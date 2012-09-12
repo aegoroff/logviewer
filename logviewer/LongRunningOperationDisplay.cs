@@ -1,20 +1,10 @@
-// ***********************************************************************
-// <author>Alexander Egorov</author>
-//
-// <summary> Long running dlg </summary>
-//
-// <copyright company="Comindware">    
-//    Copyright (c) Comindware 2010-2011. All rights reserved.   
-// </copyright>
-// ***********************************************************************
-
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Comindware.Localization
+namespace logviewer
 {
     /// <summary>
     ///     LongRunningOperationDisplay shows an overlay message block 
