@@ -42,8 +42,8 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -155,21 +155,22 @@
             this.panel1.Size = new System.Drawing.Size(740, 463);
             this.panel1.TabIndex = 3;
             // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(740, 463);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
-            // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(10, 17);
             this.toolStripStatusLabel1.Text = " ";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // syntaxRichTextBox1
+            // 
+            this.syntaxRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(740, 463);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
             // 
             // MainDlg
             // 
