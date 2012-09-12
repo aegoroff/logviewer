@@ -39,7 +39,7 @@ namespace logviewer
                 return;
             }
             this.LogPath = this.openFileDialog1.FileName;
-            
+
             if (!this.logReader.IsBusy)
             {
                 this.logReader.RunWorkerAsync(this.LogPath);
@@ -55,7 +55,7 @@ namespace logviewer
         {
             this.StopLongRunningDisplay();
             this.syntaxRichTextBox1.Text = e.Result as string;
-            toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
+            this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
         }
     }
 }
