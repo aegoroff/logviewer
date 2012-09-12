@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace logviewer
 {
@@ -36,16 +35,6 @@ namespace logviewer
     /// </summary>
     public static class Executive
     {
-        private static readonly IDictionary<LogLevel, LoggingMethod> methods = new Dictionary<LogLevel, LoggingMethod>
-            {
-                { LogLevel.Trace, Log.Instance.Trace },
-                { LogLevel.Debug, Log.Instance.Debug },
-                { LogLevel.Info, Log.Instance.Info },
-                { LogLevel.Warn, Log.Instance.Warn },
-                { LogLevel.Error, Log.Instance.Error },
-                { LogLevel.Fatal, Log.Instance.Fatal },
-            };
-
         /// <summary>
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
@@ -59,7 +48,7 @@ namespace logviewer
             }
             catch (Exception e)
             {
-                methods[level](e.Message, e);
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -76,7 +65,7 @@ namespace logviewer
             }
             catch (Exception e)
             {
-                methods[level](e.Message, e);
+                Console.WriteLine(e.ToString());
             }
             return default(T);
         }
@@ -96,7 +85,7 @@ namespace logviewer
             }
             catch (Exception e)
             {
-                methods[level](e.Message, e);
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -116,16 +105,10 @@ namespace logviewer
             }
             catch (Exception e)
             {
-                methods[level](e.Message, e);
+                Console.WriteLine(e.ToString());
             }
             return default(TReturn);
         }
-
-        #region Nested type: LoggingMethod
-
-        private delegate void LoggingMethod(object message, Exception exception);
-
-        #endregion
     }
 
     /// <summary>
