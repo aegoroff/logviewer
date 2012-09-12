@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace logviewer
 {
-    public partial class Form1 : Form
+    public partial class MainDlg : Form
     {
-        public Form1()
+        public MainDlg()
         {
             InitializeComponent();
         }
