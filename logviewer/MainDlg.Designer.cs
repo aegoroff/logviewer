@@ -164,6 +164,7 @@
             // 
             // syntaxRichTextBox1
             // 
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
             this.syntaxRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.syntaxRichTextBox1.Location = new System.Drawing.Point(0, 0);
             this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
