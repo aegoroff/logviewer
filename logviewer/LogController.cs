@@ -17,15 +17,15 @@ namespace logviewer
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
         private static readonly string[] sizes = new[]
-                                                     {
-                                                         "Bytes",
-                                                         "Kb",
-                                                         "Mb",
-                                                         "Gb",
-                                                         "Tb",
-                                                         "Pb",
-                                                         "Eb",
-                                                     };
+            {
+                "Bytes",
+                "Kb",
+                "Mb",
+                "Gb",
+                "Tb",
+                "Pb",
+                "Eb",
+            };
 
         private readonly ILogView view;
 

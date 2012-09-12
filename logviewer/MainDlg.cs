@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace logviewer
 {
@@ -19,7 +20,7 @@ namespace logviewer
 
         public void StartLongRunningDisplay()
         {
-            this.longOperationDisplay = new LongRunningOperationDisplay(this, "");
+            this.longOperationDisplay = new LongRunningOperationDisplay(this, "Reading log ...");
         }
 
         public void StopLongRunningDisplay()
@@ -28,5 +29,33 @@ namespace logviewer
         }
 
         #endregion
+
+        private void OnOpen(object sender, System.EventArgs e)
+        {
+            DialogResult r = this.openFileDialog1.ShowDialog();
+
+            if (r != DialogResult.OK)
+            {
+                return;
+            }
+            this.LogPath = this.openFileDialog1.FileName;
+            
+            if (!this.logReader.IsBusy)
+            {
+                this.logReader.RunWorkerAsync(this.LogPath);
+            }
+        }
+
+        private void ReadLog(object sender, DoWorkEventArgs e)
+        {
+            e.Result = this.controller.ReadLog(e.Argument as string);
+        }
+
+        private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.StopLongRunningDisplay();
+            this.syntaxRichTextBox1.Text = e.Result as string;
+            toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
+        }
     }
 }
