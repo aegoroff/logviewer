@@ -1,0 +1,17 @@
+_ReSharper.logviewer/
+.idea/
+*.obj
+*.suo
+*.sdf
+*.opensdf
+*.pdb
+*.log
+*.tokens
+*.vcxproj.user
+Debug/
+Release/
+dist/
+!lib/Debug/
+!lib/Release/
+!lib/x64/Debug/
+!lib/x64/Release/
