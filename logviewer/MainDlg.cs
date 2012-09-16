@@ -59,6 +59,7 @@ namespace logviewer
         {
             this.StopLongRunningDisplay();
             this.SuspendLayout();
+            toolStrip1.Focus();
             foreach (var message in this.controller.Messages)
             {
                 var i = 0;
