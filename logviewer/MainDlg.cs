@@ -54,6 +54,7 @@ namespace logviewer
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.StopLongRunningDisplay();
+            toolStrip1.Focus();
             this.syntaxRichTextBox1.Text = e.Result as string;
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
         }
