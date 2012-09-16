@@ -5,61 +5,20 @@ namespace logviewer
 {
     public class SyntaxRichTextBox : System.Windows.Forms.RichTextBox
     {
-        /// <summary>
-        ///     OnTextChanged
-        /// </summary>
-        /// <param name="e"> </param>
-        protected override void OnTextChanged(EventArgs e)
+        public void AppendText(Color color, string text)
         {
-            this.SuspendLayout();
-            this.ProcessAllLines();
-            this.ResumeLayout();
-        }
+            var start = this.TextLength;
+            this.AppendText(text);
+            var end = this.TextLength;
 
-        /// <summary>
-        ///     Process a line.
-        /// </summary>
-        private void ProcessLine(string line, int startPosition)
-        {
-            this.Select(startPosition, line.Length);
-            if (line.Contains("ERROR"))
+            // Textbox may transform chars, so (end-start) != text.Length
+            this.Select(start, end - start);
             {
-                this.SelectionColor = Color.Red;
+                this.SelectionColor = color;
+                // could set box.SelectionBackColor, box.SelectionFont too.
             }
-            else if (line.Contains("WARN"))
-            {
-                this.SelectionColor = Color.Orange;
-            }
-            else if (line.Contains("INFO"))
-            {
-                this.SelectionColor = Color.Green;
-            }
-            else if (line.Contains("FATAL"))
-            {
-                this.SelectionColor = Color.DarkViolet;
-            }
-            else if (line.Contains("DEBUG"))
-            {
-                this.SelectionColor = Color.FromArgb(100, 100, 100);
-            }
-            else if (line.Contains("TRACE"))
-            {
-                this.SelectionColor = Color.FromArgb(200, 200, 200);
-            }
-            else
-            {
-                this.SelectionColor = Color.Black;
-            }
-        }
-
-        public void ProcessAllLines()
-        {
-            var nStartPos = 0;
-            foreach (var line in this.Lines)
-            {
-                this.ProcessLine(line, nStartPos);
-                nStartPos += line.Length + 1;
-            }
+            this.SelectionLength = 0; // clear
+            this.AppendText(Environment.NewLine);
         }
     }
 }

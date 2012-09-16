@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -39,6 +38,7 @@ namespace logviewer
         public LogController(ILogView view)
         {
             this.view = view;
+            Messages = new List<LogMessage>();
             Executive.SafeRun(Convert);
         }
 
@@ -49,66 +49,57 @@ namespace logviewer
         public string HumanReadableLogSize { get; private set; }
         public long LogSize { get; private set; }
 
+        public List<LogMessage> Messages { get; private set; }
+
         #endregion
 
         #region Public Methods and Operators
 
-        public static async Task<string> ReadLog(Stream stream)
+        public void ReadLog(string path)
         {
-            var messages = new List<LogMessage>((int) stream.Length / MeanLogStringLength);
-            var message = new LogMessage {Strings = new List<string>()};
-            long length;
-            using (var sr = new StreamReader(stream, Encoding.UTF8, true))
-            {
-                length = stream.Length;
-                while (!sr.EndOfStream)
-                {
-                    var line = await sr.ReadLineAsync();
-
-                    if (regex.IsMatch(line) && message.Strings.Count > 0)
-                    {
-                        messages.Add(message);
-                        message.Strings = new List<string>();
-                    }
-
-                    message.Strings.Add(line);
-                }
-            }
-            messages.Add(message);
-            var sb = new StringBuilder((int) length + messages.Count * Environment.NewLine.Length);
-            for (var i = messages.Count - 1; i >= 0; --i)
-            {
-                sb.Append(messages[i]);
-            }
-            return sb.ToString();
-        }
-
-        public string ReadLog(string path)
-        {
-            try
-            {
-                if (!File.Exists(path))
-                {
-                    return string.Empty;
-                }
-                var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using (stream)
-                {
-                    LogSize = stream.Length;
-                    CreateHumanReadableSize();
-
-                    return ReadLog(stream).Result;
-                }
-            }
-            catch (Exception e)
-            {
-                return e.ToString();
-            }
+            Executive.SafeRun(ReadLogInternal, path);
         }
 
         #endregion
 
         #region Methods
+
+        private void ReadLogInternal(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return;
+            }
+            var reader = File.OpenText(path);
+            using (reader)
+            {
+                LogSize = reader.BaseStream.Length;
+                CreateHumanReadableSize();
+
+                ReadLogTask(reader);
+            }
+        }
+
+        private void ReadLogTask(StreamReader sr)
+        {
+            Messages = new List<LogMessage>((int) LogSize / MeanLogStringLength);
+            var message = new LogMessage { Strings = new List<string>() };
+
+            while (!sr.EndOfStream)
+            {
+                var line = sr.ReadLine();
+
+                if (regex.IsMatch(line) && message.Strings.Count > 0)
+                {
+                    Messages.Add(message);
+                    message.Strings = new List<string>();
+                }
+
+                message.Strings.Add(line);
+            }
+            Messages.Add(message);
+            Messages.Reverse();
+        }
 
         private void Convert()
         {
@@ -154,25 +145,11 @@ namespace logviewer
         #endregion
     }
 
-    internal struct LogMessage
+    public struct LogMessage
     {
         #region Constants and Fields
 
         internal IList<string> Strings;
-
-        #endregion
-
-        #region Public Methods and Operators
-
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            foreach (var s in Strings)
-            {
-                sb.AppendLine(s);
-            }
-            return sb.ToString();
-        }
 
         #endregion
     }

@@ -179,6 +179,7 @@
             // 
             // logReader
             // 
+            this.logReader.WorkerReportsProgress = true;
             this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
             this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
             // 
