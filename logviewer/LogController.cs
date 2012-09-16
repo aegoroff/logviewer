@@ -55,7 +55,7 @@ namespace logviewer
 
         public static async Task<string> ReadLog(Stream stream)
         {
-            var messages = new List<LogMessage>((int) stream.Length/MeanLogStringLength);
+            var messages = new List<LogMessage>((int) stream.Length / MeanLogStringLength);
             var message = new LogMessage {Strings = new List<string>()};
             long length;
             using (var sr = new StreamReader(stream, Encoding.UTF8, true))
@@ -75,8 +75,8 @@ namespace logviewer
                 }
             }
             messages.Add(message);
-            var sb = new StringBuilder((int)length + messages.Count * Environment.NewLine.Length);
-            for (int i = messages.Count - 1; i >= 0; --i)
+            var sb = new StringBuilder((int) length + messages.Count * Environment.NewLine.Length);
+            for (var i = messages.Count - 1; i >= 0; --i)
             {
                 sb.Append(messages[i]);
             }
@@ -116,7 +116,7 @@ namespace logviewer
             {
                 return;
             }
-            FileStream stream = File.Open(view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var stream = File.Open(view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             byte[] b;
             using (stream)
             {
@@ -127,11 +127,11 @@ namespace logviewer
             {
                 return;
             }
-            Encoding srcEncoding = Encoding.GetEncoding("windows-1251");
-            string log = File.ReadAllText(view.LogPath, srcEncoding);
-            byte[] asciiBytes = srcEncoding.GetBytes(log);
-            byte[] utf8Bytes = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiBytes);
-            string utf8 = Encoding.UTF8.GetString(utf8Bytes);
+            var srcEncoding = Encoding.GetEncoding("windows-1251");
+            var log = File.ReadAllText(view.LogPath, srcEncoding);
+            var asciiBytes = srcEncoding.GetBytes(log);
+            var utf8Bytes = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiBytes);
+            var utf8 = Encoding.UTF8.GetString(utf8Bytes);
             File.WriteAllText(view.LogPath, utf8, Encoding.UTF8);
         }
 
@@ -167,7 +167,7 @@ namespace logviewer
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (string s in Strings)
+            foreach (var s in Strings)
             {
                 sb.AppendLine(s);
             }
