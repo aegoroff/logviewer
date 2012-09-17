@@ -142,41 +142,16 @@ namespace logviewer
 
                 foreach (var msg in this.Messages)
                 {
-                    var color = Colorize(msg.Strings[0]);
-                    var messageLevel = LogLevel.Trace;
-                    if (levelsMap.ContainsKey(color))
+                    var messageLevel = ToLevel(msg.Strings[0]);
+
+                    if (messageLevel < ToLevel(this.minFilter) || messageLevel > ToLevel(this.maxFilter, LogLevel.Fatal))
                     {
-                        messageLevel = levelsMap[color];
+                        continue;
                     }
-                    if (!string.IsNullOrWhiteSpace(this.minFilter))
-                    {
-                        var filterColor = Colorize(this.minFilter);
-                        var filterLevel = LogLevel.Trace;
-                        if (levelsMap.ContainsKey(filterColor))
-                        {
-                            filterLevel = levelsMap[filterColor];
-                        }
-                        if (messageLevel < filterLevel)
-                        {
-                            continue;
-                        }
-                    }
-                    if (!string.IsNullOrWhiteSpace(this.maxFilter))
-                    {
-                        var filterColor = Colorize(this.maxFilter);
-                        var filterLevel = LogLevel.Trace;
-                        if (levelsMap.ContainsKey(filterColor))
-                        {
-                            filterLevel = levelsMap[filterColor];
-                        }
-                        if (messageLevel > filterLevel)
-                        {
-                            continue;
-                        }
-                    }
+
                     var format = new RtfCharFormat
                         {
-                            Color = color,
+                            Color = Colorize(msg.Strings[0]),
                             Font = "Courier New",
                             Size = 10
                         };
@@ -201,6 +176,20 @@ namespace logviewer
                 }
             }
         }
+
+        static LogLevel ToLevel(string str, LogLevel defaultLevel = LogLevel.Trace)
+        {
+            if (!string.IsNullOrWhiteSpace(str))
+            {
+                var color = Colorize(str);
+                if (levelsMap.ContainsKey(color))
+                {
+                    return levelsMap[color];
+                }
+            }
+            return defaultLevel;
+        }
+
 
         private static Color Colorize(string line)
         {
