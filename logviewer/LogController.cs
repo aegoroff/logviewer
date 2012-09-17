@@ -22,14 +22,14 @@ namespace logviewer
         private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
-        private static readonly Dictionary<Color, LogLevel> levelsMap = new Dictionary<Color, LogLevel>
+        private static readonly Dictionary<LogLevel, Color> levelsMap = new Dictionary<LogLevel, Color>
             {
-                { Color.FromArgb(200, 200, 200), LogLevel.Trace },
-                { Color.FromArgb(100, 100, 100), LogLevel.Debug },
-                { Color.Green, LogLevel.Info },
-                { Color.Orange, LogLevel.Warn },
-                { Color.Red, LogLevel.Error },
-                { Color.DarkViolet, LogLevel.Fatal }
+                { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
+                { LogLevel.Debug, Color.FromArgb(100, 100, 100)  },
+                { LogLevel.Info, Color.Green },
+                { LogLevel.Warn, Color.Orange },
+                { LogLevel.Error, Color.Red  },
+                { LogLevel.Fatal, Color.DarkViolet }
             };
 
         private static readonly string[] sizes = new[]
@@ -143,9 +143,9 @@ namespace logviewer
 
                 foreach (var msg in this.Messages)
                 {
-                    var messageLevel = ToLevel(msg.Header);
+                    var messageLevel = DetectLevel(msg.Header);
 
-                    if (messageLevel < ToLevel(this.minFilter) || messageLevel > ToLevel(this.maxFilter, LogLevel.Fatal))
+                    if (messageLevel < DetectLevel(this.minFilter) || messageLevel > DetectLevel(this.maxFilter, LogLevel.Fatal))
                     {
                         continue;
                     }
@@ -190,47 +190,42 @@ namespace logviewer
             }
         }
 
-        static LogLevel ToLevel(string str, LogLevel defaultLevel = LogLevel.Trace)
-        {
-            if (!string.IsNullOrWhiteSpace(str))
-            {
-                var color = Colorize(str);
-                if (levelsMap.ContainsKey(color))
-                {
-                    return levelsMap[color];
-                }
-            }
-            return defaultLevel;
-        }
-
-
         private static Color Colorize(string line)
         {
+            return levelsMap[DetectLevel(line)];
+        }
+
+        private static LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                return defaultLevel;
+            }
             if (line.Contains("ERROR"))
             {
-                return Color.Red;
+                return LogLevel.Error;
             }
             if (line.Contains("WARN"))
             {
-                return Color.Orange;
+                return LogLevel.Warn;
             }
             if (line.Contains("INFO"))
             {
-                return Color.Green;
+                return LogLevel.Info;
             }
             if (line.Contains("FATAL"))
             {
-                return Color.DarkViolet;
+                return LogLevel.Fatal;
             }
             if (line.Contains("DEBUG"))
             {
-                return Color.FromArgb(100, 100, 100);
+                return LogLevel.Debug;
             }
             if (line.Contains("TRACE"))
             {
-                return Color.FromArgb(200, 200, 200);
+                return LogLevel.Trace;
             }
-            return Color.Black;
+            return defaultLevel;
         }
 
         private void Convert()
