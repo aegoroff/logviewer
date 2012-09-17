@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -20,16 +19,16 @@ namespace logviewer
             this.KeepOriginalCaption();
         }
 
-        private void KeepOriginalCaption()
-        {
-            this.originalCapion = this.Text;
-        }
-
         #region ILogView Members
 
         public string LogPath { get; private set; }
 
         #endregion
+
+        private void KeepOriginalCaption()
+        {
+            this.originalCapion = this.Text;
+        }
 
         private void OnLogMessage(object sender, LogMessageEventArgs e)
         {
@@ -105,6 +104,11 @@ namespace logviewer
 
         private void OnReadLine(object sender, ProgressChangedEventArgs e)
         {
+            if (this.logReader.CancellationPending)
+            {
+                return;
+            }
+
             var messages = e.UserState as IList<LogMessage>;
 
             if (messages == null)
@@ -115,6 +119,31 @@ namespace logviewer
             {
                 this.syntaxRichTextBox1.AppendText(Colorize(message.Strings[0]), message.ToString());
             }
+        }
+
+        private void OnClose(object sender, EventArgs e)
+        {
+            this.CancelReading();
+            this.Text = this.originalCapion;
+            this.toolStripStatusLabel1.Text = null;
+            this.toolStripProgressBar1.Value = 0;
+            this.syntaxRichTextBox1.Clear();
+        }
+
+        private void OnExit(object sender, EventArgs e)
+        {
+            this.CancelReading();
+            this.Close();
+        }
+
+        private void CancelReading()
+        {
+            if (!this.logReader.IsBusy || this.logReader.CancellationPending)
+            {
+                return;
+            }
+            this.controller.CancelReading();
+            this.logReader.CancelAsync();
         }
     }
 }

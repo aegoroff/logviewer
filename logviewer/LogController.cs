@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -33,6 +32,7 @@ namespace logviewer
             };
 
         private readonly ILogView view;
+        private bool cancelReading;
 
         #endregion
 
@@ -62,7 +62,13 @@ namespace logviewer
 
         public void ReadLog(string path)
         {
+            this.cancelReading = false;
             Executive.SafeRun(this.ReadLogInternal, path);
+        }
+
+        public void CancelReading()
+        {
+            this.cancelReading = true;
         }
 
         #endregion
@@ -87,6 +93,10 @@ namespace logviewer
 
         private void ReadLogTask(StreamReader sr)
         {
+            if (this.cancelReading)
+            {
+                return;
+            }
             this.Messages = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
             var message = new LogMessage { Strings = new List<string>() };
 
@@ -115,6 +125,10 @@ namespace logviewer
             var i = 0;
             foreach (var msg in this.Messages)
             {
+                if (this.cancelReading)
+                {
+                    return;
+                }
                 if (i++ < portionSize)
                 {
                     messageEventArgs.Messages.Add(msg);
@@ -212,7 +226,7 @@ namespace logviewer
 
         public void UpdatePercent(int sent)
         {
-            this.Percent = (int)((sent / (double)this.maxCount) * 100);
+            this.Percent = (int) ((sent / (double) this.maxCount) * 100);
         }
     }
 }

@@ -44,9 +44,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -118,6 +118,7 @@
             this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.OnClose);
             // 
             // toolStripSeparator2
             // 
@@ -130,6 +131,7 @@
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnExit);
             // 
             // helpToolStripMenuItem
             // 
@@ -173,17 +175,6 @@
             this.panel1.Size = new System.Drawing.Size(740, 463);
             this.panel1.TabIndex = 3;
             // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(740, 463);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
-            // 
             // logReader
             // 
             this.logReader.WorkerReportsProgress = true;
@@ -195,6 +186,17 @@
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log";
+            // 
+            // syntaxRichTextBox1
+            // 
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(740, 463);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
             // 
             // MainDlg
             // 
