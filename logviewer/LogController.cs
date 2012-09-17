@@ -121,7 +121,12 @@ namespace logviewer
 
                 foreach (var msg in this.Messages)
                 {
-                    var format = new RtfCharFormat { Color = Colorize(msg.Strings[0]) };
+                    var format = new RtfCharFormat
+                        {
+                            Color = Colorize(msg.Strings[0]), 
+                            Font = "Courier New", 
+                            Size = 10
+                        };
                     var txt = msg.ToString();
                     doc.AddText(txt, format);
                     if (!txt.EndsWith("\n"))
