@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainDlg));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,10 +44,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -63,6 +63,11 @@
             this.statusStrip1.Size = new System.Drawing.Size(740, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
             // toolStripStatusLabel1
             // 
@@ -168,17 +173,6 @@
             this.panel1.Size = new System.Drawing.Size(740, 463);
             this.panel1.TabIndex = 3;
             // 
-            // logReader
-            // 
-            this.logReader.WorkerReportsProgress = true;
-            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
-            this.logReader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.OnReadLine);
-            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Log files|*.log";
-            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
@@ -190,10 +184,17 @@
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
-            // toolStripProgressBar1
+            // logReader
             // 
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
+            this.logReader.WorkerReportsProgress = true;
+            this.logReader.WorkerSupportsCancellation = true;
+            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
+            this.logReader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.OnReadLine);
+            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "Log files|*.log";
             // 
             // MainDlg
             // 
