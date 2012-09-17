@@ -108,7 +108,7 @@ namespace logviewer
             }
             var sent = 0;
             var messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
-            const int portionSize = 100;
+            const int portionSize = 200;
             var i = 0;
             foreach (var msg in this.Messages)
             {
