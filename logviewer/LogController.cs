@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Net.Sgoliver.NRtfTree.Core;
@@ -142,7 +143,7 @@ namespace logviewer
 
                 foreach (var msg in this.Messages)
                 {
-                    var messageLevel = ToLevel(msg.Strings[0]);
+                    var messageLevel = ToLevel(msg.Header);
 
                     if (messageLevel < ToLevel(this.minFilter) || messageLevel > ToLevel(this.maxFilter, LogLevel.Fatal))
                     {
@@ -151,7 +152,7 @@ namespace logviewer
 
                     var format = new RtfCharFormat
                         {
-                            Color = Colorize(msg.Strings[0]),
+                            Color = Colorize(msg.Header),
                             Font = "Courier New",
                             Size = 10
                         };
@@ -274,7 +275,18 @@ namespace logviewer
 
         public override string ToString()
         {
-            return string.Join(Environment.NewLine, this.Strings);
+            return string.Join(Environment.NewLine, Strings);
+        }
+
+        public string Header
+        {
+            get { return this.Strings[0]; }
+        }
+
+        IEnumerable<string> MessageBody()
+        {
+            var i = 0;
+            return this.Strings.Where(s => i++ > 0);
         }
     }
 }
