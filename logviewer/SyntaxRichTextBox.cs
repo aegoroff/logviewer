@@ -17,6 +17,7 @@ namespace logviewer
             this.BeginUpdate();
             this.ProcessAllLines();
             this.EndUpdate();
+            this.Invalidate();
         }
 
         /// <summary>
