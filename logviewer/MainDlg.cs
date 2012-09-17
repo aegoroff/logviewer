@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -38,6 +37,11 @@ namespace logviewer
         private void OnLogMessage(object sender, LogMessageEventArgs e)
         {
             this.logReader.ReportProgress(e.Percent, e.Messages);
+            if (this.toolStripStatusLabel1.Text == null)
+            {
+                this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
+            }
+            this.toolStripProgressBar1.Value = e.Percent;
         }
 
         private void OnOpen(object sender, EventArgs e)
@@ -54,6 +58,8 @@ namespace logviewer
             {
                 return;
             }
+            this.toolStripStatusLabel1.Text = null;
+            this.toolStripProgressBar1.Value = 0;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.syntaxRichTextBox1.SuspendLayout();
@@ -69,7 +75,7 @@ namespace logviewer
         {
             this.StopLongRunningDisplay();
             this.syntaxRichTextBox1.ResumeLayout();
-            this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
+            this.toolStripProgressBar1.Value = 100;
         }
 
         private static Color Colorize(string line)
