@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
+using Net.Sgoliver.NRtfTree.Core;
+using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer
 {
@@ -17,7 +19,6 @@ namespace logviewer
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
         private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
-        private const int IssueMessageBatchMillisecondsTimeout = 150;
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
         private static readonly string[] sizes = new[]
@@ -36,7 +37,6 @@ namespace logviewer
 
         #endregion
 
-        public event EventHandler<LogMessageEventArgs> LogMessageRead;
 
         #region Constructors and Destructors
 
@@ -60,10 +60,10 @@ namespace logviewer
 
         #region Public Methods and Operators
 
-        public void ReadLog(string path)
+        public string ReadLog(string path)
         {
             this.cancelReading = false;
-            Executive.SafeRun(this.ReadLogInternal, path);
+            return Executive.SafeRun<string, string>(this.ReadLogInternal, path);
         }
 
         public void CancelReading()
@@ -75,11 +75,11 @@ namespace logviewer
 
         #region Methods
 
-        private void ReadLogInternal(string path)
+        private string ReadLogInternal(string path)
         {
             if (!File.Exists(path))
             {
-                return;
+                return string.Empty;
             }
             var reader = File.OpenText(path);
             using (reader)
@@ -87,15 +87,15 @@ namespace logviewer
                 this.LogSize = reader.BaseStream.Length;
                 this.CreateHumanReadableSize();
 
-                this.ReadLogTask(reader);
+                return this.ReadLogTask(reader);
             }
         }
 
-        private void ReadLogTask(StreamReader sr)
+        private string ReadLogTask(StreamReader sr)
         {
             if (this.cancelReading)
             {
-                return;
+                return string.Empty;
             }
             this.Messages = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
             var message = new LogMessage { Strings = new List<string>() };
@@ -114,38 +114,64 @@ namespace logviewer
             }
             this.Messages.Add(message);
             this.Messages.Reverse();
-            var logMessageRead = this.LogMessageRead;
-            if (logMessageRead == null)
+            const string rtfPath = "log.rtf";
+            try
             {
-                return;
+                var doc = new RtfDocument(rtfPath);
+
+                foreach (var msg in this.Messages)
+                {
+                    var format = new RtfCharFormat { Color = Colorize(msg.Strings[0]) };
+                    var txt = msg.ToString();
+                    doc.AddText(txt, format);
+                    if (!txt.EndsWith("\n") || !txt.EndsWith("\n"))
+                    {
+                        doc.AddText(Environment.NewLine);
+                    }
+                }
+                doc.Close();
+
+                var tree = new RtfTree();
+                tree.LoadRtfFile(rtfPath);
+                return tree.Rtf;
             }
-            var sent = 0;
-            var messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
-            const int portionSize = 200;
-            var i = 0;
-            foreach (var msg in this.Messages)
+            finally
             {
-                if (this.cancelReading)
+                if (File.Exists(rtfPath))
                 {
-                    return;
-                }
-                if (i++ < portionSize)
-                {
-                    messageEventArgs.Messages.Add(msg);
-                }
-                else
-                {
-                    sent += messageEventArgs.Messages.Count;
-                    messageEventArgs.UpdatePercent(sent);
-                    logMessageRead(this, messageEventArgs);
-                    i = 0;
-                    messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
-                    Thread.Sleep(IssueMessageBatchMillisecondsTimeout);
+                    File.Delete(rtfPath);
                 }
             }
-            sent += messageEventArgs.Messages.Count;
-            messageEventArgs.UpdatePercent(sent);
-            logMessageRead(this, messageEventArgs);
+        }
+
+        private static Color Colorize(string line)
+        {
+            var color = Color.Black;
+            if (line.Contains("ERROR"))
+            {
+                color = Color.Red;
+            }
+            else if (line.Contains("WARN"))
+            {
+                color = Color.Orange;
+            }
+            else if (line.Contains("INFO"))
+            {
+                color = Color.Green;
+            }
+            else if (line.Contains("FATAL"))
+            {
+                color = Color.DarkViolet;
+            }
+            else if (line.Contains("DEBUG"))
+            {
+                color = Color.FromArgb(100, 100, 100);
+            }
+            else if (line.Contains("TRACE"))
+            {
+                color = Color.FromArgb(200, 200, 200);
+            }
+            return color;
         }
 
         private void Convert()
@@ -203,30 +229,6 @@ namespace logviewer
         public override string ToString()
         {
             return string.Join(Environment.NewLine, this.Strings);
-        }
-    }
-
-    /// <summary>
-    ///     Just a simple class to message
-    /// </summary>
-    public class LogMessageEventArgs : EventArgs
-    {
-        private readonly int maxCount;
-
-        public LogMessageEventArgs(int maxCount)
-        {
-            this.maxCount = maxCount;
-            this.Messages = new List<LogMessage>();
-            this.Percent = 0;
-        }
-
-        public IList<LogMessage> Messages { get; private set; }
-
-        public int Percent { get; private set; }
-
-        public void UpdatePercent(int sent)
-        {
-            this.Percent = (int) ((sent / (double) this.maxCount) * 100);
         }
     }
 }
