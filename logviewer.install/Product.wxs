@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?define SourcePath = "$(var.SolutionDir)logviewer\bin\$(var.CONFIGURATION)" ?>
+	<?define Version = "1.0.0.0" ?>
+	<Product 
+        Id="*" 
+        Name="Logviewer tool" 
+        Language="1033" 
+        Version="$(var.Version)" 
+        Manufacturer="Alexander Egorov" 
+        UpgradeCode="079be60b-0417-4be7-9513-27034cfedfd6"
+    >
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        
+        <!--
+			Check for .NET 4.0 Full
+		-->
+		<PropertyRef Id="NETFRAMEWORK40FULL"/>
+		<Condition Message="This setup requires the .NET Framework 4.0 full or higher.">
+			Installed OR NETFRAMEWORK40FULL
+		</Condition>
+        
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="logviewer.install" Level="1">
+			<ComponentRef Id="logviewer.bin" />
+			<ComponentRef Id="logviewer.shortcut" />
+		</Feature>
+    
+        <UIRef Id="WixUI_Minimal"/>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="logviewer">
+                    <Component Id="logviewer.bin" Guid="{48B9BC82-F77A-4981-874A-B523F6021505}">
+							<File
+								Id="logviewer.exe"
+								Name="logviewer.exe"
+								Source="$(var.SourcePath)\logviewer.exe"
+								DiskId="1"/>
+							<File
+								Id="logviewer.exe.config"
+								Name="logviewer.exe.config"
+								Source="$(var.SourcePath)\logviewer.exe.config"
+								DiskId="1"/>
+							<File
+								Id="NRtfTree.dll"
+								Name="NRtfTree.dll"
+								Source="$(var.SourcePath)\NRtfTree.dll"
+								DiskId="1"/>
+						</Component>
+                </Directory>
+            </Directory>
+            <!-- logviewer Start menu folder -->
+			<Directory Id="ProgramMenuFolder" Name="Programs">
+				<Directory Id="LogviewerProgramMenuFolder" Name="Logviewer">
+					<Component Id="logviewer.shortcut" Guid="{02EEED82-AD16-4EC4-8AC3-BA3E92D2F3A8}">
+						<!-- 
+							Fix ICE 38 by adding a dummy registry key that is the key for this shortcut.
+							http://msdn.microsoft.com/library/en-us/msi/setup/ice38.asp
+						-->
+						<RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+						<Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.exe]" Id="LogviewerStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
+						<!--
+							Fix ICE64 by adding a remove folder element 
+							http://windowssdk.msdn.microsoft.com/en-us/library/ms704358.aspx
+						-->
+						<RemoveFolder Id="RemoveMSBuildTeamCityTasksProgramMenuFolder" On="uninstall" />
+					</Component>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+</Wix>
