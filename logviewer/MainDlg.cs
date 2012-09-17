@@ -7,7 +7,8 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
-        private string logFilter;
+        private string logFilterMin;
+        private string logFilterMax;
         private string originalCapion;
 
         public MainDlg()
@@ -53,7 +54,9 @@ namespace logviewer
                 return;
             }
             this.toolStripComboBox1.Enabled = true;
-            this.logFilter = this.toolStripComboBox1.SelectedItem as string;
+            this.toolStripComboBox2.Enabled = true;
+            this.logFilterMin = this.toolStripComboBox1.SelectedItem as string;
+            this.logFilterMax = this.toolStripComboBox2.SelectedItem as string;
             this.toolStripStatusLabel1.Text = "Reading log ...";
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
@@ -62,7 +65,8 @@ namespace logviewer
 
         private void ReadLog(object sender, DoWorkEventArgs e)
         {
-            this.controller.Filter(this.logFilter);
+            this.controller.MinFilter(this.logFilterMin);
+            this.controller.MaxFilter(this.logFilterMax);
             e.Result = this.controller.ReadLog(e.Argument as string);
         }
 
@@ -79,6 +83,7 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
             this.toolStripComboBox1.Enabled = false;
+            this.toolStripComboBox2.Enabled = false;
         }
 
         private void OnExit(object sender, EventArgs e)

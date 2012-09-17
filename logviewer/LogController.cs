@@ -44,7 +44,8 @@ namespace logviewer
 
         private readonly ILogView view;
         private bool cancelReading;
-        private string filter;
+        private string minFilter;
+        private string maxFilter;
 
         #endregion
 
@@ -81,9 +82,14 @@ namespace logviewer
             this.cancelReading = true;
         }
 
-        public void Filter(string value)
+        public void MinFilter(string value)
         {
-            this.filter = value;
+            this.minFilter = value;
+        }
+        
+        public void MaxFilter(string value)
+        {
+            this.maxFilter = value;
         }
 
         #endregion
@@ -142,15 +148,28 @@ namespace logviewer
                     {
                         messageLevel = levelsMap[color];
                     }
-                    if (!string.IsNullOrWhiteSpace(this.filter))
+                    if (!string.IsNullOrWhiteSpace(this.minFilter))
                     {
-                        var filterColor = Colorize(this.filter);
+                        var filterColor = Colorize(this.minFilter);
                         var filterLevel = LogLevel.Trace;
                         if (levelsMap.ContainsKey(filterColor))
                         {
                             filterLevel = levelsMap[filterColor];
                         }
                         if (messageLevel < filterLevel)
+                        {
+                            continue;
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(this.maxFilter))
+                    {
+                        var filterColor = Colorize(this.maxFilter);
+                        var filterLevel = LogLevel.Trace;
+                        if (levelsMap.ContainsKey(filterColor))
+                        {
+                            filterLevel = levelsMap[filterColor];
+                        }
+                        if (messageLevel > filterLevel)
                         {
                             continue;
                         }
