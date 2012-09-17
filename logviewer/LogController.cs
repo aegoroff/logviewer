@@ -150,18 +150,30 @@ namespace logviewer
                         continue;
                     }
 
-                    var format = new RtfCharFormat
+                    var formatBody = new RtfCharFormat
                         {
                             Color = Colorize(msg.Header),
                             Font = "Courier New",
-                            Size = 10
+                            Size = 10,
+                            Bold = true
                         };
-                    var txt = msg.ToString();
-                    doc.AddText(txt, format);
-                    if (!txt.EndsWith("\n"))
+                    doc.AddText(msg.Header.Trim(), formatBody);
+                    doc.AddText(Environment.NewLine);
+
+                    var txt = msg.Body;
+                    if (string.IsNullOrWhiteSpace(txt))
                     {
-                        doc.AddText(Environment.NewLine);
+                        continue;
                     }
+                    var format = new RtfCharFormat
+                        {
+                            Color = formatBody.Color,
+                            Font = formatBody.Font,
+                            Size = formatBody.Size
+                        };
+
+                    doc.AddText(txt.Trim(), format);
+                    doc.AddText(Environment.NewLine);
                 }
                 doc.Close();
 
