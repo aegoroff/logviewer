@@ -292,12 +292,15 @@ namespace logviewer
 
         public string Header
         {
-            get { return this.Strings[0]; }
+            get
+            {
+                return this.Strings.Count == 0 ? string.Empty : this.Strings[0];
+            }
         }
         
         public string Body
         {
-            get { return string.Join(Environment.NewLine, MessageBody()); }
+            get { return this.Strings.Count < 2 ? string.Empty : string.Join(Environment.NewLine, MessageBody()); }
         }
 
         IEnumerable<string> MessageBody()
