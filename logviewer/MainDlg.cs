@@ -114,11 +114,7 @@ namespace logviewer
             }
             foreach (var message in messages)
             {
-                foreach (var s in message.Strings)
-                {
-                    this.syntaxRichTextBox1.AppendText(Colorize(s), message.ToString());
-                    break;
-                }
+                this.syntaxRichTextBox1.AppendText(Colorize(message.Strings[0]), message.ToString());
             }
         }
     }
