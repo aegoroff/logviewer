@@ -117,7 +117,6 @@ namespace logviewer
                 foreach (var s in message.Strings)
                 {
                     this.syntaxRichTextBox1.AppendText(Colorize(s), message.ToString());
-                    this.syntaxRichTextBox1.AppendText(Environment.NewLine);
                     break;
                 }
             }

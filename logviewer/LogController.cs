@@ -185,7 +185,7 @@ namespace logviewer
 
         public override string ToString()
         {
-            return string.Join(Environment.NewLine, this.Strings.Where(s => !string.IsNullOrWhiteSpace(s)));
+            return string.Join(Environment.NewLine, this.Strings);
         }
     }
 
