@@ -132,6 +132,11 @@ namespace logviewer
             {
                 var line = sr.ReadLine();
 
+                if (line == null)
+                {
+                    break;
+                }
+
                 if (regex.IsMatch(line) && message.Strings.Count > 0)
                 {
                     this.Messages.Add(message);
