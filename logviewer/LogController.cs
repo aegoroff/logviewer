@@ -178,6 +178,11 @@ namespace logviewer
         internal IList<string> Strings;
 
         #endregion
+
+        public override string ToString()
+        {
+            return string.Join(Environment.NewLine, this.Strings);
+        }
     }
 
     /// <summary>

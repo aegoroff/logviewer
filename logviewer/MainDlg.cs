@@ -118,18 +118,10 @@ namespace logviewer
             }
             foreach (var message in messages)
             {
-                var i = 0;
                 foreach (var s in message.Strings)
                 {
-                    if (i++ == 0)
-                    {
-                        this.syntaxRichTextBox1.AppendText(Colorize(s), s);
-                    }
-                    else
-                    {
-                        this.syntaxRichTextBox1.AppendText(s);
-                        this.syntaxRichTextBox1.AppendText(Environment.NewLine);
-                    }
+                    this.syntaxRichTextBox1.AppendText(Colorize(s), message.ToString());
+                    break;
                 }
             }
         }
