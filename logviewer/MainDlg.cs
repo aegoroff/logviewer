@@ -9,6 +9,7 @@ namespace logviewer
         private readonly LogController controller;
         private string logFilterMin;
         private string logFilterMax;
+        private bool reverse;
         private string originalCapion;
 
         public MainDlg()
@@ -18,8 +19,15 @@ namespace logviewer
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
-            this.toolStripComboBox1.Enabled = false;
-            this.toolStripComboBox2.Enabled = false;
+            this.toolStripComboBox3.SelectedIndex = 0;
+            EnableControls(false);
+        }
+
+        private void EnableControls(bool enabled)
+        {
+            this.toolStripComboBox1.Enabled = enabled;
+            this.toolStripComboBox2.Enabled = enabled;
+            this.toolStripComboBox3.Enabled = enabled;
         }
 
         #region ILogView Members
@@ -57,10 +65,10 @@ namespace logviewer
             {
                 return;
             }
-            this.toolStripComboBox1.Enabled = true;
-            this.toolStripComboBox2.Enabled = true;
+            EnableControls(true);
             this.logFilterMin = this.toolStripComboBox1.SelectedItem as string;
             this.logFilterMax = this.toolStripComboBox2.SelectedItem as string;
+            this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
             this.toolStripStatusLabel1.Text = "Reading log ...";
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
@@ -71,6 +79,7 @@ namespace logviewer
         {
             this.controller.MinFilter(this.logFilterMin);
             this.controller.MaxFilter(this.logFilterMax);
+            this.controller.Ordering(this.reverse);
             e.Result = this.controller.ReadLog(e.Argument as string);
         }
 
@@ -86,8 +95,7 @@ namespace logviewer
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
-            this.toolStripComboBox1.Enabled = false;
-            this.toolStripComboBox2.Enabled = false;
+            EnableControls(false);
         }
 
         private void OnExit(object sender, EventArgs e)

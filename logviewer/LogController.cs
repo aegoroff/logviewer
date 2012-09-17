@@ -47,6 +47,7 @@ namespace logviewer
         private bool cancelReading;
         private string minFilter;
         private string maxFilter;
+        private bool reverseChronological;
 
         #endregion
 
@@ -92,6 +93,11 @@ namespace logviewer
         {
             this.maxFilter = value;
         }
+        
+        public void Ordering(bool reverse)
+        {
+            this.reverseChronological = reverse;
+        }
 
         #endregion
 
@@ -135,7 +141,10 @@ namespace logviewer
                 message.Strings.Add(line);
             }
             this.Messages.Add(message);
-            this.Messages.Reverse();
+            if (this.reverseChronological)
+            {
+                this.Messages.Reverse();
+            }
             string rtfPath = Path.GetTempFileName();
             try
             {
