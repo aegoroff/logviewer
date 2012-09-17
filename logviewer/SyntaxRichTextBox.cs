@@ -7,6 +7,7 @@ namespace logviewer
     {
         public void AppendText(Color color, string text)
         {
+            this.SuspendLayout();
             var start = this.TextLength;
             this.AppendText(text);
             var end = this.TextLength;
@@ -19,6 +20,7 @@ namespace logviewer
             }
             this.SelectionLength = 0; // clear
             this.AppendText(Environment.NewLine);
+            this.ResumeLayout();
         }
     }
 }
