@@ -40,7 +40,7 @@ namespace logviewer
                 "Gb",
                 "Tb",
                 "Pb",
-                "Eb",
+                "Eb"
             };
 
         private readonly ILogView view;
