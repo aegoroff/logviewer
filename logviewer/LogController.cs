@@ -193,32 +193,31 @@ namespace logviewer
 
         private static Color Colorize(string line)
         {
-            var color = Color.Black;
             if (line.Contains("ERROR"))
             {
-                color = Color.Red;
+                return Color.Red;
             }
-            else if (line.Contains("WARN"))
+            if (line.Contains("WARN"))
             {
-                color = Color.Orange;
+                return Color.Orange;
             }
-            else if (line.Contains("INFO"))
+            if (line.Contains("INFO"))
             {
-                color = Color.Green;
+                return Color.Green;
             }
-            else if (line.Contains("FATAL"))
+            if (line.Contains("FATAL"))
             {
-                color = Color.DarkViolet;
+                return Color.DarkViolet;
             }
-            else if (line.Contains("DEBUG"))
+            if (line.Contains("DEBUG"))
             {
-                color = Color.FromArgb(100, 100, 100);
+                return Color.FromArgb(100, 100, 100);
             }
-            else if (line.Contains("TRACE"))
+            if (line.Contains("TRACE"))
             {
-                color = Color.FromArgb(200, 200, 200);
+                return Color.FromArgb(200, 200, 200);
             }
-            return color;
+            return Color.Black;
         }
 
         private void Convert()
