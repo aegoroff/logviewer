@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -42,6 +43,7 @@ namespace logviewer
                 this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             }
             this.toolStripProgressBar1.Value = e.Percent;
+            Thread.Sleep(50);
         }
 
         private void OnOpen(object sender, EventArgs e)
@@ -121,6 +123,7 @@ namespace logviewer
                 foreach (var s in message.Strings)
                 {
                     this.syntaxRichTextBox1.AppendText(Colorize(s), message.ToString());
+                    this.syntaxRichTextBox1.AppendText(Environment.NewLine);
                     break;
                 }
             }
