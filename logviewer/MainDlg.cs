@@ -10,28 +10,24 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
-        private LongRunningOperationDisplay longOperationDisplay;
+        private string originalCapion;
 
         public MainDlg()
         {
             this.InitializeComponent();
             this.controller = new LogController(this);
             this.controller.LogMessageRead += this.OnLogMessage;
+            this.KeepOriginalCaption();
+        }
+
+        private void KeepOriginalCaption()
+        {
+            this.originalCapion = this.Text;
         }
 
         #region ILogView Members
 
         public string LogPath { get; private set; }
-
-        public void StartLongRunningDisplay()
-        {
-            this.longOperationDisplay = new LongRunningOperationDisplay(this, "Reading log ...");
-        }
-
-        public void StopLongRunningDisplay()
-        {
-            LongRunningOperationDisplay.Complete(this.longOperationDisplay);
-        }
 
         #endregion
 
@@ -60,6 +56,7 @@ namespace logviewer
             {
                 return;
             }
+            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.toolStripStatusLabel1.Text = null;
             this.toolStripProgressBar1.Value = 0;
             this.syntaxRichTextBox1.Clear();
@@ -74,7 +71,6 @@ namespace logviewer
 
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.StopLongRunningDisplay();
             this.toolStripProgressBar1.Value = 100;
         }
 

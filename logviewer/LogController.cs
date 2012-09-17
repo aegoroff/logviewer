@@ -126,6 +126,9 @@ namespace logviewer
                     messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
                 }
             }
+            sent += messageEventArgs.Messages.Count;
+            messageEventArgs.UpdatePercent(sent);
+            logMessageRead(this, messageEventArgs);
         }
 
         private void Convert()
