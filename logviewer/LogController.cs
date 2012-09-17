@@ -135,7 +135,7 @@ namespace logviewer
             }
             this.Messages.Add(message);
             this.Messages.Reverse();
-            const string rtfPath = "log.rtf";
+            string rtfPath = Path.GetTempFileName();
             try
             {
                 var doc = new RtfDocument(rtfPath);
