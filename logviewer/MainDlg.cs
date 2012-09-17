@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -6,33 +7,29 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
-        private LongRunningOperationDisplay longOperationDisplay;
+        private string originalCapion;
 
         public MainDlg()
         {
             this.InitializeComponent();
             this.controller = new LogController(this);
+            this.KeepOriginalCaption();
         }
 
         #region ILogView Members
 
         public string LogPath { get; private set; }
 
-        public void StartLongRunningDisplay()
-        {
-            this.longOperationDisplay = new LongRunningOperationDisplay(this, "Reading log ...");
-        }
-
-        public void StopLongRunningDisplay()
-        {
-            LongRunningOperationDisplay.Complete(this.longOperationDisplay);
-        }
-
         #endregion
 
-        private void OnOpen(object sender, System.EventArgs e)
+        private void KeepOriginalCaption()
         {
-            DialogResult r = this.openFileDialog1.ShowDialog();
+            this.originalCapion = this.Text;
+        }
+
+        private void OnOpen(object sender, EventArgs e)
+        {
+            var r = this.openFileDialog1.ShowDialog();
 
             if (r != DialogResult.OK)
             {
@@ -40,10 +37,15 @@ namespace logviewer
             }
             this.LogPath = this.openFileDialog1.FileName;
 
-            if (!this.logReader.IsBusy)
+            if (this.logReader.IsBusy)
             {
-                this.logReader.RunWorkerAsync(this.LogPath);
+                return;
             }
+            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
+            this.toolStripStatusLabel1.Text = "Reading log ...";
+            this.syntaxRichTextBox1.Clear();
+            this.toolStrip1.Focus();
+            this.logReader.RunWorkerAsync(this.LogPath);
         }
 
         private void ReadLog(object sender, DoWorkEventArgs e)
@@ -53,10 +55,32 @@ namespace logviewer
 
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.StopLongRunningDisplay();
-            toolStrip1.Focus();
-            this.syntaxRichTextBox1.Text = e.Result as string;
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
+            this.syntaxRichTextBox1.Rtf = e.Result as string;
+        }
+
+        private void OnClose(object sender, EventArgs e)
+        {
+            this.CancelReading();
+            this.Text = this.originalCapion;
+            this.toolStripStatusLabel1.Text = null;
+            this.syntaxRichTextBox1.Clear();
+        }
+
+        private void OnExit(object sender, EventArgs e)
+        {
+            this.CancelReading();
+            this.Close();
+        }
+
+        private void CancelReading()
+        {
+            if (!this.logReader.IsBusy || this.logReader.CancellationPending)
+            {
+                return;
+            }
+            this.controller.CancelReading();
+            this.logReader.CancelAsync();
         }
     }
 }

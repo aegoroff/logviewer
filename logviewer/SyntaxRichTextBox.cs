@@ -5,61 +5,22 @@ namespace logviewer
 {
     public class SyntaxRichTextBox : System.Windows.Forms.RichTextBox
     {
-        /// <summary>
-        ///     OnTextChanged
-        /// </summary>
-        /// <param name="e"> </param>
-        protected override void OnTextChanged(EventArgs e)
+        public void AppendText(Color color, string text)
         {
             this.SuspendLayout();
-            this.ProcessAllLines();
+            var start = this.TextLength;
+            this.AppendText(text);
+            var end = this.TextLength;
+
+            // Textbox may transform chars, so (end-start) != text.Length
+            this.Select(start, end - start);
+            {
+                this.SelectionColor = color;
+                this.SelectionFont = new Font("Verdana", 10, FontStyle.Regular);
+            }
+            this.SelectionLength = 0; // clear
+            this.AppendText(Environment.NewLine);
             this.ResumeLayout();
-        }
-
-        /// <summary>
-        ///     Process a line.
-        /// </summary>
-        private void ProcessLine(string line, int startPosition)
-        {
-            this.Select(startPosition, line.Length);
-            if (line.Contains("ERROR"))
-            {
-                this.SelectionColor = Color.Red;
-            }
-            else if (line.Contains("WARN"))
-            {
-                this.SelectionColor = Color.Orange;
-            }
-            else if (line.Contains("INFO"))
-            {
-                this.SelectionColor = Color.Green;
-            }
-            else if (line.Contains("FATAL"))
-            {
-                this.SelectionColor = Color.DarkViolet;
-            }
-            else if (line.Contains("DEBUG"))
-            {
-                this.SelectionColor = Color.FromArgb(100, 100, 100);
-            }
-            else if (line.Contains("TRACE"))
-            {
-                this.SelectionColor = Color.FromArgb(200, 200, 200);
-            }
-            else
-            {
-                this.SelectionColor = Color.Black;
-            }
-        }
-
-        public void ProcessAllLines()
-        {
-            var nStartPos = 0;
-            foreach (var line in this.Lines)
-            {
-                this.ProcessLine(line, nStartPos);
-                nStartPos += line.Length + 1;
-            }
         }
     }
 }

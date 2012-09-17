@@ -1,19 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Net.Sgoliver.NRtfTree.Core;
+using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer
 {
     public class LogController
     {
-        private const int MeanLogStringLength = 70;
-        private const int BomLength = 3; // BOM (Byte Order Mark)
-        private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
+        #region Constants and Fields
+
         private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
+        private const int BomLength = 3; // BOM (Byte Order Mark)
+        private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
+        private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
         private static readonly string[] sizes = new[]
@@ -28,38 +33,175 @@ namespace logviewer
             };
 
         private readonly ILogView view;
+        private bool cancelReading;
+
+        #endregion
+
+
+        #region Constructors and Destructors
 
         public LogController(ILogView view)
         {
             this.view = view;
+            this.Messages = new List<LogMessage>();
             Executive.SafeRun(this.Convert);
         }
 
-        public long LogSize { get; private set; }
+        #endregion
+
+        #region Public Properties
 
         public string HumanReadableLogSize { get; private set; }
+        public long LogSize { get; private set; }
+
+        public List<LogMessage> Messages { get; private set; }
+
+        #endregion
+
+        #region Public Methods and Operators
 
         public string ReadLog(string path)
         {
+            this.cancelReading = false;
+            return Executive.SafeRun<string, string>(this.ReadLogInternal, path);
+        }
+
+        public void CancelReading()
+        {
+            this.cancelReading = true;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private string ReadLogInternal(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return string.Empty;
+            }
+            var reader = File.OpenText(path);
+            using (reader)
+            {
+                this.LogSize = reader.BaseStream.Length;
+                this.CreateHumanReadableSize();
+
+                return this.ReadLogTask(reader);
+            }
+        }
+
+        private string ReadLogTask(StreamReader sr)
+        {
+            if (this.cancelReading)
+            {
+                return string.Empty;
+            }
+            this.Messages = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
+            var message = new LogMessage { Strings = new List<string>() };
+
+            while (!sr.EndOfStream)
+            {
+                var line = sr.ReadLine();
+
+                if (regex.IsMatch(line) && message.Strings.Count > 0)
+                {
+                    this.Messages.Add(message);
+                    message.Strings = new List<string>();
+                }
+
+                message.Strings.Add(line);
+            }
+            this.Messages.Add(message);
+            this.Messages.Reverse();
+            const string rtfPath = "log.rtf";
             try
             {
-                if (!File.Exists(path))
-                {
-                    return string.Empty;
-                }
-                var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using (stream)
-                {
-                    this.LogSize = stream.Length;
-                    this.CreateHumanReadableSize();
+                var doc = new RtfDocument(rtfPath);
 
-                    return ReadLog(stream);
+                foreach (var msg in this.Messages)
+                {
+                    var format = new RtfCharFormat
+                        {
+                            Color = Colorize(msg.Strings[0]), 
+                            Font = "Courier New", 
+                            Size = 10
+                        };
+                    var txt = msg.ToString();
+                    doc.AddText(txt, format);
+                    if (!txt.EndsWith("\n"))
+                    {
+                        doc.AddText(Environment.NewLine);
+                    }
+                }
+                doc.Close();
+
+                var tree = new RtfTree();
+                tree.LoadRtfFile(rtfPath);
+                return tree.Rtf;
+            }
+            finally
+            {
+                if (File.Exists(rtfPath))
+                {
+                    File.Delete(rtfPath);
                 }
             }
-            catch (Exception e)
+        }
+
+        private static Color Colorize(string line)
+        {
+            var color = Color.Black;
+            if (line.Contains("ERROR"))
             {
-                return e.ToString();
+                color = Color.Red;
             }
+            else if (line.Contains("WARN"))
+            {
+                color = Color.Orange;
+            }
+            else if (line.Contains("INFO"))
+            {
+                color = Color.Green;
+            }
+            else if (line.Contains("FATAL"))
+            {
+                color = Color.DarkViolet;
+            }
+            else if (line.Contains("DEBUG"))
+            {
+                color = Color.FromArgb(100, 100, 100);
+            }
+            else if (line.Contains("TRACE"))
+            {
+                color = Color.FromArgb(200, 200, 200);
+            }
+            return color;
+        }
+
+        private void Convert()
+        {
+            if (!File.Exists(this.view.LogPath))
+            {
+                return;
+            }
+            var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            byte[] b;
+            using (stream)
+            {
+                b = new byte[BomLength];
+                stream.Read(b, 0, BomLength);
+            }
+            if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
+            {
+                return;
+            }
+            var srcEncoding = Encoding.GetEncoding("windows-1251");
+            var log = File.ReadAllText(this.view.LogPath, srcEncoding);
+            var asciiBytes = srcEncoding.GetBytes(log);
+            var utf8Bytes = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiBytes);
+            var utf8 = Encoding.UTF8.GetString(utf8Bytes);
+            File.WriteAllText(this.view.LogPath, utf8, Encoding.UTF8);
         }
 
         private void CreateHumanReadableSize()
@@ -78,72 +220,20 @@ namespace logviewer
             }
         }
 
-        public static string ReadLog(Stream stream)
-        {
-            using (var sr = new StreamReader(stream, Encoding.UTF8, true))
-            {
-                var messages = new List<LogMessage>((int) stream.Length / MeanLogStringLength);
-                var message = new LogMessage { Strings = new List<string>() };
-                while (!sr.EndOfStream)
-                {
-                    string line = sr.ReadLine();
-
-                    if (regex.IsMatch(line) && message.Strings.Count > 0)
-                    {
-                        messages.Add(message);
-                        message.Strings = new List<string>();
-                    }
-
-                    message.Strings.Add(line);
-                }
-                messages.Add(message);
-                var sb = new StringBuilder((int) stream.Length + messages.Count * Environment.NewLine.Length);
-                for (int i = messages.Count - 1; i >= 0; --i)
-                {
-                    sb.Append(messages[i]);
-                }
-                return sb.ToString();
-            }
-        }
-
-        private void Convert()
-        {
-            if (!File.Exists(this.view.LogPath))
-            {
-                return;
-            }
-            FileStream stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            byte[] b;
-            using (stream)
-            {
-                b = new byte[BomLength];
-                stream.Read(b, 0, BomLength);
-            }
-            if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
-            {
-                return;
-            }
-            Encoding srcEncoding = Encoding.GetEncoding("windows-1251");
-            string log = File.ReadAllText(this.view.LogPath, srcEncoding);
-            byte[] asciiBytes = srcEncoding.GetBytes(log);
-            byte[] utf8Bytes = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiBytes);
-            string utf8 = Encoding.UTF8.GetString(utf8Bytes);
-            File.WriteAllText(this.view.LogPath, utf8, Encoding.UTF8);
-        }
+        #endregion
     }
 
-    internal struct LogMessage
+    public struct LogMessage
     {
+        #region Constants and Fields
+
         internal IList<string> Strings;
+
+        #endregion
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (string s in this.Strings)
-            {
-                sb.AppendLine(s);
-            }
-            return sb.ToString();
+            return string.Join(Environment.NewLine, this.Strings);
         }
     }
 }
