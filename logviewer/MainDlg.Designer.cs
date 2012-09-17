@@ -43,9 +43,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -166,6 +166,17 @@
             this.panel1.Size = new System.Drawing.Size(740, 463);
             this.panel1.TabIndex = 3;
             // 
+            // logReader
+            // 
+            this.logReader.WorkerReportsProgress = true;
+            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
+            this.logReader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.OnReadLine);
+            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "Log files|*.log";
+            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
@@ -176,16 +187,6 @@
             this.syntaxRichTextBox1.Size = new System.Drawing.Size(740, 463);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
-            // 
-            // logReader
-            // 
-            this.logReader.WorkerReportsProgress = true;
-            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
-            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Log files|*.log";
             // 
             // MainDlg
             // 

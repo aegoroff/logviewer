@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -14,6 +16,7 @@ namespace logviewer
         {
             this.InitializeComponent();
             this.controller = new LogController(this);
+            this.controller.LogMessageRead += this.OnLogMessage;
         }
 
         #region ILogView Members
@@ -32,6 +35,11 @@ namespace logviewer
 
         #endregion
 
+        private void OnLogMessage(object sender, LogMessageEventArgs e)
+        {
+            this.logReader.ReportProgress(e.Percent, e.Messages);
+        }
+
         private void OnOpen(object sender, EventArgs e)
         {
             var r = this.openFileDialog1.ShowDialog();
@@ -42,42 +50,26 @@ namespace logviewer
             }
             this.LogPath = this.openFileDialog1.FileName;
 
-            if (!this.logReader.IsBusy)
+            if (this.logReader.IsBusy)
             {
-                this.syntaxRichTextBox1.Clear();
-                this.logReader.RunWorkerAsync(this.LogPath);
+                return;
             }
+            this.syntaxRichTextBox1.Clear();
+            this.toolStrip1.Focus();
+            this.syntaxRichTextBox1.SuspendLayout();
+            this.logReader.RunWorkerAsync(this.LogPath);
         }
 
         private void ReadLog(object sender, DoWorkEventArgs e)
         {
             this.controller.ReadLog(e.Argument as string);
-            e.Result = this.controller.Messages;
         }
 
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.StopLongRunningDisplay();
-            this.SuspendLayout();
-            toolStrip1.Focus();
-            foreach (var message in this.controller.Messages)
-            {
-                var i = 0;
-                foreach (var s in message.Strings)
-                {
-                    if (i++ == 0)
-                    {
-                        this.syntaxRichTextBox1.AppendText(Colorize(s), s);
-                    }
-                    else
-                    {
-                        this.syntaxRichTextBox1.AppendText(s);
-                        this.syntaxRichTextBox1.AppendText(Environment.NewLine);
-                    }
-                }
-            }
+            this.syntaxRichTextBox1.ResumeLayout();
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
-            this.ResumeLayout();
         }
 
         private static Color Colorize(string line)
@@ -108,6 +100,32 @@ namespace logviewer
                 color = Color.FromArgb(200, 200, 200);
             }
             return color;
+        }
+
+        private void OnReadLine(object sender, ProgressChangedEventArgs e)
+        {
+            var messages = e.UserState as IList<LogMessage>;
+
+            if (messages == null)
+            {
+                return;
+            }
+            foreach (var message in messages)
+            {
+                var i = 0;
+                foreach (var s in message.Strings)
+                {
+                    if (i++ == 0)
+                    {
+                        this.syntaxRichTextBox1.AppendText(Colorize(s), s);
+                    }
+                    else
+                    {
+                        this.syntaxRichTextBox1.AppendText(s);
+                        this.syntaxRichTextBox1.AppendText(Environment.NewLine);
+                    }
+                }
+            }
         }
     }
 }

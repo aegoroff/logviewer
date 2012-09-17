@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace logviewer
 {
@@ -33,13 +33,15 @@ namespace logviewer
 
         #endregion
 
+        public event EventHandler<LogMessageEventArgs> LogMessageRead;
+
         #region Constructors and Destructors
 
         public LogController(ILogView view)
         {
             this.view = view;
-            Messages = new List<LogMessage>();
-            Executive.SafeRun(Convert);
+            this.Messages = new List<LogMessage>();
+            Executive.SafeRun(this.Convert);
         }
 
         #endregion
@@ -57,7 +59,7 @@ namespace logviewer
 
         public void ReadLog(string path)
         {
-            Executive.SafeRun(ReadLogInternal, path);
+            Executive.SafeRun(this.ReadLogInternal, path);
         }
 
         #endregion
@@ -73,16 +75,16 @@ namespace logviewer
             var reader = File.OpenText(path);
             using (reader)
             {
-                LogSize = reader.BaseStream.Length;
-                CreateHumanReadableSize();
+                this.LogSize = reader.BaseStream.Length;
+                this.CreateHumanReadableSize();
 
-                ReadLogTask(reader);
+                this.ReadLogTask(reader);
             }
         }
 
         private void ReadLogTask(StreamReader sr)
         {
-            Messages = new List<LogMessage>((int) LogSize / MeanLogStringLength);
+            this.Messages = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
             var message = new LogMessage { Strings = new List<string>() };
 
             while (!sr.EndOfStream)
@@ -91,23 +93,47 @@ namespace logviewer
 
                 if (regex.IsMatch(line) && message.Strings.Count > 0)
                 {
-                    Messages.Add(message);
+                    this.Messages.Add(message);
                     message.Strings = new List<string>();
                 }
 
                 message.Strings.Add(line);
             }
-            Messages.Add(message);
-            Messages.Reverse();
+            this.Messages.Add(message);
+            this.Messages.Reverse();
+            var logMessageRead = this.LogMessageRead;
+            if (logMessageRead == null)
+            {
+                return;
+            }
+            var sent = 0;
+            var messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
+            const int portionSize = 100;
+            var i = 0;
+            foreach (var msg in this.Messages)
+            {
+                if (i++ < portionSize)
+                {
+                    messageEventArgs.Messages.Add(msg);
+                }
+                else
+                {
+                    sent += messageEventArgs.Messages.Count;
+                    messageEventArgs.UpdatePercent(sent);
+                    logMessageRead(this, messageEventArgs);
+                    i = 0;
+                    messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
+                }
+            }
         }
 
         private void Convert()
         {
-            if (!File.Exists(view.LogPath))
+            if (!File.Exists(this.view.LogPath))
             {
                 return;
             }
-            var stream = File.Open(view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             byte[] b;
             using (stream)
             {
@@ -119,26 +145,26 @@ namespace logviewer
                 return;
             }
             var srcEncoding = Encoding.GetEncoding("windows-1251");
-            var log = File.ReadAllText(view.LogPath, srcEncoding);
+            var log = File.ReadAllText(this.view.LogPath, srcEncoding);
             var asciiBytes = srcEncoding.GetBytes(log);
             var utf8Bytes = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiBytes);
             var utf8 = Encoding.UTF8.GetString(utf8Bytes);
-            File.WriteAllText(view.LogPath, utf8, Encoding.UTF8);
+            File.WriteAllText(this.view.LogPath, utf8, Encoding.UTF8);
         }
 
         private void CreateHumanReadableSize()
         {
-            var normalized = new FileSize((ulong) LogSize);
+            var normalized = new FileSize((ulong) this.LogSize);
             if (normalized.Unit == SizeUnit.Bytes)
             {
-                HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, SmallFileFormat, normalized.Bytes,
-                                                     sizes[(int) normalized.Unit]);
+                this.HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, SmallFileFormat, normalized.Bytes,
+                                                          sizes[(int) normalized.Unit]);
             }
             else
             {
-                HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, BigFileFormat, normalized.Value,
-                                                     sizes[(int) normalized.Unit], normalized.Bytes,
-                                                     sizes[(int) SizeUnit.Bytes]);
+                this.HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, BigFileFormat, normalized.Value,
+                                                          sizes[(int) normalized.Unit], normalized.Bytes,
+                                                          sizes[(int) SizeUnit.Bytes]);
             }
         }
 
@@ -152,5 +178,29 @@ namespace logviewer
         internal IList<string> Strings;
 
         #endregion
+    }
+
+    /// <summary>
+    ///     Just a simple class to message
+    /// </summary>
+    public class LogMessageEventArgs : EventArgs
+    {
+        private readonly int maxCount;
+
+        public LogMessageEventArgs(int maxCount)
+        {
+            this.maxCount = maxCount;
+            this.Messages = new List<LogMessage>();
+            this.Percent = 0;
+        }
+
+        public IList<LogMessage> Messages { get; private set; }
+
+        public int Percent { get; private set; }
+
+        public void UpdatePercent(int sent)
+        {
+            this.Percent = (int)((sent / (double)this.maxCount) * 100);
+        }
     }
 }
