@@ -16,6 +16,10 @@ namespace logviewer
             this.InitializeComponent();
             this.controller = new LogController(this);
             this.KeepOriginalCaption();
+            this.toolStripComboBox1.SelectedIndex = 0;
+            this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
+            this.toolStripComboBox1.Enabled = false;
+            this.toolStripComboBox2.Enabled = false;
         }
 
         #region ILogView Members
