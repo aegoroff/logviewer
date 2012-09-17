@@ -21,7 +21,7 @@ namespace logviewer
         private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
-        private static Dictionary<Color, LogLevel> levelsMap = new Dictionary<Color, LogLevel>
+        private static readonly Dictionary<Color, LogLevel> levelsMap = new Dictionary<Color, LogLevel>
             {
                 { Color.FromArgb(200, 200, 200), LogLevel.Trace },
                 { Color.FromArgb(100, 100, 100), LogLevel.Debug },
@@ -146,7 +146,7 @@ namespace logviewer
                     {
                         var filterColor = Colorize(this.filter);
                         var filterLevel = LogLevel.Trace;
-                        if(levelsMap.ContainsKey(filterColor))
+                        if (levelsMap.ContainsKey(filterColor))
                         {
                             filterLevel = levelsMap[filterColor];
                         }
