@@ -8,6 +8,7 @@ _ReSharper.logviewer/
 *.log
 *.tokens
 *.vcxproj.user
+*.DotSettings.user
 Debug/
 Release/
 dist/
