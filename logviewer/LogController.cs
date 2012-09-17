@@ -282,6 +282,11 @@ namespace logviewer
         {
             get { return this.Strings[0]; }
         }
+        
+        public string Body
+        {
+            get { return string.Join(Environment.NewLine, MessageBody()); }
+        }
 
         IEnumerable<string> MessageBody()
         {
