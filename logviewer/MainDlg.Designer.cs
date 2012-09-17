@@ -42,10 +42,12 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -144,7 +146,9 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1});
+            this.toolStripButton1,
+            this.toolStripLabel1,
+            this.toolStripComboBox1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(740, 25);
@@ -160,6 +164,27 @@
             this.toolStripButton1.Text = "Open";
             this.toolStripButton1.Click += new System.EventHandler(this.OnOpen);
             // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(61, 22);
+            this.toolStripLabel1.Text = "Min level: ";
+            // 
+            // toolStripComboBox1
+            // 
+            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBox1.Enabled = false;
+            this.toolStripComboBox1.Items.AddRange(new object[] {
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"});
+            this.toolStripComboBox1.Name = "toolStripComboBox1";
+            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 25);
+            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.syntaxRichTextBox1);
@@ -168,17 +193,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(740, 463);
             this.panel1.TabIndex = 3;
-            // 
-            // logReader
-            // 
-            this.logReader.WorkerReportsProgress = true;
-            this.logReader.WorkerSupportsCancellation = true;
-            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
-            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Log files|*.log";
             // 
             // syntaxRichTextBox1
             // 
@@ -190,6 +204,17 @@
             this.syntaxRichTextBox1.Size = new System.Drawing.Size(740, 463);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
+            // 
+            // logReader
+            // 
+            this.logReader.WorkerReportsProgress = true;
+            this.logReader.WorkerSupportsCancellation = true;
+            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
+            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "Log files|*.log";
             // 
             // MainDlg
             // 
@@ -235,6 +260,8 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.ComponentModel.BackgroundWorker logReader;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }
 

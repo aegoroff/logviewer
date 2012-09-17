@@ -21,6 +21,16 @@ namespace logviewer
         private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
+        private static Dictionary<Color, LogLevel> levelsMap = new Dictionary<Color, LogLevel>
+            {
+                { Color.FromArgb(200, 200, 200), LogLevel.Trace },
+                { Color.FromArgb(100, 100, 100), LogLevel.Debug },
+                { Color.Green, LogLevel.Info },
+                { Color.Orange, LogLevel.Warn },
+                { Color.Red, LogLevel.Error },
+                { Color.DarkViolet, LogLevel.Fatal }
+            };
+
         private static readonly string[] sizes = new[]
             {
                 "Bytes",
@@ -34,9 +44,9 @@ namespace logviewer
 
         private readonly ILogView view;
         private bool cancelReading;
+        private string filter;
 
         #endregion
-
 
         #region Constructors and Destructors
 
@@ -69,6 +79,11 @@ namespace logviewer
         public void CancelReading()
         {
             this.cancelReading = true;
+        }
+
+        public void Filter(string value)
+        {
+            this.filter = value;
         }
 
         #endregion
@@ -121,10 +136,29 @@ namespace logviewer
 
                 foreach (var msg in this.Messages)
                 {
+                    var color = Colorize(msg.Strings[0]);
+                    var messageLevel = LogLevel.Trace;
+                    if (levelsMap.ContainsKey(color))
+                    {
+                        messageLevel = levelsMap[color];
+                    }
+                    if (!string.IsNullOrWhiteSpace(this.filter))
+                    {
+                        var filterColor = Colorize(this.filter);
+                        var filterLevel = LogLevel.Trace;
+                        if(levelsMap.ContainsKey(filterColor))
+                        {
+                            filterLevel = levelsMap[filterColor];
+                        }
+                        if (messageLevel < filterLevel)
+                        {
+                            continue;
+                        }
+                    }
                     var format = new RtfCharFormat
                         {
-                            Color = Colorize(msg.Strings[0]), 
-                            Font = "Courier New", 
+                            Color = color,
+                            Font = "Courier New",
                             Size = 10
                         };
                     var txt = msg.ToString();

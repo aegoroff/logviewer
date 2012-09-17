@@ -7,6 +7,7 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
+        private string logFilter;
         private string originalCapion;
 
         public MainDlg()
@@ -42,6 +43,17 @@ namespace logviewer
                 return;
             }
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
+            this.StartReading();
+        }
+
+        private void StartReading()
+        {
+            if (this.logReader.IsBusy)
+            {
+                return;
+            }
+            this.toolStripComboBox1.Enabled = true;
+            this.logFilter = this.toolStripComboBox1.SelectedItem as string;
             this.toolStripStatusLabel1.Text = "Reading log ...";
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
@@ -50,6 +62,7 @@ namespace logviewer
 
         private void ReadLog(object sender, DoWorkEventArgs e)
         {
+            this.controller.Filter(this.logFilter);
             e.Result = this.controller.ReadLog(e.Argument as string);
         }
 
@@ -65,6 +78,7 @@ namespace logviewer
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
+            this.toolStripComboBox1.Enabled = false;
         }
 
         private void OnExit(object sender, EventArgs e)
@@ -81,6 +95,11 @@ namespace logviewer
             }
             this.controller.CancelReading();
             this.logReader.CancelAsync();
+        }
+
+        private void OnChangeFilter(object sender, EventArgs e)
+        {
+            this.StartReading();
         }
     }
 }
