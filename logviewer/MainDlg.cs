@@ -64,7 +64,6 @@ namespace logviewer
             this.toolStripProgressBar1.Value = 0;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
-            this.syntaxRichTextBox1.SuspendLayout();
             this.logReader.RunWorkerAsync(this.LogPath);
         }
 
@@ -76,7 +75,6 @@ namespace logviewer
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.StopLongRunningDisplay();
-            this.syntaxRichTextBox1.ResumeLayout();
             this.toolStripProgressBar1.Value = 100;
         }
 
