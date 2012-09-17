@@ -1,19 +1,22 @@
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace logviewer
 {
     public class SyntaxRichTextBox : System.Windows.Forms.RichTextBox
     {
+        private const int WM_SETREDRAW = 0x0b;
+
         /// <summary>
         ///     OnTextChanged
         /// </summary>
         /// <param name="e"> </param>
         protected override void OnTextChanged(EventArgs e)
         {
-            this.SuspendLayout();
+            this.BeginUpdate();
             this.ProcessAllLines();
-            this.ResumeLayout();
+            this.EndUpdate();
         }
 
         /// <summary>
@@ -61,5 +64,18 @@ namespace logviewer
                 nStartPos += line.Length + 1;
             }
         }
+
+        public void BeginUpdate()
+        {
+            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr) 0, IntPtr.Zero);
+        }
+
+        public void EndUpdate()
+        {
+            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr) 1, IntPtr.Zero);
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
     }
 }
