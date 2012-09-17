@@ -16,7 +16,7 @@ namespace logviewer
             this.Select(start, end - start);
             {
                 this.SelectionColor = color;
-                // could set box.SelectionBackColor, box.SelectionFont too.
+                this.SelectionFont = new Font("Verdana", 10, FontStyle.Regular);
             }
             this.SelectionLength = 0; // clear
             this.AppendText(Environment.NewLine);
