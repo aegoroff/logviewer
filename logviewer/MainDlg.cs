@@ -39,7 +39,6 @@ namespace logviewer
                 this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             }
             this.toolStripProgressBar1.Value = e.Percent;
-            Thread.Sleep(50);
         }
 
         private void OnOpen(object sender, EventArgs e)

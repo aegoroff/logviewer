@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace logviewer
 {
@@ -17,6 +18,7 @@ namespace logviewer
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
         private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
+        private const int IssueMessageBatchMillisecondsTimeout = 150;
         private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
 
         private static readonly string[] sizes = new[]
@@ -124,6 +126,7 @@ namespace logviewer
                     logMessageRead(this, messageEventArgs);
                     i = 0;
                     messageEventArgs = new LogMessageEventArgs(this.Messages.Count);
+                    Thread.Sleep(IssueMessageBatchMillisecondsTimeout);
                 }
             }
             sent += messageEventArgs.Messages.Count;
