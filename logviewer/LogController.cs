@@ -124,7 +124,7 @@ namespace logviewer
                     var format = new RtfCharFormat { Color = Colorize(msg.Strings[0]) };
                     var txt = msg.ToString();
                     doc.AddText(txt, format);
-                    if (!txt.EndsWith("\n") || !txt.EndsWith("\n"))
+                    if (!txt.EndsWith("\n"))
                     {
                         doc.AddText(Environment.NewLine);
                     }
