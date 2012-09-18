@@ -144,7 +144,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.OnAbout);
             // 
@@ -233,10 +233,14 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.syntaxRichTextBox1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 49);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(2);
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
             // 
@@ -253,12 +257,15 @@
             // 
             // syntaxRichTextBox1
             // 
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.syntaxRichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
             this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
             this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(840, 474);
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
