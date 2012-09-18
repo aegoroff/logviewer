@@ -42,6 +42,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
@@ -49,11 +50,11 @@
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logWatch = new System.IO.FileSystemWatcher();
+            this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.recentFilesToolStripMenuItem,
             this.toolStripSeparator1,
             this.closeToolStripMenuItem,
             this.toolStripSeparator2,
@@ -177,6 +179,15 @@
             this.toolStripButton1.Text = "Open";
             this.toolStripButton1.Click += new System.EventHandler(this.OnOpen);
             // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(66, 22);
+            this.toolStripButton2.Text = "Refresh";
+            this.toolStripButton2.Click += new System.EventHandler(this.OnChangeFilter);
+            // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
@@ -248,26 +259,6 @@
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
             // 
-            // logReader
-            // 
-            this.logReader.WorkerReportsProgress = true;
-            this.logReader.WorkerSupportsCancellation = true;
-            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
-            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Log files|*.log";
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(66, 22);
-            this.toolStripButton2.Text = "Refresh";
-            this.toolStripButton2.Click += new System.EventHandler(this.OnChangeFilter);
-            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -282,11 +273,28 @@
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
+            // logReader
+            // 
+            this.logReader.WorkerReportsProgress = true;
+            this.logReader.WorkerSupportsCancellation = true;
+            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
+            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "Log files|*.log";
+            // 
             // logWatch
             // 
             this.logWatch.EnableRaisingEvents = true;
             this.logWatch.SynchronizingObject = this;
             this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
+            // 
+            // recentFilesToolStripMenuItem
+            // 
+            this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
+            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.recentFilesToolStripMenuItem.Text = "Recent files";
             // 
             // MainDlg
             // 
@@ -341,6 +349,7 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.IO.FileSystemWatcher logWatch;
+        private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
     }
 }
 

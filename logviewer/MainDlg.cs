@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -8,6 +10,8 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
+        private readonly List<string> recentFiles = new List<string>();
+        private readonly string recentFilesFilePath = Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt");
         private string logFilterMax;
         private string logFilterMin;
         private string originalCapion;
@@ -22,6 +26,7 @@ namespace logviewer
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
             this.toolStripComboBox3.SelectedIndex = 0;
             this.EnableControls(false);
+            this.ReadRecentFiles();
         }
 
         #region ILogView Members
@@ -36,6 +41,46 @@ namespace logviewer
             this.toolStripComboBox2.Enabled = enabled;
             this.toolStripComboBox3.Enabled = enabled;
             this.toolStripButton2.Enabled = enabled;
+        }
+
+        private void ReadRecentFiles()
+        {
+            if (!File.Exists(this.recentFilesFilePath))
+            {
+                using (File.Open(this.recentFilesFilePath, FileMode.Create))
+                {
+                }
+            }
+            var files = File.ReadAllLines(this.recentFilesFilePath);
+            this.recentFiles.Clear();
+            this.recentFiles.AddRange(files);
+            this.recentFilesToolStripMenuItem.DropDownItems.Clear();
+            foreach (var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select new ToolStripMenuItem(file) { Tag = file })
+            {
+                item.Click += this.OnOpenRecentLogFile;
+                this.recentFilesToolStripMenuItem.DropDownItems.Add(item);
+            }
+        }
+
+        private void OnOpenRecentLogFile(object sender, EventArgs e)
+        {
+            var item = (ToolStripMenuItem) sender;
+            this.LogPath = item.Tag as string;
+            this.ReadLog();
+        }
+
+        private void SaveRecentFiles()
+        {
+            if (!this.recentFiles.Contains(this.LogPath))
+            {
+                this.recentFiles.Add(this.LogPath);
+            }
+            else
+            {
+                this.recentFiles.Remove(this.LogPath);
+                this.recentFiles.Add(this.LogPath);
+            }
+            File.WriteAllLines(this.recentFilesFilePath, this.recentFiles);
         }
 
         private void KeepOriginalCaption()
@@ -57,6 +102,11 @@ namespace logviewer
             {
                 return;
             }
+            this.ReadLog();
+        }
+
+        private void ReadLog()
+        {
             try
             {
                 this.logWatch.Path = Path.GetDirectoryName(this.LogPath);
@@ -68,6 +118,7 @@ namespace logviewer
             }
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
+            this.SaveRecentFiles();
         }
 
         private void StartReading()
