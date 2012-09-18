@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- Importing MSBuild Community Tasks -->
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<!-- Importing MSBuild TeamCity Tasks -->
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildTeamCityTasks\MSBuild.TeamCity.Tasks.Targets"/>
+	<!-- Global properties definitions -->
+	<PropertyGroup>
+
+		<!-- Code configuration to build (Release or Debug) -->
+		<Configuration>Release</Configuration>
+		
+		<!-- Enables updating version mechanism -->
+		<IsUpdateVersion>false</IsUpdateVersion>
+		
+		<!-- Version components  -->
+		<Major>1</Major>
+		<Minor>0</Minor>
+		<Build>0</Build>
+		<Revision>0</Revision>
+	</PropertyGroup>
+	<!-- AssemblyInfo.cs file definitions where to set version -->
+	<ItemGroup>
+		<AssemblyInfoFile Include="$(MSBuildProjectDirectory)\**\AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install\Product.wxs" />
+		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\Bundle.wxs" />
+	</ItemGroup>
+	<!-- Updating version and product code task -->
+	<Target Name="VersionUpdater" Condition=" '$(IsUpdateVersion)'=='true' ">
+		<!-- Updating AssemblyInfo.cs files -->
+		<FileUpdate
+			Files="@(AssemblyInfoFile)"
+			Regex='\[assembly(\s*):(\s*)(AssemblyVersion|AssemblyFileVersion|AssemblyInformationalVersionAttribute)\((\s*)"(\d+)\.(\d+)\.(\d+)\.(\d+)"(\s*)\)\]'
+			ReplacementText='[assembly : $3("$(Major).$(Minor).$(Build).$(Revision)")]' />
+		<!-- Updating WiX files -->
+		<FileUpdate
+			Files="@(WixFile)"
+			Regex='define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"'
+			ReplacementText='define Version = "$(Major).$(Minor).$(Build).$(Revision)"' />
+		<FileUpdate
+			Files="@(WixFile)"
+			Regex='\$\(var\.SolutionDir\)'
+			ReplacementText='$(MSBuildProjectDirectory)\' />
+
+	</Target>
+	<ItemGroup>
+		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi => installer" />
+		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe => installer" />
+	</ItemGroup>
+	<!-- Main build step where solution file are built -->
+	<Target Name="Compile" DependsOnTargets="VersionUpdater">
+		<!-- Start building solution file -->
+		<MSBuild
+			StopOnFirstFailure="true"
+			Projects="logviewer.sln"
+			Properties="Configuration=$(Configuration)" 
+		/>
+	</Target>
+	<!-- Setting next build version and finish build process -->
+	<Target Name="Build" DependsOnTargets="Compile">
+		<PublishArtifacts Artifacts="@(SetupFile)"/>
+		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
+	</Target>
+</Project>
