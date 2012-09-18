@@ -30,6 +30,12 @@
       <Name>WixBalExtension</Name>
     </WixExtension>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Theme.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Theme.wxl" />
+  </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
