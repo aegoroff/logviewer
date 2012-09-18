@@ -149,6 +149,7 @@ namespace logviewer
         {
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             this.syntaxRichTextBox1.Rtf = e.Result as string;
+            this.ReadRecentFiles();
         }
 
         private void OnClose(object sender, EventArgs e)
