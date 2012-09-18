@@ -49,14 +49,16 @@
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
+            this.logWatch = new System.IO.FileSystemWatcher();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.logWatch)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -246,20 +248,6 @@
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
             // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
-            // 
             // logReader
             // 
             this.logReader.WorkerReportsProgress = true;
@@ -279,6 +267,26 @@
             this.toolStripButton2.Size = new System.Drawing.Size(66, 22);
             this.toolStripButton2.Text = "Refresh";
             this.toolStripButton2.Click += new System.EventHandler(this.OnChangeFilter);
+            // 
+            // syntaxRichTextBox1
+            // 
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
+            // 
+            // logWatch
+            // 
+            this.logWatch.EnableRaisingEvents = true;
+            this.logWatch.SynchronizingObject = this;
+            this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
             // 
             // MainDlg
             // 
@@ -300,6 +308,7 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.logWatch)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,6 +340,7 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.IO.FileSystemWatcher logWatch;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 
 namespace logviewer
@@ -56,6 +57,15 @@ namespace logviewer
             {
                 return;
             }
+            try
+            {
+                this.logWatch.Path = Path.GetDirectoryName(this.LogPath);
+                this.logWatch.Filter = Path.GetFileName(this.LogPath);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
         }
@@ -97,6 +107,7 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
             this.EnableControls(false);
+            this.logWatch.Filter = string.Empty;
         }
 
         private void OnExit(object sender, EventArgs e)
@@ -127,6 +138,11 @@ namespace logviewer
             {
                 dlg.ShowDialog();
             }
+        }
+
+        private void OnChangeLog(object sender, FileSystemEventArgs e)
+        {
+            this.StartReading();
         }
     }
 }
