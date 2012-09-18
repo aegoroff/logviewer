@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
 	<Bundle Name="Logviewer Setup" Version="1.0.0.0" Manufacturer="Alexander Egorov" UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e">
-		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
-		<Chain>
+		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+            <bal:WixStandardBootstrapperApplication
+                LicenseUrl="http://www.apache.org/licenses/LICENSE-2.0.html"
+            />
+
+        </BootstrapperApplicationRef>
+	    <Chain>
 			<MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
 		</Chain>
 	</Bundle>
