@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -19,16 +20,15 @@ namespace logviewer
         private const int BomLength = 3; // BOM (Byte Order Mark)
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
-        private const string StartMessagePattern = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
-        private static readonly Regex regex = new Regex(StartMessagePattern, RegexOptions.Compiled);
+        private static readonly Regex regex = new Regex(ConfigurationManager.AppSettings["StartMessagePattern"], RegexOptions.Compiled);
 
         private static readonly Dictionary<LogLevel, Color> levelsMap = new Dictionary<LogLevel, Color>
             {
                 { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
-                { LogLevel.Debug, Color.FromArgb(100, 100, 100)  },
+                { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
                 { LogLevel.Info, Color.Green },
                 { LogLevel.Warn, Color.Orange },
-                { LogLevel.Error, Color.Red  },
+                { LogLevel.Error, Color.Red },
                 { LogLevel.Fatal, Color.DarkViolet }
             };
 
@@ -45,8 +45,8 @@ namespace logviewer
 
         private readonly ILogView view;
         private bool cancelReading;
-        private string minFilter;
         private string maxFilter;
+        private string minFilter;
         private bool reverseChronological;
 
         #endregion
@@ -88,12 +88,12 @@ namespace logviewer
         {
             this.minFilter = value;
         }
-        
+
         public void MaxFilter(string value)
         {
             this.maxFilter = value;
         }
-        
+
         public void Ordering(bool reverse)
         {
             this.reverseChronological = reverse;
@@ -294,25 +294,22 @@ namespace logviewer
 
         #endregion
 
-        public override string ToString()
-        {
-            return string.Join(Environment.NewLine, Strings);
-        }
-
         public string Header
         {
-            get
-            {
-                return this.Strings.Count == 0 ? string.Empty : this.Strings[0];
-            }
-        }
-        
-        public string Body
-        {
-            get { return this.Strings.Count < 2 ? string.Empty : string.Join(Environment.NewLine, MessageBody()); }
+            get { return this.Strings.Count == 0 ? string.Empty : this.Strings[0]; }
         }
 
-        IEnumerable<string> MessageBody()
+        public string Body
+        {
+            get { return this.Strings.Count < 2 ? string.Empty : string.Join(Environment.NewLine, this.MessageBody()); }
+        }
+
+        public override string ToString()
+        {
+            return string.Join(Environment.NewLine, this.Strings);
+        }
+
+        private IEnumerable<string> MessageBody()
         {
             var i = 0;
             return this.Strings.Where(s => i++ > 0);
