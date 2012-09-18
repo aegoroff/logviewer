@@ -118,5 +118,14 @@ namespace logviewer
         {
             this.StartReading();
         }
+
+        private void OnAbout(object sender, EventArgs e)
+        {
+            AboutDlg dlg = new AboutDlg();
+            using (dlg)
+            {
+                dlg.ShowDialog();
+            }
+        }
     }
 }

@@ -53,6 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutDlg.Designer.cs">
+      <DependentUpon>AboutDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Executive.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
@@ -69,6 +75,9 @@
     <Compile Include="SyntaxRichTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="AboutDlg.resx">
+      <DependentUpon>AboutDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainDlg.resx">
       <DependentUpon>MainDlg.cs</DependentUpon>
     </EmbeddedResource>

@@ -46,11 +46,11 @@
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -144,8 +144,9 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.OnAbout);
             // 
             // toolStrip1
             // 
@@ -214,6 +215,22 @@
             this.toolStripComboBox2.Size = new System.Drawing.Size(121, 25);
             this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(40, 22);
+            this.toolStripLabel3.Text = "  Sort: ";
+            // 
+            // toolStripComboBox3
+            // 
+            this.toolStripComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBox3.Items.AddRange(new object[] {
+            "Reverse chronological",
+            "Direct chronological"});
+            this.toolStripComboBox3.Name = "toolStripComboBox3";
+            this.toolStripComboBox3.Size = new System.Drawing.Size(150, 25);
+            this.toolStripComboBox3.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.syntaxRichTextBox1);
@@ -233,22 +250,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log";
-            // 
-            // toolStripLabel3
-            // 
-            this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(40, 22);
-            this.toolStripLabel3.Text = "  Sort: ";
-            // 
-            // toolStripComboBox3
-            // 
-            this.toolStripComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox3.Items.AddRange(new object[] {
-            "Reverse chronological",
-            "Direct chronological"});
-            this.toolStripComboBox3.Name = "toolStripComboBox3";
-            this.toolStripComboBox3.Size = new System.Drawing.Size(150, 25);
-            this.toolStripComboBox3.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // syntaxRichTextBox1
             // 
