@@ -8,7 +8,8 @@
         <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
         </BootstrapperApplicationRef>
 	    <Chain>
-			<MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
+            <PackageGroupRef Id="NetFx40Web"/>
+            <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
 		</Chain>
 	</Bundle>
 </Wix>
