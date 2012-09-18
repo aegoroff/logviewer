@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Net.Sgoliver.NRtfTree.Core;
 using Net.Sgoliver.NRtfTree.Util;
+using logviewer.Properties;
 
 namespace logviewer
 {
@@ -34,13 +35,13 @@ namespace logviewer
 
         private static readonly string[] sizes = new[]
             {
-                "Bytes",
-                "Kb",
-                "Mb",
-                "Gb",
-                "Tb",
-                "Pb",
-                "Eb"
+                Resources.SizeBytes,
+                Resources.SizeKBytes,
+                Resources.SizeMBytes,
+                Resources.SizeGBytes,
+                Resources.SizeTBytes,
+                Resources.SizePBytes,
+                Resources.SizeEBytes
             };
 
         private readonly ILogView view;

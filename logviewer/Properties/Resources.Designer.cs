@@ -59,5 +59,77 @@ namespace logviewer.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reading log ....
+        /// </summary>
+        internal static string ReadingLogMessage {
+            get {
+                return ResourceManager.GetString("ReadingLogMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bytes.
+        /// </summary>
+        internal static string SizeBytes {
+            get {
+                return ResourceManager.GetString("SizeBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Eb.
+        /// </summary>
+        internal static string SizeEBytes {
+            get {
+                return ResourceManager.GetString("SizeEBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gb.
+        /// </summary>
+        internal static string SizeGBytes {
+            get {
+                return ResourceManager.GetString("SizeGBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kb.
+        /// </summary>
+        internal static string SizeKBytes {
+            get {
+                return ResourceManager.GetString("SizeKBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mb.
+        /// </summary>
+        internal static string SizeMBytes {
+            get {
+                return ResourceManager.GetString("SizeMBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pb.
+        /// </summary>
+        internal static string SizePBytes {
+            get {
+                return ResourceManager.GetString("SizePBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tb.
+        /// </summary>
+        internal static string SizeTBytes {
+            get {
+                return ResourceManager.GetString("SizeTBytes", resourceCulture);
+            }
+        }
     }
 }

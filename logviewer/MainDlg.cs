@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using logviewer.Properties;
 
 namespace logviewer
 {
@@ -131,7 +132,7 @@ namespace logviewer
             this.logFilterMin = this.toolStripComboBox1.SelectedItem as string;
             this.logFilterMax = this.toolStripComboBox2.SelectedItem as string;
             this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
-            this.toolStripStatusLabel1.Text = "Reading log ...";
+            this.toolStripStatusLabel1.Text = Resources.ReadingLogMessage;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.logReader.RunWorkerAsync(this.LogPath);
@@ -185,7 +186,7 @@ namespace logviewer
 
         private void OnAbout(object sender, EventArgs e)
         {
-            AboutDlg dlg = new AboutDlg();
+            var dlg = new AboutDlg();
             using (dlg)
             {
                 dlg.ShowDialog();
