@@ -7,10 +7,10 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
-        private string logFilterMin;
         private string logFilterMax;
-        private bool reverse;
+        private string logFilterMin;
         private string originalCapion;
+        private bool reverse;
 
         public MainDlg()
         {
@@ -20,14 +20,7 @@ namespace logviewer
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
             this.toolStripComboBox3.SelectedIndex = 0;
-            EnableControls(false);
-        }
-
-        private void EnableControls(bool enabled)
-        {
-            this.toolStripComboBox1.Enabled = enabled;
-            this.toolStripComboBox2.Enabled = enabled;
-            this.toolStripComboBox3.Enabled = enabled;
+            this.EnableControls(false);
         }
 
         #region ILogView Members
@@ -35,6 +28,14 @@ namespace logviewer
         public string LogPath { get; private set; }
 
         #endregion
+
+        private void EnableControls(bool enabled)
+        {
+            this.toolStripComboBox1.Enabled = enabled;
+            this.toolStripComboBox2.Enabled = enabled;
+            this.toolStripComboBox3.Enabled = enabled;
+            this.toolStripButton2.Enabled = enabled;
+        }
 
         private void KeepOriginalCaption()
         {
@@ -65,7 +66,7 @@ namespace logviewer
             {
                 return;
             }
-            EnableControls(true);
+            this.EnableControls(true);
             this.logFilterMin = this.toolStripComboBox1.SelectedItem as string;
             this.logFilterMax = this.toolStripComboBox2.SelectedItem as string;
             this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
@@ -95,7 +96,7 @@ namespace logviewer
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
-            EnableControls(false);
+            this.EnableControls(false);
         }
 
         private void OnExit(object sender, EventArgs e)

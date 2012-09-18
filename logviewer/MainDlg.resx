@@ -159,6 +159,19 @@
         AABJRU5ErkJggg==
 </value>
   </data>
+  <data name="toolStripButton2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGMSURBVDhPtZPdK4NxFMf3J9kFuXDhQsqdUi5MCrvYxUq5
+        sVwQUZIVRVuUUKvtkrw0JSsyrzNamxaTt6WsZtFaUYfPqeeZeZsbvzr9fs853+/3fM/veR6L5T+Wx58U
+        93xCfMsp8QYu9Mxetpd/9VKB4ZNHjb1YrmT/VYRuc0t3EtzJaCAQOsxKPPWsu5EH862TAU9CAsF7WdnK
+        mLF9nJXc04ukHwoqQA3M4HSqVGRkJiZTgVt1AAAwxM+LPBiw3JPppKPvQMYWrrQwu5hWcr7wKuc3eVOI
+        UagTYJ3DkaJAi+tIXBNJLWDTAPPMGVfjvmutkQMLx3RQ07Yh7f1xLRgzskNmXki4IQcGLJyiQOuaVLXu
+        SoMzKrbemL4+FqMgYlwkRDBg6+3rRYEe975Ym0NSa49oh88XSHfH8Jk0dp8qxtq8KUPeaOmbqGhaUeU6
+        R8R08ZEImVqlLSxgv/0WDBG6AO4aTahlghwNfiQbigAYh07VbfsanLFdlmyI9E++O+gMKoHg/GXmsn/W
+        HwFvQ4jjyATOTZ4AAAAASUVORK5CYII=
+</value>
+  </data>
   <metadata name="logReader.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>353, 17</value>
   </metadata>
