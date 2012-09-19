@@ -75,15 +75,14 @@ namespace logviewer.tests
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
             var sb = new StringBuilder();
-            for (var i = 0; i < 10000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 sb.AppendLine(MessageExamples);
             }
-            File.WriteAllText(TestPath, sb.ToString());
             var controller = new LogController(this.view, MessageStart, null);
-            Assert.IsNotEmpty(controller.ReadLog(TestPath));
-            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(20000));
-            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("742,19 Kb (760003 Bytes)"));
+            Assert.IsNotEmpty(controller.ReadLog(CreateTestStream(sb.ToString())));
+            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2000));
+            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74,22 Kb (76000 Bytes)"));
         }
 
         [Test]
