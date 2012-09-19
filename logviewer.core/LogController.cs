@@ -207,26 +207,22 @@ namespace logviewer.core
                             Bold = true
                         };
                     doc.AddText(msg.Header.Trim(), formatBody);
-                    try
-                    {
-                        var txt = msg.Body;
-                        if (string.IsNullOrWhiteSpace(txt))
-                        {
-                            continue;
-                        }
-                        var format = new RtfCharFormat
-                            {
-                                Color = formatBody.Color,
-                                Font = formatBody.Font,
-                                Size = formatBody.Size
-                            };
+                    doc.AddText(Environment.NewLine);
 
-                        doc.AddText(txt.Trim(), format);
-                    }
-                    finally
+                    var txt = msg.Body;
+                    if (string.IsNullOrWhiteSpace(txt))
                     {
-                        doc.AddText(Environment.NewLine);
+                        continue;
                     }
+                    var format = new RtfCharFormat
+                        {
+                            Color = formatBody.Color,
+                            Font = formatBody.Font,
+                            Size = formatBody.Size
+                        };
+
+                    doc.AddText(txt.Trim(), format);
+                    doc.AddText(Environment.NewLine);
                 }
                 doc.Close();
 
