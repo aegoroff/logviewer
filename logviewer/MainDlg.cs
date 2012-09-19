@@ -83,18 +83,16 @@ namespace logviewer
 
         private void ReadLog()
         {
-            try
-            {
-                this.logWatch.Path = Path.GetDirectoryName(this.LogPath);
-                this.logWatch.Filter = Path.GetFileName(this.LogPath);
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-            }
+            Executive.SafeRun(this.WatchLogFile);
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
             this.controller.SaveRecentFiles();
+        }
+
+        private void WatchLogFile()
+        {
+            this.logWatch.Path = Path.GetDirectoryName(this.LogPath);
+            this.logWatch.Filter = Path.GetFileName(this.LogPath);
         }
 
         private void StartReading()
