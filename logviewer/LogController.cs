@@ -151,7 +151,7 @@ namespace logviewer
             {
                 this.Messages.Reverse();
             }
-            string rtfPath = Path.GetTempFileName();
+            var rtfPath = Path.GetTempFileName();
             try
             {
                 var doc = new RtfDocument(rtfPath);
