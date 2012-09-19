@@ -11,6 +11,17 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
+
+        private readonly string[] levels = new[]
+            {
+                ConfigurationManager.AppSettings["TraceMarker"],
+                ConfigurationManager.AppSettings["DebugMarker"],
+                ConfigurationManager.AppSettings["InfoMarker"],
+                ConfigurationManager.AppSettings["WarnMarker"],
+                ConfigurationManager.AppSettings["ErrorMarker"],
+                ConfigurationManager.AppSettings["FatalMarker"]
+            };
+
         private string logFilterMax;
         private string logFilterMin;
         private string originalCapion;
@@ -20,12 +31,12 @@ namespace logviewer
         {
             this.InitializeComponent();
             this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
-            this.controller.DefineTraceMarker(ConfigurationManager.AppSettings["TraceMarker"]);
-            this.controller.DefineDebugMarker(ConfigurationManager.AppSettings["DebugMarker"]);
-            this.controller.DefineInfoMarker(ConfigurationManager.AppSettings["InfoMarker"]);
-            this.controller.DefineWarnMarker(ConfigurationManager.AppSettings["WarnMarker"]);
-            this.controller.DefineErrorMarker(ConfigurationManager.AppSettings["ErrorMarker"]);
-            this.controller.DefineFatalMarker(ConfigurationManager.AppSettings["FatalMarker"]);
+            this.controller.DefineTraceMarker(this.levels[0]);
+            this.controller.DefineDebugMarker(this.levels[1]);
+            this.controller.DefineInfoMarker(this.levels[2]);
+            this.controller.DefineWarnMarker(this.levels[3]);
+            this.controller.DefineErrorMarker(this.levels[4]);
+            this.controller.DefineFatalMarker(this.levels[5]);
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
@@ -111,13 +122,18 @@ namespace logviewer
                 return;
             }
             this.EnableControls(true);
-            this.logFilterMin = this.toolStripComboBox1.SelectedItem as string;
-            this.logFilterMax = this.toolStripComboBox2.SelectedItem as string;
+            this.logFilterMin = this.ReadLevel(this.toolStripComboBox1.SelectedIndex);
+            this.logFilterMax = this.ReadLevel(this.toolStripComboBox2.SelectedIndex);
             this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
             this.toolStripStatusLabel1.Text = Resources.ReadingLogMessage;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.logReader.RunWorkerAsync(this.LogPath);
+        }
+
+        private string ReadLevel(int index)
+        {
+            return index < 0 || index > this.levels.Length - 1 ? null : this.levels[index];
         }
 
         private void ReadLog(object sender, DoWorkEventArgs e)
