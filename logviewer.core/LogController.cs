@@ -180,7 +180,10 @@ namespace logviewer.core
 
                 message.Strings.Add(line);
             }
-            this.Messages.Add(message);
+            if (message.Strings.Count > 0)
+            {
+                this.Messages.Add(message);
+            }
             if (this.reverseChronological)
             {
                 this.Messages.Reverse();
