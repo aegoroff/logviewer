@@ -16,7 +16,7 @@ namespace logviewer.tests
             this.mockery = new Mockery();
             this.view = this.mockery.NewMock<ILogView>();
         }
-        
+
         [TearDown]
         public void Teardown()
         {
@@ -36,14 +36,6 @@ namespace logviewer.tests
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
 
         [Test]
-        public void ReadFromBadPath()
-        {
-            Expect.Once.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
-            var controller = new LogController(this.view, MessageStart);
-            Assert.IsEmpty(controller.ReadLog(string.Empty));
-        }
-        
-        [Test]
         public void ReadEmptyFile()
         {
             File.Create(TestPath).Dispose();
@@ -51,6 +43,14 @@ namespace logviewer.tests
             var controller = new LogController(this.view, MessageStart);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(3));
+        }
+
+        [Test]
+        public void ReadFromBadPath()
+        {
+            Expect.Once.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
+            var controller = new LogController(this.view, MessageStart);
+            Assert.IsEmpty(controller.ReadLog(string.Empty));
         }
     }
 }
