@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Net.Sgoliver.NRtfTree.Core;
@@ -289,35 +288,5 @@ namespace logviewer
         }
 
         #endregion
-    }
-
-    public struct LogMessage
-    {
-        #region Constants and Fields
-
-        internal IList<string> Strings;
-
-        #endregion
-
-        public string Header
-        {
-            get { return this.Strings.Count == 0 ? string.Empty : this.Strings[0]; }
-        }
-
-        public string Body
-        {
-            get { return this.Strings.Count < 2 ? string.Empty : string.Join(Environment.NewLine, this.MessageBody()); }
-        }
-
-        public override string ToString()
-        {
-            return string.Join(Environment.NewLine, this.Strings);
-        }
-
-        private IEnumerable<string> MessageBody()
-        {
-            var i = 0;
-            return this.Strings.Where(s => i++ > 0);
-        }
     }
 }

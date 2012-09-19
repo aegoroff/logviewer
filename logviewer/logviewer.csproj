@@ -64,6 +64,7 @@
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
     <Compile Include="LogController.cs" />
+    <Compile Include="LogMessage.cs" />
     <Compile Include="MainDlg.cs">
       <SubType>Form</SubType>
     </Compile>
