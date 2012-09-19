@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using logviewer.Properties;
 
@@ -11,8 +9,6 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly LogController controller;
-        private readonly List<string> recentFiles = new List<string>();
-        private readonly string recentFilesFilePath = Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt");
         private string logFilterMax;
         private string logFilterMin;
         private string originalCapion;
@@ -27,12 +23,24 @@ namespace logviewer
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
             this.toolStripComboBox3.SelectedIndex = 0;
             this.EnableControls(false);
-            this.ReadRecentFiles();
+            this.controller.ReadRecentFiles();
         }
 
         #region ILogView Members
 
         public string LogPath { get; private set; }
+
+        public void CreateRecentFileItem(string file)
+        {
+            var result = new ToolStripMenuItem(file) { Tag = file };
+            result.Click += this.OnOpenRecentLogFile;
+            this.recentFilesToolStripMenuItem.DropDownItems.Add(result);
+        }
+
+        public void ClearRecentFilesList()
+        {
+            this.recentFilesToolStripMenuItem.DropDownItems.Clear();
+        }
 
         #endregion
 
@@ -44,44 +52,11 @@ namespace logviewer
             this.toolStripButton2.Enabled = enabled;
         }
 
-        private void ReadRecentFiles()
-        {
-            if (!File.Exists(this.recentFilesFilePath))
-            {
-                using (File.Open(this.recentFilesFilePath, FileMode.Create))
-                {
-                }
-            }
-            var files = File.ReadAllLines(this.recentFilesFilePath);
-            this.recentFiles.Clear();
-            this.recentFiles.AddRange(files);
-            this.recentFilesToolStripMenuItem.DropDownItems.Clear();
-            foreach (var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select new ToolStripMenuItem(file) { Tag = file })
-            {
-                item.Click += this.OnOpenRecentLogFile;
-                this.recentFilesToolStripMenuItem.DropDownItems.Add(item);
-            }
-        }
-
         private void OnOpenRecentLogFile(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem) sender;
             this.LogPath = item.Tag as string;
             this.ReadLog();
-        }
-
-        private void SaveRecentFiles()
-        {
-            if (!this.recentFiles.Contains(this.LogPath))
-            {
-                this.recentFiles.Add(this.LogPath);
-            }
-            else
-            {
-                this.recentFiles.Remove(this.LogPath);
-                this.recentFiles.Add(this.LogPath);
-            }
-            File.WriteAllLines(this.recentFilesFilePath, this.recentFiles);
         }
 
         private void KeepOriginalCaption()
@@ -119,7 +94,7 @@ namespace logviewer
             }
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
-            this.SaveRecentFiles();
+            this.controller.SaveRecentFiles();
         }
 
         private void StartReading()
@@ -150,7 +125,7 @@ namespace logviewer
         {
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             this.syntaxRichTextBox1.Rtf = e.Result as string;
-            this.ReadRecentFiles();
+            this.controller.ReadRecentFiles();
         }
 
         private void OnClose(object sender, EventArgs e)

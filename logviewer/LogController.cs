@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Net.Sgoliver.NRtfTree.Core;
@@ -21,6 +22,8 @@ namespace logviewer
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
         private static readonly Regex regex = new Regex(ConfigurationManager.AppSettings["StartMessagePattern"], RegexOptions.Compiled);
+        private readonly string recentFilesFilePath = Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt");
+        private readonly List<string> recentFiles = new List<string>();
 
         private static readonly Dictionary<LogLevel, Color> levelsMap = new Dictionary<LogLevel, Color>
             {
@@ -97,6 +100,38 @@ namespace logviewer
         public void Ordering(bool reverse)
         {
             this.reverseChronological = reverse;
+        }
+
+        public void ReadRecentFiles()
+        {
+            if (!File.Exists(this.recentFilesFilePath))
+            {
+                using (File.Open(this.recentFilesFilePath, FileMode.Create))
+                {
+                }
+            }
+            var files = File.ReadAllLines(this.recentFilesFilePath);
+            this.recentFiles.Clear();
+            this.recentFiles.AddRange(files);
+            this.view.ClearRecentFilesList();
+            foreach (var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
+            {
+                this.view.CreateRecentFileItem(item);
+            }
+        }
+
+        public void SaveRecentFiles()
+        {
+            if (!this.recentFiles.Contains(this.view.LogPath))
+            {
+                this.recentFiles.Add(this.view.LogPath);
+            }
+            else
+            {
+                this.recentFiles.Remove(this.view.LogPath);
+                this.recentFiles.Add(this.view.LogPath);
+            }
+            File.WriteAllLines(this.recentFilesFilePath, this.recentFiles);
         }
 
         #endregion
