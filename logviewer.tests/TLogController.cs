@@ -44,6 +44,7 @@ namespace logviewer.tests
             var controller = new LogController(this.view, MessageStart);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(3));
+            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("3 Bytes"));
         }
 
@@ -53,6 +54,7 @@ namespace logviewer.tests
             Expect.Once.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
             var controller = new LogController(this.view, MessageStart);
             Assert.IsEmpty(controller.ReadLog(string.Empty));
+            Assert.IsEmpty(controller.Messages);
             Assert.IsNull(controller.HumanReadableLogSize);
         }
 
@@ -64,6 +66,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, ts);
             var controller = new LogController(this.view, MessageStart);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
+            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("77 Bytes"));
         }
         
@@ -80,6 +83,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, sb.ToString());
             var controller = new LogController(this.view, MessageStart);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
+            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(20000));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("742,19 Kb (760003 Bytes)"));
         }
     }
