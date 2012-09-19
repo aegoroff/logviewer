@@ -51,10 +51,10 @@
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -265,23 +265,6 @@
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
             // 
-            // logReader
-            // 
-            this.logReader.WorkerReportsProgress = true;
-            this.logReader.WorkerSupportsCancellation = true;
-            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
-            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Log files|*.log";
-            // 
-            // logWatch
-            // 
-            this.logWatch.EnableRaisingEvents = true;
-            this.logWatch.SynchronizingObject = this;
-            this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
-            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -295,6 +278,23 @@
             this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
+            // 
+            // logReader
+            // 
+            this.logReader.WorkerReportsProgress = true;
+            this.logReader.WorkerSupportsCancellation = true;
+            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
+            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
+            // 
+            // logWatch
+            // 
+            this.logWatch.EnableRaisingEvents = true;
+            this.logWatch.SynchronizingObject = this;
+            this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
             // 
             // MainDlg
             // 
