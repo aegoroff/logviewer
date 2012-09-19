@@ -368,8 +368,8 @@ namespace logviewer.core
                         f.WriteByte(0xBB);
                         f.WriteByte(0xBF);
 
-                        var sr = new StreamReader(stream);
                         var srcEncoding = Encoding.GetEncoding("windows-1251");
+                        var sr = new StreamReader(stream, srcEncoding);
                         using (sr)
                         {
                             while (!sr.EndOfStream)
@@ -381,6 +381,8 @@ namespace logviewer.core
                                 }
                                 var asciiB = srcEncoding.GetBytes(line);
                                 var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
+                                var utf8 = Encoding.UTF8.GetString(utf8B);
+                                utf8B = Encoding.UTF8.GetBytes(utf8);
                                 f.Write(utf8B, 0, utf8B.Length);
                                 f.Write(newLineBytes, 0, newLineBytes.Length);
                             }
