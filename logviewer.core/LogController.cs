@@ -20,9 +20,6 @@ namespace logviewer.core
         private const int BomLength = 3; // BOM (Byte Order Mark)
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
-        private readonly Regex regex;
-        private readonly string recentFilesFilePath = Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt");
-        private readonly List<string> recentFiles = new List<string>();
 
         private static readonly Dictionary<LogLevel, Color> levelsMap = new Dictionary<LogLevel, Color>
             {
@@ -45,6 +42,9 @@ namespace logviewer.core
                 Resources.SizeEBytes
             };
 
+        private readonly List<string> recentFiles = new List<string>();
+        private readonly string recentFilesFilePath;
+        private readonly Regex regex;
         private readonly ILogView view;
         private bool cancelReading;
         private string maxFilter;
@@ -55,8 +55,9 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public LogController(ILogView view, string startMessagePattern)
+        public LogController(ILogView view, string startMessagePattern, string recentFilesFilePath)
         {
+            this.recentFilesFilePath = recentFilesFilePath;
             this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
             this.Messages = new List<LogMessage>();

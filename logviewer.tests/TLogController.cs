@@ -41,7 +41,7 @@ namespace logviewer.tests
         {
             File.Create(TestPath).Dispose();
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            var controller = new LogController(this.view, MessageStart);
+            var controller = new LogController(this.view, MessageStart, null);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(3));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
@@ -52,7 +52,7 @@ namespace logviewer.tests
         public void ReadFromBadPath()
         {
             Expect.Once.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
-            var controller = new LogController(this.view, MessageStart);
+            var controller = new LogController(this.view, MessageStart, null);
             Assert.IsEmpty(controller.ReadLog(string.Empty));
             Assert.IsEmpty(controller.Messages);
             Assert.IsNull(controller.HumanReadableLogSize);
@@ -64,7 +64,7 @@ namespace logviewer.tests
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
             const string ts = "2008-12-27 19:31:47,250 [4688] INFO \n2008-12-27 19:40:11,906 [5272] ERROR ";
             File.WriteAllText(TestPath, ts);
-            var controller = new LogController(this.view, MessageStart);
+            var controller = new LogController(this.view, MessageStart, null);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("77 Bytes"));
@@ -81,7 +81,7 @@ namespace logviewer.tests
                 sb.AppendLine(ts);
             }
             File.WriteAllText(TestPath, sb.ToString());
-            var controller = new LogController(this.view, MessageStart);
+            var controller = new LogController(this.view, MessageStart, null);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(20000));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("742,19 Kb (760003 Bytes)"));

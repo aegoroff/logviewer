@@ -19,7 +19,7 @@ namespace logviewer
         public MainDlg()
         {
             this.InitializeComponent();
-            this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"]);
+            this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
