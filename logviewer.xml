@@ -69,7 +69,7 @@
     <Target Name="UnitTesting" DependsOnTargets="Compile">
         <!-- Managed tests -->
         <Exec
-            Command='"$(NUnitPath)\nunit-console.exe" /xml:$(MSBuildProjectDirectory)\$(ManagedTestsReport) $(MSBuildProjectDirectory)logviewer.tests\bin\$(Configuration)\logviewer.tests.dll /config=$(Configuration)'
+            Command='"$(NUnitPath)\nunit-console.exe" /xml:$(MSBuildProjectDirectory)\$(ManagedTestsReport) $(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll /config=$(Configuration)'
             IgnoreExitCode="true"
         />
         <!-- Import into TeamCity -->
