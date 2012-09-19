@@ -51,10 +51,6 @@
 			ReplacementText='$(MSBuildProjectDirectory)\' />
 
 	</Target>
-	<ItemGroup>
-		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi => installer" />
-		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe => installer" />
-	</ItemGroup>
 	<!-- Main build step where solution file are built -->
 	<Target Name="Compile" DependsOnTargets="VersionUpdater">
 		<!-- Start building solution file -->
@@ -62,6 +58,14 @@
 			StopOnFirstFailure="true"
 			Projects="logviewer.sln"
 			Properties="Configuration=$(Configuration)" 
+		/>
+		<Copy
+			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi"
+			DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi"
+		/>
+		<Copy
+			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe"
+			DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe"
 		/>
 	</Target>
 
@@ -75,7 +79,10 @@
         <!-- Import into TeamCity -->
         <ImportData Type="nunit" Path="$(MSBuildProjectDirectory)\$(ManagedTestsReport)" />
     </Target>
-    
+    <ItemGroup>
+		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi => installer" />
+		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe => installer" />
+	</ItemGroup>
 	<!-- Setting next build version and finish build process -->
 	<Target Name="Build" DependsOnTargets="UnitTesting">
 		<PublishArtifacts Artifacts="@(SetupFile)"/>
