@@ -64,7 +64,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("77 Bytes"));
+            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("80 Bytes"));
         }
         
         [Test]

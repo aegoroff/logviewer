@@ -346,34 +346,55 @@ namespace logviewer.core
             }
             
             var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using (stream)
+            var tmp = Path.GetTempFileName();
+            try
             {
-                var b = new byte[BomLength];
-                stream.Read(b, 0, BomLength);
-                if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
+                using (stream)
                 {
-                    return;
-                }
-                
-                stream.Seek(0, SeekOrigin.Begin);
-                var tmp = Path.GetTempFileName();
-                File.Create(tmp).Dispose();
-                var sr = new StreamReader(stream);
-                var srcEncoding = Encoding.GetEncoding("windows-1251");
-                using (sr)
-                {
-                    while (!sr.EndOfStream)
+                    var b = new byte[BomLength];
+                    stream.Read(b, 0, BomLength);
+                    if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
                     {
-                        var line = sr.ReadLine();
-                        if (line == null)
-                        {
-                            break;
-                        }
-                        var asciiB = srcEncoding.GetBytes(line);
-                        var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
-                        var utf8 = Encoding.UTF8.GetString(utf8B);
-                        File.AppendAllText(tmp, utf8, Encoding.UTF8);
+                        return;
                     }
+                
+                    stream.Seek(0, SeekOrigin.Begin);
+                
+                    var f = File.Create(tmp);
+                    var newLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+                    using (f)
+                    {
+                        f.WriteByte(0xEF);
+                        f.WriteByte(0xBB);
+                        f.WriteByte(0xBF);
+
+                        var sr = new StreamReader(stream);
+                        var srcEncoding = Encoding.GetEncoding("windows-1251");
+                        using (sr)
+                        {
+                            while (!sr.EndOfStream)
+                            {
+                                var line = sr.ReadLine();
+                                if (line == null)
+                                {
+                                    break;
+                                }
+                                var asciiB = srcEncoding.GetBytes(line);
+                                var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
+                                f.Write(utf8B, 0, utf8B.Length);
+                                f.Write(newLineBytes, 0, newLineBytes.Length);
+                            }
+                        }
+                    }
+                }
+                File.Delete(this.view.LogPath);
+                File.Copy(tmp, this.view.LogPath);
+            }
+            finally
+            {
+                if (File.Exists(tmp))
+                {
+                    File.Delete(tmp);
                 }
             }
         }
