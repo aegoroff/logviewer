@@ -90,10 +90,9 @@ namespace logviewer.tests
         public void MinFilter()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            File.WriteAllText(TestPath, MessageExamples);
             var controller = new LogController(this.view, MessageStart, null);
             controller.MinFilter("WARN");
-            controller.ReadLog(TestPath);
+            controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
         }
 
@@ -101,10 +100,9 @@ namespace logviewer.tests
         public void MinFilterBorder()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            File.WriteAllText(TestPath, MessageExamples);
             var controller = new LogController(this.view, MessageStart, null);
             controller.MinFilter("INFO");
-            controller.ReadLog(TestPath);
+            controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
         }
         
@@ -112,10 +110,9 @@ namespace logviewer.tests
         public void MaxFilter()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            File.WriteAllText(TestPath, MessageExamples);
             var controller = new LogController(this.view, MessageStart, null);
             controller.MaxFilter("WARN");
-            controller.ReadLog(TestPath);
+            controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
         }
         
@@ -123,10 +120,9 @@ namespace logviewer.tests
         public void MaxFilterBorder()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            File.WriteAllText(TestPath, MessageExamples);
             var controller = new LogController(this.view, MessageStart, null);
             controller.MaxFilter("ERROR");
-            controller.ReadLog(TestPath);
+            controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
         }
 
@@ -134,11 +130,10 @@ namespace logviewer.tests
         public void MinFilterGreaterThenMax()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            File.WriteAllText(TestPath, MessageExamples);
             var controller = new LogController(this.view, MessageStart, null);
             controller.MinFilter("ERROR");
             controller.MaxFilter("WARN");
-            controller.ReadLog(TestPath);
+            controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
         }
         
@@ -146,12 +141,20 @@ namespace logviewer.tests
         public void MaxAndMaxFilter()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            File.WriteAllText(TestPath, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ");
             var controller = new LogController(this.view, MessageStart, null);
             controller.MinFilter("WARN");
             controller.MaxFilter("WARN");
-            controller.ReadLog(TestPath);
+            controller.ReadLog(CreateTestStream(MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN "));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
+        }
+
+        static Stream CreateTestStream(string data)
+        {
+            var result = new MemoryStream();
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
+            result.Write(bytes, 0, bytes.Length);
+            result.Seek(0, SeekOrigin.Begin);
+            return result;
         }
     }
 }

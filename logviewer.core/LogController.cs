@@ -83,6 +83,12 @@ namespace logviewer.core
             return Executive.SafeRun<string, string>(this.ReadLogInternal, path);
         }
 
+        public string ReadLog(Stream stream)
+        {
+            this.cancelReading = false;
+            return Executive.SafeRun<string, Stream>(this.ReadLogInternal, stream);
+        }
+
         public void CancelReading()
         {
             this.cancelReading = true;
@@ -146,9 +152,22 @@ namespace logviewer.core
                 return string.Empty;
             }
             var reader = File.OpenText(path);
+            return this.ReadLogInternal(reader);
+        }
+
+        private string ReadLogInternal(Stream stream)
+        {
+            return this.ReadLogInternal(new StreamReader(stream));
+        }
+
+        private string ReadLogInternal(StreamReader reader)
+        {
             using (reader)
             {
-                this.LogSize = reader.BaseStream.Length;
+                if (reader.BaseStream.CanSeek)
+                {
+                    this.LogSize = reader.BaseStream.Length;
+                }
                 this.CreateHumanReadableSize();
 
                 return this.ReadLogTask(reader);
@@ -239,7 +258,7 @@ namespace logviewer.core
             }
         }
 
-        bool Filter(LogMessage message)
+        private bool Filter(LogMessage message)
         {
             var messageLevel = DetectLevel(message.Header);
             return messageLevel < DetectLevel(this.minFilter) || messageLevel > DetectLevel(this.maxFilter, LogLevel.Fatal);
