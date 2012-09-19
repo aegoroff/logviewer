@@ -34,6 +34,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -50,11 +51,10 @@
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
-            this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -111,6 +111,12 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.openToolStripMenuItem.Text = "Open ...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OnOpen);
+            // 
+            // recentFilesToolStripMenuItem
+            // 
+            this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
+            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.recentFilesToolStripMenuItem.Text = "Recent files";
             // 
             // toolStripSeparator1
             // 
@@ -240,8 +246,8 @@
             // 
             this.toolStripComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBox3.Items.AddRange(new object[] {
-            "Reverse chronological",
-            "Direct chronological"});
+            "Date, DESC",
+            "Date, ASC"});
             this.toolStripComboBox3.Name = "toolStripComboBox3";
             this.toolStripComboBox3.Size = new System.Drawing.Size(150, 25);
             this.toolStripComboBox3.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
@@ -258,20 +264,6 @@
             this.panel1.Padding = new System.Windows.Forms.Padding(2);
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
-            // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
             // 
             // logReader
             // 
@@ -290,11 +282,19 @@
             this.logWatch.SynchronizingObject = this;
             this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
             // 
-            // recentFilesToolStripMenuItem
+            // syntaxRichTextBox1
             // 
-            this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
-            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.recentFilesToolStripMenuItem.Text = "Recent files";
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
             // 
             // MainDlg
             // 
