@@ -344,23 +344,38 @@ namespace logviewer.core
             {
                 return;
             }
+            
             var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            byte[] b;
             using (stream)
             {
-                b = new byte[BomLength];
+                var b = new byte[BomLength];
                 stream.Read(b, 0, BomLength);
+                if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
+                {
+                    return;
+                }
+                
+                stream.Seek(0, SeekOrigin.Begin);
+                var tmp = Path.GetTempFileName();
+                File.Create(tmp).Dispose();
+                var sr = new StreamReader(stream);
+                var srcEncoding = Encoding.GetEncoding("windows-1251");
+                using (sr)
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        var line = sr.ReadLine();
+                        if (line == null)
+                        {
+                            break;
+                        }
+                        var asciiB = srcEncoding.GetBytes(line);
+                        var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
+                        var utf8 = Encoding.UTF8.GetString(utf8B);
+                        File.AppendAllText(tmp, utf8, Encoding.UTF8);
+                    }
+                }
             }
-            if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
-            {
-                return;
-            }
-            var srcEncoding = Encoding.GetEncoding("windows-1251");
-            var log = File.ReadAllText(this.view.LogPath, srcEncoding);
-            var asciiBytes = srcEncoding.GetBytes(log);
-            var utf8Bytes = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiBytes);
-            var utf8 = Encoding.UTF8.GetString(utf8Bytes);
-            File.WriteAllText(this.view.LogPath, utf8, Encoding.UTF8);
         }
 
         private void CreateHumanReadableSize()
