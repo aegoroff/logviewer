@@ -120,25 +120,4 @@
   <data name="ReadingLogMessage" xml:space="preserve">
     <value>Reading log ...</value>
   </data>
-  <data name="SizeBytes" xml:space="preserve">
-    <value>Bytes</value>
-  </data>
-  <data name="SizeEBytes" xml:space="preserve">
-    <value>Eb</value>
-  </data>
-  <data name="SizeGBytes" xml:space="preserve">
-    <value>Gb</value>
-  </data>
-  <data name="SizeKBytes" xml:space="preserve">
-    <value>Kb</value>
-  </data>
-  <data name="SizeMBytes" xml:space="preserve">
-    <value>Mb</value>
-  </data>
-  <data name="SizePBytes" xml:space="preserve">
-    <value>Pb</value>
-  </data>
-  <data name="SizeTBytes" xml:space="preserve">
-    <value>Tb</value>
-  </data>
 </root>

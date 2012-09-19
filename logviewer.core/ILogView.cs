@@ -1,4 +1,4 @@
-namespace logviewer
+namespace logviewer.core
 {
 	public interface ILogView
 	{

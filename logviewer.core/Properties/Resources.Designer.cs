@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace logviewer.Properties {
+namespace logviewer.core.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace logviewer.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("logviewer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("logviewer.core.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,65 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reading log ....
+        ///   Looks up a localized string similar to Bytes.
         /// </summary>
-        internal static string ReadingLogMessage {
+        internal static string SizeBytes {
             get {
-                return ResourceManager.GetString("ReadingLogMessage", resourceCulture);
+                return ResourceManager.GetString("SizeBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Eb.
+        /// </summary>
+        internal static string SizeEBytes {
+            get {
+                return ResourceManager.GetString("SizeEBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gb.
+        /// </summary>
+        internal static string SizeGBytes {
+            get {
+                return ResourceManager.GetString("SizeGBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kb.
+        /// </summary>
+        internal static string SizeKBytes {
+            get {
+                return ResourceManager.GetString("SizeKBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mb.
+        /// </summary>
+        internal static string SizeMBytes {
+            get {
+                return ResourceManager.GetString("SizeMBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pb.
+        /// </summary>
+        internal static string SizePBytes {
+            get {
+                return ResourceManager.GetString("SizePBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tb.
+        /// </summary>
+        internal static string SizeTBytes {
+            get {
+                return ResourceManager.GetString("SizeTBytes", resourceCulture);
             }
         }
     }

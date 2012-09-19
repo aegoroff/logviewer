@@ -1,6 +1,6 @@
 using System;
 
-namespace logviewer
+namespace logviewer.core
 {
     /// <summary>
     ///     Represents file size normalization code

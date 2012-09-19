@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -9,9 +8,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Net.Sgoliver.NRtfTree.Core;
 using Net.Sgoliver.NRtfTree.Util;
-using logviewer.Properties;
+using logviewer.core.Properties;
 
-namespace logviewer
+namespace logviewer.core
 {
     public class LogController
     {
@@ -21,7 +20,7 @@ namespace logviewer
         private const int BomLength = 3; // BOM (Byte Order Mark)
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
-        private static readonly Regex regex = new Regex(ConfigurationManager.AppSettings["StartMessagePattern"], RegexOptions.Compiled);
+        private readonly Regex regex;
         private readonly string recentFilesFilePath = Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt");
         private readonly List<string> recentFiles = new List<string>();
 
@@ -56,8 +55,9 @@ namespace logviewer
 
         #region Constructors and Destructors
 
-        public LogController(ILogView view)
+        public LogController(ILogView view, string startMessagePattern)
         {
+            this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
             this.Messages = new List<LogMessage>();
             Executive.SafeRun(this.Convert);
@@ -172,7 +172,7 @@ namespace logviewer
                     break;
                 }
 
-                if (regex.IsMatch(line) && message.Strings.Count > 0)
+                if (this.regex.IsMatch(line) && message.Strings.Count > 0)
                 {
                     this.Messages.Add(message);
                     message.Strings = new List<string>();

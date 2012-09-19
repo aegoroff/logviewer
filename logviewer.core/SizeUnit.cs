@@ -1,4 +1,4 @@
-namespace logviewer
+namespace logviewer.core
 {
     /// <summary>
     /// Represents size unit tag bytes, Kbytes, Mbytes etc.

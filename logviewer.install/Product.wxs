@@ -47,6 +47,11 @@
 								Name="logviewer.exe.config"
 								Source="$(var.SourcePath)\logviewer.exe.config"
 								DiskId="1"/>
+                            <File
+								Id="logviewer.core.dll"
+								Name="logviewer.core.dll"
+								Source="$(var.SourcePath)\logviewer.core.dll"
+								DiskId="1"/>
 							<File
 								Id="NRtfTree.dll"
 								Name="NRtfTree.dll"

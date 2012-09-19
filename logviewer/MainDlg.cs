@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.Windows.Forms;
 using logviewer.Properties;
+using logviewer.core;
 
 namespace logviewer
 {
@@ -17,7 +19,7 @@ namespace logviewer
         public MainDlg()
         {
             this.InitializeComponent();
-            this.controller = new LogController(this);
+            this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"]);
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
