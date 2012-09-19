@@ -131,7 +131,7 @@ namespace logviewer.tests
         }
 
         [Test]
-        public void MaxFilterGreaterThenMax()
+        public void MinFilterGreaterThenMax()
         {
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
             File.WriteAllText(TestPath, MessageExamples);
