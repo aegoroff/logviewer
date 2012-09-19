@@ -9,6 +9,12 @@
 
 		<!-- Code configuration to build (Release or Debug) -->
 		<Configuration>Release</Configuration>
+
+        <!-- NUnit working path  -->
+        <NUnitPath>C:\Program Files (x86)\NUnit 2.6.1\bin</NUnitPath>
+
+        <!-- Managed unit tests report  -->
+        <ManagedTestsReport>ManagedTests.xml</ManagedTestsReport>
 		
 		<!-- Enables updating version mechanism -->
 		<IsUpdateVersion>false</IsUpdateVersion>
@@ -58,8 +64,20 @@
 			Properties="Configuration=$(Configuration)" 
 		/>
 	</Target>
+
+    <!-- Run unit tests task -->
+    <Target Name="UnitTesting" DependsOnTargets="Compile">
+        <!-- Managed tests -->
+        <Exec
+            Command='"$(NUnitPath)\nunit-console.exe" /xml:$(MSBuildProjectDirectory)\$(ManagedTestsReport) $(MSBuildProjectDirectory)logviewer.tests\bin\$(Configuration)\logviewer.tests.dll /config=$(Configuration)'
+            IgnoreExitCode="true"
+        />
+        <!-- Import into TeamCity -->
+        <ImportData Type="nunit" Path="$(MSBuildProjectDirectory)\$(ManagedTestsReport)" />
+    </Target>
+    
 	<!-- Setting next build version and finish build process -->
-	<Target Name="Build" DependsOnTargets="Compile">
+	<Target Name="Build" DependsOnTargets="UnitTesting">
 		<PublishArtifacts Artifacts="@(SetupFile)"/>
 		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
 	</Target>
