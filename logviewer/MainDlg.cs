@@ -52,6 +52,7 @@ namespace logviewer
             this.toolStripComboBox2.Enabled = enabled;
             this.toolStripComboBox3.Enabled = enabled;
             this.toolStripButton2.Enabled = enabled;
+            this.refreshToolStripMenuItem.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)

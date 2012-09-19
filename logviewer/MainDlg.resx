@@ -140,6 +140,19 @@
         AABJRU5ErkJggg==
 </value>
   </data>
+  <data name="refreshToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAGMSURBVDhPtZPdK4NxFMf3J9kFuXDhQsqdUi5MCrvYxUq5sVwQUZIVRVuUUKvtkrw0JSsyrzNa
+        mxaTt6WsZtFaUYfPqeeZeZsbvzr9fs853+/3fM/veR6L5T+Wx58U93xCfMsp8QYu9Mxetpd/9VKB4ZNH
+        jb1YrmT/VYRuc0t3EtzJaCAQOsxKPPWsu5EH862TAU9CAsF7WdnKmLF9nJXc04ukHwoqQA3M4HSqVGRk
+        JiZTgVt1AAAwxM+LPBiw3JPppKPvQMYWrrQwu5hWcr7wKuc3eVOIUagTYJ3DkaJAi+tIXBNJLWDTAPPM
+        GVfjvmutkQMLx3RQ07Yh7f1xLRgzskNmXki4IQcGLJyiQOuaVLXuSoMzKrbemL4+FqMgYlwkRDBg6+3r
+        RYEe975Ym0NSa49oh88XSHfH8Jk0dp8qxtq8KUPeaOmbqGhaUeU6R8R08ZEImVqlLSxgv/0WDBG6AO4a
+        TahlghwNfiQbigAYh07VbfsanLFdlmyI9E++O+gMKoHg/GXmsn/WHwFvQ4jjyATOTZ4AAAAASUVORK5C
+        YII=
+</value>
+  </data>
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
   </metadata>
