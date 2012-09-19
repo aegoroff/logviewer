@@ -67,7 +67,6 @@ namespace logviewer.core
             this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
             this.Messages = new List<LogMessage>();
-            Executive.SafeRun(this.Convert);
         }
 
         #endregion
@@ -116,6 +115,7 @@ namespace logviewer.core
         public string ReadLog(string path)
         {
             this.cancelReading = false;
+            Executive.SafeRun(this.Convert);
             return Executive.SafeRun<string, string>(this.ReadLogInternal, path);
         }
 

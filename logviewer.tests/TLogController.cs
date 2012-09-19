@@ -45,9 +45,9 @@ namespace logviewer.tests
         {
             File.Create(TestPath).Dispose();
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
-            Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(0));
+            Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(3));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
-            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("0 Bytes"));
+            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("3 Bytes"));
         }
 
         [Test]
@@ -64,17 +64,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             Assert.IsNotEmpty(controller.ReadLog(TestPath));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74 Bytes"));
-        }
-        
-        [Test]
-        public void ReadNormalLogAfterConvert()
-        {
-            File.WriteAllText(TestPath, MessageExamples);
-            var ctrl = new LogController(this.view, MessageStart, null);
-            Assert.IsNotEmpty(ctrl.ReadLog(TestPath));
-            Assert.That(ctrl.Messages.Count, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(ctrl.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("77 Bytes"));
+            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("77 Bytes"));
         }
         
         [Test]
