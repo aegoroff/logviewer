@@ -175,13 +175,16 @@ namespace logviewer.core
 
                 if (this.regex.IsMatch(line) && message.Strings.Count > 0)
                 {
-                    this.Messages.Add(message);
+                    if (!this.Filter(message))
+                    {
+                        this.Messages.Add(message);
+                    }
                     message.Strings = new List<string>();
                 }
 
                 message.Strings.Add(line);
             }
-            if (message.Strings.Count > 0)
+            if (message.Strings.Count > 0 && !this.Filter(message))
             {
                 this.Messages.Add(message);
             }
@@ -196,13 +199,6 @@ namespace logviewer.core
 
                 foreach (var msg in this.Messages)
                 {
-                    var messageLevel = DetectLevel(msg.Header);
-
-                    if (messageLevel < DetectLevel(this.minFilter) || messageLevel > DetectLevel(this.maxFilter, LogLevel.Fatal))
-                    {
-                        continue;
-                    }
-
                     var formatBody = new RtfCharFormat
                         {
                             Color = Colorize(msg.Header),
@@ -241,6 +237,12 @@ namespace logviewer.core
                     File.Delete(rtfPath);
                 }
             }
+        }
+
+        bool Filter(LogMessage message)
+        {
+            var messageLevel = DetectLevel(message.Header);
+            return messageLevel < DetectLevel(this.minFilter) || messageLevel > DetectLevel(this.maxFilter, LogLevel.Fatal);
         }
 
         private static Color Colorize(string line)
