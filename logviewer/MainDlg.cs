@@ -20,6 +20,12 @@ namespace logviewer
         {
             this.InitializeComponent();
             this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
+            this.controller.DefineTraceMarker(ConfigurationManager.AppSettings["TraceMarker"]);
+            this.controller.DefineDebugMarker(ConfigurationManager.AppSettings["DebugMarker"]);
+            this.controller.DefineInfoMarker(ConfigurationManager.AppSettings["InfoMarker"]);
+            this.controller.DefineWarnMarker(ConfigurationManager.AppSettings["WarnMarker"]);
+            this.controller.DefineErrorMarker(ConfigurationManager.AppSettings["ErrorMarker"]);
+            this.controller.DefineFatalMarker(ConfigurationManager.AppSettings["FatalMarker"]);
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;

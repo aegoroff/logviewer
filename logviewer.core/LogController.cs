@@ -47,9 +47,15 @@ namespace logviewer.core
         private readonly Regex regex;
         private readonly ILogView view;
         private bool cancelReading;
+        private string debugMarker = "DEBUG";
+        private string errorMarker = "ERROR";
+        private string fatalMarker = "FATAL";
+        private string infoMarker = "INFO";
         private string maxFilter;
         private string minFilter;
         private bool reverseChronological;
+        private string traceMarker = "TRACE";
+        private string warnMarker = "WARN";
 
         #endregion
 
@@ -76,6 +82,36 @@ namespace logviewer.core
         #endregion
 
         #region Public Methods and Operators
+
+        public void DefineTraceMarker(string marker)
+        {
+            this.traceMarker = marker;
+        }
+
+        public void DefineDebugMarker(string marker)
+        {
+            this.debugMarker = marker;
+        }
+
+        public void DefineInfoMarker(string marker)
+        {
+            this.infoMarker = marker;
+        }
+
+        public void DefineWarnMarker(string marker)
+        {
+            this.warnMarker = marker;
+        }
+
+        public void DefineErrorMarker(string marker)
+        {
+            this.errorMarker = marker;
+        }
+
+        public void DefineFatalMarker(string marker)
+        {
+            this.fatalMarker = marker;
+        }
 
         public string ReadLog(string path)
         {
@@ -220,7 +256,7 @@ namespace logviewer.core
                 {
                     var formatBody = new RtfCharFormat
                         {
-                            Color = Colorize(msg.Header),
+                            Color = this.Colorize(msg.Header),
                             Font = "Courier New",
                             Size = 10,
                             Bold = true
@@ -260,42 +296,42 @@ namespace logviewer.core
 
         private bool Filter(LogMessage message)
         {
-            var messageLevel = DetectLevel(message.Header);
-            return messageLevel < DetectLevel(this.minFilter) || messageLevel > DetectLevel(this.maxFilter, LogLevel.Fatal);
+            var messageLevel = this.DetectLevel(message.Header);
+            return messageLevel < this.DetectLevel(this.minFilter) || messageLevel > this.DetectLevel(this.maxFilter, LogLevel.Fatal);
         }
 
-        private static Color Colorize(string line)
+        private Color Colorize(string line)
         {
-            return levelsMap[DetectLevel(line)];
+            return levelsMap[this.DetectLevel(line)];
         }
 
-        private static LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
+        private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
                 return defaultLevel;
             }
-            if (line.Contains("ERROR"))
-            {
-                return LogLevel.Error;
-            }
-            if (line.Contains("WARN"))
-            {
-                return LogLevel.Warn;
-            }
-            if (line.Contains("INFO"))
+            if (line.Contains(this.infoMarker))
             {
                 return LogLevel.Info;
             }
-            if (line.Contains("FATAL"))
+            if (line.Contains(this.errorMarker))
+            {
+                return LogLevel.Error;
+            }
+            if (line.Contains(this.warnMarker))
+            {
+                return LogLevel.Warn;
+            }
+            if (line.Contains(this.fatalMarker))
             {
                 return LogLevel.Fatal;
             }
-            if (line.Contains("DEBUG"))
+            if (line.Contains(this.debugMarker))
             {
                 return LogLevel.Debug;
             }
-            if (line.Contains("TRACE"))
+            if (line.Contains(this.traceMarker))
             {
                 return LogLevel.Trace;
             }
