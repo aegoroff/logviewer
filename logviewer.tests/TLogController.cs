@@ -1,4 +1,5 @@
-﻿using NMock2;
+﻿using System.IO;
+using NMock2;
 using NUnit.Framework;
 using logviewer.core;
 
@@ -15,9 +16,19 @@ namespace logviewer.tests
             this.mockery = new Mockery();
             this.view = this.mockery.NewMock<ILogView>();
         }
+        
+        [TearDown]
+        public void Teardown()
+        {
+            if (File.Exists(TestPath))
+            {
+                File.Delete(TestPath);
+            }
+        }
 
         #endregion
 
+        private const string TestPath = "f";
         private Mockery mockery;
         private ILogView view;
         private const string LogPathProperty = "LogPath";
@@ -30,6 +41,16 @@ namespace logviewer.tests
             Expect.Once.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
             var controller = new LogController(this.view, MessageStart);
             Assert.IsEmpty(controller.ReadLog(string.Empty));
+        }
+        
+        [Test]
+        public void ReadEmptyFile()
+        {
+            File.Create(TestPath).Dispose();
+            Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
+            var controller = new LogController(this.view, MessageStart);
+            Assert.IsNotEmpty(controller.ReadLog(TestPath));
+            Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(3));
         }
     }
 }
