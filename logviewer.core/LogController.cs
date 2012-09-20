@@ -394,7 +394,6 @@ namespace logviewer.core
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var f = File.Create(tmp);
-                var newLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
                 using (f)
                 {
                     f.WriteByte(0xEF);
@@ -412,12 +411,7 @@ namespace logviewer.core
                             {
                                 break;
                             }
-                            var asciiB = srcEncoding.GetBytes(line);
-                            var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
-                            var utf8 = Encoding.UTF8.GetString(utf8B);
-                            utf8B = Encoding.UTF8.GetBytes(utf8);
-                            f.Write(utf8B, 0, utf8B.Length);
-                            f.Write(newLineBytes, 0, newLineBytes.Length);
+                            f.WriteLine(line, srcEncoding, Encoding.UTF8);
                         }
                     }
                 }
