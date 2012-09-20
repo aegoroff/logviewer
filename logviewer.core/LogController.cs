@@ -116,8 +116,20 @@ namespace logviewer.core
         public string ReadLog(string path)
         {
             this.cancelReading = false;
-            Executive.SafeRun(this.Convert);
-            return Executive.SafeRun<string, string>(this.ReadLogInternal, path);
+            var convertedPath = Executive.SafeRun<string>(this.Convert);
+            var useConverted = !string.IsNullOrWhiteSpace(convertedPath) && !convertedPath.Equals(path, StringComparison.OrdinalIgnoreCase);
+            var filePath = useConverted ? convertedPath : path;
+            try
+            {
+                return Executive.SafeRun<string, string>(this.ReadLogInternal, filePath);
+            }
+            finally
+            {
+                if (useConverted && File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
         }
 
         public string ReadLog(Stream stream)
@@ -350,78 +362,67 @@ namespace logviewer.core
             return defaultLevel;
         }
 
-        private void Convert()
+        private string Convert()
         {
             if (!File.Exists(this.view.LogPath))
             {
-                return;
+                return this.view.LogPath;
             }
 
             var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var tmp = Path.GetTempFileName();
-            try
+            using (stream)
             {
-                using (stream)
+                Encoding srcEncoding;
+                var detector = new CharsetDetector();
+                detector.Feed(stream);
+                detector.DataEnd();
+                if (detector.Charset != null)
                 {
-                    Encoding srcEncoding;
-                    var cdet = new CharsetDetector();
-                    cdet.Feed(stream);
-                    cdet.DataEnd();
-                    if (cdet.Charset != null)
-                    {
-                        srcEncoding = Encoding.GetEncoding(cdet.Charset);
-                    }
-                    else
-                    {
-                        return;
-                    }
+                    srcEncoding = Encoding.GetEncoding(detector.Charset);
+                }
+                else
+                {
+                    return this.view.LogPath;
+                }
 
-                    if (srcEncoding.Equals(Encoding.UTF8))
-                    {
-                        return;
-                    }
+                if (srcEncoding.Equals(Encoding.UTF8))
+                {
+                    return this.view.LogPath;
+                }
 
-                    stream.Seek(0, SeekOrigin.Begin);
+                stream.Seek(0, SeekOrigin.Begin);
 
-                    var f = File.Create(tmp);
-                    var newLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
-                    using (f)
-                    {
-                        f.WriteByte(0xEF);
-                        f.WriteByte(0xBB);
-                        f.WriteByte(0xBF);
+                var f = File.Create(tmp);
+                var newLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+                using (f)
+                {
+                    f.WriteByte(0xEF);
+                    f.WriteByte(0xBB);
+                    f.WriteByte(0xBF);
 
                         
-                        var sr = new StreamReader(stream, srcEncoding);
-                        using (sr)
+                    var sr = new StreamReader(stream, srcEncoding);
+                    using (sr)
+                    {
+                        while (!sr.EndOfStream)
                         {
-                            while (!sr.EndOfStream)
+                            var line = sr.ReadLine();
+                            if (line == null)
                             {
-                                var line = sr.ReadLine();
-                                if (line == null)
-                                {
-                                    break;
-                                }
-                                var asciiB = srcEncoding.GetBytes(line);
-                                var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
-                                var utf8 = Encoding.UTF8.GetString(utf8B);
-                                utf8B = Encoding.UTF8.GetBytes(utf8);
-                                f.Write(utf8B, 0, utf8B.Length);
-                                f.Write(newLineBytes, 0, newLineBytes.Length);
+                                break;
                             }
+                            var asciiB = srcEncoding.GetBytes(line);
+                            var utf8B = Encoding.Convert(srcEncoding, Encoding.UTF8, asciiB);
+                            var utf8 = Encoding.UTF8.GetString(utf8B);
+                            utf8B = Encoding.UTF8.GetBytes(utf8);
+                            f.Write(utf8B, 0, utf8B.Length);
+                            f.Write(newLineBytes, 0, newLineBytes.Length);
                         }
                     }
                 }
-                File.Delete(this.view.LogPath);
-                File.Copy(tmp, this.view.LogPath);
             }
-            finally
-            {
-                if (File.Exists(tmp))
-                {
-                    File.Delete(tmp);
-                }
-            }
+            return tmp;
         }
 
         private void CreateHumanReadableSize()
