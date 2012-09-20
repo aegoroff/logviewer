@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using logviewer.Properties;
 using logviewer.core;
@@ -71,6 +72,7 @@ namespace logviewer
             this.toolStripComboBox3.Enabled = enabled;
             this.toolStripButton2.Enabled = enabled;
             this.refreshToolStripMenuItem.Enabled = enabled;
+            this.exportToolStripMenuItem.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
@@ -197,6 +199,18 @@ namespace logviewer
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
             this.StartReading();
+        }
+
+        private void OnExport(object sender, EventArgs e)
+        {
+            this.exportDialog.FileName = Path.GetFileNameWithoutExtension(this.LogPath) + ".rtf";
+            var r = this.exportDialog.ShowDialog();
+
+            if (r != DialogResult.OK)
+            {
+                return;
+            }
+            File.WriteAllText(this.exportDialog.FileName, this.syntaxRichTextBox1.Rtf, Encoding.GetEncoding("windows-1251"));
         }
     }
 }
