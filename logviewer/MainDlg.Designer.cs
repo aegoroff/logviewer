@@ -36,6 +36,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,8 +55,11 @@
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -125,6 +129,15 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
             // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("refreshToolStripMenuItem.Image")));
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.OnChangeFilter);
+            // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
@@ -166,12 +179,16 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
+            this.toolStripSeparator3,
             this.toolStripLabel1,
             this.toolStripComboBox1,
             this.toolStripLabel2,
             this.toolStripComboBox2,
             this.toolStripLabel3,
-            this.toolStripComboBox3});
+            this.toolStripComboBox3,
+            this.toolStripSeparator4,
+            this.toolStripLabel4,
+            this.toolStripTextBox1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(840, 25);
@@ -214,7 +231,7 @@
             "ERROR",
             "FATAL"});
             this.toolStripComboBox1.Name = "toolStripComboBox1";
-            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 25);
+            this.toolStripComboBox1.Size = new System.Drawing.Size(80, 25);
             this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // toolStripLabel2
@@ -235,7 +252,7 @@
             "ERROR",
             "FATAL"});
             this.toolStripComboBox2.Name = "toolStripComboBox2";
-            this.toolStripComboBox2.Size = new System.Drawing.Size(121, 25);
+            this.toolStripComboBox2.Size = new System.Drawing.Size(80, 25);
             this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // toolStripLabel3
@@ -251,7 +268,7 @@
             "Date, DESC",
             "Date, ASC"});
             this.toolStripComboBox3.Name = "toolStripComboBox3";
-            this.toolStripComboBox3.Size = new System.Drawing.Size(150, 25);
+            this.toolStripComboBox3.Size = new System.Drawing.Size(90, 25);
             this.toolStripComboBox3.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // panel1
@@ -284,14 +301,10 @@
             this.logWatch.SynchronizingObject = this;
             this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
             // 
-            // refreshToolStripMenuItem
+            // toolStripSeparator3
             // 
-            this.refreshToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("refreshToolStripMenuItem.Image")));
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.OnChangeFilter);
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // syntaxRichTextBox1
             // 
@@ -306,6 +319,22 @@
             this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel4
+            // 
+            this.toolStripLabel4.Name = "toolStripLabel4";
+            this.toolStripLabel4.Size = new System.Drawing.Size(42, 22);
+            this.toolStripLabel4.Text = " Filter: ";
+            // 
+            // toolStripTextBox1
+            // 
+            this.toolStripTextBox1.Name = "toolStripTextBox1";
+            this.toolStripTextBox1.Size = new System.Drawing.Size(160, 25);
             // 
             // MainDlg
             // 
@@ -362,6 +391,10 @@
         private System.IO.FileSystemWatcher logWatch;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel4;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
     }
 }
 
