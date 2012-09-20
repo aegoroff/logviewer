@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Net.Sgoliver.NRtfTree.Core;
 using Net.Sgoliver.NRtfTree.Util;
+using Ude;
 using logviewer.core.Properties;
 
 namespace logviewer.core
@@ -17,7 +18,6 @@ namespace logviewer.core
         #region Constants and Fields
 
         private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
-        private const int BomLength = 3; // BOM (Byte Order Mark)
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
 
@@ -363,9 +363,20 @@ namespace logviewer.core
             {
                 using (stream)
                 {
-                    var b = new byte[BomLength];
-                    stream.Read(b, 0, BomLength);
-                    if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) // Do not convert file that is already in UTF-8
+                    Encoding srcEncoding;
+                    var cdet = new CharsetDetector();
+                    cdet.Feed(stream);
+                    cdet.DataEnd();
+                    if (cdet.Charset != null)
+                    {
+                        srcEncoding = Encoding.GetEncoding(cdet.Charset);
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    if (srcEncoding.Equals(Encoding.UTF8))
                     {
                         return;
                     }
@@ -380,7 +391,7 @@ namespace logviewer.core
                         f.WriteByte(0xBB);
                         f.WriteByte(0xBF);
 
-                        var srcEncoding = Encoding.GetEncoding("windows-1251");
+                        
                         var sr = new StreamReader(stream, srcEncoding);
                         using (sr)
                         {

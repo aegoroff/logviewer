@@ -57,6 +57,11 @@
 								Name="NRtfTree.dll"
 								Source="$(var.SourcePath)\NRtfTree.dll"
 								DiskId="1"/>
+                            <File
+								Id="Ude.dll"
+								Name="Ude.dll"
+								Source="$(var.SourcePath)\Ude.dll"
+								DiskId="1"/>
 						</Component>
                 </Directory>
             </Directory>
