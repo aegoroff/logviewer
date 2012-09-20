@@ -28,6 +28,7 @@ namespace logviewer
         private string logFilterText;
         private string originalCapion;
         private bool reverse;
+        private bool textFilterChanging;
 
         public MainDlg()
         {
@@ -73,6 +74,7 @@ namespace logviewer
             this.toolStripButton2.Enabled = enabled;
             this.refreshToolStripMenuItem.Enabled = enabled;
             this.exportToolStripMenuItem.Enabled = enabled;
+            toolStripTextBox1.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
@@ -154,6 +156,10 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             this.syntaxRichTextBox1.Rtf = e.Result as string;
             this.controller.ReadRecentFiles();
+            if (textFilterChanging)
+            {
+                toolStripTextBox1.Focus();
+            }
         }
 
         private void OnClose(object sender, EventArgs e)
@@ -184,6 +190,7 @@ namespace logviewer
 
         private void OnChangeFilter(object sender, EventArgs e)
         {
+            textFilterChanging = false;
             this.StartReading();
         }
 
@@ -211,6 +218,12 @@ namespace logviewer
                 return;
             }
             File.WriteAllText(this.exportDialog.FileName, this.syntaxRichTextBox1.Rtf, Encoding.GetEncoding("windows-1251"));
+        }
+
+        private void OnChangeTextFilter(object sender, EventArgs e)
+        {
+            textFilterChanging = true;
+            this.StartReading();
         }
     }
 }

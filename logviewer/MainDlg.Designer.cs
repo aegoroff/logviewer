@@ -34,6 +34,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,9 +60,8 @@
             this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -120,6 +120,13 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.openToolStripMenuItem.Text = "Open ...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OnOpen);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.exportToolStripMenuItem.Text = "Export ...";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.OnExport);
             // 
             // recentFilesToolStripMenuItem
             // 
@@ -294,6 +301,7 @@
             // 
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(190, 25);
+            this.toolStripTextBox1.TextChanged += new System.EventHandler(this.OnChangeTextFilter);
             // 
             // panel1
             // 
@@ -325,6 +333,11 @@
             this.logWatch.SynchronizingObject = this;
             this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
             // 
+            // exportDialog
+            // 
+            this.exportDialog.DefaultExt = "rtf";
+            this.exportDialog.Filter = "RTF files | *.rtf";
+            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -338,18 +351,6 @@
             this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
-            // 
-            // exportToolStripMenuItem
-            // 
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.exportToolStripMenuItem.Text = "Export ...";
-            this.exportToolStripMenuItem.Click += new System.EventHandler(this.OnExport);
-            // 
-            // exportDialog
-            // 
-            this.exportDialog.DefaultExt = "rtf";
-            this.exportDialog.Filter = "RTF files | *.rtf";
             // 
             // MainDlg
             // 
