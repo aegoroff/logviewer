@@ -54,6 +54,7 @@ namespace logviewer.core
         private string maxFilter;
         private string minFilter;
         private bool reverseChronological;
+        private string textFilter;
         private string traceMarker = "TRACE";
         private string warnMarker = "WARN";
 
@@ -138,6 +139,11 @@ namespace logviewer.core
         public void MaxFilter(string value)
         {
             this.maxFilter = value;
+        }
+
+        public void TextFilter(string value)
+        {
+            this.textFilter = value;
         }
 
         public void Ordering(bool reverse)
@@ -297,7 +303,13 @@ namespace logviewer.core
         private bool Filter(LogMessage message)
         {
             var messageLevel = this.DetectLevel(message.Header);
-            return messageLevel < this.DetectLevel(this.minFilter) || messageLevel > this.DetectLevel(this.maxFilter, LogLevel.Fatal);
+            var filteredByLevel = messageLevel < this.DetectLevel(this.minFilter) || messageLevel > this.DetectLevel(this.maxFilter, LogLevel.Fatal);
+            if (string.IsNullOrWhiteSpace(this.textFilter) || filteredByLevel)
+            {
+                return filteredByLevel;
+            }
+            var r = new Regex(this.textFilter, RegexOptions.IgnoreCase);
+            return !r.IsMatch(message.ToString());
         }
 
         private Color Colorize(string line)
@@ -344,7 +356,7 @@ namespace logviewer.core
             {
                 return;
             }
-            
+
             var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var tmp = Path.GetTempFileName();
             try
@@ -357,9 +369,9 @@ namespace logviewer.core
                     {
                         return;
                     }
-                
+
                     stream.Seek(0, SeekOrigin.Begin);
-                
+
                     var f = File.Create(tmp);
                     var newLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
                     using (f)

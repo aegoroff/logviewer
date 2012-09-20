@@ -130,6 +130,14 @@ namespace logviewer.tests
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
         }
 
+        [Test]
+        public void FilterText()
+        {
+            controller.TextFilter(".*5272.*");
+            controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
+        }
+
         static Stream CreateTestStream(string data)
         {
             var result = new MemoryStream();

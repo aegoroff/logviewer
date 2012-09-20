@@ -24,6 +24,7 @@ namespace logviewer
 
         private string logFilterMax;
         private string logFilterMin;
+        private string logFilterText;
         private string originalCapion;
         private bool reverse;
 
@@ -124,6 +125,7 @@ namespace logviewer
             this.EnableControls(true);
             this.logFilterMin = this.ReadLevel(this.toolStripComboBox1.SelectedIndex);
             this.logFilterMax = this.ReadLevel(this.toolStripComboBox2.SelectedIndex);
+            this.logFilterText = this.toolStripTextBox1.Text;
             this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
             this.toolStripStatusLabel1.Text = Resources.ReadingLogMessage;
             this.syntaxRichTextBox1.Clear();
@@ -140,6 +142,7 @@ namespace logviewer
         {
             this.controller.MinFilter(this.logFilterMin);
             this.controller.MaxFilter(this.logFilterMax);
+            this.controller.TextFilter(this.logFilterText);
             this.controller.Ordering(this.reverse);
             e.Result = this.controller.ReadLog(e.Argument as string);
         }
