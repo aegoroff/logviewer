@@ -17,7 +17,7 @@ namespace logviewer.tests
             this.mockery = new Mockery();
             this.view = this.mockery.NewMock<ILogView>();
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            this.controller = new LogController(this.view, MessageStart, null);
+            this.controller = new LogController(this.view, MessageStart, RecentPath);
         }
 
         [TearDown]
@@ -27,15 +27,22 @@ namespace logviewer.tests
             {
                 File.Delete(TestPath);
             }
+            if (File.Exists(RecentPath))
+            {
+                File.Delete(RecentPath);
+            }
         }
 
         #endregion
 
         private const string TestPath = "f";
+        private const string RecentPath = "r";
         private Mockery mockery;
         private ILogView view;
         private LogController controller;
         private const string LogPathProperty = "LogPath";
+        private const string ClearRecentFilesListMethod = "ClearRecentFilesList";
+        private const string CreateRecentFileItemMethod = "CreateRecentFileItem";
         const string MessageExamples = "2008-12-27 19:31:47,250 [4688] INFO \n2008-12-27 19:40:11,906 [5272] ERROR ";
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
@@ -145,6 +152,30 @@ namespace logviewer.tests
             result.Write(bytes, 0, bytes.Length);
             result.Seek(0, SeekOrigin.Begin);
             return result;
+        }
+
+        [Test]
+        public void ReadRecentFiles()
+        {
+            Expect.Once.On(this.view).Method(ClearRecentFilesListMethod);
+            controller.ReadRecentFiles();
+        }
+        
+        [Test]
+        public void SaveRecentFiles()
+        {
+            Expect.Exactly(2).On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
+            controller.SaveRecentFiles();
+        }
+        
+        [Test]
+        public void SaveAndReadRecentFiles()
+        {
+            Expect.Exactly(2).On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
+            Expect.Once.On(this.view).Method(ClearRecentFilesListMethod);
+            Expect.Once.On(this.view).Method(CreateRecentFileItemMethod).Will(Return.Value(TestPath));
+            controller.SaveRecentFiles();
+            controller.ReadRecentFiles();
         }
     }
 }
