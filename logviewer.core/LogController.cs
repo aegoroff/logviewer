@@ -412,7 +412,7 @@ namespace logviewer.core
                     return this.view.LogPath;
                 }
 
-                if (srcEncoding.Equals(Encoding.UTF8))
+                if (srcEncoding.Equals(Encoding.UTF8) || srcEncoding.Equals(Encoding.ASCII))
                 {
                     return this.view.LogPath;
                 }
