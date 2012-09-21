@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using NLog.Targets;
 using Net.Sgoliver.NRtfTree.Core;
 using Net.Sgoliver.NRtfTree.Util;
 using Ude;
@@ -115,6 +117,21 @@ namespace logviewer.core
         public void DefineFatalMarker(string marker)
         {
             this.fatalMarker = marker;
+        }
+
+        public void InitializeLogger()
+        {
+            var target = new RichTextBoxTarget
+                {
+                    Layout = @"${date:format=yyyy-MM-dd HH\:mm\:ss,fff} ${level:upperCase=True} ${logger} ${message}${newline}${onexception:Process\: ${processname}${newline}Process time\: ${processtime}${newline}Process ID\: ${processid}${newline}Thread ID\: ${threadid}${newline}Details\:${newline}${exception:format=ToString}}",
+                    ControlName = "syntaxRichTextBox1",
+                    FormName = "MainDlg",
+                    UseDefaultRowColoringRules = false
+                };
+            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Warn", "Orange", "White", FontStyle.Regular));
+            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Error", "Red", "White", FontStyle.Regular));
+            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White", FontStyle.Regular));
+            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
         }
 
         public string ReadLog()

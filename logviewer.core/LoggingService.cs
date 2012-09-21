@@ -4,7 +4,7 @@ using NLog;
 
 namespace logviewer.core
 {
-    internal class Log : LoggingService
+    public class Log : LoggingService
     {
         private static readonly Log instance = new Log();
 

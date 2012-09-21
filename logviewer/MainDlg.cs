@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using logviewer.Properties;
 using logviewer.core;
@@ -34,6 +35,7 @@ namespace logviewer
         public MainDlg()
         {
             this.InitializeComponent();
+            Application.ThreadException += OnUnhandledException;
             this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
             this.controller.DefineTraceMarker(this.levels[0]);
             this.controller.DefineDebugMarker(this.levels[1]);
@@ -47,6 +49,11 @@ namespace logviewer
             this.toolStripComboBox3.SelectedIndex = 0;
             this.EnableControls(false);
             this.controller.ReadRecentFiles();
+        }
+
+        private static void OnUnhandledException(object sender, ThreadExceptionEventArgs e)
+        {
+            Log.Instance.Fatal(e.Exception.Message, e.Exception);
         }
 
         #region ILogView Members
@@ -161,7 +168,11 @@ namespace logviewer
         {
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.controller.DisplayedMessages, this.controller.TotalMessages);
-            this.syntaxRichTextBox1.Rtf = e.Result as string;
+            var rtf = e.Result as string;
+            if (!string.IsNullOrWhiteSpace(rtf))
+            {
+                this.syntaxRichTextBox1.Rtf = rtf;
+            }
             this.controller.ReadRecentFiles();
             if (this.textFilterChanging)
             {
@@ -238,6 +249,11 @@ namespace logviewer
         {
             this.controller.ClearCache();
             this.OnChangeFilter(sender, e);
+        }
+
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            controller.InitializeLogger();
         }
     }
 }
