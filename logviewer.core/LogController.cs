@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,16 +20,6 @@ namespace logviewer.core
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
 
-        private static readonly Dictionary<LogLevel, Color> levelsMap = new Dictionary<LogLevel, Color>
-            {
-                { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
-                { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
-                { LogLevel.Info, Color.Green },
-                { LogLevel.Warn, Color.Orange },
-                { LogLevel.Error, Color.Red },
-                { LogLevel.Fatal, Color.DarkViolet }
-            };
-
         private static readonly string[] sizes = new[]
             {
                 Resources.SizeBytes,
@@ -46,11 +35,13 @@ namespace logviewer.core
         private readonly string recentFilesFilePath;
         private readonly Regex regex;
         private readonly ILogView view;
+
         private bool cancelReading;
         private string currentPath;
         private string debugMarker = "DEBUG";
         private string errorMarker = "ERROR";
         private string fatalMarker = "FATAL";
+
         private string infoMarker = "INFO";
         private LogLevel maxFilter = LogLevel.Fatal;
         private List<LogMessage> messagesCache;
@@ -305,14 +296,7 @@ namespace logviewer.core
 
                 foreach (var msg in this.Messages.Where(m => !this.Filter(m)))
                 {
-                    var formatBody = new RtfCharFormat
-                        {
-                            Color = Colorize(msg.Level),
-                            Font = "Courier New",
-                            Size = 10,
-                            Bold = true
-                        };
-                    doc.AddText(msg.Header.Trim(), formatBody);
+                    doc.AddText(msg.Header.Trim(), msg.HeadFormat);
                     doc.AddText(Environment.NewLine);
 
                     var txt = msg.Body;
@@ -320,14 +304,7 @@ namespace logviewer.core
                     {
                         continue;
                     }
-                    var format = new RtfCharFormat
-                        {
-                            Color = formatBody.Color,
-                            Font = formatBody.Font,
-                            Size = formatBody.Size
-                        };
-
-                    doc.AddText(txt.Trim(), format);
+                    doc.AddText(txt.Trim(), msg.BodyFormat);
                     doc.AddText(Environment.NewLine);
                 }
                 doc.Close();
@@ -354,11 +331,6 @@ namespace logviewer.core
             }
             var r = new Regex(this.textFilter, RegexOptions.IgnoreCase);
             return !r.IsMatch(message.ToString());
-        }
-
-        private static Color Colorize(LogLevel level)
-        {
-            return levelsMap[level];
         }
 
         private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
