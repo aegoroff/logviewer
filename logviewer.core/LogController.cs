@@ -297,15 +297,16 @@ namespace logviewer.core
                 foreach (var msg in this.Messages.Where(m => !this.Filter(m)))
                 {
                     doc.AddText(msg.Header.Trim(), msg.HeadFormat);
-                    doc.AddText(Environment.NewLine);
+                    doc.AddText("\n");
 
                     var txt = msg.Body;
                     if (string.IsNullOrWhiteSpace(txt))
                     {
+                        doc.AddText("\n");
                         continue;
                     }
                     doc.AddText(txt.Trim(), msg.BodyFormat);
-                    doc.AddText(Environment.NewLine);
+                    doc.AddText("\n\n\n");
                 }
                 doc.Close();
 

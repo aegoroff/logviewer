@@ -37,7 +37,7 @@ namespace logviewer.core
 
         public string Body
         {
-            get { return this.Strings.Count < 2 ? string.Empty : string.Join(Environment.NewLine, this.MessageBody()); }
+            get { return this.Strings.Count < 2 ? string.Empty : string.Join("\n", this.MessageBody()); }
         }
 
         public RtfCharFormat HeadFormat
