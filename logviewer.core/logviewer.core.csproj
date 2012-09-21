@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="NRtfTree">
       <HintPath>..\lib\NRtfTree.dll</HintPath>
     </Reference>
@@ -51,6 +55,7 @@
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
     <Compile Include="LogController.cs" />
+    <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -58,6 +63,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SafeRunner.cs" />
     <Compile Include="SizeUnit.cs" />
   </ItemGroup>
   <ItemGroup>

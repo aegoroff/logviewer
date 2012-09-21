@@ -48,7 +48,7 @@ namespace logviewer.core
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log.Instance.Error(e.Message, e);
             }
         }
 
@@ -65,7 +65,7 @@ namespace logviewer.core
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log.Instance.Error(e.Message, e);
             }
             return default(T);
         }
@@ -85,7 +85,7 @@ namespace logviewer.core
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log.Instance.Error(e.Message, e);
             }
         }
 
@@ -105,7 +105,7 @@ namespace logviewer.core
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log.Instance.Error(e.Message, e);
             }
             return default(TReturn);
         }
