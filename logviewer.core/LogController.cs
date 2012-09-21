@@ -207,7 +207,7 @@ namespace logviewer.core
             {
                 return string.Empty;
             }
-            if (string.IsNullOrWhiteSpace(this.currentPath) || !this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase))
+            if (!this.CurrentPathCached)
             {
                 this.currentPath = this.view.LogPath;
                 var reader = File.OpenText(path);
@@ -369,7 +369,7 @@ namespace logviewer.core
 
         private string Convert()
         {
-            if (!File.Exists(this.view.LogPath))
+            if (!File.Exists(this.view.LogPath) || this.CurrentPathCached)
             {
                 return this.view.LogPath;
             }
@@ -421,6 +421,11 @@ namespace logviewer.core
                 }
             }
             return tmp;
+        }
+
+        private bool CurrentPathCached
+        {
+            get { return !string.IsNullOrWhiteSpace(this.currentPath) && this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase); }
         }
 
         private void CreateHumanReadableSize()
