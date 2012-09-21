@@ -77,9 +77,20 @@ namespace logviewer.core
         #region Public Properties
 
         public string HumanReadableLogSize { get; private set; }
+
         public long LogSize { get; private set; }
 
         public List<LogMessage> Messages { get; private set; }
+
+        public int TotalMessages
+        {
+            get { return this.messagesCache == null ? 0 : this.messagesCache.Count; }
+        }
+
+        public int DisplayedMessages
+        {
+            get { return this.Messages.Count; }
+        }
 
         #endregion
 
@@ -144,7 +155,7 @@ namespace logviewer.core
         {
             this.cancelReading = true;
         }
-        
+
         public void ClearCache()
         {
             this.currentPath = null;

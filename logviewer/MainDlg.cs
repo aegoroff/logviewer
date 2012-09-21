@@ -27,6 +27,7 @@ namespace logviewer
         private string logFilterMin;
         private string logFilterText;
         private string originalCapion;
+        private string originalLogInfo;
         private bool reverse;
         private bool textFilterChanging;
 
@@ -91,6 +92,7 @@ namespace logviewer
         private void KeepOriginalCaption()
         {
             this.originalCapion = this.Text;
+            this.originalLogInfo = this.toolStripStatusLabel2.Text;
         }
 
         private void OnOpen(object sender, EventArgs e)
@@ -158,6 +160,7 @@ namespace logviewer
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
+            this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.controller.DisplayedMessages, this.controller.TotalMessages);
             this.syntaxRichTextBox1.Rtf = e.Result as string;
             this.controller.ReadRecentFiles();
             if (this.textFilterChanging)
