@@ -61,6 +61,10 @@ namespace logviewer
 
         public void ClearRecentFilesList()
         {
+            foreach (ToolStripMenuItem item in this.recentFilesToolStripMenuItem.DropDownItems)
+            {
+                item.Click -= this.OnOpenRecentLogFile;
+            }
             this.recentFilesToolStripMenuItem.DropDownItems.Clear();
         }
 
