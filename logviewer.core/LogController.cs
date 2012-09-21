@@ -57,6 +57,7 @@ namespace logviewer.core
         private string textFilter;
         private string traceMarker = "TRACE";
         private string warnMarker = "WARN";
+        private List<LogMessage> messagesCache;
 
         #endregion
 
@@ -224,17 +225,17 @@ namespace logviewer.core
                 }
                 this.CreateHumanReadableSize();
 
-                return this.ReadLogTask(reader);
+                return this.ReadLog(reader);
             }
         }
 
-        private string ReadLogTask(StreamReader sr)
+        private string ReadLog(StreamReader sr)
         {
             if (this.cancelReading)
             {
                 return string.Empty;
             }
-            this.Messages = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
+            this.messagesCache = new List<LogMessage>((int)this.LogSize / MeanLogStringLength);
             var message = new LogMessage { Strings = new List<string>() };
 
             while (!sr.EndOfStream)
@@ -248,19 +249,23 @@ namespace logviewer.core
 
                 if (this.regex.IsMatch(line) && message.Strings.Count > 0)
                 {
-                    if (!this.Filter(message))
-                    {
-                        this.Messages.Add(message);
-                    }
+                    this.messagesCache.Add(message);
                     message.Strings = new List<string>();
                 }
 
                 message.Strings.Add(line);
             }
-            if (message.Strings.Count > 0 && !this.Filter(message))
+            if (message.Strings.Count > 0)
             {
-                this.Messages.Add(message);
+                this.messagesCache.Add(message);
             }
+            return this.CreateRtf();
+        }
+
+        private string CreateRtf()
+        {
+            this.Messages = new List<LogMessage>(this.messagesCache.Where(m => !this.Filter(m)));
+            
             if (this.reverseChronological)
             {
                 this.Messages.Reverse();
@@ -270,7 +275,7 @@ namespace logviewer.core
             {
                 var doc = new RtfDocument(rtfPath);
 
-                foreach (var msg in this.Messages)
+                foreach (var msg in this.Messages.Where(m => !this.Filter(m)))
                 {
                     var formatBody = new RtfCharFormat
                         {
