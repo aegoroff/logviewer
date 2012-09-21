@@ -52,9 +52,9 @@ namespace logviewer.core
         private string errorMarker = "ERROR";
         private string fatalMarker = "FATAL";
         private string infoMarker = "INFO";
-        private string maxFilter;
+        private LogLevel maxFilter = LogLevel.Fatal;
         private List<LogMessage> messagesCache;
-        private string minFilter;
+        private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
         private string textFilter;
         private string traceMarker = "TRACE";
@@ -163,12 +163,12 @@ namespace logviewer.core
 
         public void MinFilter(string value)
         {
-            this.minFilter = value;
+            this.minFilter = this.DetectLevel(value);
         }
 
         public void MaxFilter(string value)
         {
-            this.maxFilter = value;
+            this.maxFilter = this.DetectLevel(value, LogLevel.Fatal);
         }
 
         public void TextFilter(string value)
@@ -268,19 +268,26 @@ namespace logviewer.core
                         break;
                     }
 
-                    if (this.regex.IsMatch(line) && message.Strings.Count > 0)
+                    if (this.regex.IsMatch(line))
                     {
-                        this.messagesCache.Add(message);
+                        this.AddMessageToCache(message);
                         message.Strings = new List<string>();
                     }
 
                     message.Strings.Add(line);
                 }
-                if (message.Strings.Count > 0)
-                {
-                    this.messagesCache.Add(message);
-                }
+                this.AddMessageToCache(message);
             }
+        }
+
+        private void AddMessageToCache(LogMessage message)
+        {
+            if (message.Strings.Count == 0)
+            {
+                return;
+            }
+            message.Level = this.DetectLevel(message.Header);
+            this.messagesCache.Add(message);
         }
 
         private string CreateRtf()
@@ -340,8 +347,7 @@ namespace logviewer.core
 
         private bool Filter(LogMessage message)
         {
-            var messageLevel = this.DetectLevel(message.Header);
-            var filteredByLevel = messageLevel < this.DetectLevel(this.minFilter) || messageLevel > this.DetectLevel(this.maxFilter, LogLevel.Fatal);
+            var filteredByLevel = message.Level < this.minFilter || message.Level > this.maxFilter;
             if (string.IsNullOrWhiteSpace(this.textFilter) || filteredByLevel)
             {
                 return filteredByLevel;

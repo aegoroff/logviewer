@@ -9,6 +9,7 @@ namespace logviewer.core
         #region Constants and Fields
 
         internal IList<string> Strings;
+        internal LogLevel Level;
 
         #endregion
 
