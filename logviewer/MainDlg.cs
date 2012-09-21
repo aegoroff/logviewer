@@ -205,6 +205,7 @@ namespace logviewer
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
+            this.controller.ClearCache();
             this.StartReading();
         }
 
@@ -224,6 +225,12 @@ namespace logviewer
         {
             this.textFilterChanging = true;
             this.StartReading();
+        }
+
+        private void OnRefresh(object sender, EventArgs e)
+        {
+            this.controller.ClearCache();
+            this.OnChangeFilter(sender, e);
         }
     }
 }

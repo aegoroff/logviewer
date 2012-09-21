@@ -144,6 +144,11 @@ namespace logviewer.core
         {
             this.cancelReading = true;
         }
+        
+        public void ClearCache()
+        {
+            this.currentPath = null;
+        }
 
         public void MinFilter(string value)
         {
