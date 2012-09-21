@@ -307,7 +307,7 @@ namespace logviewer.core
                 {
                     var formatBody = new RtfCharFormat
                         {
-                            Color = this.Colorize(msg.Header),
+                            Color = Colorize(msg.Level),
                             Font = "Courier New",
                             Size = 10,
                             Bold = true
@@ -356,9 +356,9 @@ namespace logviewer.core
             return !r.IsMatch(message.ToString());
         }
 
-        private Color Colorize(string line)
+        private static Color Colorize(LogLevel level)
         {
-            return levelsMap[this.DetectLevel(line)];
+            return levelsMap[level];
         }
 
         private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
