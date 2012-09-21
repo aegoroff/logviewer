@@ -74,7 +74,7 @@ namespace logviewer
             this.toolStripButton2.Enabled = enabled;
             this.refreshToolStripMenuItem.Enabled = enabled;
             this.exportToolStripMenuItem.Enabled = enabled;
-            toolStripTextBox1.Enabled = enabled;
+            this.toolStripTextBox1.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
@@ -148,7 +148,7 @@ namespace logviewer
             this.controller.MaxFilter(this.logFilterMax);
             this.controller.TextFilter(this.logFilterText);
             this.controller.Ordering(this.reverse);
-            e.Result = this.controller.ReadLog(e.Argument as string);
+            e.Result = this.controller.ReadLog();
         }
 
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -156,9 +156,9 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             this.syntaxRichTextBox1.Rtf = e.Result as string;
             this.controller.ReadRecentFiles();
-            if (textFilterChanging)
+            if (this.textFilterChanging)
             {
-                toolStripTextBox1.Focus();
+                this.toolStripTextBox1.Focus();
             }
         }
 
@@ -190,7 +190,7 @@ namespace logviewer
 
         private void OnChangeFilter(object sender, EventArgs e)
         {
-            textFilterChanging = false;
+            this.textFilterChanging = false;
             this.StartReading();
         }
 
@@ -222,7 +222,7 @@ namespace logviewer
 
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
-            textFilterChanging = true;
+            this.textFilterChanging = true;
             this.StartReading();
         }
     }

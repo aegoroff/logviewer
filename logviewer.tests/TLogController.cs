@@ -51,7 +51,7 @@ namespace logviewer.tests
         public void ReadEmptyFile()
         {
             File.Create(TestPath).Dispose();
-            Assert.IsNotEmpty(controller.ReadLog(TestPath));
+            Assert.IsNotEmpty(controller.ReadLog());
             Assert.That(controller.LogSize, NUnit.Framework.Is.EqualTo(0));
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("0 Bytes"));
@@ -60,7 +60,9 @@ namespace logviewer.tests
         [Test]
         public void ReadFromBadPath()
         {
-            Assert.IsEmpty(controller.ReadLog(string.Empty));
+            Expect.Never.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
+            Expect.Never.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
+            Assert.IsEmpty(controller.ReadLog());
             Assert.IsEmpty(controller.Messages);
             Assert.IsNull(controller.HumanReadableLogSize);
         }
@@ -69,7 +71,7 @@ namespace logviewer.tests
         public void ReadNormalLog()
         {
             File.WriteAllText(TestPath, MessageExamples);
-            Assert.IsNotEmpty(controller.ReadLog(TestPath));
+            Assert.IsNotEmpty(controller.ReadLog());
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
             Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("80 Bytes"));
         }

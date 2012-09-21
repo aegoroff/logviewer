@@ -47,17 +47,18 @@ namespace logviewer.core
         private readonly Regex regex;
         private readonly ILogView view;
         private bool cancelReading;
+        private string currentPath;
         private string debugMarker = "DEBUG";
         private string errorMarker = "ERROR";
         private string fatalMarker = "FATAL";
         private string infoMarker = "INFO";
         private string maxFilter;
+        private List<LogMessage> messagesCache;
         private string minFilter;
         private bool reverseChronological;
         private string textFilter;
         private string traceMarker = "TRACE";
         private string warnMarker = "WARN";
-        private List<LogMessage> messagesCache;
 
         #endregion
 
@@ -114,12 +115,12 @@ namespace logviewer.core
             this.fatalMarker = marker;
         }
 
-        public string ReadLog(string path)
+        public string ReadLog()
         {
             this.cancelReading = false;
             var convertedPath = Executive.SafeRun<string>(this.Convert);
-            var useConverted = !string.IsNullOrWhiteSpace(convertedPath) && !convertedPath.Equals(path, StringComparison.OrdinalIgnoreCase);
-            var filePath = useConverted ? convertedPath : path;
+            var useConverted = !string.IsNullOrWhiteSpace(convertedPath) && !convertedPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
+            var filePath = useConverted ? convertedPath : this.view.LogPath;
             try
             {
                 return Executive.SafeRun<string, string>(this.ReadLogInternal, filePath);
@@ -202,20 +203,26 @@ namespace logviewer.core
 
         private string ReadLogInternal(string path)
         {
-            if (!File.Exists(path))
+            if (!File.Exists(this.view.LogPath))
             {
                 return string.Empty;
             }
-            var reader = File.OpenText(path);
-            return this.ReadLogInternal(reader);
+            if (string.IsNullOrWhiteSpace(this.currentPath) || !this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase))
+            {
+                this.currentPath = this.view.LogPath;
+                var reader = File.OpenText(path);
+                this.CacheStream(reader);
+            }
+            return this.CreateRtf();
         }
 
         private string ReadLogInternal(Stream stream)
         {
-            return this.ReadLogInternal(new StreamReader(stream));
+            this.CacheStream(new StreamReader(stream));
+            return this.CreateRtf();
         }
 
-        private string ReadLogInternal(StreamReader reader)
+        private void CacheStream(StreamReader reader)
         {
             using (reader)
             {
@@ -224,48 +231,41 @@ namespace logviewer.core
                     this.LogSize = reader.BaseStream.Length;
                 }
                 this.CreateHumanReadableSize();
-
-                return this.ReadLog(reader);
-            }
-        }
-
-        private string ReadLog(StreamReader sr)
-        {
-            if (this.cancelReading)
-            {
-                return string.Empty;
-            }
-            this.messagesCache = new List<LogMessage>((int)this.LogSize / MeanLogStringLength);
-            var message = new LogMessage { Strings = new List<string>() };
-
-            while (!sr.EndOfStream)
-            {
-                var line = sr.ReadLine();
-
-                if (line == null)
+                if (this.cancelReading)
                 {
-                    break;
+                    return;
                 }
+                this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
+                var message = new LogMessage { Strings = new List<string>() };
 
-                if (this.regex.IsMatch(line) && message.Strings.Count > 0)
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    if (this.regex.IsMatch(line) && message.Strings.Count > 0)
+                    {
+                        this.messagesCache.Add(message);
+                        message.Strings = new List<string>();
+                    }
+
+                    message.Strings.Add(line);
+                }
+                if (message.Strings.Count > 0)
                 {
                     this.messagesCache.Add(message);
-                    message.Strings = new List<string>();
                 }
-
-                message.Strings.Add(line);
             }
-            if (message.Strings.Count > 0)
-            {
-                this.messagesCache.Add(message);
-            }
-            return this.CreateRtf();
         }
 
         private string CreateRtf()
         {
             this.Messages = new List<LogMessage>(this.messagesCache.Where(m => !this.Filter(m)));
-            
+
             if (this.reverseChronological)
             {
                 this.Messages.Reverse();
@@ -405,7 +405,6 @@ namespace logviewer.core
                     f.WriteByte(0xBB);
                     f.WriteByte(0xBF);
 
-                        
                     var sr = new StreamReader(stream, srcEncoding);
                     using (sr)
                     {
