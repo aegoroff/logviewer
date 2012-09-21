@@ -201,6 +201,11 @@ namespace logviewer.core
 
         #region Methods
 
+        private bool CurrentPathCached
+        {
+            get { return !string.IsNullOrWhiteSpace(this.currentPath) && this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase); }
+        }
+
         private string ReadLogInternal(string path)
         {
             if (!File.Exists(this.view.LogPath))
@@ -421,11 +426,6 @@ namespace logviewer.core
                 }
             }
             return tmp;
-        }
-
-        private bool CurrentPathCached
-        {
-            get { return !string.IsNullOrWhiteSpace(this.currentPath) && this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase); }
         }
 
         private void CreateHumanReadableSize()
