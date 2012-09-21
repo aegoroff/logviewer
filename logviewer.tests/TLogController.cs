@@ -73,7 +73,18 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             Assert.IsNotEmpty(controller.ReadLog());
             Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("80 Bytes"));
+            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74 Bytes"));
+        }
+        
+        [Test]
+        public void ReadNormalLogWin1251()
+        {
+            const string messageExamples1251 = "2008-12-27 19:31:47,250 [4688] INFO \n2008-12-27 19:40:11,906 [тест] ERROR ";
+            File.WriteAllText(TestPath, messageExamples1251, Encoding.GetEncoding("windows-1251"));
+            Assert.IsNotEmpty(controller.ReadLog());
+            Assert.That(MessageExamples.Length, NUnit.Framework.Is.EqualTo(messageExamples1251.Length));
+            Assert.That(controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("84 Bytes"));
         }
         
         [Test]
