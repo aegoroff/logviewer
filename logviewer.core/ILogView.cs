@@ -11,5 +11,6 @@ namespace logviewer.core
 	    bool OpenLogFile();
 	    void ReadLog();
         void CancelRead();
+        void LoadLog(string path);
 	}
 }

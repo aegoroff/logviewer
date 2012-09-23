@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NLog.Targets;
-using Net.Sgoliver.NRtfTree.Core;
 using Net.Sgoliver.NRtfTree.Util;
 using Ude;
 using logviewer.core.Properties;
@@ -136,6 +135,22 @@ namespace logviewer.core
             target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White",
                                                                        FontStyle.Regular));
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
+        }
+
+        public void LoadLog(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            {
+                return;
+            }
+            try
+            {
+                this.view.LoadLog(path);
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
 
         public string ReadLog()
@@ -336,37 +351,24 @@ namespace logviewer.core
                 this.Messages.Reverse();
             }
             var rtfPath = Path.GetTempFileName();
-            try
-            {
-                var doc = new RtfDocument(rtfPath);
+            var doc = new RtfDocument(rtfPath);
 
-                foreach (var msg in this.Messages.Where(m => !this.Filter(m)))
+            foreach (var msg in this.Messages.Where(m => !this.Filter(m)))
+            {
+                doc.AddText(msg.Header.Trim(), msg.HeadFormat);
+                doc.AddText("\n");
+
+                var txt = msg.Body;
+                if (string.IsNullOrWhiteSpace(txt))
                 {
-                    doc.AddText(msg.Header.Trim(), msg.HeadFormat);
                     doc.AddText("\n");
-
-                    var txt = msg.Body;
-                    if (string.IsNullOrWhiteSpace(txt))
-                    {
-                        doc.AddText("\n");
-                        continue;
-                    }
-                    doc.AddText(txt.Trim(), msg.BodyFormat);
-                    doc.AddText("\n\n\n");
+                    continue;
                 }
-                doc.Close();
-
-                var tree = new RtfTree();
-                tree.LoadRtfFile(rtfPath);
-                return tree.Rtf;
+                doc.AddText(txt.Trim(), msg.BodyFormat);
+                doc.AddText("\n\n\n");
             }
-            finally
-            {
-                if (File.Exists(rtfPath))
-                {
-                    File.Delete(rtfPath);
-                }
-            }
+            doc.Close();
+            return rtfPath;
         }
 
         private bool Filter(LogMessage message)

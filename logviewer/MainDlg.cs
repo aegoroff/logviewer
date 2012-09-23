@@ -36,7 +36,8 @@ namespace logviewer
         {
             this.InitializeComponent();
             Application.ThreadException += OnUnhandledException;
-            this.controller = new MainController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
+            this.controller = new MainController(this, ConfigurationManager.AppSettings["StartMessagePattern"],
+                                                 Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
             this.controller.DefineTraceMarker(this.levels[0]);
             this.controller.DefineDebugMarker(this.levels[1]);
             this.controller.DefineInfoMarker(this.levels[2]);
@@ -60,10 +61,20 @@ namespace logviewer
 
         public string LogPath { get; set; }
 
-        public string LogFileName { get { return this.openFileDialog1.FileName; } }
-        
-        public bool IsBusy { get { return this.logReader.IsBusy; } }
-        public bool CancellationPending { get { return this.logReader.CancellationPending; } }
+        public string LogFileName
+        {
+            get { return this.openFileDialog1.FileName; }
+        }
+
+        public bool IsBusy
+        {
+            get { return this.logReader.IsBusy; }
+        }
+
+        public bool CancellationPending
+        {
+            get { return this.logReader.CancellationPending; }
+        }
 
         public void CreateRecentFileItem(string file)
         {
@@ -130,6 +141,13 @@ namespace logviewer
             logReader.CancelAsync();
         }
 
+        public void LoadLog(string path)
+        {
+            this.syntaxRichTextBox1.SuspendLayout();
+            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
+            this.syntaxRichTextBox1.ResumeLayout();
+        }
+
         private void WatchLogFile()
         {
             this.logWatch.Path = Path.GetDirectoryName(this.LogPath);
@@ -170,12 +188,9 @@ namespace logviewer
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
-            this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.controller.DisplayedMessages, this.controller.TotalMessages);
-            var rtf = e.Result as string;
-            if (!string.IsNullOrWhiteSpace(rtf))
-            {
-                this.syntaxRichTextBox1.Rtf = rtf;
-            }
+            this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.controller.DisplayedMessages,
+                                                            this.controller.TotalMessages);
+            this.controller.LoadLog(e.Result as string);
             this.controller.ReadRecentFiles();
             if (this.textFilterChanging)
             {
@@ -229,7 +244,8 @@ namespace logviewer
             {
                 return;
             }
-            File.WriteAllText(this.exportDialog.FileName, this.syntaxRichTextBox1.Rtf, Encoding.GetEncoding("windows-1251"));
+            File.WriteAllText(this.exportDialog.FileName, this.syntaxRichTextBox1.Rtf,
+                              Encoding.GetEncoding("windows-1251"));
         }
 
         private void OnChangeTextFilter(object sender, EventArgs e)

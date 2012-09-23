@@ -50,6 +50,7 @@ namespace logviewer.tests
         private const string LogFileNameProperty = "LogFileName";
         private const string IsBusyProperty = "IsBusy";
         private const string ReadLogMethod = "ReadLog";
+        private const string LoadLogMethod = "LoadLog";
 
         [Test]
         public void ReadEmptyFile()
@@ -221,6 +222,28 @@ namespace logviewer.tests
             Expect.Once.On(this.view).SetProperty(LogPathProperty).To(TestPath);
             Expect.Once.On(this.view).GetProperty(IsBusyProperty).Will(Return.Value(true));
             controller.OpenLogFile();
+        }
+
+        [Test]
+        public void LoadLog()
+        {
+            File.WriteAllText(TestPath, string.Empty);
+            Expect.Once.On(this.view).Method(LoadLogMethod).With(TestPath);
+            controller.LoadLog(TestPath);
+        }
+        
+        [Test]
+        public void LoadLogUnexistPath()
+        {
+            Expect.Never.On(this.view).Method(LoadLogMethod).WithAnyArguments();
+            controller.LoadLog(TestPath);
+        }
+        
+        [Test]
+        public void LoadLogEmpty()
+        {
+            Expect.Never.On(this.view).Method(LoadLogMethod).WithAnyArguments();
+            controller.LoadLog(string.Empty);
         }
     }
 }
