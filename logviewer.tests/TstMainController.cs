@@ -7,7 +7,7 @@ using logviewer.core;
 namespace logviewer.tests
 {
     [TestFixture]
-    public class TstLogController
+    public class TstMainController
     {
         #region Setup/Teardown
 
