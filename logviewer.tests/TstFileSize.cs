@@ -4,7 +4,7 @@ using logviewer.core;
 namespace logviewer.tests
 {
     [TestFixture]
-    internal class TFileSize
+    internal class TstFileSize
     {
         [TestCase(0UL, SizeUnit.Bytes, 0.0)]
         [TestCase(1023UL, SizeUnit.Bytes, 0.0)]

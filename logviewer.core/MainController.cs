@@ -14,7 +14,7 @@ using logviewer.core.Properties;
 
 namespace logviewer.core
 {
-    public class LogController
+    public class MainController
     {
         #region Constants and Fields
 
@@ -57,7 +57,7 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public LogController(ILogView view, string startMessagePattern, string recentFilesFilePath)
+        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath)
         {
             this.recentFilesFilePath = recentFilesFilePath;
             this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);

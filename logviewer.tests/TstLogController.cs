@@ -7,7 +7,7 @@ using logviewer.core;
 namespace logviewer.tests
 {
     [TestFixture]
-    public class TLogController
+    public class TstLogController
     {
         #region Setup/Teardown
 
@@ -17,7 +17,7 @@ namespace logviewer.tests
             this.mockery = new Mockery();
             this.view = this.mockery.NewMock<ILogView>();
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            this.controller = new LogController(this.view, MessageStart, RecentPath);
+            this.controller = new MainController(this.view, MessageStart, RecentPath);
         }
 
         [TearDown]
@@ -39,7 +39,7 @@ namespace logviewer.tests
         private const string RecentPath = "r";
         private Mockery mockery;
         private ILogView view;
-        private LogController controller;
+        private MainController controller;
         private const string LogPathProperty = "LogPath";
         private const string ClearRecentFilesListMethod = "ClearRecentFilesList";
         private const string CreateRecentFileItemMethod = "CreateRecentFileItem";

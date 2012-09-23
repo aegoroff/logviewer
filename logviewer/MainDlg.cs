@@ -12,7 +12,7 @@ namespace logviewer
 {
     public partial class MainDlg : Form, ILogView
     {
-        private readonly LogController controller;
+        private readonly MainController controller;
 
         private readonly string[] levels = new[]
             {
@@ -36,7 +36,7 @@ namespace logviewer
         {
             this.InitializeComponent();
             Application.ThreadException += OnUnhandledException;
-            this.controller = new LogController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
+            this.controller = new MainController(this, ConfigurationManager.AppSettings["StartMessagePattern"], Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"));
             this.controller.DefineTraceMarker(this.levels[0]);
             this.controller.DefineDebugMarker(this.levels[1]);
             this.controller.DefineInfoMarker(this.levels[2]);
