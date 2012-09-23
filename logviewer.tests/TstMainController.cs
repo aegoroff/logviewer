@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using NMock2;
 using NUnit.Framework;
@@ -229,7 +230,28 @@ namespace logviewer.tests
         {
             File.WriteAllText(TestPath, string.Empty);
             Expect.Once.On(this.view).Method(LoadLogMethod).With(TestPath);
+            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             controller.LoadLog(TestPath);
+            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
+        }
+        
+        [Test]
+        public void LoadLogThatThrows()
+        {
+            File.WriteAllText(TestPath, string.Empty);
+            Expect.Once.On(this.view).Method(LoadLogMethod).Will(Throw.Exception(new Exception()));
+            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
+            var thrown = false;
+            try
+            {
+                controller.LoadLog(TestPath);
+            }
+            catch (Exception)
+            {
+                thrown = true;
+            }
+            Assert.That(thrown, NUnit.Framework.Is.True);
+            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
         }
         
         [Test]
