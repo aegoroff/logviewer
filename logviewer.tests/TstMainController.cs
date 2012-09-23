@@ -46,6 +46,10 @@ namespace logviewer.tests
         const string MessageExamples = "2008-12-27 19:31:47,250 [4688] INFO \n2008-12-27 19:40:11,906 [5272] ERROR ";
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
+        private const string OpenLogFileMethod = "OpenLogFile";
+        private const string LogFileNameProperty = "LogFileName";
+        private const string IsBusyProperty = "IsBusy";
+        private const string ReadLogMethod = "ReadLog";
 
         [Test]
         public void ReadEmptyFile()
@@ -189,6 +193,34 @@ namespace logviewer.tests
             Expect.Once.On(this.view).Method(CreateRecentFileItemMethod).Will(Return.Value(TestPath));
             controller.SaveRecentFiles();
             controller.ReadRecentFiles();
+        }
+
+        [Test]
+        public void OpenLogFileCanceled()
+        {
+            Expect.Once.On(this.view).Method(OpenLogFileMethod).Will(Return.Value(false));
+            controller.OpenLogFile();
+        }
+        
+        [Test]
+        public void OpenLogFileOpenedAndNotBusy()
+        {
+            Expect.Once.On(this.view).Method(OpenLogFileMethod).Will(Return.Value(true));
+            Expect.Once.On(this.view).GetProperty(LogFileNameProperty).Will(Return.Value(TestPath));
+            Expect.Once.On(this.view).SetProperty(LogPathProperty).To(TestPath);
+            Expect.Once.On(this.view).GetProperty(IsBusyProperty).Will(Return.Value(false));
+            Expect.Once.On(this.view).Method(ReadLogMethod);
+            controller.OpenLogFile();
+        }
+        
+        [Test]
+        public void OpenLogFileOpenedAndBusy()
+        {
+            Expect.Once.On(this.view).Method(OpenLogFileMethod).Will(Return.Value(true));
+            Expect.Once.On(this.view).GetProperty(LogFileNameProperty).Will(Return.Value(TestPath));
+            Expect.Once.On(this.view).SetProperty(LogPathProperty).To(TestPath);
+            Expect.Once.On(this.view).GetProperty(IsBusyProperty).Will(Return.Value(true));
+            controller.OpenLogFile();
         }
     }
 }

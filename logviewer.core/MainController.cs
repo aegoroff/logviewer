@@ -129,9 +129,12 @@ namespace logviewer.core
                     FormName = "MainDlg",
                     UseDefaultRowColoringRules = false
                 };
-            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Warn", "Orange", "White", FontStyle.Regular));
-            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Error", "Red", "White", FontStyle.Regular));
-            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White", FontStyle.Regular));
+            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Warn", "Orange", "White",
+                                                                       FontStyle.Regular));
+            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Error", "Red", "White",
+                                                                       FontStyle.Regular));
+            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White",
+                                                                       FontStyle.Regular));
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
         }
 
@@ -139,7 +142,8 @@ namespace logviewer.core
         {
             this.cancelReading = false;
             var convertedPath = Executive.SafeRun<string>(this.Convert);
-            var useConverted = !string.IsNullOrWhiteSpace(convertedPath) && !convertedPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
+            var useConverted = !string.IsNullOrWhiteSpace(convertedPath) &&
+                               !convertedPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
             var filePath = useConverted ? convertedPath : this.view.LogPath;
             try
             {
@@ -207,7 +211,8 @@ namespace logviewer.core
             this.recentFiles.Clear();
             this.recentFiles.AddRange(files);
             this.view.ClearRecentFilesList();
-            foreach (var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
+            foreach (
+                var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
             {
                 this.view.CreateRecentFileItem(item);
             }
@@ -229,10 +234,11 @@ namespace logviewer.core
 
         public void OpenLogFile()
         {
-            if (view.OpenLogFile())
+            if (!view.OpenLogFile())
             {
-                view.LogPath = view.LogFileName;
+                return;
             }
+            view.LogPath = view.LogFileName;
             if (view.IsBusy)
             {
                 return;
@@ -246,7 +252,11 @@ namespace logviewer.core
 
         private bool CurrentPathCached
         {
-            get { return !string.IsNullOrWhiteSpace(this.currentPath) && this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase); }
+            get
+            {
+                return !string.IsNullOrWhiteSpace(this.currentPath) &&
+                       this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
+            }
         }
 
         private string ReadLogInternal(string path)
