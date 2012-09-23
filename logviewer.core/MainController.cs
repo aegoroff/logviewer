@@ -162,7 +162,12 @@ namespace logviewer.core
 
         public void CancelReading()
         {
+            if (!this.view.IsBusy || this.view.CancellationPending)
+            {
+                return;
+            }
             this.cancelReading = true;
+            this.view.CancelRead();
         }
 
         public void ClearCache()
@@ -220,6 +225,19 @@ namespace logviewer.core
                 this.recentFiles.Add(this.view.LogPath);
             }
             File.WriteAllLines(this.recentFilesFilePath, this.recentFiles);
+        }
+
+        public void OpenLogFile()
+        {
+            if (view.OpenLogFile())
+            {
+                view.LogPath = view.LogFileName;
+            }
+            if (view.IsBusy)
+            {
+                return;
+            }
+            view.ReadLog();
         }
 
         #endregion

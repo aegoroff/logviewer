@@ -58,13 +58,23 @@ namespace logviewer
 
         #region ILogView Members
 
-        public string LogPath { get; private set; }
+        public string LogPath { get; set; }
+
+        public string LogFileName { get { return this.openFileDialog1.FileName; } }
+        
+        public bool IsBusy { get { return this.logReader.IsBusy; } }
+        public bool CancellationPending { get { return this.logReader.CancellationPending; } }
 
         public void CreateRecentFileItem(string file)
         {
             var result = new ToolStripMenuItem(file) { Tag = file };
             result.Click += this.OnOpenRecentLogFile;
             this.recentFilesToolStripMenuItem.DropDownItems.Add(result);
+        }
+
+        public bool OpenLogFile()
+        {
+            return this.openFileDialog1.ShowDialog() == DialogResult.OK;
         }
 
         public void ClearRecentFilesList()
@@ -104,27 +114,20 @@ namespace logviewer
 
         private void OnOpen(object sender, EventArgs e)
         {
-            var r = this.openFileDialog1.ShowDialog();
-
-            if (r != DialogResult.OK)
-            {
-                return;
-            }
-            this.LogPath = this.openFileDialog1.FileName;
-
-            if (this.logReader.IsBusy)
-            {
-                return;
-            }
-            this.ReadLog();
+            this.controller.OpenLogFile();
         }
 
-        private void ReadLog()
+        public void ReadLog()
         {
             Executive.SafeRun(this.WatchLogFile);
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
             this.controller.SaveRecentFiles();
+        }
+
+        public void CancelRead()
+        {
+            logReader.CancelAsync();
         }
 
         private void WatchLogFile()
@@ -182,7 +185,7 @@ namespace logviewer
 
         private void OnClose(object sender, EventArgs e)
         {
-            this.CancelReading();
+            this.controller.CancelReading();
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
@@ -192,18 +195,8 @@ namespace logviewer
 
         private void OnExit(object sender, EventArgs e)
         {
-            this.CancelReading();
-            this.Close();
-        }
-
-        private void CancelReading()
-        {
-            if (!this.logReader.IsBusy || this.logReader.CancellationPending)
-            {
-                return;
-            }
             this.controller.CancelReading();
-            this.logReader.CancelAsync();
+            this.Close();
         }
 
         private void OnChangeFilter(object sender, EventArgs e)
