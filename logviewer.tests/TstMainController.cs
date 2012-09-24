@@ -122,36 +122,46 @@ namespace logviewer.tests
             Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
         }
 
-        [Test]
-        public void MaxFilter()
+        [TestCase("WARN", 1)]
+        [TestCase(@"\[?WARN\]?", 1)]
+        [TestCase(@"\[?WERN\]?", 2)]
+        [TestCase(@"ERROR", 2)]
+        public void MaxFilter(string f, int c)
         {
-            this.controller.MaxFilter("WARN");
+            this.controller.MaxFilter(f);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
         }
 
-        [Test]
-        public void MaxFilterBorder()
+        [TestCase(@"\[?WARN\]?", "WARN", 1)]
+        [TestCase(@"\[?WARN\]?", "WaRN", 2)]
+        public void MaxFilterWithCustomMarker(string m, string f, int c)
         {
-            this.controller.MaxFilter("ERROR");
+            this.controller.DefineWarnMarker(m);
+            this.controller.MaxFilter(f);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
         }
 
-        [Test]
-        public void MinFilter()
+        [TestCase("WARN", 1)]
+        [TestCase(@"\[?WARN\]?", 1)]
+        [TestCase(@"\[?WERN\]?", 2)]
+        [TestCase("INFO", 2)]
+        public void MinFilter(string f, int c)
         {
-            this.controller.MinFilter("WARN");
+            this.controller.MinFilter(f);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
         }
 
-        [Test]
-        public void MinFilterBorder()
+        [TestCase(@"\[?WARN\]?", "WARN", 1)]
+        [TestCase(@"\[?WARN\]?", "WaRN", 2)]
+        public void MinFilterWithCustomMarker(string m, string f, int c)
         {
-            this.controller.MinFilter("INFO");
+            this.controller.DefineWarnMarker(m);
+            this.controller.MinFilter(f);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
         }
 
         [Test]
