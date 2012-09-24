@@ -52,11 +52,6 @@ namespace logviewer
             this.controller.ReadRecentFiles();
         }
 
-        private static void OnUnhandledException(object sender, ThreadExceptionEventArgs e)
-        {
-            Log.Instance.Fatal(e.Exception.Message, e.Exception);
-        }
-
         #region ILogView Members
 
         public string LogPath { get; set; }
@@ -97,7 +92,32 @@ namespace logviewer
             this.recentFilesToolStripMenuItem.DropDownItems.Clear();
         }
 
+        public void ReadLog()
+        {
+            Executive.SafeRun(this.WatchLogFile);
+            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
+            this.StartReading();
+            this.controller.SaveRecentFiles();
+        }
+
+        public void CancelRead()
+        {
+            this.logReader.CancelAsync();
+        }
+
+        public void LoadLog(string path)
+        {
+            this.syntaxRichTextBox1.SuspendLayout();
+            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
+            this.syntaxRichTextBox1.ResumeLayout();
+        }
+
         #endregion
+
+        private static void OnUnhandledException(object sender, ThreadExceptionEventArgs e)
+        {
+            Log.Instance.Fatal(e.Exception.Message, e.Exception);
+        }
 
         private void EnableControls(bool enabled)
         {
@@ -126,26 +146,6 @@ namespace logviewer
         private void OnOpen(object sender, EventArgs e)
         {
             this.controller.OpenLogFile();
-        }
-
-        public void ReadLog()
-        {
-            Executive.SafeRun(this.WatchLogFile);
-            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
-            this.StartReading();
-            this.controller.SaveRecentFiles();
-        }
-
-        public void CancelRead()
-        {
-            logReader.CancelAsync();
-        }
-
-        public void LoadLog(string path)
-        {
-            this.syntaxRichTextBox1.SuspendLayout();
-            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
-            this.syntaxRichTextBox1.ResumeLayout();
         }
 
         private void WatchLogFile()
@@ -262,7 +262,7 @@ namespace logviewer
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            controller.InitializeLogger();
+            this.controller.InitializeLogger();
         }
     }
 }

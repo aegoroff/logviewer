@@ -249,16 +249,16 @@ namespace logviewer.core
 
         public void OpenLogFile()
         {
-            if (!view.OpenLogFile())
+            if (!this.view.OpenLogFile())
             {
                 return;
             }
-            view.LogPath = view.LogFileName;
-            if (view.IsBusy)
+            this.view.LogPath = this.view.LogFileName;
+            if (this.view.IsBusy)
             {
                 return;
             }
-            view.ReadLog();
+            this.view.ReadLog();
         }
 
         #endregion
