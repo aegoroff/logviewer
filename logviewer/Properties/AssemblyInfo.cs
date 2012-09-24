@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("logviewer")]
-[assembly: AssemblyDescription("Logviewer is intended for viewing NLog log files")]
+[assembly: AssemblyDescription("A simple application for convenient working with application text logs.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Alexander Egorov")]
 [assembly: AssemblyProduct("logviewer")]
