@@ -39,18 +39,18 @@ namespace logviewer.core
 
         private bool cancelReading;
         private string currentPath;
-        private string debugMarker = "DEBUG";
-        private string errorMarker = "ERROR";
-        private string fatalMarker = "FATAL";
+        private Regex debugMarker = "DEBUG".ToMarker();
+        private Regex errorMarker = "ERROR".ToMarker();
+        private Regex fatalMarker = "FATAL".ToMarker();
 
-        private string infoMarker = "INFO";
+        private Regex infoMarker = "INFO".ToMarker();
         private LogLevel maxFilter = LogLevel.Fatal;
         private List<LogMessage> messagesCache;
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
         private string textFilter;
-        private string traceMarker = "TRACE";
-        private string warnMarker = "WARN";
+        private Regex traceMarker = "TRACE".ToMarker();
+        private Regex warnMarker = "WARN".ToMarker();
 
         #endregion
 
@@ -90,32 +90,32 @@ namespace logviewer.core
 
         public void DefineTraceMarker(string marker)
         {
-            this.traceMarker = marker;
+            this.traceMarker = marker.ToMarker();
         }
 
         public void DefineDebugMarker(string marker)
         {
-            this.debugMarker = marker;
+            this.debugMarker = marker.ToMarker();
         }
 
         public void DefineInfoMarker(string marker)
         {
-            this.infoMarker = marker;
+            this.infoMarker = marker.ToMarker();
         }
 
         public void DefineWarnMarker(string marker)
         {
-            this.warnMarker = marker;
+            this.warnMarker = marker.ToMarker();
         }
 
         public void DefineErrorMarker(string marker)
         {
-            this.errorMarker = marker;
+            this.errorMarker = marker.ToMarker();
         }
 
         public void DefineFatalMarker(string marker)
         {
-            this.fatalMarker = marker;
+            this.fatalMarker = marker.ToMarker();
         }
 
         public void InitializeLogger()
@@ -388,27 +388,27 @@ namespace logviewer.core
             {
                 return defaultLevel;
             }
-            if (line.Contains(this.infoMarker))
+            if (this.infoMarker.IsMatch(line))
             {
                 return LogLevel.Info;
             }
-            if (line.Contains(this.errorMarker))
+            if (this.errorMarker.IsMatch(line))
             {
                 return LogLevel.Error;
             }
-            if (line.Contains(this.warnMarker))
+            if (this.warnMarker.IsMatch(line))
             {
                 return LogLevel.Warn;
             }
-            if (line.Contains(this.fatalMarker))
+            if (this.fatalMarker.IsMatch(line))
             {
                 return LogLevel.Fatal;
             }
-            if (line.Contains(this.debugMarker))
+            if (this.debugMarker.IsMatch(line))
             {
                 return LogLevel.Debug;
             }
-            if (line.Contains(this.traceMarker))
+            if (this.traceMarker.IsMatch(line))
             {
                 return LogLevel.Trace;
             }

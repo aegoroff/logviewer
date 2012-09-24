@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace logviewer.core
 {
@@ -34,6 +35,11 @@ namespace logviewer.core
             var dst = dstEncoding.GetString(dstBytes);
             dstBytes = dstEncoding.GetBytes(dst);
             stream.Write(dstBytes, 0, dstBytes.Length);
+        }
+
+        internal static Regex ToMarker(this string marker)
+        {
+            return new Regex(marker, RegexOptions.Compiled);
         }
     }
 }
