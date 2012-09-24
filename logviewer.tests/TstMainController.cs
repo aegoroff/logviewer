@@ -113,13 +113,14 @@ namespace logviewer.tests
             this.controller.LoadLog(TestPath);
         }
 
-        [Test]
-        public void MaxAndMaxFilter()
+        [TestCase("WARN", "WARN", MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
+        [TestCase("ERROR", "WARN", MessageExamples, 0)]
+        public void MaxAndMaxFilter(string min, string max, string msg, int count)
         {
-            this.controller.MinFilter("WARN");
-            this.controller.MaxFilter("WARN");
-            this.controller.ReadLog(CreateTestStream(MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN "));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
+            this.controller.MinFilter(min);
+            this.controller.MaxFilter(max);
+            this.controller.ReadLog(CreateTestStream(msg));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(count));
         }
 
         [TestCase("WARN", 1)]
@@ -162,15 +163,6 @@ namespace logviewer.tests
             this.controller.MinFilter(f);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
-        }
-
-        [Test]
-        public void MinFilterGreaterThenMax()
-        {
-            this.controller.MinFilter("ERROR");
-            this.controller.MaxFilter("WARN");
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
         }
 
         [Test]
