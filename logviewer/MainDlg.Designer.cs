@@ -352,7 +352,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
             this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
             this.syntaxRichTextBox1.ReadOnly = true;
