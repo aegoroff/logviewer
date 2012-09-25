@@ -32,7 +32,7 @@ namespace logviewer.core
                 Resources.SizeEBytes
             };
 
-        private readonly Regex[] markers;
+        private readonly List<Regex> markers;
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
@@ -52,14 +52,11 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IList<string> levels)
+        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels)
         {
             this.recentFilesFilePath = recentFilesFilePath;
-            this.markers = new Regex[levels.Count];
-            for (var i = 0; i < levels.Count; i++)
-            {
-                this.markers[i] = levels[i].ToMarker();
-            }
+            this.markers = new List<Regex>();
+            this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
             this.Messages = new List<LogMessage>();
@@ -377,7 +374,7 @@ namespace logviewer.core
             {
                 return defaultLevel;
             }
-            for (var i = 0; i < this.markers.Length; i++)
+            for (var i = 0; i < this.markers.Count; i++)
             {
                 if (this.markers[i].IsMatch(line))
                 {
