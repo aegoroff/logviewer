@@ -247,12 +247,12 @@
             this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBox1.Enabled = false;
             this.toolStripComboBox1.Items.AddRange(new object[] {
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARN",
-            "ERROR",
-            "FATAL"});
+            "TRACE - 0",
+            "DEBUG - 1",
+            "INFO - 2",
+            "WARN - 3",
+            "ERROR - 4",
+            "FATAL - 5"});
             this.toolStripComboBox1.Name = "toolStripComboBox1";
             this.toolStripComboBox1.Size = new System.Drawing.Size(80, 25);
             this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
@@ -268,12 +268,12 @@
             this.toolStripComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBox2.Enabled = false;
             this.toolStripComboBox2.Items.AddRange(new object[] {
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARN",
-            "ERROR",
-            "FATAL"});
+            "TRACE - 0",
+            "DEBUG - 1",
+            "INFO - 2",
+            "WARN - 3",
+            "ERROR - 4",
+            "FATAL - 5"});
             this.toolStripComboBox2.Name = "toolStripComboBox2";
             this.toolStripComboBox2.Size = new System.Drawing.Size(80, 25);
             this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
