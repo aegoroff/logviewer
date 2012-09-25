@@ -211,6 +211,16 @@ namespace logviewer.tests
             Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
             Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("0 Bytes"));
         }
+        
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ReadEmptyWhenMinGreaterThenMax()
+        {
+            this.controller.MinFilter((int)LogLevel.Error);
+            this.controller.MaxFilter((int)LogLevel.Info);
+            File.Create(TestPath).Dispose();
+            this.controller.ReadLog();
+        }
 
         [Test]
         public void ReadFromBadPath()

@@ -126,6 +126,10 @@ namespace logviewer.core
 
         public string ReadLog()
         {
+            if (minFilter > maxFilter && maxFilter >= LogLevel.Trace)
+            {
+                throw new ArgumentException("Min level is greater then max level");
+            }
             this.cancelReading = false;
             var convertedPath = Executive.SafeRun<string>(this.Convert);
             var useConverted = !string.IsNullOrWhiteSpace(convertedPath) &&

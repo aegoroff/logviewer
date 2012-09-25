@@ -181,7 +181,14 @@ namespace logviewer
             this.controller.MaxFilter(this.logFilterMax);
             this.controller.TextFilter(this.logFilterText);
             this.controller.Ordering(this.reverse);
-            e.Result = this.controller.ReadLog();
+            try
+            {
+                e.Result = this.controller.ReadLog();
+            }
+            catch (ArgumentException exc)
+            {
+                Log.Instance.ErrorFormatted(exc.Message);
+            }
         }
 
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
