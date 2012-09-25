@@ -256,7 +256,6 @@ namespace logviewer.tests
         [Test]
         public void SaveAndReadRecentFiles()
         {
-            Expect.Exactly(2).On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
             Expect.Once.On(this.view).Method(ClearRecentFilesListMethod);
             Expect.Once.On(this.view).Method(CreateRecentFileItemMethod).Will(Return.Value(TestPath));
             this.controller.SaveRecentFiles();
@@ -266,8 +265,22 @@ namespace logviewer.tests
         [Test]
         public void SaveRecentFiles()
         {
-            Expect.Exactly(2).On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
             this.controller.SaveRecentFiles();
+        }
+
+        [Test]
+        public void ExportRtfSuccess()
+        {
+            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(true));
+            Expect.Once.On(this.view).Method("SaveRtf");
+            this.controller.ExportToRtf();
+        }
+        
+        [Test]
+        public void ExportRtfFail()
+        {
+            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(false));
+            this.controller.ExportToRtf();
         }
     }
 }

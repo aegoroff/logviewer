@@ -12,5 +12,7 @@ namespace logviewer.core
 	    void ReadLog();
         void CancelRead();
         void LoadLog(string path);
+        bool OpenExport(string path);
+        void SaveRtf();
 	}
 }

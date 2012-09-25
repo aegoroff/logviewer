@@ -261,6 +261,15 @@ namespace logviewer.core
             this.view.ReadLog();
         }
 
+        public void ExportToRtf()
+        {
+            var path = Path.GetFileNameWithoutExtension(this.view.LogPath) + ".rtf";
+            if (this.view.OpenExport(path))
+            {
+                this.view.SaveRtf();
+            }
+        }
+
         #endregion
 
         #region Methods

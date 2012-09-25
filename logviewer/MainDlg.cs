@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using logviewer.Properties;
@@ -110,6 +109,17 @@ namespace logviewer
             this.syntaxRichTextBox1.SuspendLayout();
             this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
             this.syntaxRichTextBox1.ResumeLayout();
+        }
+
+        public bool OpenExport(string path)
+        {
+            this.exportDialog.FileName = path;
+            return this.exportDialog.ShowDialog() == DialogResult.OK;
+        }
+
+        public void SaveRtf()
+        {
+            this.syntaxRichTextBox1.SaveFile(this.exportDialog.FileName, RichTextBoxStreamType.RichText);
         }
 
         #endregion
@@ -237,15 +247,7 @@ namespace logviewer
 
         private void OnExport(object sender, EventArgs e)
         {
-            this.exportDialog.FileName = Path.GetFileNameWithoutExtension(this.LogPath) + ".rtf";
-            var r = this.exportDialog.ShowDialog();
-
-            if (r != DialogResult.OK)
-            {
-                return;
-            }
-            File.WriteAllText(this.exportDialog.FileName, this.syntaxRichTextBox1.Rtf,
-                              Encoding.GetEncoding("windows-1251"));
+            this.controller.ExportToRtf();
         }
 
         private void OnChangeTextFilter(object sender, EventArgs e)
