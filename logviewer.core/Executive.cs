@@ -39,8 +39,7 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
-        /// <param name="level"> Logging level </param>
-        public static void SafeRun(VoidMethod method, LogLevel level = LogLevel.Error)
+        public static void SafeRun(VoidMethod method)
         {
             try
             {
@@ -56,8 +55,7 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
-        /// <param name="level"> Logging level </param>
-        public static T SafeRun<T>(ParameterlessMethod<T> method, LogLevel level = LogLevel.Error)
+        public static T SafeRun<T>(ParameterlessMethod<T> method)
         {
             try
             {
@@ -76,8 +74,7 @@ namespace logviewer.core
         /// <typeparam name="T"> Argument type </typeparam>
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
-        /// <param name="level"> Logging level </param>
-        public static void SafeRun<T>(OneArgumentMethod<T> method, T argument, LogLevel level = LogLevel.Error)
+        public static void SafeRun<T>(OneArgumentMethod<T> method, T argument)
         {
             try
             {
@@ -96,8 +93,7 @@ namespace logviewer.core
         /// <typeparam name="TArg"> Argument type </typeparam>
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
-        /// <param name="level"> Logging level </param>
-        public static TReturn SafeRun<TReturn, TArg>(OneArgumentReturningMethod<TReturn, TArg> method, TArg argument, LogLevel level = LogLevel.Error)
+        public static TReturn SafeRun<TReturn, TArg>(OneArgumentReturningMethod<TReturn, TArg> method, TArg argument)
         {
             try
             {
