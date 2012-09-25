@@ -353,7 +353,7 @@ namespace logviewer.core
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
-            foreach (var m in this.Messages.Where(m => !this.Filter(m)))
+            foreach (var m in this.Messages)
             {
                 AddMessage(doc, m);
             }
