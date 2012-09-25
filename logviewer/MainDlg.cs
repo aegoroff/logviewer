@@ -188,7 +188,9 @@ namespace logviewer
         {
             this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
             this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.controller.DisplayedMessages,
-                                                            this.controller.TotalMessages);
+                                                            this.controller.TotalMessages, this.controller.CountMessages(LogLevel.Trace), this.controller.CountMessages(LogLevel.Debug),
+                                                            this.controller.CountMessages(LogLevel.Info), this.controller.CountMessages(LogLevel.Warn), this.controller.CountMessages(LogLevel.Error),
+                                                            this.controller.CountMessages(LogLevel.Fatal));
             this.controller.LoadLog(e.Result as string);
             this.controller.ReadRecentFiles();
             if (this.textFilterChanging)
