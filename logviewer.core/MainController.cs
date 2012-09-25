@@ -353,22 +353,27 @@ namespace logviewer.core
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
-            foreach (var msg in this.Messages.Where(m => !this.Filter(m)))
+            foreach (var m in this.Messages.Where(m => !this.Filter(m)))
             {
-                doc.AddText(msg.Header.Trim(), msg.HeadFormat);
-                doc.AddText("\n");
-
-                var txt = msg.Body;
-                if (string.IsNullOrWhiteSpace(txt))
-                {
-                    doc.AddText("\n");
-                    continue;
-                }
-                doc.AddText(txt.Trim(), msg.BodyFormat);
-                doc.AddText("\n\n\n");
+                AddMessage(doc, m);
             }
             doc.Close();
             return rtfPath;
+        }
+
+        private static void AddMessage(RtfDocument doc, LogMessage message)
+        {
+            doc.AddText(message.Header.Trim(), message.HeadFormat);
+            doc.AddText("\n");
+
+            var txt = message.Body;
+            if (string.IsNullOrWhiteSpace(txt))
+            {
+                doc.AddText("\n");
+                return;
+            }
+            doc.AddText(txt.Trim(), message.BodyFormat);
+            doc.AddText("\n\n\n");
         }
 
         private bool Filter(LogMessage message)
