@@ -18,7 +18,7 @@ namespace logviewer.tests
             this.mockery = new Mockery();
             this.view = this.mockery.NewMock<ILogView>();
             Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            this.controller = new MainController(this.view, MessageStart, RecentPath);
+            this.controller = new MainController(this.view, MessageStart, RecentPath, this.levels);
         }
 
         [TearDown]
@@ -35,6 +35,16 @@ namespace logviewer.tests
         }
 
         #endregion
+
+        private readonly string[] levels = new[]
+            {
+                "TRACE",
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "ERROR",
+                "FATAL"
+            };
 
         private const string TestPath = "f";
         private const string RecentPath = "r";
@@ -60,6 +70,57 @@ namespace logviewer.tests
             result.Write(bytes, 0, bytes.Length);
             result.Seek(0, SeekOrigin.Begin);
             return result;
+        }
+
+        [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
+        [TestCase((int) LogLevel.Error, (int) LogLevel.Warn, MessageExamples, 0)]
+        public void MaxAndMaxFilter(int min, int max, string msg, int count)
+        {
+            this.controller.MinFilter(min);
+            this.controller.MaxFilter(max);
+            this.controller.ReadLog(CreateTestStream(msg));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(count));
+        }
+
+        [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
+        [TestCase(LogLevel.Info, new[] { "TRACE", "DEBUG", @"\[?INFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
+        [TestCase(LogLevel.Debug, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 0)]
+        [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 2)]
+        [TestCase(LogLevel.Trace, new[] { "TRACE", "DEBUG", @"\[?InFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
+        public void MaxFilter(LogLevel filter, string[] markers, int c)
+        {
+            this.controller = new MainController(this.view, MessageStart, RecentPath, markers);
+            this.controller.MaxFilter((int)filter);
+            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
+        }
+        
+        [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
+        [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERROR\]?", "FATAL" }, 1)]
+        [TestCase(LogLevel.Info, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 2)]
+        [TestCase(LogLevel.Fatal, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 0)]
+        [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERRoR\]?", "FATAL" }, 0)]
+        public void MinFilter(LogLevel filter, string[] markers, int c)
+        {
+            this.controller = new MainController(this.view, MessageStart, RecentPath, markers);
+            this.controller.MinFilter((int)filter);
+            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
+        }
+
+        [Test]
+        public void ExportRtfFail()
+        {
+            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(false));
+            this.controller.ExportToRtf();
+        }
+
+        [Test]
+        public void ExportRtfSuccess()
+        {
+            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(true));
+            Expect.Once.On(this.view).Method("SaveRtf");
+            this.controller.ExportToRtf();
         }
 
         [Test]
@@ -111,58 +172,6 @@ namespace logviewer.tests
         {
             Expect.Never.On(this.view).Method(LoadLogMethod).WithAnyArguments();
             this.controller.LoadLog(TestPath);
-        }
-
-        [TestCase("WARN", "WARN", MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
-        [TestCase("ERROR", "WARN", MessageExamples, 0)]
-        public void MaxAndMaxFilter(string min, string max, string msg, int count)
-        {
-            this.controller.MinFilter(min);
-            this.controller.MaxFilter(max);
-            this.controller.ReadLog(CreateTestStream(msg));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(count));
-        }
-
-        [TestCase("WARN", 1)]
-        [TestCase(@"\[?WARN\]?", 1)]
-        [TestCase(@"\[?WERN\]?", 2)]
-        [TestCase(@"ERROR", 2)]
-        public void MaxFilter(string f, int c)
-        {
-            this.controller.MaxFilter(f);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
-        }
-
-        [TestCase(@"\[?WARN\]?", "WARN", 1)]
-        [TestCase(@"\[?WARN\]?", "WaRN", 2)]
-        public void MaxFilterWithCustomMarker(string m, string f, int c)
-        {
-            this.controller.DefineWarnMarker(m);
-            this.controller.MaxFilter(f);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
-        }
-
-        [TestCase("WARN", 1)]
-        [TestCase(@"\[?WARN\]?", 1)]
-        [TestCase(@"\[?WERN\]?", 2)]
-        [TestCase("INFO", 2)]
-        public void MinFilter(string f, int c)
-        {
-            this.controller.MinFilter(f);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
-        }
-
-        [TestCase(@"\[?WARN\]?", "WARN", 1)]
-        [TestCase(@"\[?WARN\]?", "WaRN", 2)]
-        public void MinFilterWithCustomMarker(string m, string f, int c)
-        {
-            this.controller.DefineWarnMarker(m);
-            this.controller.MinFilter(f);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
         }
 
         [Test]
@@ -266,21 +275,6 @@ namespace logviewer.tests
         public void SaveRecentFiles()
         {
             this.controller.SaveRecentFiles();
-        }
-
-        [Test]
-        public void ExportRtfSuccess()
-        {
-            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(true));
-            Expect.Once.On(this.view).Method("SaveRtf");
-            this.controller.ExportToRtf();
-        }
-        
-        [Test]
-        public void ExportRtfFail()
-        {
-            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(false));
-            this.controller.ExportToRtf();
         }
     }
 }

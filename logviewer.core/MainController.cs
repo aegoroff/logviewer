@@ -32,6 +32,8 @@ namespace logviewer.core
                 Resources.SizeEBytes
             };
 
+        private readonly Regex[] markers;
+
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
         private readonly Regex regex;
@@ -39,26 +41,25 @@ namespace logviewer.core
 
         private bool cancelReading;
         private string currentPath;
-        private Regex debugMarker = "DEBUG".ToMarker();
-        private Regex errorMarker = "ERROR".ToMarker();
-        private Regex fatalMarker = "FATAL".ToMarker();
 
-        private Regex infoMarker = "INFO".ToMarker();
         private LogLevel maxFilter = LogLevel.Fatal;
         private List<LogMessage> messagesCache;
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
         private string textFilter;
-        private Regex traceMarker = "TRACE".ToMarker();
-        private Regex warnMarker = "WARN".ToMarker();
 
         #endregion
 
         #region Constructors and Destructors
 
-        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath)
+        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IList<string> levels)
         {
             this.recentFilesFilePath = recentFilesFilePath;
+            this.markers = new Regex[levels.Count];
+            for (var i = 0; i < levels.Count; i++)
+            {
+                this.markers[i] = levels[i].ToMarker();
+            }
             this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
             this.Messages = new List<LogMessage>();
@@ -87,36 +88,6 @@ namespace logviewer.core
         #endregion
 
         #region Public Methods and Operators
-
-        public void DefineTraceMarker(string marker)
-        {
-            this.traceMarker = marker.ToMarker();
-        }
-
-        public void DefineDebugMarker(string marker)
-        {
-            this.debugMarker = marker.ToMarker();
-        }
-
-        public void DefineInfoMarker(string marker)
-        {
-            this.infoMarker = marker.ToMarker();
-        }
-
-        public void DefineWarnMarker(string marker)
-        {
-            this.warnMarker = marker.ToMarker();
-        }
-
-        public void DefineErrorMarker(string marker)
-        {
-            this.errorMarker = marker.ToMarker();
-        }
-
-        public void DefineFatalMarker(string marker)
-        {
-            this.fatalMarker = marker.ToMarker();
-        }
 
         public void InitializeLogger()
         {
@@ -194,14 +165,14 @@ namespace logviewer.core
             this.currentPath = null;
         }
 
-        public void MinFilter(string value)
+        public void MinFilter(int value)
         {
-            this.minFilter = this.DetectLevel(value);
+            this.minFilter = (LogLevel)value;
         }
 
-        public void MaxFilter(string value)
+        public void MaxFilter(int value)
         {
-            this.maxFilter = this.DetectLevel(value, LogLevel.Fatal);
+            this.maxFilter = (LogLevel)value;
         }
 
         public void TextFilter(string value)
@@ -402,30 +373,14 @@ namespace logviewer.core
             {
                 return defaultLevel;
             }
-            if (this.infoMarker.IsMatch(line))
+            for (var i = 0; i < this.markers.Length; i++)
             {
-                return LogLevel.Info;
+                if (this.markers[i].IsMatch(line))
+                {
+                    return (LogLevel)i;
+                }
             }
-            if (this.errorMarker.IsMatch(line))
-            {
-                return LogLevel.Error;
-            }
-            if (this.warnMarker.IsMatch(line))
-            {
-                return LogLevel.Warn;
-            }
-            if (this.fatalMarker.IsMatch(line))
-            {
-                return LogLevel.Fatal;
-            }
-            if (this.debugMarker.IsMatch(line))
-            {
-                return LogLevel.Debug;
-            }
-            if (this.traceMarker.IsMatch(line))
-            {
-                return LogLevel.Trace;
-            }
+
             return defaultLevel;
         }
 
