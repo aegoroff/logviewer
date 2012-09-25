@@ -32,6 +32,8 @@ namespace logviewer.core
                 Resources.SizeEBytes
             };
 
+        private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
+
         private readonly List<Regex> markers;
 
         private readonly List<string> recentFiles = new List<string>();
@@ -123,7 +125,7 @@ namespace logviewer.core
 
         public string ReadLog()
         {
-            if (minFilter > maxFilter && maxFilter >= LogLevel.Trace)
+            if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
@@ -168,12 +170,12 @@ namespace logviewer.core
 
         public void MinFilter(int value)
         {
-            this.minFilter = (LogLevel)value;
+            this.minFilter = (LogLevel) value;
         }
 
         public void MaxFilter(int value)
         {
-            this.maxFilter = (LogLevel)value;
+            this.maxFilter = (LogLevel) value;
         }
 
         public void TextFilter(string value)
@@ -242,6 +244,11 @@ namespace logviewer.core
             }
         }
 
+        public int CountMessages(LogLevel level)
+        {
+            return this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0;
+        }
+
         #endregion
 
         #region Methods
@@ -290,6 +297,7 @@ namespace logviewer.core
                     return;
                 }
                 this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
+                this.byLevel.Clear();
                 var message = new LogMessage { Strings = new List<string>() };
 
                 while (!reader.EndOfStream)
@@ -321,6 +329,14 @@ namespace logviewer.core
             }
             message.Level = this.DetectLevel(message.Header);
             this.messagesCache.Add(message);
+            if (this.byLevel.ContainsKey(message.Level))
+            {
+                this.byLevel[message.Level] = this.byLevel[message.Level] + 1;
+            }
+            else
+            {
+                this.byLevel.Add(message.Level, 1);
+            }
         }
 
         private string CreateRtf()
@@ -378,7 +394,7 @@ namespace logviewer.core
             {
                 if (this.markers[i].IsMatch(line))
                 {
-                    return (LogLevel)i;
+                    return (LogLevel) i;
                 }
             }
 
