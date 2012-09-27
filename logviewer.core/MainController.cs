@@ -297,7 +297,6 @@ namespace logviewer.core
                     return;
                 }
                 this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
-                this.byLevel.Clear();
                 var message = new LogMessage { Strings = new List<string>() };
 
                 while (!reader.EndOfStream)
@@ -329,20 +328,12 @@ namespace logviewer.core
             }
             message.Level = this.DetectLevel(message.Header);
             this.messagesCache.Add(message);
-            if (this.byLevel.ContainsKey(message.Level))
-            {
-                this.byLevel[message.Level] = this.byLevel[message.Level] + 1;
-            }
-            else
-            {
-                this.byLevel.Add(message.Level, 1);
-            }
         }
 
         private string CreateRtf()
         {
             this.Messages = new List<LogMessage>(this.messagesCache.Where(m => !this.Filter(m)));
-
+            this.byLevel.Clear();
             if (this.reverseChronological)
             {
                 this.Messages.Reverse();
@@ -358,8 +349,17 @@ namespace logviewer.core
             return rtfPath;
         }
 
-        private static void AddMessage(RtfDocument doc, LogMessage message)
+        private void AddMessage(RtfDocument doc, LogMessage message)
         {
+            if (this.byLevel.ContainsKey(message.Level))
+            {
+                this.byLevel[message.Level] = this.byLevel[message.Level] + 1;
+            }
+            else
+            {
+                this.byLevel.Add(message.Level, 1);
+            }
+            
             doc.AddText(message.Header.Trim(), message.HeadFormat);
             doc.AddText("\n");
 
