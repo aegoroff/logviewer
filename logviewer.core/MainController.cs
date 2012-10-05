@@ -199,6 +199,7 @@ namespace logviewer.core
             var files = File.ReadAllLines(this.recentFilesFilePath);
             this.recentFiles.Clear();
             this.recentFiles.AddRange(files);
+            this.recentFiles.Reverse();
             this.view.ClearRecentFilesList();
             foreach (
                 var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
