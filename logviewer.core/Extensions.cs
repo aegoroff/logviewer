@@ -8,7 +8,7 @@ namespace logviewer.core
     public static class Extensions
     {
         /// <summary>
-        ///     Writes string line specified into stream with recoding if necessary
+        ///     Writes string line specified into stream with converting if necessary
         /// </summary>
         /// <param name="stream"> Stream to write to </param>
         /// <param name="line"> Source string </param>
@@ -22,7 +22,7 @@ namespace logviewer.core
         }
 
         /// <summary>
-        ///     Writes string specified into stream with recoding if necessary
+        ///     Writes string specified into stream with converting if necessary
         /// </summary>
         /// <param name="stream"> Stream to write to </param>
         /// <param name="line"> Source string </param>
