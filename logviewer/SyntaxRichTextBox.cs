@@ -49,6 +49,17 @@ namespace logviewer
 
             return (rtfPoint.Y + this.ClientSize.Height >= maxScroll);
         }
+        
+        public double ScrolledPercent()
+        {
+            int minScroll;
+            int maxScroll;
+            GetScrollRange(this.Handle, SbVert, out minScroll, out maxScroll);
+            Point rtfPoint = Point.Empty;
+            SendMessage(this.Handle, EmGetscrollpos, 0, ref rtfPoint);
+
+            return (((double)rtfPoint.Y + this.ClientSize.Height) / maxScroll) * 100;
+        }
 
         protected virtual void OnScrolledToBottom(EventArgs e)
         {

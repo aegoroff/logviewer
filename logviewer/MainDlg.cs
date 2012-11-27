@@ -45,79 +45,6 @@ namespace logviewer
             this.controller.ReadRecentFiles();
         }
 
-        #region ILogView Members
-
-        public string LogPath { get; set; }
-
-        public string LogFileName
-        {
-            get { return this.openFileDialog1.FileName; }
-        }
-
-        public bool IsBusy
-        {
-            get { return this.logReader.IsBusy; }
-        }
-
-        public bool CancellationPending
-        {
-            get { return this.logReader.CancellationPending; }
-        }
-
-        public void CreateRecentFileItem(string file)
-        {
-            var result = new ToolStripMenuItem(file) { Tag = file };
-            result.Click += this.OnOpenRecentLogFile;
-            this.recentFilesToolStripMenuItem.DropDownItems.Add(result);
-        }
-
-        public bool OpenLogFile()
-        {
-            return this.openFileDialog1.ShowDialog() == DialogResult.OK;
-        }
-
-        public void ClearRecentFilesList()
-        {
-            foreach (ToolStripMenuItem item in this.recentFilesToolStripMenuItem.DropDownItems)
-            {
-                item.Click -= this.OnOpenRecentLogFile;
-            }
-            this.recentFilesToolStripMenuItem.DropDownItems.Clear();
-        }
-
-        public void ReadLog()
-        {
-            Executive.SafeRun(this.WatchLogFile);
-            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
-            this.StartReading();
-            this.controller.SaveRecentFiles();
-        }
-
-        public void CancelRead()
-        {
-            this.logReader.CancelAsync();
-        }
-
-        public void LoadLog(string path)
-        {
-            this.syntaxRichTextBox1.SuspendLayout();
-            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
-            this.syntaxRichTextBox1.ResumeLayout();
-        }
-
-        public bool OpenExport(string path)
-        {
-            this.exportDialog.FileName = path;
-            return this.exportDialog.ShowDialog() == DialogResult.OK;
-        }
-
-        public void SaveRtf()
-        {
-            this.syntaxRichTextBox1.SaveFile(this.exportDialog.FileName, RichTextBoxStreamType.RichText);
-        }
-
-        #endregion
-
         private static void OnUnhandledException(object sender, ThreadExceptionEventArgs e)
         {
             Log.Instance.Fatal(e.Exception.Message, e.Exception);
@@ -256,6 +183,84 @@ namespace logviewer
         private void OnFormLoad(object sender, EventArgs e)
         {
             this.controller.InitializeLogger();
+        }
+
+        #region ILogView Members
+
+        public string LogPath { get; set; }
+
+        public string LogFileName
+        {
+            get { return this.openFileDialog1.FileName; }
+        }
+
+        public bool IsBusy
+        {
+            get { return this.logReader.IsBusy; }
+        }
+
+        public bool CancellationPending
+        {
+            get { return this.logReader.CancellationPending; }
+        }
+
+        public void CreateRecentFileItem(string file)
+        {
+            var result = new ToolStripMenuItem(file) { Tag = file };
+            result.Click += this.OnOpenRecentLogFile;
+            this.recentFilesToolStripMenuItem.DropDownItems.Add(result);
+        }
+
+        public bool OpenLogFile()
+        {
+            return this.openFileDialog1.ShowDialog() == DialogResult.OK;
+        }
+
+        public void ClearRecentFilesList()
+        {
+            foreach (ToolStripMenuItem item in this.recentFilesToolStripMenuItem.DropDownItems)
+            {
+                item.Click -= this.OnOpenRecentLogFile;
+            }
+            this.recentFilesToolStripMenuItem.DropDownItems.Clear();
+        }
+
+        public void ReadLog()
+        {
+            Executive.SafeRun(this.WatchLogFile);
+            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
+            this.StartReading();
+            this.controller.SaveRecentFiles();
+        }
+
+        public void CancelRead()
+        {
+            this.logReader.CancelAsync();
+        }
+
+        public void LoadLog(string path)
+        {
+            this.syntaxRichTextBox1.SuspendLayout();
+            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
+            this.syntaxRichTextBox1.ResumeLayout();
+        }
+
+        public bool OpenExport(string path)
+        {
+            this.exportDialog.FileName = path;
+            return this.exportDialog.ShowDialog() == DialogResult.OK;
+        }
+
+        public void SaveRtf()
+        {
+            this.syntaxRichTextBox1.SaveFile(this.exportDialog.FileName, RichTextBoxStreamType.RichText);
+        }
+
+        #endregion
+
+        private void OnVScroll(object sender, EventArgs e)
+        {
+            // TODO: use syntaxRichTextBox1.ScrolledPercent() to detect page to load
         }
     }
 }
