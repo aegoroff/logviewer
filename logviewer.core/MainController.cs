@@ -411,7 +411,7 @@ namespace logviewer.core
             }
 
             var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var tmp = Path.GetTempFileName();
+            var result = Path.GetTempFileName();
             using (stream)
             {
                 Encoding srcEncoding;
@@ -434,7 +434,7 @@ namespace logviewer.core
 
                 stream.Seek(0, SeekOrigin.Begin);
 
-                var f = File.Create(tmp);
+                var f = File.Create(result);
                 using (f)
                 {
                     f.WriteByte(0xEF);
@@ -456,7 +456,7 @@ namespace logviewer.core
                     }
                 }
             }
-            return tmp;
+            return result;
         }
 
         private void CreateHumanReadableSize()
