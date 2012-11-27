@@ -20,6 +20,7 @@ namespace logviewer.core
         private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
+        private const string NewLine = "\n";
 
         private static readonly string[] sizes = new[]
             {
@@ -362,12 +363,12 @@ namespace logviewer.core
             }
             
             doc.AddText(message.Header.Trim(), message.HeadFormat);
-            doc.AddText("\n");
+            doc.AddText(NewLine);
 
             var txt = message.Body;
             if (string.IsNullOrWhiteSpace(txt))
             {
-                doc.AddText("\n");
+                doc.AddText(NewLine);
                 return;
             }
             doc.AddText(txt.Trim(), message.BodyFormat);
