@@ -264,5 +264,17 @@ namespace logviewer
         {
             this.controller.InitializeLogger();
         }
+
+        private void OnPrevPage(object sender, EventArgs e)
+        {
+            this.controller.CurrentPage -= 1;
+            this.OnChangeFilter(sender, e);
+        }
+
+        private void OnNextPage(object sender, EventArgs e)
+        {
+            this.controller.CurrentPage += 1;
+            this.OnChangeFilter(sender, e);
+        }
     }
 }

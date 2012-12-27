@@ -377,6 +377,7 @@
             this.prev.TabIndex = 2;
             this.prev.Text = "<";
             this.prev.UseVisualStyleBackColor = true;
+            this.prev.Click += new System.EventHandler(this.OnPrevPage);
             // 
             // currentPage
             // 
@@ -399,6 +400,7 @@
             this.next.TabIndex = 4;
             this.next.Text = ">";
             this.next.UseVisualStyleBackColor = true;
+            this.next.Click += new System.EventHandler(this.OnNextPage);
             // 
             // last
             // 
