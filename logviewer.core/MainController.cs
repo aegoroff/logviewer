@@ -94,13 +94,19 @@ namespace logviewer.core
                 {
                     return 1;
                 }
-                return (int) Math.Ceiling(this.DisplayedMessages / (float) this.pageSize);
+                return (int) Math.Ceiling(this.Messages.Count / (float) this.pageSize);
             }
         }
 
         public int DisplayedMessages
         {
-            get { return this.Messages.Count; }
+            get
+            {
+                var start = (this.CurrentPage - 1) * this.pageSize;
+                var tail = this.Messages.Count - start;
+                var finish = Math.Min(tail, this.pageSize);
+                return Math.Min(finish, this.Messages.Count);
+            }
         }
 
         #endregion
@@ -135,9 +141,9 @@ namespace logviewer.core
             try
             {
                 this.view.LoadLog(path);
-                this.view.SetCurrentPage(CurrentPage);
-                this.view.DisableBack(CurrentPage <= 1);
-                this.view.DisableForward(CurrentPage >= TotalPages);
+                this.view.SetCurrentPage(this.CurrentPage);
+                this.view.DisableBack(this.CurrentPage <= 1);
+                this.view.DisableForward(this.CurrentPage >= this.TotalPages);
             }
             finally
             {
@@ -250,6 +256,7 @@ namespace logviewer.core
             {
                 return;
             }
+            this.CurrentPage = 1;
             this.view.LogPath = this.view.LogFileName;
             if (this.view.IsBusy)
             {

@@ -161,6 +161,7 @@ namespace logviewer
         {
             var item = (ToolStripMenuItem) sender;
             this.LogPath = item.Tag as string;
+            this.controller.CurrentPage = 1;
             this.ReadLog();
         }
 
@@ -231,6 +232,7 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
             this.EnableControls(false);
+            this.controller.CurrentPage = 1;
             this.logWatch.Filter = string.Empty;
         }
 
