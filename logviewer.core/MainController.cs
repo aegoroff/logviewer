@@ -59,7 +59,7 @@ namespace logviewer.core
 
         public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels, int pageSize = DefaultPageSize)
         {
-            CurrentPage = 1;
+            this.CurrentPage = 1;
             this.recentFilesFilePath = recentFilesFilePath;
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
@@ -361,9 +361,11 @@ namespace logviewer.core
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
-            foreach (var m in this.Messages)
+            var start = (this.CurrentPage - 1) * this.pageSize;
+            var finish = Math.Min(start + this.pageSize, this.Messages.Count);
+            for (var i = start; i < finish; i++)
             {
-                this.AddMessage(doc, m);
+                this.AddMessage(doc, this.Messages[i]);
             }
             doc.Close();
             return rtfPath;
