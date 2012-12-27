@@ -35,7 +35,6 @@ namespace logviewer.core
             };
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
-        private readonly int currentPage = 1;
 
         private readonly List<Regex> markers;
         private readonly int pageSize;
@@ -60,6 +59,7 @@ namespace logviewer.core
 
         public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels, int pageSize = DefaultPageSize)
         {
+            CurrentPage = 1;
             this.recentFilesFilePath = recentFilesFilePath;
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
@@ -84,10 +84,7 @@ namespace logviewer.core
             get { return this.messagesCache == null ? 0 : this.messagesCache.Count; }
         }
 
-        public int CurrentPage
-        {
-            get { return this.currentPage; }
-        }
+        public int CurrentPage { get; set; }
 
         public int TotalPages
         {
