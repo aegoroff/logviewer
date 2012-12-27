@@ -288,6 +288,12 @@ namespace logviewer.tests
         }
 
         [Test]
+        public void TotalPagesNoMessages()
+        {
+            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(0));
+        }
+        
+        [Test]
         public void TotalPagesMessagesBelowPageSize()
         {
             var sb = new StringBuilder();
