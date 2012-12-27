@@ -15,5 +15,7 @@ namespace logviewer.core
         bool OpenExport(string path);
         void SaveRtf();
 	    void SetCurrentPage(int page);
+	    void DisableForward(bool disabled);
+        void DisableBack(bool disabled);
 	}
 }

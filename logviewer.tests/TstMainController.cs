@@ -63,6 +63,8 @@ namespace logviewer.tests
         private const string ReadLogMethod = "ReadLog";
         private const string LoadLogMethod = "LoadLog";
         private const string SetCurrentPageMethod = "SetCurrentPage";
+        private const string DisableBackMethod = "DisableBack";
+        private const string DisableForwardMethod = "DisableForward";
 
         private static Stream CreateTestStream(string data)
         {
@@ -138,6 +140,8 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, string.Empty);
             Expect.Once.On(this.view).Method(LoadLogMethod).With(TestPath);
             Expect.Once.On(this.view).Method(SetCurrentPageMethod).With(1);
+            Expect.Once.On(this.view).Method(DisableBackMethod).With(true);
+            Expect.Once.On(this.view).Method(DisableForwardMethod).With(true);
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             this.controller.LoadLog(TestPath);
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
@@ -155,6 +159,8 @@ namespace logviewer.tests
         {
             File.WriteAllText(TestPath, string.Empty);
             Expect.Once.On(this.view).Method(LoadLogMethod).Will(Throw.Exception(new Exception()));
+            Expect.Once.On(this.view).Method(DisableBackMethod).With(true);
+            Expect.Once.On(this.view).Method(DisableForwardMethod).With(true);
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             var thrown = false;
             try

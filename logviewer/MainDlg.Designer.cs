@@ -366,12 +366,13 @@
             this.first.TabIndex = 1;
             this.first.Text = "|<";
             this.first.UseVisualStyleBackColor = true;
+            this.first.Click += new System.EventHandler(this.OnFirst);
             // 
             // prev
             // 
             this.prev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.prev.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.prev.Location = new System.Drawing.Point(40, 451);
+            this.prev.Location = new System.Drawing.Point(34, 451);
             this.prev.Name = "prev";
             this.prev.Size = new System.Drawing.Size(19, 20);
             this.prev.TabIndex = 2;
@@ -383,7 +384,7 @@
             // 
             this.currentPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.currentPage.BackColor = System.Drawing.SystemColors.Window;
-            this.currentPage.Location = new System.Drawing.Point(65, 450);
+            this.currentPage.Location = new System.Drawing.Point(56, 450);
             this.currentPage.Name = "currentPage";
             this.currentPage.ReadOnly = true;
             this.currentPage.Size = new System.Drawing.Size(57, 20);
@@ -394,7 +395,7 @@
             // 
             this.next.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.next.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.next.Location = new System.Drawing.Point(128, 451);
+            this.next.Location = new System.Drawing.Point(116, 451);
             this.next.Name = "next";
             this.next.Size = new System.Drawing.Size(19, 20);
             this.next.TabIndex = 4;
@@ -406,12 +407,13 @@
             // 
             this.last.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.last.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.last.Location = new System.Drawing.Point(153, 451);
+            this.last.Location = new System.Drawing.Point(135, 451);
             this.last.Name = "last";
             this.last.Size = new System.Drawing.Size(22, 20);
             this.last.TabIndex = 5;
             this.last.Text = ">|";
             this.last.UseVisualStyleBackColor = true;
+            this.last.Click += new System.EventHandler(this.OnLast);
             // 
             // syntaxRichTextBox1
             // 

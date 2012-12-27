@@ -123,6 +123,18 @@ namespace logviewer
             this.currentPage.Text = string.Format("{0} / {1}", page, this.controller.TotalPages);
         }
 
+        public void DisableForward(bool disabled)
+        {
+            this.next.Enabled = !disabled;
+            this.last.Enabled = !disabled;
+        }
+
+        public void DisableBack(bool disabled)
+        {
+            this.prev.Enabled = !disabled;
+            this.first.Enabled = !disabled;
+        }
+
         #endregion
 
         private static void OnUnhandledException(object sender, ThreadExceptionEventArgs e)
@@ -176,6 +188,8 @@ namespace logviewer
                 return;
             }
             this.EnableControls(true);
+            this.DisableBack(true);
+            this.DisableForward(true);
             this.logFilterMin = this.toolStripComboBox1.SelectedIndex;
             this.logFilterMax = this.toolStripComboBox2.SelectedIndex;
             this.logFilterText = this.toolStripTextBox1.Text;
@@ -278,6 +292,18 @@ namespace logviewer
         private void OnNextPage(object sender, EventArgs e)
         {
             this.controller.CurrentPage += 1;
+            this.OnChangeFilter(sender, e);
+        }
+
+        private void OnFirst(object sender, EventArgs e)
+        {
+            this.controller.CurrentPage = 1;
+            this.OnChangeFilter(sender, e);
+        }
+
+        private void OnLast(object sender, EventArgs e)
+        {
+            this.controller.CurrentPage = this.controller.TotalPages;
             this.OnChangeFilter(sender, e);
         }
     }

@@ -136,6 +136,8 @@ namespace logviewer.core
             {
                 this.view.LoadLog(path);
                 this.view.SetCurrentPage(CurrentPage);
+                this.view.DisableBack(CurrentPage <= 1);
+                this.view.DisableForward(CurrentPage >= TotalPages);
             }
             finally
             {
