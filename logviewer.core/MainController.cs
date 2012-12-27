@@ -21,6 +21,7 @@ namespace logviewer.core
         private const int MeanLogStringLength = 70;
         private const string SmallFileFormat = "{0} {1}";
         private const string NewLine = "\n";
+        private const int DefaultPageSize = 10000;
 
         private static readonly string[] sizes = new[]
             {
@@ -34,12 +35,13 @@ namespace logviewer.core
             };
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
+        private readonly int currentPage = 1;
 
         private readonly List<Regex> markers;
+        private readonly int pageSize;
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
-        private readonly int pageSize;
         private readonly Regex regex;
         private readonly ILogView view;
 
@@ -51,7 +53,6 @@ namespace logviewer.core
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
         private string textFilter;
-        private const int DefaultPageSize = 10000;
 
         #endregion
 
@@ -82,7 +83,12 @@ namespace logviewer.core
         {
             get { return this.messagesCache == null ? 0 : this.messagesCache.Count; }
         }
-        
+
+        public int CurrentPage
+        {
+            get { return this.currentPage; }
+        }
+
         public int TotalPages
         {
             get
@@ -91,7 +97,7 @@ namespace logviewer.core
                 {
                     return 0;
                 }
-                return (int)Math.Ceiling(this.DisplayedMessages / (float)this.pageSize);
+                return (int) Math.Ceiling(this.DisplayedMessages / (float) this.pageSize);
             }
         }
 
@@ -360,7 +366,7 @@ namespace logviewer.core
 
             foreach (var m in this.Messages)
             {
-                AddMessage(doc, m);
+                this.AddMessage(doc, m);
             }
             doc.Close();
             return rtfPath;
@@ -376,7 +382,7 @@ namespace logviewer.core
             {
                 this.byLevel.Add(message.Level, 1);
             }
-            
+
             doc.AddText(message.Header.Trim(), message.HeadFormat);
             doc.AddText(NewLine);
 

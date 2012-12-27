@@ -14,6 +14,6 @@ namespace logviewer.core
         void LoadLog(string path);
         bool OpenExport(string path);
         void SaveRtf();
-        int CurrentPage { get; }
+	    void SetCurrentPage(int page);
 	}
 }

@@ -118,7 +118,10 @@ namespace logviewer
             this.syntaxRichTextBox1.SaveFile(this.exportDialog.FileName, RichTextBoxStreamType.RichText);
         }
 
-        public int CurrentPage { get; private set; }
+        public void SetCurrentPage(int page)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 
