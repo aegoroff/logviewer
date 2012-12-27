@@ -62,6 +62,11 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
+            this.first = new System.Windows.Forms.Button();
+            this.prev = new System.Windows.Forms.Button();
+            this.currentPage = new System.Windows.Forms.TextBox();
+            this.next = new System.Windows.Forms.Button();
+            this.last = new System.Windows.Forms.Button();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -316,6 +321,11 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.last);
+            this.panel1.Controls.Add(this.next);
+            this.panel1.Controls.Add(this.currentPage);
+            this.panel1.Controls.Add(this.prev);
+            this.panel1.Controls.Add(this.first);
             this.panel1.Controls.Add(this.syntaxRichTextBox1);
             this.panel1.Location = new System.Drawing.Point(0, 49);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
@@ -346,6 +356,61 @@
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
             // 
+            // first
+            // 
+            this.first.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.first.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.first.Location = new System.Drawing.Point(12, 451);
+            this.first.Name = "first";
+            this.first.Size = new System.Drawing.Size(22, 20);
+            this.first.TabIndex = 1;
+            this.first.Text = "|<";
+            this.first.UseVisualStyleBackColor = true;
+            // 
+            // prev
+            // 
+            this.prev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.prev.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.prev.Location = new System.Drawing.Point(40, 451);
+            this.prev.Name = "prev";
+            this.prev.Size = new System.Drawing.Size(19, 20);
+            this.prev.TabIndex = 2;
+            this.prev.Text = "<";
+            this.prev.UseVisualStyleBackColor = true;
+            // 
+            // currentPage
+            // 
+            this.currentPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.currentPage.BackColor = System.Drawing.SystemColors.Window;
+            this.currentPage.Location = new System.Drawing.Point(65, 450);
+            this.currentPage.Name = "currentPage";
+            this.currentPage.ReadOnly = true;
+            this.currentPage.Size = new System.Drawing.Size(57, 20);
+            this.currentPage.TabIndex = 3;
+            this.currentPage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // next
+            // 
+            this.next.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.next.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.next.Location = new System.Drawing.Point(128, 451);
+            this.next.Name = "next";
+            this.next.Size = new System.Drawing.Size(19, 20);
+            this.next.TabIndex = 4;
+            this.next.Text = ">";
+            this.next.UseVisualStyleBackColor = true;
+            // 
+            // last
+            // 
+            this.last.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.last.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.last.Location = new System.Drawing.Point(153, 451);
+            this.last.Name = "last";
+            this.last.Size = new System.Drawing.Size(22, 20);
+            this.last.TabIndex = 5;
+            this.last.Text = ">|";
+            this.last.UseVisualStyleBackColor = true;
+            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -355,7 +420,7 @@
             this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
             this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
             this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 470);
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 443);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
@@ -380,6 +445,7 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logWatch)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -422,6 +488,11 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog exportDialog;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.Button first;
+        private System.Windows.Forms.Button prev;
+        private System.Windows.Forms.TextBox currentPage;
+        private System.Windows.Forms.Button next;
+        private System.Windows.Forms.Button last;
     }
 }
 

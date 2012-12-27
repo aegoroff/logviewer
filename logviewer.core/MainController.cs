@@ -92,7 +92,7 @@ namespace logviewer.core
             {
                 if (this.messagesCache == null)
                 {
-                    return 0;
+                    return 1;
                 }
                 return (int) Math.Ceiling(this.DisplayedMessages / (float) this.pageSize);
             }
@@ -135,6 +135,7 @@ namespace logviewer.core
             try
             {
                 this.view.LoadLog(path);
+                this.view.SetCurrentPage(CurrentPage);
             }
             finally
             {

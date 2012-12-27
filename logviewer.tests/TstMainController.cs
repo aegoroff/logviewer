@@ -62,6 +62,7 @@ namespace logviewer.tests
         private const string IsBusyProperty = "IsBusy";
         private const string ReadLogMethod = "ReadLog";
         private const string LoadLogMethod = "LoadLog";
+        private const string SetCurrentPageMethod = "SetCurrentPage";
 
         private static Stream CreateTestStream(string data)
         {
@@ -136,6 +137,7 @@ namespace logviewer.tests
         {
             File.WriteAllText(TestPath, string.Empty);
             Expect.Once.On(this.view).Method(LoadLogMethod).With(TestPath);
+            Expect.Once.On(this.view).Method(SetCurrentPageMethod).With(1);
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             this.controller.LoadLog(TestPath);
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
@@ -290,7 +292,7 @@ namespace logviewer.tests
         [Test]
         public void TotalPagesNoMessages()
         {
-            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(0));
+            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
         }
         
         [Test]

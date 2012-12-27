@@ -120,7 +120,7 @@ namespace logviewer
 
         public void SetCurrentPage(int page)
         {
-            throw new NotImplementedException();
+            this.currentPage.Text = string.Format("{0} / {1}", page, this.controller.TotalPages);
         }
 
         #endregion
