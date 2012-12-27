@@ -39,6 +39,7 @@ namespace logviewer.core
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
+        private readonly int pageSize;
         private readonly Regex regex;
         private readonly ILogView view;
 
@@ -50,14 +51,16 @@ namespace logviewer.core
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
         private string textFilter;
+        private const int DefaultPageSize = 10000;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels)
+        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels, int pageSize = DefaultPageSize)
         {
             this.recentFilesFilePath = recentFilesFilePath;
+            this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);

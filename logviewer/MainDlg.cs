@@ -35,8 +35,10 @@ namespace logviewer
         {
             this.InitializeComponent();
             Application.ThreadException += OnUnhandledException;
+            int pageSize;
+            int.TryParse(ConfigurationManager.AppSettings["PageSize"], out pageSize);
             this.controller = new MainController(this, ConfigurationManager.AppSettings["StartMessagePattern"],
-                                                 Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"), this.levels);
+                                                 Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"), this.levels, pageSize);
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
