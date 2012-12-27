@@ -139,6 +139,10 @@ namespace logviewer
             this.refreshToolStripMenuItem.Enabled = enabled;
             this.exportToolStripMenuItem.Enabled = enabled;
             this.toolStripTextBox1.Enabled = enabled;
+            this.prev.Enabled = enabled;
+            this.next.Enabled = enabled;
+            this.last.Enabled = enabled;
+            this.first.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
