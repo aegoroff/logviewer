@@ -286,5 +286,41 @@ namespace logviewer.tests
         {
             this.controller.SaveRecentFiles();
         }
+
+        [Test]
+        public void TotalPagesMessagesBelowPageSize()
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < 1000; i++)
+            {
+                sb.AppendLine(MessageExamples);
+            }
+            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
+        }
+        
+        [Test]
+        public void TotalPagesMessagesInexactlyAbovePageSize()
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < 6000; i++)
+            {
+                sb.AppendLine(MessageExamples);
+            }
+            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
+        }
+        
+        [Test]
+        public void TotalPagesMessagesExactlyAbovePageSize()
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < 10000; i++)
+            {
+                sb.AppendLine(MessageExamples);
+            }
+            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
+        }
     }
 }

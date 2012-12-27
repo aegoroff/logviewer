@@ -82,6 +82,18 @@ namespace logviewer.core
         {
             get { return this.messagesCache == null ? 0 : this.messagesCache.Count; }
         }
+        
+        public int TotalPages
+        {
+            get
+            {
+                if (this.messagesCache == null)
+                {
+                    return 0;
+                }
+                return (int)Math.Ceiling(this.DisplayedMessages / (float)this.pageSize);
+            }
+        }
 
         public int DisplayedMessages
         {

@@ -118,6 +118,8 @@ namespace logviewer
             this.syntaxRichTextBox1.SaveFile(this.exportDialog.FileName, RichTextBoxStreamType.RichText);
         }
 
+        public int CurrentPage { get; private set; }
+
         #endregion
 
         private static void OnUnhandledException(object sender, ThreadExceptionEventArgs e)
