@@ -374,7 +374,7 @@
             // currentPage
             // 
             this.currentPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.currentPage.BackColor = System.Drawing.SystemColors.Window;
+            this.currentPage.BackColor = System.Drawing.SystemColors.Control;
             this.currentPage.Location = new System.Drawing.Point(56, 450);
             this.currentPage.Name = "currentPage";
             this.currentPage.ReadOnly = true;
