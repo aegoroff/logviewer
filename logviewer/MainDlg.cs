@@ -245,6 +245,7 @@ namespace logviewer
         private void OnChangeFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = false;
+            this.controller.RebuildMessages = true;
             this.StartReading();
         }
 
@@ -271,6 +272,7 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
+            this.controller.RebuildMessages = true;
             this.StartReading();
         }
 
@@ -288,25 +290,33 @@ namespace logviewer
         private void OnPrevPage(object sender, EventArgs e)
         {
             this.controller.CurrentPage -= 1;
-            this.OnChangeFilter(sender, e);
+            this.controller.RebuildMessages = false;
+            this.textFilterChanging = false;
+            this.StartReading();
         }
 
         private void OnNextPage(object sender, EventArgs e)
         {
             this.controller.CurrentPage += 1;
-            this.OnChangeFilter(sender, e);
+            this.controller.RebuildMessages = false;
+            this.textFilterChanging = false;
+            this.StartReading();
         }
 
         private void OnFirst(object sender, EventArgs e)
         {
             this.controller.CurrentPage = 1;
-            this.OnChangeFilter(sender, e);
+            this.controller.RebuildMessages = false;
+            this.textFilterChanging = false;
+            this.StartReading();
         }
 
         private void OnLast(object sender, EventArgs e)
         {
             this.controller.CurrentPage = this.controller.TotalPages;
-            this.OnChangeFilter(sender, e);
+            this.controller.RebuildMessages = false;
+            this.textFilterChanging = false;
+            this.StartReading();
         }
     }
 }

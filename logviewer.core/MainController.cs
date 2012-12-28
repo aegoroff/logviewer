@@ -60,6 +60,7 @@ namespace logviewer.core
         public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels, int pageSize = DefaultPageSize)
         {
             this.CurrentPage = 1;
+            this.RebuildMessages = true;
             this.recentFilesFilePath = recentFilesFilePath;
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
@@ -76,6 +77,8 @@ namespace logviewer.core
         public string HumanReadableLogSize { get; private set; }
 
         public long LogSize { get; private set; }
+
+        public bool RebuildMessages { get; set; }
 
         public List<LogMessage> Messages { get; private set; }
 
@@ -194,6 +197,7 @@ namespace logviewer.core
         public void ClearCache()
         {
             this.currentPath = null;
+            this.RebuildMessages = true;
         }
 
         public void MinFilter(int value)
@@ -362,12 +366,15 @@ namespace logviewer.core
 
         private string CreateRtf()
         {
-            this.Messages = new List<LogMessage>(this.messagesCache.Where(m => !this.Filter(m)));
-            this.byLevel.Clear();
-            if (this.reverseChronological)
+            if (this.RebuildMessages)
             {
-                this.Messages.Reverse();
+                this.Messages = new List<LogMessage>(this.messagesCache.Where(m => !this.Filter(m)));
+                if (this.reverseChronological)
+                {
+                    this.Messages.Reverse();
+                }
             }
+            this.byLevel.Clear();
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
