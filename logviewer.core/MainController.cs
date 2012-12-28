@@ -51,7 +51,7 @@ namespace logviewer.core
         private List<LogMessage> messagesCache;
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
-        private string textFilter;
+        private Regex textFilter;
 
         #endregion
 
@@ -212,7 +212,7 @@ namespace logviewer.core
 
         public void TextFilter(string value)
         {
-            this.textFilter = value;
+            this.textFilter = string.IsNullOrWhiteSpace(value) ? null : new Regex(value, RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
         public void Ordering(bool reverse)
@@ -420,12 +420,11 @@ namespace logviewer.core
         private bool Filter(LogMessage message)
         {
             var filteredByLevel = message.Level < this.minFilter || message.Level > this.maxFilter;
-            if (string.IsNullOrWhiteSpace(this.textFilter) || filteredByLevel)
+            if (this.textFilter == null || filteredByLevel)
             {
                 return filteredByLevel;
             }
-            var r = new Regex(this.textFilter, RegexOptions.IgnoreCase);
-            return !r.IsMatch(message.ToString());
+            return !this.textFilter.IsMatch(message.ToString());
         }
 
         private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
