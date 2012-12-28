@@ -58,6 +58,7 @@
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pageSizeLabel = new System.Windows.Forms.Label();
             this.last = new System.Windows.Forms.Button();
             this.next = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.TextBox();
@@ -67,7 +68,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.pageSizeLabel = new System.Windows.Forms.Label();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -90,8 +90,9 @@
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(296, 17);
-            this.toolStripStatusLabel2.Text = "{0} of {1} displayed   T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   ";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(396, 17);
+            this.toolStripStatusLabel2.Text = "Total: {1} To display: {8} Displayed: {0}   T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:" +
+    "{7}   ";
             // 
             // toolStripStatusLabel1
             // 
@@ -336,6 +337,16 @@
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
             // 
+            // pageSizeLabel
+            // 
+            this.pageSizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pageSizeLabel.AutoSize = true;
+            this.pageSizeLabel.Location = new System.Drawing.Point(163, 454);
+            this.pageSizeLabel.Name = "pageSizeLabel";
+            this.pageSizeLabel.Size = new System.Drawing.Size(123, 13);
+            this.pageSizeLabel.TabIndex = 6;
+            this.pageSizeLabel.Text = "Page size: {0} messages";
+            // 
             // last
             // 
             this.last.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -416,16 +427,6 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
-            // 
-            // pageSizeLabel
-            // 
-            this.pageSizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pageSizeLabel.AutoSize = true;
-            this.pageSizeLabel.Location = new System.Drawing.Point(163, 454);
-            this.pageSizeLabel.Name = "pageSizeLabel";
-            this.pageSizeLabel.Size = new System.Drawing.Size(123, 13);
-            this.pageSizeLabel.TabIndex = 6;
-            this.pageSizeLabel.Text = "Page size: {0} messages";
             // 
             // syntaxRichTextBox1
             // 
