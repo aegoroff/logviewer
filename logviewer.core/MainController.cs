@@ -378,7 +378,7 @@ namespace logviewer.core
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
-            if (this.CurrentPage > this.TotalPages)
+            if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
             {
                 this.CurrentPage = 1;
             }
