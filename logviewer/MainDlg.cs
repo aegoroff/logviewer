@@ -37,6 +37,7 @@ namespace logviewer
             Application.ThreadException += OnUnhandledException;
             int pageSize;
             int.TryParse(ConfigurationManager.AppSettings["PageSize"], out pageSize);
+            this.pageSizeLabel.Text = string.Format(this.pageSizeLabel.Text, pageSize);
             this.controller = new MainController(this, ConfigurationManager.AppSettings["StartMessagePattern"],
                                                  Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"), this.levels, pageSize);
             this.KeepOriginalCaption();
