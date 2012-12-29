@@ -260,6 +260,7 @@ namespace logviewer.core
             {
                 return;
             }
+            this.ClearCache();
             this.CurrentPage = 1;
             this.view.LogPath = this.view.LogFileName;
             if (this.view.IsBusy)

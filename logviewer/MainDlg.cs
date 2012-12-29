@@ -163,6 +163,7 @@ namespace logviewer
             var item = (ToolStripMenuItem) sender;
             this.LogPath = item.Tag as string;
             this.controller.CurrentPage = 1;
+            this.controller.ClearCache();
             this.ReadLog();
         }
 
