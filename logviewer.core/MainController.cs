@@ -80,7 +80,7 @@ namespace logviewer.core
 
         public bool RebuildMessages { get; set; }
 
-        public List<LogMessage> Messages { get; private set; }
+        public IList<LogMessage> Messages { get; private set; }
 
         public int TotalMessages
         {
@@ -368,11 +368,7 @@ namespace logviewer.core
         {
             if (this.RebuildMessages)
             {
-                this.Messages = new List<LogMessage>(this.messagesCache.Where(m => !this.Filter(m)));
-                if (this.reverseChronological)
-                {
-                    this.Messages.Reverse();
-                }
+                this.Messages = new List<LogMessage>(this.ReadFromCache());
             }
             this.byLevel.Clear();
             var rtfPath = Path.GetTempFileName();
@@ -391,6 +387,31 @@ namespace logviewer.core
             }
             doc.Close();
             return rtfPath;
+        }
+
+        private IEnumerable<LogMessage> ReadFromCache()
+        {
+            if (this.reverseChronological)
+            {
+                for (int i = this.messagesCache.Count - 1; i >= 0; i--)
+                {
+                    if (!this.Filter(this.messagesCache[i]))
+                    {
+                        yield return this.messagesCache[i];
+                    }
+                }
+            }
+            else
+            {
+                // IMPORTANT: dont use LINQ due to performance reason
+                for (int i = 0; i < this.messagesCache.Count; i++)
+                {
+                    if (!this.Filter(this.messagesCache[i]))
+                    {
+                        yield return this.messagesCache[i];
+                    }
+                }
+            }
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
