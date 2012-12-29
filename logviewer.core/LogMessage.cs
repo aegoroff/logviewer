@@ -30,14 +30,25 @@ namespace logviewer.core
 
         private static Dictionary<LogLevel, Color> levelsMap;
 
+        public LogMessage(IList<string> strings)
+        {
+            this.strings = strings;
+            this.Level = LogLevel.Trace;
+        }
+
         public string Header
         {
-            get { return this.Strings.Count == 0 ? string.Empty : this.Strings[0]; }
+            get { return this.IsEmpty ? string.Empty : this.strings[0]; }
+        }
+
+        public bool IsEmpty
+        {
+            get { return this.strings.Count == 0; }
         }
 
         public string Body
         {
-            get { return this.Strings.Count < 2 ? string.Empty : string.Join("\n", this.MessageBody()); }
+            get { return this.strings.Count < 2 ? string.Empty : string.Join("\n", this.MessageBody()); }
         }
 
         public RtfCharFormat HeadFormat
@@ -48,6 +59,11 @@ namespace logviewer.core
         public RtfCharFormat BodyFormat
         {
             get { return bodyFormatsMap[this.Level]; }
+        }
+
+        public void AddLine(string line)
+        {
+            this.strings.Add(line);
         }
 
         private static RtfCharFormat FormatHead(LogLevel level)
@@ -87,19 +103,19 @@ namespace logviewer.core
 
         public override string ToString()
         {
-            return string.Join(Environment.NewLine, this.Strings);
+            return string.Join(Environment.NewLine, this.strings);
         }
 
         private IEnumerable<string> MessageBody()
         {
             var i = 0;
-            return this.Strings.Where(s => i++ > 0);
+            return this.strings.Where(s => i++ > 0);
         }
 
         #region Constants and Fields
 
+        private readonly IList<string> strings;
         internal LogLevel Level;
-        internal IList<string> Strings;
 
         #endregion
     }

@@ -331,7 +331,7 @@ namespace logviewer.core
                     return;
                 }
                 this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
-                var message = new LogMessage { Strings = new List<string>() };
+                var message = new LogMessage(new List<string>());
 
                 while (!reader.EndOfStream)
                 {
@@ -345,10 +345,10 @@ namespace logviewer.core
                     if (this.regex.IsMatch(line))
                     {
                         this.AddMessageToCache(message);
-                        message.Strings = new List<string>();
+                        message = new LogMessage(new List<string>());
                     }
 
-                    message.Strings.Add(line);
+                    message.AddLine(line);
                 }
                 this.AddMessageToCache(message);
             }
@@ -356,7 +356,7 @@ namespace logviewer.core
 
         private void AddMessageToCache(LogMessage message)
         {
-            if (message.Strings.Count == 0)
+            if (message.IsEmpty)
             {
                 return;
             }
