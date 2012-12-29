@@ -12,7 +12,7 @@ namespace logviewer
     public partial class MainDlg : Form, ILogView
     {
         private readonly MainController controller;
-        int pageSize;
+        readonly int pageSize;
 
         private readonly string[] levels = new[]
             {
