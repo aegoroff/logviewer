@@ -37,11 +37,11 @@ namespace logviewer.core
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
 
         private readonly List<Regex> markers;
+        private readonly Regex messageHead;
         private readonly int pageSize;
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
-        private readonly Regex messageHead;
         private readonly ILogView view;
 
         private bool cancelReading;
@@ -67,14 +67,14 @@ namespace logviewer.core
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
-            this.messages = new LogMessage[0];
+            this.messages = new List<LogMessage>();
         }
 
         #endregion
 
         #region Public Properties
 
-        private LogMessage[] messages;
+        private List<LogMessage> messages;
         public string HumanReadableLogSize { get; private set; }
 
         public long LogSize { get; private set; }
@@ -83,7 +83,7 @@ namespace logviewer.core
 
         public int MessagesCount
         {
-            get { return this.messages.Length; }
+            get { return this.messages.Count; }
         }
 
         public int TotalMessages
@@ -101,7 +101,7 @@ namespace logviewer.core
                 {
                     return 1;
                 }
-                return (int) Math.Ceiling(this.messages.Length / (float) this.pageSize);
+                return (int) Math.Ceiling(this.messages.Count / (float) this.pageSize);
             }
         }
 
@@ -110,9 +110,9 @@ namespace logviewer.core
             get
             {
                 var start = (this.CurrentPage - 1) * this.pageSize;
-                var tail = this.messages.Length - start;
+                var tail = this.messages.Count - start;
                 var finish = Math.Min(tail, this.pageSize);
-                return Math.Min(finish, this.messages.Length);
+                return Math.Min(finish, this.messages.Count);
             }
         }
 
@@ -373,7 +373,8 @@ namespace logviewer.core
         {
             if (this.RebuildMessages)
             {
-                this.messages = this.ReadFromCache().ToArray();
+                this.messages = new List<LogMessage>();
+                this.ReadFromCache();
             }
             this.byLevel.Clear();
             var rtfPath = Path.GetTempFileName();
@@ -385,7 +386,7 @@ namespace logviewer.core
             }
 
             var start = (this.CurrentPage - 1) * this.pageSize;
-            var finish = Math.Min(start + this.pageSize, this.messages.Length);
+            var finish = Math.Min(start + this.pageSize, this.messages.Count);
             for (var i = start; i < finish; i++)
             {
                 this.AddMessage(doc, this.messages[i]);
@@ -394,7 +395,7 @@ namespace logviewer.core
             return rtfPath;
         }
 
-        private IEnumerable<LogMessage> ReadFromCache()
+        private void ReadFromCache()
         {
             if (this.reverseChronological)
             {
@@ -402,7 +403,7 @@ namespace logviewer.core
                 {
                     if (!this.Filter(this.messagesCache[i]))
                     {
-                        yield return this.messagesCache[i];
+                        this.messages.Add(this.messagesCache[i]);
                     }
                 }
             }
@@ -415,7 +416,7 @@ namespace logviewer.core
                 {
                     if (!this.Filter(this.messagesCache[i]))
                     {
-                        yield return this.messagesCache[i];
+                        this.messages.Add(this.messagesCache[i]);
                     }
                 }
             }
