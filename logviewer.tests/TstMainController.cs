@@ -54,7 +54,7 @@ namespace logviewer.tests
         private const string LogPathProperty = "LogPath";
         private const string ClearRecentFilesListMethod = "ClearRecentFilesList";
         private const string CreateRecentFileItemMethod = "CreateRecentFileItem";
-        private const string MessageExamples = "2008-12-27 19:31:47,250 [4688] INFO \n2008-12-27 19:40:11,906 [5272] ERROR ";
+        private const string MessageExamples = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
         private const string OpenLogFileMethod = "OpenLogFile";
@@ -250,7 +250,7 @@ namespace logviewer.tests
             }
             Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2000));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74,22 Kb (76000 Bytes)"));
+            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("103,52 Kb (106000 Bytes)"));
         }
 
         [Test]
@@ -259,18 +259,18 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74 Bytes"));
+            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("104 Bytes"));
         }
 
         [Test]
         public void ReadNormalLogWin1251()
         {
-            const string messageExamples1251 = "2008-12-27 19:31:47,250 [4688] INFO \n2008-12-27 19:40:11,906 [тест] ERROR ";
+            const string messageExamples1251 = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
             File.WriteAllText(TestPath, messageExamples1251, Encoding.GetEncoding("windows-1251"));
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(MessageExamples.Length, NUnit.Framework.Is.EqualTo(messageExamples1251.Length));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("84 Bytes"));
+            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("104 Bytes"));
         }
 
         [Test]
