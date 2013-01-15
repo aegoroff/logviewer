@@ -36,7 +36,7 @@ namespace logviewer.core
 
         public bool IsEmpty
         {
-            get { return this.strings.Count == 0; }
+            get { return this.strings == null || this.strings.Count == 0; }
         }
 
         public string Body

@@ -336,8 +336,7 @@ namespace logviewer.core
                     return;
                 }
                 this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
-                var message = LogMessage.Create();
-
+                var message = new LogMessage();
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
