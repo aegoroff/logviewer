@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using System.Text;
 using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer.core
@@ -30,12 +29,6 @@ namespace logviewer.core
 
         private static Dictionary<LogLevel, Color> levelsMap;
 
-        public LogMessage(IList<string> strings)
-        {
-            this.strings = strings;
-            this.Level = LogLevel.Trace;
-        }
-
         public string Header
         {
             get { return this.IsEmpty ? string.Empty : this.strings[0]; }
@@ -48,7 +41,7 @@ namespace logviewer.core
 
         public string Body
         {
-            get { return this.strings.Count < 2 ? string.Empty : string.Join("\n", this.MessageBody()); }
+            get { return this.strings.Count < 2 ? string.Empty : this.ToString(1); }
         }
 
         public RtfCharFormat HeadFormat
@@ -103,19 +96,35 @@ namespace logviewer.core
 
         public override string ToString()
         {
-            return string.Join(Environment.NewLine, this.strings);
+            return this.ToString(0);
         }
 
-        private IEnumerable<string> MessageBody()
+        private string ToString(int start)
         {
-            var i = 0;
-            return this.strings.Where(s => i++ > 0);
+            var sb = new StringBuilder();
+            var count = this.strings.Count;
+// ReSharper disable ForCanBeConvertedToForeach
+            for (var i = start; i < count; i++)
+// ReSharper restore ForCanBeConvertedToForeach
+            {
+                sb.Append(this.strings[i]);
+                if (i < count - 1)
+                {
+                    sb.Append('\n');
+                }
+            }
+            return sb.ToString();
+        }
+
+        public static LogMessage Create()
+        {
+            return new LogMessage { strings = new List<string>(), Level = LogLevel.Trace };
         }
 
         #region Constants and Fields
 
-        private readonly IList<string> strings;
         internal LogLevel Level;
+        private List<string> strings;
 
         #endregion
     }

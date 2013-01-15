@@ -332,7 +332,7 @@ namespace logviewer.core
                     return;
                 }
                 this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
-                var message = new LogMessage(new List<string>());
+                var message = LogMessage.Create();
 
                 while (!reader.EndOfStream)
                 {
@@ -346,7 +346,7 @@ namespace logviewer.core
                     if (this.regex.IsMatch(line))
                     {
                         this.AddMessageToCache(message);
-                        message = new LogMessage(new List<string>());
+                        message = LogMessage.Create();
                     }
 
                     message.AddLine(line);

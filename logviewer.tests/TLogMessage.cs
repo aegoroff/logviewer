@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 using logviewer.core;
 
@@ -11,7 +10,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            this.m = new LogMessage(new List<string>());
+            this.m = LogMessage.Create();
         }
 
         private LogMessage m;
@@ -33,7 +32,7 @@ namespace logviewer.tests
         {
             this.m.AddLine(H);
             this.m.AddLine(B);
-            Assert.That(this.m.ToString(), Is.EqualTo(H + Environment.NewLine + B));
+            Assert.That(this.m.ToString(), Is.EqualTo(H + "\n" + B));
         }
 
         [Test]
