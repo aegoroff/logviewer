@@ -82,7 +82,7 @@ namespace logviewer.tests
             this.controller.MinFilter(min);
             this.controller.MaxFilter(max);
             this.controller.ReadLog(CreateTestStream(msg));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(count));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(count));
         }
 
         [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
@@ -95,7 +95,7 @@ namespace logviewer.tests
             this.controller = new MainController(this.view, MessageStart, RecentPath, markers);
             this.controller.MaxFilter((int)filter);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
         
         [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
@@ -108,7 +108,7 @@ namespace logviewer.tests
             this.controller = new MainController(this.view, MessageStart, RecentPath, markers);
             this.controller.MinFilter((int)filter);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(c));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace logviewer.tests
         {
             this.controller.TextFilter(".*5272.*");
             this.controller.ReadLog(CreateTestStream(MessageExamples));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(1));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace logviewer.tests
             File.Create(TestPath).Dispose();
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.LogSize, NUnit.Framework.Is.EqualTo(0));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(0));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
             Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("0 Bytes"));
         }
         
@@ -236,7 +236,7 @@ namespace logviewer.tests
             Expect.Never.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
             Expect.Never.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
             Assert.IsEmpty(this.controller.ReadLog());
-            Assert.IsEmpty(this.controller.Messages);
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
             Assert.IsNull(this.controller.HumanReadableLogSize);
         }
 
@@ -249,7 +249,7 @@ namespace logviewer.tests
                 sb.AppendLine(MessageExamples);
             }
             Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(2000));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2000));
             Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74,22 Kb (76000 Bytes)"));
         }
 
@@ -258,7 +258,7 @@ namespace logviewer.tests
         {
             File.WriteAllText(TestPath, MessageExamples);
             Assert.IsNotEmpty(this.controller.ReadLog());
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
             Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("74 Bytes"));
         }
 
@@ -269,7 +269,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, messageExamples1251, Encoding.GetEncoding("windows-1251"));
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(MessageExamples.Length, NUnit.Framework.Is.EqualTo(messageExamples1251.Length));
-            Assert.That(this.controller.Messages.Count, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
             Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("84 Bytes"));
         }
 
