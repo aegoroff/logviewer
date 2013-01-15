@@ -41,7 +41,7 @@ namespace logviewer.core
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
-        private readonly Regex regex;
+        private readonly Regex messageHead;
         private readonly ILogView view;
 
         private bool cancelReading;
@@ -65,7 +65,7 @@ namespace logviewer.core
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
-            this.regex = new Regex(startMessagePattern, RegexOptions.Compiled);
+            this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
             this.messages = new List<LogMessage>();
         }
@@ -346,7 +346,7 @@ namespace logviewer.core
                         break;
                     }
 
-                    if (this.regex.IsMatch(line))
+                    if (this.messageHead.IsMatch(line))
                     {
                         this.AddMessageToCache(message);
                         message = LogMessage.Create();
