@@ -398,7 +398,7 @@ namespace logviewer.core
         {
             if (this.reverseChronological)
             {
-                for (int i = this.messagesCache.Count - 1; i >= 0; i--)
+                for (var i = this.messagesCache.Count - 1; i >= 0; i--)
                 {
                     if (!this.Filter(this.messagesCache[i]))
                     {
@@ -409,7 +409,9 @@ namespace logviewer.core
             else
             {
                 // IMPORTANT: dont use LINQ due to performance reason
-                for (int i = 0; i < this.messagesCache.Count; i++)
+// ReSharper disable ForCanBeConvertedToForeach
+                for (var i = 0; i < this.messagesCache.Count; i++)
+// ReSharper restore ForCanBeConvertedToForeach
                 {
                     if (!this.Filter(this.messagesCache[i]))
                     {
