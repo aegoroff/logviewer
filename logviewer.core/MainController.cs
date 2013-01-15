@@ -354,6 +354,7 @@ namespace logviewer.core
 
                     message.AddLine(line);
                 }
+                // Add last message
                 this.AddMessageToCache(message);
             }
         }
