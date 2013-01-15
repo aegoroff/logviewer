@@ -18,7 +18,7 @@ namespace logviewer.core
         #region Constants and Fields
 
         private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
-        private const int MeanLogStringLength = 70;
+        private const int MeanLogStringLength = 50;
         private const string SmallFileFormat = "{0} {1}";
         private const string NewLine = "\n";
         private const int DefaultPageSize = 10000;
@@ -335,7 +335,8 @@ namespace logviewer.core
                 {
                     return;
                 }
-                this.messagesCache = new List<LogMessage>((int) this.LogSize / MeanLogStringLength);
+                var logCharsCount = (int) this.LogSize / sizeof (char);
+                this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
                 var message = new LogMessage();
                 while (!reader.EndOfStream)
                 {
