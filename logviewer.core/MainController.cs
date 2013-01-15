@@ -373,7 +373,7 @@ namespace logviewer.core
         {
             if (this.RebuildMessages)
             {
-                this.messages = new List<LogMessage>();
+                this.messages = new List<LogMessage>(this.pageSize);
                 this.ReadFromCache();
             }
             this.byLevel.Clear();
