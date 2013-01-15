@@ -67,14 +67,14 @@ namespace logviewer.core
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
             this.view = view;
-            this.messages = new List<LogMessage>();
+            this.messages = new LogMessage[0];
         }
 
         #endregion
 
         #region Public Properties
 
-        private List<LogMessage> messages;
+        private LogMessage[] messages;
         public string HumanReadableLogSize { get; private set; }
 
         public long LogSize { get; private set; }
@@ -83,7 +83,7 @@ namespace logviewer.core
 
         public int MessagesCount
         {
-            get { return this.messages.Count; }
+            get { return this.messages.Length; }
         }
 
         public int TotalMessages
@@ -101,7 +101,7 @@ namespace logviewer.core
                 {
                     return 1;
                 }
-                return (int) Math.Ceiling(this.messages.Count / (float) this.pageSize);
+                return (int) Math.Ceiling(this.messages.Length / (float) this.pageSize);
             }
         }
 
@@ -110,9 +110,9 @@ namespace logviewer.core
             get
             {
                 var start = (this.CurrentPage - 1) * this.pageSize;
-                var tail = this.messages.Count - start;
+                var tail = this.messages.Length - start;
                 var finish = Math.Min(tail, this.pageSize);
-                return Math.Min(finish, this.messages.Count);
+                return Math.Min(finish, this.messages.Length);
             }
         }
 
@@ -373,7 +373,7 @@ namespace logviewer.core
         {
             if (this.RebuildMessages)
             {
-                this.messages = new List<LogMessage>(this.ReadFromCache());
+                this.messages = this.ReadFromCache().ToArray();
             }
             this.byLevel.Clear();
             var rtfPath = Path.GetTempFileName();
@@ -385,7 +385,7 @@ namespace logviewer.core
             }
 
             var start = (this.CurrentPage - 1) * this.pageSize;
-            var finish = Math.Min(start + this.pageSize, this.messages.Count);
+            var finish = Math.Min(start + this.pageSize, this.messages.Length);
             for (var i = start; i < finish; i++)
             {
                 this.AddMessage(doc, this.messages[i]);
