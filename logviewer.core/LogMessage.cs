@@ -7,6 +7,8 @@ namespace logviewer.core
 {
     public struct LogMessage
     {
+        private const string NewLine = "\n";
+
         private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>
             {
                 { LogLevel.Trace, FormatBody(LogLevel.Trace) },
@@ -29,19 +31,19 @@ namespace logviewer.core
 
         private static Dictionary<LogLevel, Color> levelsMap;
 
-        public string Header
-        {
-            get { return this.IsEmpty ? string.Empty : this.strings[0]; }
-        }
-
         public bool IsEmpty
         {
-            get { return this.strings == null || this.strings.Count == 0; }
+            get { return this.head == null && this.body == null && (this.strings == null || this.strings.Count == 0); }
+        }
+        
+        public string Header
+        {
+            get { return this.head ?? (this.IsEmpty ? string.Empty : this.strings[0]); }
         }
 
         public string Body
         {
-            get { return this.strings.Count < 2 ? string.Empty : this.ToString(1); }
+            get { return this.body ?? (this.strings.Count < 2 ? string.Empty : this.ToString(1)); }
         }
 
         public RtfCharFormat HeadFormat
@@ -57,6 +59,18 @@ namespace logviewer.core
         public void AddLine(string line)
         {
             this.strings.Add(line);
+        }
+
+        public void Cache()
+        {
+            if (this.head != null && this.body != null)
+            {
+                return;
+            }
+            this.head = this.Header;
+            this.body = this.Body;
+            this.strings.Clear();
+            this.strings = null;
         }
 
         private static RtfCharFormat FormatHead(LogLevel level)
@@ -96,7 +110,7 @@ namespace logviewer.core
 
         public override string ToString()
         {
-            return this.ToString(0);
+            return this.head == null && this.body == null ? this.ToString(0) : head + (string.IsNullOrEmpty(body) ? string.Empty : NewLine + body);
         }
 
         private string ToString(int start)
@@ -110,7 +124,7 @@ namespace logviewer.core
                 sb.Append(this.strings[i]);
                 if (i < count - 1)
                 {
-                    sb.Append('\n');
+                    sb.Append(NewLine);
                 }
             }
             return sb.ToString();
@@ -124,6 +138,8 @@ namespace logviewer.core
         #region Constants and Fields
 
         internal LogLevel Level;
+        private string body;
+        private string head;
         private List<string> strings;
 
         #endregion

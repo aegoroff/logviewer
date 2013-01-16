@@ -367,6 +367,7 @@ namespace logviewer.core
                 return;
             }
             message.Level = this.DetectLevel(message.Header);
+            message.Cache();
             this.messagesCache.Add(message);
         }
 
