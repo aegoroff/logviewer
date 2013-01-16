@@ -272,6 +272,15 @@ namespace logviewer.tests
         }
 
         [Test]
+        public void ReadNotEmptyLogWithoutMessagesMatch()
+        {
+            File.WriteAllText(TestPath, "test log");
+            Assert.IsNotEmpty(this.controller.ReadLog());
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
+            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("8 Bytes"));
+        }
+
+        [Test]
         public void ReadRecentFiles()
         {
             Expect.Once.On(this.view).Method(ClearRecentFilesListMethod);
