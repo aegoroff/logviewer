@@ -337,7 +337,7 @@ namespace logviewer.core
                 }
                 var logCharsCount = (int) this.LogSize / sizeof (char);
                 this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
-                var message = new LogMessage();
+                var message = LogMessage.Create();
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
