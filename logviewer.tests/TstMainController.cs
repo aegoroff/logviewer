@@ -10,6 +10,9 @@ namespace logviewer.tests
     [TestFixture]
     public class TstMainController
     {
+        private const string f1 = "1";
+        private const string f2 = "2";
+
         #region Setup/Teardown
 
         [SetUp]
@@ -31,6 +34,14 @@ namespace logviewer.tests
             if (File.Exists(RecentPath))
             {
                 File.Delete(RecentPath);
+            }
+            if (File.Exists(f1))
+            {
+                File.Delete(f1);
+            }
+            if (File.Exists(f2))
+            {
+                File.Delete(f2);
             }
         }
 
@@ -273,17 +284,69 @@ namespace logviewer.tests
         }
 
         [Test]
-        public void ReadRecentFiles()
+        public void ReadRecentFilesNoFile()
         {
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
             this.controller.ReadRecentFiles();
         }
+        
+        [Test]
+        public void ReadRecentFilesSingleUnexistFile()
+        {
+            File.WriteAllLines(RecentPath, new[] { "1" });
+            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+            this.controller.ReadRecentFiles();
+        }
+        
+        [Test]
+        public void ReadRecentFilesSingleExistFile()
+        {
+            
+            using (File.Open(f1, FileMode.Create))
+            {
+            }
+            File.WriteAllLines(RecentPath, new[] { f1 });
+            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+            this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
+            this.controller.ReadRecentFiles();
+        }
+        
+        [Test]
+        public void ReadRecentFilesManyExistFile()
+        {
+            
+            using (File.Open(f1, FileMode.Create))
+            {
+            }
+            using (File.Open(f2, FileMode.Create))
+            {
+            }
+            File.WriteAllLines(RecentPath, new[] { f1, f2 });
+            using (mockery.Ordered())
+            {
+                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
+                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
+            }
+            this.controller.ReadRecentFiles();
+        }
 
+        [Test]
+        public void SaveAndReadRecentFilesNoFile()
+        {
+            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+            this.controller.SaveRecentFiles();
+            this.controller.ReadRecentFiles();
+        }
+        
         [Test]
         public void SaveAndReadRecentFiles()
         {
+            using (File.Open(TestPath, FileMode.Create))
+            {
+            }
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-            this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem("test"));
+            this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
         }
