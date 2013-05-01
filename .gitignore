@@ -12,6 +12,7 @@ _ReSharper.logviewer/
 Debug/
 Release/
 dist/
+packages/
 !lib/Debug/
 !lib/Release/
 !lib/x64/Debug/
