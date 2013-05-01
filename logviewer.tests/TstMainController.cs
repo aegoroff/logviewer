@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using NMock2;
+using NMock;
 using NUnit.Framework;
 using logviewer.core;
 
@@ -15,10 +15,10 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            this.mockery = new Mockery();
-            this.view = this.mockery.NewMock<ILogView>();
-            Expect.AtLeastOnce.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            this.controller = new MainController(this.view, MessageStart, RecentPath, this.levels);
+            this.mockery = new MockFactory();
+            this.view = this.mockery.CreateMock<ILogView>();
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, this.levels);
         }
 
         [TearDown]
@@ -48,23 +48,12 @@ namespace logviewer.tests
 
         private const string TestPath = "f";
         private const string RecentPath = "r";
-        private Mockery mockery;
-        private ILogView view;
+        private MockFactory mockery;
+        private Mock<ILogView> view;
         private MainController controller;
-        private const string LogPathProperty = "LogPath";
-        private const string ClearRecentFilesListMethod = "ClearRecentFilesList";
-        private const string CreateRecentFileItemMethod = "CreateRecentFileItem";
         private const string MessageExamples = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
-        private const string OpenLogFileMethod = "OpenLogFile";
-        private const string LogFileNameProperty = "LogFileName";
-        private const string IsBusyProperty = "IsBusy";
-        private const string ReadLogMethod = "ReadLog";
-        private const string LoadLogMethod = "LoadLog";
-        private const string SetCurrentPageMethod = "SetCurrentPage";
-        private const string DisableBackMethod = "DisableBack";
-        private const string DisableForwardMethod = "DisableForward";
 
         private static Stream CreateTestStream(string data)
         {
@@ -92,7 +81,7 @@ namespace logviewer.tests
         [TestCase(LogLevel.Trace, new[] { "TRACE", "DEBUG", @"\[?InFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
         public void MaxFilter(LogLevel filter, string[] markers, int c)
         {
-            this.controller = new MainController(this.view, MessageStart, RecentPath, markers);
+            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, markers);
             this.controller.MaxFilter((int)filter);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
@@ -105,7 +94,7 @@ namespace logviewer.tests
         [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERRoR\]?", "FATAL" }, 0)]
         public void MinFilter(LogLevel filter, string[] markers, int c)
         {
-            this.controller = new MainController(this.view, MessageStart, RecentPath, markers);
+            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, markers);
             this.controller.MinFilter((int)filter);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
@@ -114,15 +103,15 @@ namespace logviewer.tests
         [Test]
         public void ExportRtfFail()
         {
-            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(false));
+            this.view.Expects.One.MethodWith(v => v.OpenExport(TestPath + ".rtf")).WillReturn(false);
             this.controller.ExportToRtf();
         }
 
         [Test]
         public void ExportRtfSuccess()
         {
-            Expect.Once.On(this.view).Method("OpenExport").With(TestPath + ".rtf").Will(Return.Value(true));
-            Expect.Once.On(this.view).Method("SaveRtf");
+            this.view.Expects.One.MethodWith(v => v.OpenExport(TestPath + ".rtf")).WillReturn(true);
+            this.view.Expects.One.Method(v => v.SaveRtf());
             this.controller.ExportToRtf();
         }
 
@@ -138,10 +127,11 @@ namespace logviewer.tests
         public void LoadLog()
         {
             File.WriteAllText(TestPath, string.Empty);
-            Expect.Once.On(this.view).Method(LoadLogMethod).With(TestPath);
-            Expect.Once.On(this.view).Method(SetCurrentPageMethod).With(1);
-            Expect.Once.On(this.view).Method(DisableBackMethod).With(true);
-            Expect.Once.On(this.view).Method(DisableForwardMethod).With(true);
+            this.view.Expects.One.MethodWith(v => v.LoadLog(TestPath));
+            this.view.Expects.One.MethodWith(v => v.SetCurrentPage(1));
+            this.view.Expects.One.MethodWith(v => v.DisableBack(true));
+            this.view.Expects.One.MethodWith(v => v.DisableForward(true));
+
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             this.controller.LoadLog(TestPath);
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
@@ -150,7 +140,7 @@ namespace logviewer.tests
         [Test]
         public void LoadLogEmpty()
         {
-            Expect.Never.On(this.view).Method(LoadLogMethod).WithAnyArguments();
+            this.view.Expects.No.Method(v => v.LoadLog(null)).WithAnyArguments();
             this.controller.LoadLog(string.Empty);
         }
 
@@ -158,9 +148,10 @@ namespace logviewer.tests
         public void LoadLogThatThrows()
         {
             File.WriteAllText(TestPath, string.Empty);
-            Expect.Once.On(this.view).Method(LoadLogMethod).Will(Throw.Exception(new Exception()));
-            Expect.Once.On(this.view).Method(DisableBackMethod).With(true);
-            Expect.Once.On(this.view).Method(DisableForwardMethod).With(true);
+            this.view.Expects.One.MethodWith(v => v.LoadLog(TestPath)).Will(Throw.Exception(new Exception()));
+            this.view.Expects.One.MethodWith(v => v.DisableBack(true));
+            this.view.Expects.One.MethodWith(v => v.DisableForward(true));
+
             Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             var thrown = false;
             try
@@ -178,35 +169,36 @@ namespace logviewer.tests
         [Test]
         public void LoadLogUnexistPath()
         {
-            Expect.Never.On(this.view).Method(LoadLogMethod).WithAnyArguments();
+            this.view.Expects.No.Method(v => v.LoadLog(null)).WithAnyArguments();
             this.controller.LoadLog(TestPath);
         }
 
         [Test]
         public void OpenLogFileCanceled()
         {
-            Expect.Once.On(this.view).Method(OpenLogFileMethod).Will(Return.Value(false));
+            this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(false);
             this.controller.OpenLogFile();
         }
 
         [Test]
         public void OpenLogFileOpenedAndBusy()
         {
-            Expect.Once.On(this.view).Method(OpenLogFileMethod).Will(Return.Value(true));
-            Expect.Once.On(this.view).GetProperty(LogFileNameProperty).Will(Return.Value(TestPath));
-            Expect.Once.On(this.view).SetProperty(LogPathProperty).To(TestPath);
-            Expect.Once.On(this.view).GetProperty(IsBusyProperty).Will(Return.Value(true));
+            this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(true);
+            this.view.Expects.One.GetProperty(v => v.LogFileName).WillReturn(TestPath);
+            this.view.Expects.One.SetProperty(v => v.LogPath).To(TestPath);
+            this.view.Expects.One.GetProperty(v => v.IsBusy).WillReturn(true);
+
             this.controller.OpenLogFile();
         }
 
         [Test]
         public void OpenLogFileOpenedAndNotBusy()
         {
-            Expect.Once.On(this.view).Method(OpenLogFileMethod).Will(Return.Value(true));
-            Expect.Once.On(this.view).GetProperty(LogFileNameProperty).Will(Return.Value(TestPath));
-            Expect.Once.On(this.view).SetProperty(LogPathProperty).To(TestPath);
-            Expect.Once.On(this.view).GetProperty(IsBusyProperty).Will(Return.Value(false));
-            Expect.Once.On(this.view).Method(ReadLogMethod);
+            this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(true);
+            this.view.Expects.One.GetProperty(v => v.LogFileName).WillReturn(TestPath);
+            this.view.Expects.One.SetProperty(v => v.LogPath).To(TestPath);
+            this.view.Expects.One.GetProperty(v => v.IsBusy).WillReturn(false);
+            this.view.Expects.One.Method(v => v.ReadLog());
             this.controller.OpenLogFile();
         }
 
@@ -233,8 +225,8 @@ namespace logviewer.tests
         [Test]
         public void ReadFromBadPath()
         {
-            Expect.Never.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(TestPath));
-            Expect.Never.On(this.view).GetProperty(LogPathProperty).Will(Return.Value(string.Empty));
+            this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(string.Empty);
             Assert.IsEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
             Assert.IsNull(this.controller.HumanReadableLogSize);
@@ -283,15 +275,15 @@ namespace logviewer.tests
         [Test]
         public void ReadRecentFiles()
         {
-            Expect.Once.On(this.view).Method(ClearRecentFilesListMethod);
+            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
             this.controller.ReadRecentFiles();
         }
 
         [Test]
         public void SaveAndReadRecentFiles()
         {
-            Expect.Once.On(this.view).Method(ClearRecentFilesListMethod);
-            Expect.Once.On(this.view).Method(CreateRecentFileItemMethod).Will(Return.Value(TestPath));
+            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+            this.view.Expects.One.Method(v => v.CreateRecentFileItem(null)).WithAnyArguments();
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
         }
