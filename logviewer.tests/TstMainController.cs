@@ -283,7 +283,7 @@ namespace logviewer.tests
         public void SaveAndReadRecentFiles()
         {
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-            this.view.Expects.One.Method(v => v.CreateRecentFileItem(null)).WithAnyArguments();
+            this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem("test"));
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
         }
