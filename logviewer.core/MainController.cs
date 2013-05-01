@@ -240,7 +240,7 @@ namespace logviewer.core
             this.recentFiles.Reverse();
 
             foreach (
-                var item in from file in files where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
+                var item in from file in this.recentFiles where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
             {
                 this.view.CreateRecentFileItem(item);
             }
@@ -248,6 +248,7 @@ namespace logviewer.core
 
         public void SaveRecentFiles()
         {
+            this.recentFiles.Reverse();
             if (!this.recentFiles.Contains(this.view.LogPath))
             {
                 this.recentFiles.Add(this.view.LogPath);
