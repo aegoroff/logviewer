@@ -443,6 +443,7 @@
             // 
             // MainDlg
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(840, 545);
@@ -455,6 +456,8 @@
             this.Name = "MainDlg";
             this.Text = "Log Viewer";
             this.Load += new System.EventHandler(this.OnFormLoad);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragAndDropFile);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);

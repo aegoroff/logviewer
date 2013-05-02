@@ -320,5 +320,23 @@ namespace logviewer
             this.textFilterChanging = false;
             this.StartReading();
         }
+
+        private void OnDragAndDropFile(object sender, DragEventArgs e)
+        {
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            this.LogPath = files[0];
+            this.controller.CurrentPage = 1;
+            this.controller.ClearCache();
+            this.ReadLog();
+        }
+
+        private void OnDragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
     }
 }
