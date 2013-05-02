@@ -59,6 +59,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SafeRunner.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SizeUnit.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using logviewer.Properties;
 using logviewer.core;
+using Settings = logviewer.core.Settings;
 
 namespace logviewer
 {
@@ -44,6 +45,7 @@ namespace logviewer
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
             this.toolStripComboBox3.SelectedIndex = 0;
+            this.toolStripTextBox1.Text = Settings.MessageFilter;
             this.EnableControls(false);
             this.controller.ReadRecentFiles();
         }
@@ -275,6 +277,7 @@ namespace logviewer
         {
             this.textFilterChanging = true;
             this.controller.RebuildMessages = true;
+            Settings.MessageFilter = this.toolStripTextBox1.Text;
             this.StartReading();
         }
 
