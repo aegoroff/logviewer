@@ -323,7 +323,12 @@ namespace logviewer
 
         private void OnDragAndDropFile(object sender, DragEventArgs e)
         {
-            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var files = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+            if (files == null || files.Length == 0)
+            {
+                return;
+            }
 
             this.LogPath = files[0];
             this.controller.CurrentPage = 1;
