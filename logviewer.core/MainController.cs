@@ -216,7 +216,7 @@ namespace logviewer.core
 
         public void TextFilter(string value)
         {
-            this.textFilter = string.IsNullOrWhiteSpace(value) ? null : new Regex(value, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            this.textFilter = string.IsNullOrWhiteSpace(value) ? null : new Regex(value, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
         }
 
         public void Ordering(bool reverse)
