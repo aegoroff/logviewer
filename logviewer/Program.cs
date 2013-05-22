@@ -26,15 +26,20 @@ namespace logviewer
         static void Main()
         {
             var kernel = new StandardKernel();
-            kernel.Bind<IMainController>().To<MainController>()
-                .WithConstructorArgument("startMessagePattern", ConfigurationManager.AppSettings["StartMessagePattern"])
-                .WithConstructorArgument("recentFilesFilePath", Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"))
-                .WithConstructorArgument("levels", levels)
-                .WithConstructorArgument("pageSize", PageSize());
-            kernel.Bind<ILogView>().To<MainDlg>();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(kernel.Get<MainDlg>());
+            using (kernel)
+            {
+                kernel.Bind<IMainController>().To<MainController>()
+                      .WithConstructorArgument("startMessagePattern",
+                                               ConfigurationManager.AppSettings["StartMessagePattern"])
+                      .WithConstructorArgument("recentFilesFilePath",
+                                               Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"))
+                      .WithConstructorArgument("levels", levels)
+                      .WithConstructorArgument("pageSize", PageSize());
+                kernel.Bind<ILogView>().To<MainDlg>();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(kernel.Get<MainDlg>());
+            }
         }
 
         private static int PageSize()
