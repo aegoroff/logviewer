@@ -17,5 +17,6 @@ namespace logviewer.core
 	    void SetCurrentPage(int page);
 	    void DisableForward(bool disabled);
         void DisableBack(bool disabled);
+	    void SetPageSize(int size);
 	}
 }

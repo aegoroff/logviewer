@@ -13,7 +13,7 @@ using logviewer.core.Properties;
 
 namespace logviewer.core
 {
-    public class MainController
+    public class MainController : IMainController
     {
         #region Constants and Fields
 
@@ -42,7 +42,7 @@ namespace logviewer.core
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
-        private readonly ILogView view;
+        private ILogView view;
 
         private bool cancelReading;
         private string currentPath;
@@ -57,7 +57,8 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public MainController(ILogView view, string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels, int pageSize = DefaultPageSize)
+        public MainController(string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels,
+                              int pageSize = DefaultPageSize)
         {
             this.CurrentPage = 1;
             this.RebuildMessages = true;
@@ -66,7 +67,6 @@ namespace logviewer.core
             this.markers = new List<Regex>();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
-            this.view = view;
             this.messages = new List<LogMessage>();
         }
 
@@ -216,7 +216,10 @@ namespace logviewer.core
 
         public void TextFilter(string value)
         {
-            this.textFilter = string.IsNullOrWhiteSpace(value) ? null : new Regex(value, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+            this.textFilter = string.IsNullOrWhiteSpace(value)
+                                  ? null
+                                  : new Regex(value,
+                                              RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
         }
 
         public void Ordering(bool reverse)
@@ -235,12 +238,15 @@ namespace logviewer.core
             var files = File.ReadAllLines(this.recentFilesFilePath);
             this.recentFiles.Clear();
             this.view.ClearRecentFilesList();
-            
+
             this.recentFiles.AddRange(files);
             this.recentFiles.Reverse();
 
             foreach (
-                var item in from file in this.recentFiles where !string.IsNullOrWhiteSpace(file) && File.Exists(file) select file)
+                var item in
+                    from file in this.recentFiles
+                    where !string.IsNullOrWhiteSpace(file) && File.Exists(file)
+                    select file)
             {
                 this.view.CreateRecentFileItem(item);
             }
@@ -289,6 +295,16 @@ namespace logviewer.core
         public int CountMessages(LogLevel level)
         {
             return this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0;
+        }
+
+        public void SetView(ILogView logView)
+        {
+            this.view = logView;
+        }
+
+        public void SetPageSize()
+        {
+            view.SetPageSize(pageSize);
         }
 
         #endregion

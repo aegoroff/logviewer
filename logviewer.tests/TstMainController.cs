@@ -20,7 +20,8 @@ namespace logviewer.tests
         {
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, this.levels);
+            this.controller = new MainController(MessageStart, RecentPath, this.levels);
+            this.controller.SetView(this.view.MockObject);
         }
 
         [TearDown]
@@ -91,7 +92,8 @@ namespace logviewer.tests
         [TestCase(LogLevel.Trace, new[] { "TRACE", "DEBUG", @"\[?InFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
         public void MaxFilter(LogLevel filter, string[] markers, int c)
         {
-            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, markers);
+            this.controller = new MainController(MessageStart, RecentPath, markers);
+            this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
@@ -104,7 +106,8 @@ namespace logviewer.tests
         [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERRoR\]?", "FATAL" }, 0)]
         public void MinFilter(LogLevel filter, string[] markers, int c)
         {
-            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, markers);
+            this.controller = new MainController(MessageStart, RecentPath, markers);
+            this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
@@ -410,7 +413,8 @@ namespace logviewer.tests
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
             }
-            this.controller = new MainController(this.view.MockObject, MessageStart, RecentPath, this.levels);
+            this.controller = new MainController(MessageStart, RecentPath, this.levels);
+            this.controller.SetView(this.view.MockObject);
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
             this.controller.SaveRecentFiles();

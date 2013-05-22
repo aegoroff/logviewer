@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Configuration;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -12,19 +11,7 @@ namespace logviewer
 {
     public partial class MainDlg : Form, ILogView
     {
-        private readonly MainController controller;
-        readonly int pageSize;
-
-        private readonly string[] levels = new[]
-            {
-                ConfigurationManager.AppSettings["TraceMarker"],
-                ConfigurationManager.AppSettings["DebugMarker"],
-                ConfigurationManager.AppSettings["InfoMarker"],
-                ConfigurationManager.AppSettings["WarnMarker"],
-                ConfigurationManager.AppSettings["ErrorMarker"],
-                ConfigurationManager.AppSettings["FatalMarker"]
-            };
-
+        private readonly IMainController controller;
         private int logFilterMax;
         private int logFilterMin;
         private string logFilterText;
@@ -33,14 +20,12 @@ namespace logviewer
         private bool reverse;
         private bool textFilterChanging;
 
-        public MainDlg()
+        public MainDlg(IMainController controller)
         {
             this.InitializeComponent();
             Application.ThreadException += OnUnhandledException;
-            int.TryParse(ConfigurationManager.AppSettings["PageSize"], out pageSize);
-            this.pageSizeLabel.Text = string.Format(this.pageSizeLabel.Text, pageSize);
-            this.controller = new MainController(this, ConfigurationManager.AppSettings["StartMessagePattern"],
-                                                 Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"), this.levels, pageSize);
+            this.controller = controller;
+            this.controller.SetView(this);
             this.KeepOriginalCaption();
             this.toolStripComboBox1.SelectedIndex = 0;
             this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
@@ -48,6 +33,7 @@ namespace logviewer
             this.toolStripTextBox1.Text = Settings.MessageFilter;
             this.EnableControls(false);
             this.controller.ReadRecentFiles();
+            this.controller.SetPageSize();
         }
 
         #region ILogView Members
@@ -136,6 +122,11 @@ namespace logviewer
         {
             this.prev.Enabled = !disabled;
             this.first.Enabled = !disabled;
+        }
+
+        public void SetPageSize(int size)
+        {
+            this.pageSizeLabel.Text = string.Format(this.pageSizeLabel.Text, size);
         }
 
         #endregion

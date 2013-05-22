@@ -67,6 +67,11 @@
 								Name="NLog.dll"
 								Source="$(var.SourcePath)\NLog.dll"
 								DiskId="1"/>
+                            <File
+								Id="Ninject.dll"
+								Name="Ninject.dll"
+								Source="$(var.SourcePath)\Ninject.dll"
+								DiskId="1"/>
 						</Component>
                 </Directory>
             </Directory>

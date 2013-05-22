@@ -49,6 +49,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
+    <Compile Include="IMainController.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
