@@ -42,7 +42,6 @@ namespace logviewer.core
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
-        private ILogView view;
 
         private bool cancelReading;
         private string currentPath;
@@ -52,6 +51,7 @@ namespace logviewer.core
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
         private Regex textFilter;
+        private ILogView view;
 
         #endregion
 
@@ -304,7 +304,7 @@ namespace logviewer.core
 
         public void SetPageSize()
         {
-            view.SetPageSize(pageSize);
+            this.view.SetPageSize(this.pageSize);
         }
 
         #endregion
