@@ -26,6 +26,7 @@ namespace logviewer
 
         public override void Load()
         {
+            this.Bind<ILogView>().To<MainDlg>();
             this.Bind<MainController>().ToSelf()
                 .WithConstructorArgument("startMessagePattern",
                                          ConfigurationManager.AppSettings["StartMessagePattern"])

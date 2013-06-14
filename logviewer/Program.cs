@@ -16,7 +16,6 @@ namespace logviewer
             var kernel = new StandardKernel(new MainControllerModule());
             using (kernel)
             {
-                kernel.Bind<ILogView>().To<MainDlg>();
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(kernel.Get<MainDlg>());
