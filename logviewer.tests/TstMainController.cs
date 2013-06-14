@@ -21,6 +21,7 @@ namespace logviewer.tests
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
             this.controller = new MainController(MessageStart, RecentPath, this.levels);
+            this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
 
@@ -92,6 +93,7 @@ namespace logviewer.tests
         [TestCase(LogLevel.Trace, new[] { "TRACE", "DEBUG", @"\[?InFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
         public void MaxFilter(LogLevel filter, string[] markers, int c)
         {
+            this.view.Expects.One.Method(_ => _.Initialize());
             this.controller = new MainController(MessageStart, RecentPath, markers);
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
@@ -106,6 +108,7 @@ namespace logviewer.tests
         [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERRoR\]?", "FATAL" }, 0)]
         public void MinFilter(LogLevel filter, string[] markers, int c)
         {
+            this.view.Expects.One.Method(_ => _.Initialize());
             this.controller = new MainController(MessageStart, RecentPath, markers);
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
@@ -400,6 +403,7 @@ namespace logviewer.tests
 
             using (mockery.Ordered())
             {
+                this.view.Expects.One.Method(_ => _.Initialize());
                 this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
