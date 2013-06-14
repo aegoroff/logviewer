@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Ninject;
 using logviewer.Properties;
 using logviewer.core;
 using Settings = logviewer.core.Settings;
@@ -11,7 +12,6 @@ namespace logviewer
 {
     public partial class MainDlg : Form, ILogView
     {
-        private readonly IMainController controller;
         private int logFilterMax;
         private int logFilterMin;
         private string logFilterText;
@@ -19,21 +19,11 @@ namespace logviewer
         private string originalLogInfo;
         private bool reverse;
         private bool textFilterChanging;
+        private MainController controller;
 
-        public MainDlg(IMainController controller)
+        public MainDlg()
         {
             this.InitializeComponent();
-            Application.ThreadException += OnUnhandledException;
-            this.controller = controller;
-            this.controller.SetView(this);
-            this.KeepOriginalCaption();
-            this.toolStripComboBox1.SelectedIndex = 0;
-            this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
-            this.toolStripComboBox3.SelectedIndex = 0;
-            this.toolStripTextBox1.Text = Settings.MessageFilter;
-            this.EnableControls(false);
-            this.controller.ReadRecentFiles();
-            this.controller.SetPageSize();
         }
 
         #region ILogView Members
@@ -53,6 +43,30 @@ namespace logviewer
         public bool CancellationPending
         {
             get { return this.logReader.CancellationPending; }
+        }
+
+        [Inject]
+        public MainController Controller
+        {
+            get { return controller; }
+            set
+            {
+                controller = value;
+                this.controller.SetView(this);
+            }
+        }
+
+        public void Initialize()
+        {
+            Application.ThreadException += OnUnhandledException;
+            this.KeepOriginalCaption();
+            this.toolStripComboBox1.SelectedIndex = 0;
+            this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
+            this.toolStripComboBox3.SelectedIndex = 0;
+            this.toolStripTextBox1.Text = Settings.MessageFilter;
+            this.EnableControls(false);
+            this.Controller.ReadRecentFiles();
+            this.Controller.SetPageSize();
         }
 
         public void CreateRecentFileItem(string file)
@@ -81,7 +95,7 @@ namespace logviewer
             Executive.SafeRun(this.WatchLogFile);
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
-            this.controller.SaveRecentFiles();
+            this.Controller.SaveRecentFiles();
         }
 
         public void CancelRead()
@@ -109,7 +123,7 @@ namespace logviewer
 
         public void SetCurrentPage(int page)
         {
-            this.currentPage.Text = string.Format("{0} / {1}", page, this.controller.TotalPages);
+            this.currentPage.Text = string.Format("{0} / {1}", page, this.Controller.TotalPages);
         }
 
         public void DisableForward(bool disabled)
@@ -155,8 +169,8 @@ namespace logviewer
         {
             var item = (ToolStripMenuItem) sender;
             this.LogPath = item.Tag as string;
-            this.controller.CurrentPage = 1;
-            this.controller.ClearCache();
+            this.Controller.CurrentPage = 1;
+            this.Controller.ClearCache();
             this.ReadLog();
         }
 
@@ -168,7 +182,7 @@ namespace logviewer
 
         private void OnOpen(object sender, EventArgs e)
         {
-            this.controller.OpenLogFile();
+            this.Controller.OpenLogFile();
         }
 
         private void WatchLogFile()
@@ -198,22 +212,22 @@ namespace logviewer
 
         private void ReadLog(object sender, DoWorkEventArgs e)
         {
-            this.controller.MinFilter(this.logFilterMin);
-            this.controller.MaxFilter(this.logFilterMax);
-            this.controller.TextFilter(this.logFilterText);
-            this.controller.Ordering(this.reverse);
-            e.Result = Executive.SafeRun<string>(this.controller.ReadLog);
+            this.Controller.MinFilter(this.logFilterMin);
+            this.Controller.MaxFilter(this.logFilterMax);
+            this.Controller.TextFilter(this.logFilterText);
+            this.Controller.Ordering(this.reverse);
+            e.Result = Executive.SafeRun<string>(this.Controller.ReadLog);
         }
 
         private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.toolStripStatusLabel1.Text = this.controller.HumanReadableLogSize;
-            this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.controller.DisplayedMessages,
-                                                            this.controller.TotalMessages, this.controller.CountMessages(LogLevel.Trace), this.controller.CountMessages(LogLevel.Debug),
-                                                            this.controller.CountMessages(LogLevel.Info), this.controller.CountMessages(LogLevel.Warn), this.controller.CountMessages(LogLevel.Error),
-                                                            this.controller.CountMessages(LogLevel.Fatal), controller.MessagesCount);
-            this.controller.LoadLog(e.Result as string);
-            this.controller.ReadRecentFiles();
+            this.toolStripStatusLabel1.Text = this.Controller.HumanReadableLogSize;
+            this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.Controller.DisplayedMessages,
+                                                            this.Controller.TotalMessages, this.Controller.CountMessages(LogLevel.Trace), this.Controller.CountMessages(LogLevel.Debug),
+                                                            this.Controller.CountMessages(LogLevel.Info), this.Controller.CountMessages(LogLevel.Warn), this.Controller.CountMessages(LogLevel.Error),
+                                                            this.Controller.CountMessages(LogLevel.Fatal), Controller.MessagesCount);
+            this.Controller.LoadLog(e.Result as string);
+            this.Controller.ReadRecentFiles();
             if (this.textFilterChanging)
             {
                 this.toolStripTextBox1.Focus();
@@ -222,25 +236,25 @@ namespace logviewer
 
         private void OnClose(object sender, EventArgs e)
         {
-            this.controller.CancelReading();
+            this.Controller.CancelReading();
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
             this.EnableControls(false);
-            this.controller.CurrentPage = 1;
+            this.Controller.CurrentPage = 1;
             this.logWatch.Filter = string.Empty;
         }
 
         private void OnExit(object sender, EventArgs e)
         {
-            this.controller.CancelReading();
+            this.Controller.CancelReading();
             this.Close();
         }
 
         private void OnChangeFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = false;
-            this.controller.RebuildMessages = true;
+            this.Controller.RebuildMessages = true;
             this.StartReading();
         }
 
@@ -255,62 +269,62 @@ namespace logviewer
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
-            this.controller.ClearCache();
+            this.Controller.ClearCache();
             this.StartReading();
         }
 
         private void OnExport(object sender, EventArgs e)
         {
-            this.controller.ExportToRtf();
+            this.Controller.ExportToRtf();
         }
 
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            this.controller.RebuildMessages = true;
+            this.Controller.RebuildMessages = true;
             Settings.MessageFilter = this.toolStripTextBox1.Text;
             this.StartReading();
         }
 
         private void OnRefresh(object sender, EventArgs e)
         {
-            this.controller.ClearCache();
+            this.Controller.ClearCache();
             this.OnChangeFilter(sender, e);
         }
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            this.controller.InitializeLogger();
+            this.Controller.InitializeLogger();
         }
 
         private void OnPrevPage(object sender, EventArgs e)
         {
-            this.controller.CurrentPage -= 1;
-            this.controller.RebuildMessages = false;
+            this.Controller.CurrentPage -= 1;
+            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
 
         private void OnNextPage(object sender, EventArgs e)
         {
-            this.controller.CurrentPage += 1;
-            this.controller.RebuildMessages = false;
+            this.Controller.CurrentPage += 1;
+            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
 
         private void OnFirst(object sender, EventArgs e)
         {
-            this.controller.CurrentPage = 1;
-            this.controller.RebuildMessages = false;
+            this.Controller.CurrentPage = 1;
+            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
 
         private void OnLast(object sender, EventArgs e)
         {
-            this.controller.CurrentPage = this.controller.TotalPages;
-            this.controller.RebuildMessages = false;
+            this.Controller.CurrentPage = this.Controller.TotalPages;
+            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
@@ -325,8 +339,8 @@ namespace logviewer
             }
 
             this.LogPath = files[0];
-            this.controller.CurrentPage = 1;
-            this.controller.ClearCache();
+            this.Controller.CurrentPage = 1;
+            this.Controller.ClearCache();
             this.ReadLog();
         }
 

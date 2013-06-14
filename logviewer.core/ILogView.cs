@@ -18,5 +18,6 @@ namespace logviewer.core
 	    void DisableForward(bool disabled);
         void DisableBack(bool disabled);
 	    void SetPageSize(int size);
+	    void Initialize();
 	}
 }

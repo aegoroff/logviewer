@@ -26,7 +26,7 @@ namespace logviewer
 
         public override void Load()
         {
-            this.Bind<IMainController>().To<MainController>()
+            this.Bind<MainController>().ToSelf()
                 .WithConstructorArgument("startMessagePattern",
                                          ConfigurationManager.AppSettings["StartMessagePattern"])
                 .WithConstructorArgument("recentFilesFilePath",

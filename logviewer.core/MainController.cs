@@ -13,7 +13,7 @@ using logviewer.core.Properties;
 
 namespace logviewer.core
 {
-    public class MainController : IMainController
+    public class MainController
     {
         #region Constants and Fields
 
@@ -300,6 +300,7 @@ namespace logviewer.core
         public void SetView(ILogView logView)
         {
             this.view = logView;
+            this.view.Initialize();
         }
 
         public void SetPageSize()
