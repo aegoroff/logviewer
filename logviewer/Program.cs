@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using Ninject;
-using logviewer.core;
 
 namespace logviewer
 {
