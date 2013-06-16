@@ -351,5 +351,14 @@ namespace logviewer
                 e.Effect = DragDropEffects.Copy;
             }
         }
+
+        private void OnSettings(object sender, EventArgs e)
+        {
+            var dlg = new SettingsDlg();
+            using (dlg)
+            {
+                dlg.ShowDialog();
+            }
+        }
     }
 }
