@@ -44,6 +44,7 @@ namespace logviewer.tests
             {
                 File.Delete(f2);
             }
+            this.controller.Dispose();
         }
 
         #endregion
