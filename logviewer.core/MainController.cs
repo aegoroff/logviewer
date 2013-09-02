@@ -39,7 +39,7 @@ namespace logviewer.core
         private bool reverseChronological;
         private Regex textFilter;
         private ILogView view;
-        private readonly CancellationTokenSource cancellation = new CancellationTokenSource();
+        private CancellationTokenSource cancellation = new CancellationTokenSource();
 
         #endregion
 
@@ -147,6 +147,7 @@ namespace logviewer.core
 
         public void BeginLogReading(int min, int max, string filter, bool reverse)
         {
+            this.CancelPreviousTask();
             this.MinFilter(min);
             this.MaxFilter(max);
             this.TextFilter(filter);
@@ -155,27 +156,39 @@ namespace logviewer.core
             var path = string.Empty;
             var realPath = string.Empty;
             var size = new FileSize();
-            var started = DateTime.MinValue;
             Action action = delegate
             {
-                started = DateTime.Now;
                 realPath = this.view.LogPath;
                 path = Executive.SafeRun<string>(this.ReadLog);
                 size = new FileSize((ulong)this.LogSize);
             };
-            var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path, size, realPath, started), uiContext);
+            task = Task.Factory.StartNew(action, this.cancellation.Token);
+            task.ContinueWith(t => this.EndLogReading(path, size, realPath), uiContext);
         }
 
-        private DateTime lastStarted = DateTime.MinValue;
-
-        private void EndLogReading(string path, FileSize size, string realPath, DateTime started)
+        private void CancelPreviousTask()
         {
-            if (lastStarted != DateTime.MinValue && lastStarted > started)
+            if (task == null || task.Status != TaskStatus.Running)
             {
                 return;
             }
-            lastStarted = started;
+            if (cancellation.IsCancellationRequested)
+            {
+                task.Wait();
+            }
+            else
+            {
+                cancellation.Cancel();
+                task.Wait();
+                cancellation.Dispose();
+                cancellation = new CancellationTokenSource();
+            }
+        }
+
+        private Task task;
+
+        private void EndLogReading(string path, FileSize size, string realPath)
+        {
             this.view.HumanReadableLogSize = size.ToString();
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
@@ -606,6 +619,10 @@ namespace logviewer.core
         {
             if (disposing)
             {
+                if (task != null)
+                {
+                    task.Dispose();
+                }
                 cancellation.Dispose();
             }
         }
