@@ -167,13 +167,19 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.Ordering(reverse);
             var path = string.Empty;
-            Action action = delegate { path = Executive.SafeRun<string>(this.ReadLog); };
+            var size = 0L;
+            Action action = delegate
+            {
+                path = Executive.SafeRun<string>(this.ReadLog);
+                size = LogSize;
+            };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path));
+            task.ContinueWith(t => this.EndLogReading(path, size));
         }
 
-        private void EndLogReading(string path)
+        private void EndLogReading(string path, long size)
         {
+            this.CreateHumanReadableSize(size);
             this.view.HumanReadableLogSize = this.HumanReadableLogSize;
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
@@ -353,12 +359,13 @@ namespace logviewer.core
             {
                 return string.Empty;
             }
-            if (!this.CurrentPathCached)
+            if (this.CurrentPathCached)
             {
-                this.currentPath = this.view.LogPath;
-                var reader = File.OpenText(path);
-                this.CacheStream(reader);
+                return this.CreateRtf();
             }
+            this.currentPath = this.view.LogPath;
+            var reader = File.OpenText(path);
+            this.CacheStream(reader);
             return this.CreateRtf();
         }
 
@@ -372,11 +379,6 @@ namespace logviewer.core
         {
             using (reader)
             {
-                if (reader.BaseStream.CanSeek)
-                {
-                    this.LogSize = reader.BaseStream.Length;
-                }
-                this.CreateHumanReadableSize();
                 if (this.cancellation.IsCancellationRequested)
                 {
                     return;
@@ -403,6 +405,10 @@ namespace logviewer.core
                 }
                 // Add last message
                 this.AddMessageToCache(message);
+                if (reader.BaseStream.CanSeek)
+                {
+                    this.LogSize = reader.BaseStream.Length;
+                }
             }
         }
 
@@ -589,9 +595,9 @@ namespace logviewer.core
             return result;
         }
 
-        private void CreateHumanReadableSize()
+        private void CreateHumanReadableSize(long size)
         {
-            var normalized = new FileSize((ulong) this.LogSize);
+            var normalized = new FileSize((ulong)size);
             if (normalized.Unit == SizeUnit.Bytes)
             {
                 this.HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, SmallFileFormat, normalized.Bytes,

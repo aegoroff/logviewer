@@ -223,7 +223,6 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.LogSize, NUnit.Framework.Is.EqualTo(0));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("0 Bytes"));
         }
         
         [Test]
@@ -257,7 +256,6 @@ namespace logviewer.tests
             }
             Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2000));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("103,52 Kb (106000 Bytes)"));
         }
 
         [Test]
@@ -267,7 +265,6 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("104 Bytes"));
         }
 
         [Test]
@@ -277,7 +274,6 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples, Encoding.GetEncoding("windows-1251"));
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("104 Bytes"));
         }
 
         [Test]
@@ -287,7 +283,6 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, "test log");
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
-            Assert.That(this.controller.HumanReadableLogSize, NUnit.Framework.Is.EqualTo("8 Bytes"));
         }
 
         [Test]
