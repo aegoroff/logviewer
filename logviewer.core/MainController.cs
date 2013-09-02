@@ -453,6 +453,10 @@ namespace logviewer.core
             {
                 for (var i = this.messagesCache.Count - 1; i >= 0; i--)
                 {
+                    if (this.cancellation.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     if (!this.Filter(this.messagesCache[i]))
                     {
                         this.messages.Add(this.messagesCache[i]);
@@ -466,6 +470,10 @@ namespace logviewer.core
                 for (var i = 0; i < this.messagesCache.Count; i++)
 // ReSharper restore ForCanBeConvertedToForeach
                 {
+                    if (this.cancellation.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     if (!this.Filter(this.messagesCache[i]))
                     {
                         this.messages.Add(this.messagesCache[i]);
