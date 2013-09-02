@@ -166,17 +166,18 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.Ordering(reverse);
             var path = string.Empty;
+            var realPath = this.view.LogPath;
             var size = 0L;
             Action action = delegate
             {
                 path = Executive.SafeRun<string>(this.ReadLog);
-                size = LogSize;
+                size = this.LogSize;
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path, size));
+            task.ContinueWith(t => this.EndLogReading(path, size, realPath));
         }
 
-        private void EndLogReading(string path, long size)
+        private void EndLogReading(string path, long size, string realPath)
         {
             this.view.HumanReadableLogSize = this.CreateHumanReadableSize(size);
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
@@ -184,8 +185,11 @@ namespace logviewer.core
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal), this.MessagesCount);
             this.LoadLog(path);
+            this.view.SetLoadedFileCapltion(realPath);
             this.ReadRecentFiles();
             this.view.FocusOnTextFilterControl();
+            this.currentPath = realPath;
+            this.view.LogPath = realPath;
         }
 
         public string ReadLog()

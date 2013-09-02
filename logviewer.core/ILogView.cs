@@ -13,6 +13,7 @@ namespace logviewer.core
 	    void ReadLog();
         void LoadLog(string path);
         bool OpenExport(string path);
+        void SetLoadedFileCapltion(string path);
         void SaveRtf();
 	    void SetCurrentPage(int page);
 	    void DisableForward(bool disabled);

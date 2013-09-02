@@ -103,7 +103,6 @@ namespace logviewer
         public void ReadLog()
         {
             Executive.SafeRun(this.WatchLogFile);
-            this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
             this.Controller.SaveRecentFiles();
         }
@@ -119,6 +118,11 @@ namespace logviewer
         {
             this.exportDialog.FileName = path;
             return this.exportDialog.ShowDialog() == DialogResult.OK;
+        }
+
+        public void SetLoadedFileCapltion(string path)
+        {
+            this.Text = string.Format("{0}: {1}", this.originalCapion, path);
         }
 
         public void SaveRtf()
