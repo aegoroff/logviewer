@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,22 +18,9 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
         private const int MeanLogStringLength = 50;
-        private const string SmallFileFormat = "{0} {1}";
         private const string NewLine = "\n";
         private const int DefaultPageSize = 10000;
-
-        private static readonly string[] sizes =
-        {
-            Resources.SizeBytes,
-            Resources.SizeKBytes,
-            Resources.SizeMBytes,
-            Resources.SizeGBytes,
-            Resources.SizeTBytes,
-            Resources.SizePBytes,
-            Resources.SizeEBytes
-        };
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
 
@@ -168,14 +154,14 @@ namespace logviewer.core
             var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             var path = string.Empty;
             var realPath = string.Empty;
-            var size = 0L;
+            var size = new FileSize();
             var started = DateTime.MinValue;
             Action action = delegate
             {
                 started = DateTime.Now;
                 realPath = this.view.LogPath;
                 path = Executive.SafeRun<string>(this.ReadLog);
-                size = this.LogSize;
+                size = new FileSize((ulong)this.LogSize);
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
             task.ContinueWith(t => this.EndLogReading(path, size, realPath, started), uiContext);
@@ -183,14 +169,14 @@ namespace logviewer.core
 
         private DateTime lastStarted = DateTime.MinValue;
 
-        private void EndLogReading(string path, long size, string realPath, DateTime started)
+        private void EndLogReading(string path, FileSize size, string realPath, DateTime started)
         {
             if (lastStarted != DateTime.MinValue && lastStarted > started)
             {
                 return;
             }
             lastStarted = started;
-            this.view.HumanReadableLogSize = this.CreateHumanReadableSize(size);
+            this.view.HumanReadableLogSize = size.ToString();
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
@@ -606,19 +592,6 @@ namespace logviewer.core
                 }
             }
             return result;
-        }
-
-        private string CreateHumanReadableSize(long size)
-        {
-            var normalized = new FileSize((ulong)size);
-            if (normalized.Unit == SizeUnit.Bytes)
-            {
-                return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, normalized.Bytes,
-                                                          sizes[(int) normalized.Unit]);
-            }
-            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, normalized.Value,
-                sizes[(int) normalized.Unit], normalized.Bytes,
-                sizes[(int) SizeUnit.Bytes]);
         }
 
         #endregion

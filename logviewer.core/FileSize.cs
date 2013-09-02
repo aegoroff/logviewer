@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -12,6 +14,20 @@ namespace logviewer.core
         private readonly ulong bytes;
         private readonly SizeUnit sizeUnit;
         private readonly double value;
+
+        private static readonly string[] sizes =
+        {
+            Resources.SizeBytes,
+            Resources.SizeKBytes,
+            Resources.SizeMBytes,
+            Resources.SizeGBytes,
+            Resources.SizeTBytes,
+            Resources.SizePBytes,
+            Resources.SizeEBytes
+        };
+
+        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
+        private const string SmallFileFormat = "{0} {1}";
 
         /// <summary>
         ///     Initializes new instance of <see cref = "FileSize" /> structure using raw file size
@@ -54,11 +70,11 @@ namespace logviewer.core
         private static ulong IntegerLogarithm(ulong x)
         {
             ulong n = Int64BitsCount;
-            int c = Int64BitsCount / 2;
+            var c = Int64BitsCount / 2;
 
             do
             {
-                ulong y = x >> c;
+                var y = x >> c;
                 if (y != 0)
                 {
                     n -= (ulong) c;
@@ -68,6 +84,18 @@ namespace logviewer.core
             } while (c != 0);
             n -= x >> (Int64BitsCount - 1);
             return (Int64BitsCount - 1) - (n - x);
+        }
+
+        public override string ToString()
+        {
+            if (this.Unit == SizeUnit.Bytes)
+            {
+                return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, this.Bytes,
+                    sizes[(int)this.Unit]);
+            }
+            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, this.Value,
+                sizes[(int)this.Unit], this.Bytes,
+                sizes[(int)SizeUnit.Bytes]);
         }
     }
 }
