@@ -166,10 +166,11 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.Ordering(reverse);
             var path = string.Empty;
-            var realPath = this.view.LogPath;
+            var realPath = string.Empty;
             var size = 0L;
             Action action = delegate
             {
+                realPath = this.view.LogPath;
                 path = Executive.SafeRun<string>(this.ReadLog);
                 size = this.LogSize;
             };
