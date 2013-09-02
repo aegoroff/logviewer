@@ -165,6 +165,7 @@ namespace logviewer.core
             this.MaxFilter(max);
             this.TextFilter(filter);
             this.Ordering(reverse);
+            var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             var path = string.Empty;
             var realPath = string.Empty;
             var size = 0L;
@@ -175,7 +176,7 @@ namespace logviewer.core
                 size = this.LogSize;
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path, size, realPath));
+            task.ContinueWith(t => this.EndLogReading(path, size, realPath), uiContext);
         }
 
         private void EndLogReading(string path, long size, string realPath)

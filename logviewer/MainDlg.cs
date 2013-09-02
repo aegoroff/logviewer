@@ -234,7 +234,7 @@ namespace logviewer
 
         private void OnChangeFilter(object sender, EventArgs e)
         {
-            this.textFilterChanging = false;
+            this.textFilterChanging = true;
             this.Controller.RebuildMessages = true;
             this.StartReading();
         }
