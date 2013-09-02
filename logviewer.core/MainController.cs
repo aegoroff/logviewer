@@ -167,17 +167,21 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.Ordering(reverse);
             var path = string.Empty;
-            Task.Factory.StartNew(() => { path = Executive.SafeRun<string>(this.ReadLog); }, this.cancellation.Token).ContinueWith(delegate
-            {
-                this.view.HumanReadableLogSize = this.HumanReadableLogSize;
-                this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
-                    this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
-                    this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
-                    this.CountMessages(LogLevel.Fatal), this.MessagesCount);
-                this.LoadLog(path);
-                this.ReadRecentFiles();
-                this.view.FocusOnTextFilterControl();
-            }, this.cancellation.Token);
+            Action action = delegate { path = Executive.SafeRun<string>(this.ReadLog); };
+            var task = Task.Factory.StartNew(action, this.cancellation.Token);
+            task.ContinueWith(t => this.EndLogReading(path), this.cancellation.Token);
+        }
+
+        private void EndLogReading(string path)
+        {
+            this.view.HumanReadableLogSize = this.HumanReadableLogSize;
+            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
+                this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
+                this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
+                this.CountMessages(LogLevel.Fatal), this.MessagesCount);
+            this.LoadLog(path);
+            this.ReadRecentFiles();
+            this.view.FocusOnTextFilterControl();
         }
 
         public string ReadLog()
