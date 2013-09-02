@@ -45,7 +45,6 @@ namespace logviewer.core
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
 
-        private bool cancelReading;
         private string currentPath;
 
         private LogLevel maxFilter = LogLevel.Fatal;
@@ -187,7 +186,6 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            this.cancelReading = false;
             var convertedPath = Executive.SafeRun<string>(this.Convert);
             var useConverted = !string.IsNullOrWhiteSpace(convertedPath) &&
                                !convertedPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
@@ -207,7 +205,6 @@ namespace logviewer.core
 
         public string ReadLog(Stream stream)
         {
-            this.cancelReading = false;
             return Executive.SafeRun<string, Stream>(this.ReadLogInternal, stream);
         }
 
@@ -217,7 +214,6 @@ namespace logviewer.core
             {
                 return;
             }
-            this.cancelReading = true;
             this.cancellation.Cancel();
         }
 
@@ -377,19 +373,15 @@ namespace logviewer.core
                     this.LogSize = reader.BaseStream.Length;
                 }
                 this.CreateHumanReadableSize();
-                if (this.cancelReading)
+                if (this.cancellation.IsCancellationRequested)
                 {
                     return;
                 }
-                var logCharsCount = (int) this.LogSize / sizeof (char);
-                this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
+                var logCharsCount = (int)this.LogSize/sizeof (char);
+                this.messagesCache = new List<LogMessage>(logCharsCount/MeanLogStringLength);
                 var message = LogMessage.Create();
-                while (!reader.EndOfStream)
+                while (!reader.EndOfStream && !this.cancellation.IsCancellationRequested)
                 {
-                    if (cancellation.IsCancellationRequested)
-                    {
-                        return;
-                    }
                     var line = reader.ReadLine();
 
                     if (line == null)
