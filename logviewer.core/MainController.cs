@@ -566,7 +566,7 @@ namespace logviewer.core
                     var sr = new StreamReader(stream, srcEncoding);
                     using (sr)
                     {
-                        while (!sr.EndOfStream)
+                        while (!sr.EndOfStream && !this.cancellation.IsCancellationRequested)
                         {
                             var line = sr.ReadLine();
                             if (line == null)
