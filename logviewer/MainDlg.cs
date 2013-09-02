@@ -89,7 +89,7 @@ namespace logviewer
             return this.openFileDialog1.ShowDialog() == DialogResult.OK;
         }
 
-        public string OriginalLogInfo { get; private set; }
+        public string LogInfoFormatString { get; private set; }
 
         public void ClearRecentFilesList()
         {
@@ -182,7 +182,7 @@ namespace logviewer
         private void KeepOriginalCaption()
         {
             this.originalCapion = this.Text;
-            this.OriginalLogInfo = this.toolStripStatusLabel2.Text;
+            this.LogInfoFormatString = this.toolStripStatusLabel2.Text;
         }
 
         private void OnOpen(object sender, EventArgs e)
@@ -208,7 +208,7 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = Resources.ReadingLogMessage;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
-            this.Controller.ReadLog(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse);
+            this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse);
         }
 
         private void OnClose(object sender, EventArgs e)

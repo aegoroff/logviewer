@@ -160,7 +160,7 @@ namespace logviewer.core
             }
         }
 
-        public void ReadLog(int min, int max, string filter, bool reverse)
+        public void BeginLogReading(int min, int max, string filter, bool reverse)
         {
             this.MinFilter(min);
             this.MaxFilter(max);
@@ -170,7 +170,7 @@ namespace logviewer.core
             Task.Factory.StartNew(() => { path = Executive.SafeRun<string>(this.ReadLog); }, this.cancellation.Token).ContinueWith(delegate
             {
                 this.view.HumanReadableLogSize = this.HumanReadableLogSize;
-                this.view.LogInfo = string.Format(this.view.OriginalLogInfo, this.DisplayedMessages,
+                this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                     this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                     this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
                     this.CountMessages(LogLevel.Fatal), this.MessagesCount);
