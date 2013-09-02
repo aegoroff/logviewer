@@ -169,7 +169,7 @@ namespace logviewer.core
             var path = string.Empty;
             Action action = delegate { path = Executive.SafeRun<string>(this.ReadLog); };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path), this.cancellation.Token);
+            task.ContinueWith(t => this.EndLogReading(path));
         }
 
         private void EndLogReading(string path)
