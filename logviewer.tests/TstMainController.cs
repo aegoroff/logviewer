@@ -243,7 +243,6 @@ namespace logviewer.tests
             this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(string.Empty);
             Assert.IsEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
-            Assert.IsNull(this.controller.HumanReadableLogSize);
         }
 
         [Test]

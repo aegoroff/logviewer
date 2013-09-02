@@ -77,7 +77,6 @@ namespace logviewer.core
         #region Public Properties
 
         private List<LogMessage> messages;
-        public string HumanReadableLogSize { get; private set; }
 
         public long LogSize { get; private set; }
 
@@ -179,8 +178,7 @@ namespace logviewer.core
 
         private void EndLogReading(string path, long size)
         {
-            this.CreateHumanReadableSize(size);
-            this.view.HumanReadableLogSize = this.HumanReadableLogSize;
+            this.view.HumanReadableLogSize = this.CreateHumanReadableSize(size);
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
@@ -595,20 +593,17 @@ namespace logviewer.core
             return result;
         }
 
-        private void CreateHumanReadableSize(long size)
+        private string CreateHumanReadableSize(long size)
         {
             var normalized = new FileSize((ulong)size);
             if (normalized.Unit == SizeUnit.Bytes)
             {
-                this.HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, SmallFileFormat, normalized.Bytes,
+                return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, normalized.Bytes,
                                                           sizes[(int) normalized.Unit]);
             }
-            else
-            {
-                this.HumanReadableLogSize = string.Format(CultureInfo.CurrentCulture, BigFileFormat, normalized.Value,
-                                                          sizes[(int) normalized.Unit], normalized.Bytes,
-                                                          sizes[(int) SizeUnit.Bytes]);
-            }
+            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, normalized.Value,
+                sizes[(int) normalized.Unit], normalized.Bytes,
+                sizes[(int) SizeUnit.Bytes]);
         }
 
         #endregion
