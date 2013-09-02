@@ -437,7 +437,7 @@ namespace logviewer.core
             var finish = Math.Min(start + this.pageSize, this.messages.Count);
             for (var i = start; i < finish; i++)
             {
-                if (cancellation.IsCancellationRequested)
+                if (this.cancellation.IsCancellationRequested)
                 {
                     break;
                 }
