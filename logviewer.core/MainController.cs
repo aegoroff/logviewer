@@ -15,7 +15,7 @@ using logviewer.core.Properties;
 
 namespace logviewer.core
 {
-    public class MainController
+    public sealed class MainController : IDisposable
     {
         #region Constants and Fields
 
@@ -606,5 +606,19 @@ namespace logviewer.core
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                cancellation.Dispose();
+            }
+        }
     }
 }
