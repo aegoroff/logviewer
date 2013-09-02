@@ -169,18 +169,27 @@ namespace logviewer.core
             var path = string.Empty;
             var realPath = string.Empty;
             var size = 0L;
+            var started = DateTime.MinValue;
             Action action = delegate
             {
+                started = DateTime.Now;
                 realPath = this.view.LogPath;
                 path = Executive.SafeRun<string>(this.ReadLog);
                 size = this.LogSize;
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path, size, realPath), uiContext);
+            task.ContinueWith(t => this.EndLogReading(path, size, realPath, started), uiContext);
         }
 
-        private void EndLogReading(string path, long size, string realPath)
+        private DateTime lastStarted = DateTime.MinValue;
+
+        private void EndLogReading(string path, long size, string realPath, DateTime started)
         {
+            if (lastStarted != DateTime.MinValue && lastStarted > started)
+            {
+                return;
+            }
+            lastStarted = started;
             this.view.HumanReadableLogSize = this.CreateHumanReadableSize(size);
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
