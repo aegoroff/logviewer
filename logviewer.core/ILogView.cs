@@ -4,13 +4,13 @@ namespace logviewer.core
 	{
         string LogPath { get; set; }
         string LogFileName { get; }
-		bool IsBusy { get; }
-        bool CancellationPending { get; }
+        string HumanReadableLogSize { get; set; }
+        string LogInfo { get; set; }
+        string OriginalLogInfo { get; }
 	    void ClearRecentFilesList();
 	    void CreateRecentFileItem(string file);
 	    bool OpenLogFile();
 	    void ReadLog();
-        void CancelRead();
         void LoadLog(string path);
         bool OpenExport(string path);
         void SaveRtf();
@@ -19,5 +19,6 @@ namespace logviewer.core
         void DisableBack(bool disabled);
 	    void SetPageSize(int size);
 	    void Initialize();
+	    void FocusOnTextFilterControl();
 	}
 }

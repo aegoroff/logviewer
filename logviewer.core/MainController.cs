@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using NLog.Targets;
 using Net.Sgoliver.NRtfTree.Util;
 using Ude;
@@ -23,16 +25,16 @@ namespace logviewer.core
         private const string NewLine = "\n";
         private const int DefaultPageSize = 10000;
 
-        private static readonly string[] sizes = new[]
-            {
-                Resources.SizeBytes,
-                Resources.SizeKBytes,
-                Resources.SizeMBytes,
-                Resources.SizeGBytes,
-                Resources.SizeTBytes,
-                Resources.SizePBytes,
-                Resources.SizeEBytes
-            };
+        private static readonly string[] sizes =
+        {
+            Resources.SizeBytes,
+            Resources.SizeKBytes,
+            Resources.SizeMBytes,
+            Resources.SizeGBytes,
+            Resources.SizeTBytes,
+            Resources.SizePBytes,
+            Resources.SizeEBytes
+        };
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
 
@@ -52,6 +54,7 @@ namespace logviewer.core
         private bool reverseChronological;
         private Regex textFilter;
         private ILogView view;
+        private readonly CancellationTokenSource cancellation = new CancellationTokenSource();
 
         #endregion
 
@@ -86,7 +89,7 @@ namespace logviewer.core
             get { return this.messages.Count; }
         }
 
-        public int TotalMessages
+        private int TotalMessages
         {
             get { return this.messagesCache == null ? 0 : this.messagesCache.Count; }
         }
@@ -158,6 +161,26 @@ namespace logviewer.core
             }
         }
 
+        public void ReadLog(int min, int max, string filter, bool reverse)
+        {
+            this.MinFilter(min);
+            this.MaxFilter(max);
+            this.TextFilter(filter);
+            this.Ordering(reverse);
+            var path = string.Empty;
+            Task.Factory.StartNew(() => { path = Executive.SafeRun<string>(this.ReadLog); }, this.cancellation.Token).ContinueWith(delegate
+            {
+                this.view.HumanReadableLogSize = this.HumanReadableLogSize;
+                this.view.LogInfo = string.Format(this.view.OriginalLogInfo, this.DisplayedMessages,
+                    this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
+                    this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
+                    this.CountMessages(LogLevel.Fatal), this.MessagesCount);
+                this.LoadLog(path);
+                this.ReadRecentFiles();
+                this.view.FocusOnTextFilterControl();
+            }, this.cancellation.Token);
+        }
+
         public string ReadLog()
         {
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
@@ -190,12 +213,12 @@ namespace logviewer.core
 
         public void CancelReading()
         {
-            if (!this.view.IsBusy || this.view.CancellationPending)
+            if (this.cancellation.IsCancellationRequested)
             {
                 return;
             }
             this.cancelReading = true;
-            this.view.CancelRead();
+            this.cancellation.Cancel();
         }
 
         public void ClearCache()
@@ -222,7 +245,7 @@ namespace logviewer.core
                                               RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
         }
 
-        public void Ordering(bool reverse)
+        private void Ordering(bool reverse)
         {
             this.reverseChronological = reverse;
         }
@@ -242,13 +265,20 @@ namespace logviewer.core
             this.recentFiles.AddRange(files);
             this.recentFiles.Reverse();
 
-            foreach (
-                var item in
-                    from file in this.recentFiles
-                    where !string.IsNullOrWhiteSpace(file) && File.Exists(file)
-                    select file)
+            try
             {
-                this.view.CreateRecentFileItem(item);
+                foreach (
+                    var item in
+                        from file in this.recentFiles
+                        where !string.IsNullOrWhiteSpace(file) && File.Exists(file)
+                        select file)
+                {
+                    this.view.CreateRecentFileItem(item);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
             }
         }
 
@@ -276,10 +306,6 @@ namespace logviewer.core
             this.ClearCache();
             this.CurrentPage = 1;
             this.view.LogPath = this.view.LogFileName;
-            if (this.view.IsBusy)
-            {
-                return;
-            }
             this.view.ReadLog();
         }
 
@@ -292,7 +318,7 @@ namespace logviewer.core
             }
         }
 
-        public int CountMessages(LogLevel level)
+        private int CountMessages(LogLevel level)
         {
             return this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0;
         }
@@ -360,6 +386,10 @@ namespace logviewer.core
                 var message = LogMessage.Create();
                 while (!reader.EndOfStream)
                 {
+                    if (cancellation.IsCancellationRequested)
+                    {
+                        return;
+                    }
                     var line = reader.ReadLine();
 
                     if (line == null)
@@ -411,6 +441,10 @@ namespace logviewer.core
             var finish = Math.Min(start + this.pageSize, this.messages.Count);
             for (var i = start; i < finish; i++)
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return string.Empty;
+                }
                 this.AddMessage(doc, this.messages[i]);
             }
             doc.Close();

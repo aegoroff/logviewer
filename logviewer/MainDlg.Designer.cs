@@ -38,6 +38,7 @@
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -65,11 +66,9 @@
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
-            this.logReader = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -155,6 +154,13 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.OnSettings);
             // 
             // refreshToolStripMenuItem
             // 
@@ -421,13 +427,6 @@
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
-            // logReader
-            // 
-            this.logReader.WorkerReportsProgress = true;
-            this.logReader.WorkerSupportsCancellation = true;
-            this.logReader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ReadLog);
-            this.logReader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ReadLogCompleted);
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
@@ -442,13 +441,6 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.OnSettings);
             // 
             // MainDlg
             // 
@@ -498,7 +490,6 @@
         private System.Windows.Forms.Panel panel1;
         private SyntaxRichTextBox syntaxRichTextBox1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.ComponentModel.BackgroundWorker logReader;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;

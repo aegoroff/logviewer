@@ -48,15 +48,15 @@ namespace logviewer.tests
 
         #endregion
 
-        private readonly string[] levels = new[]
-            {
-                "TRACE",
-                "DEBUG",
-                "INFO",
-                "WARN",
-                "ERROR",
-                "FATAL"
-            };
+        private readonly string[] levels =
+        {
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+        };
 
         private const string TestPath = "f";
         private const string RecentPath = "r";
@@ -211,28 +211,6 @@ namespace logviewer.tests
         public void OpenLogFileCanceled()
         {
             this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(false);
-            this.controller.OpenLogFile();
-        }
-
-        [Test]
-        public void OpenLogFileOpenedAndBusy()
-        {
-            this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(true);
-            this.view.Expects.One.GetProperty(v => v.LogFileName).WillReturn(TestPath);
-            this.view.Expects.One.SetProperty(v => v.LogPath).To(TestPath);
-            this.view.Expects.One.GetProperty(v => v.IsBusy).WillReturn(true);
-
-            this.controller.OpenLogFile();
-        }
-
-        [Test]
-        public void OpenLogFileOpenedAndNotBusy()
-        {
-            this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(true);
-            this.view.Expects.One.GetProperty(v => v.LogFileName).WillReturn(TestPath);
-            this.view.Expects.One.SetProperty(v => v.LogPath).To(TestPath);
-            this.view.Expects.One.GetProperty(v => v.IsBusy).WillReturn(false);
-            this.view.Expects.One.Method(v => v.ReadLog());
             this.controller.OpenLogFile();
         }
 

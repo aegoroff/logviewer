@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -16,7 +15,6 @@ namespace logviewer
         private int logFilterMin;
         private string logFilterText;
         private string originalCapion;
-        private string originalLogInfo;
         private bool reverse;
         private bool textFilterChanging;
         private MainController controller;
@@ -35,14 +33,16 @@ namespace logviewer
             get { return this.openFileDialog1.FileName; }
         }
 
-        public bool IsBusy
+        public string HumanReadableLogSize
         {
-            get { return this.logReader.IsBusy; }
+            get { return this.toolStripStatusLabel1.Text; }
+            set { this.toolStripStatusLabel1.Text = value; }
         }
 
-        public bool CancellationPending
+        public string LogInfo
         {
-            get { return this.logReader.CancellationPending; }
+            get { return this.toolStripStatusLabel2.Text; }
+            set { this.toolStripStatusLabel2.Text = value; }
         }
 
         [Inject]
@@ -69,6 +69,14 @@ namespace logviewer
             this.Controller.SetPageSize();
         }
 
+        public void FocusOnTextFilterControl()
+        {
+            if (this.textFilterChanging)
+            {
+                this.toolStripTextBox1.Focus();
+            }
+        }
+
         public void CreateRecentFileItem(string file)
         {
             var result = new ToolStripMenuItem(file) { Tag = file };
@@ -80,6 +88,8 @@ namespace logviewer
         {
             return this.openFileDialog1.ShowDialog() == DialogResult.OK;
         }
+
+        public string OriginalLogInfo { get; private set; }
 
         public void ClearRecentFilesList()
         {
@@ -96,11 +106,6 @@ namespace logviewer
             this.Text = string.Format("{0}: {1}", this.originalCapion, this.LogPath);
             this.StartReading();
             this.Controller.SaveRecentFiles();
-        }
-
-        public void CancelRead()
-        {
-            this.logReader.CancelAsync();
         }
 
         public void LoadLog(string path)
@@ -177,7 +182,7 @@ namespace logviewer
         private void KeepOriginalCaption()
         {
             this.originalCapion = this.Text;
-            this.originalLogInfo = this.toolStripStatusLabel2.Text;
+            this.OriginalLogInfo = this.toolStripStatusLabel2.Text;
         }
 
         private void OnOpen(object sender, EventArgs e)
@@ -193,10 +198,6 @@ namespace logviewer
 
         private void StartReading()
         {
-            if (this.logReader.IsBusy)
-            {
-                return;
-            }
             this.EnableControls(true);
             this.DisableBack(true);
             this.DisableForward(true);
@@ -207,31 +208,7 @@ namespace logviewer
             this.toolStripStatusLabel1.Text = Resources.ReadingLogMessage;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
-            this.logReader.RunWorkerAsync(this.LogPath);
-        }
-
-        private void ReadLog(object sender, DoWorkEventArgs e)
-        {
-            this.Controller.MinFilter(this.logFilterMin);
-            this.Controller.MaxFilter(this.logFilterMax);
-            this.Controller.TextFilter(this.logFilterText);
-            this.Controller.Ordering(this.reverse);
-            e.Result = Executive.SafeRun<string>(this.Controller.ReadLog);
-        }
-
-        private void ReadLogCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            this.toolStripStatusLabel1.Text = this.Controller.HumanReadableLogSize;
-            this.toolStripStatusLabel2.Text = string.Format(this.originalLogInfo, this.Controller.DisplayedMessages,
-                                                            this.Controller.TotalMessages, this.Controller.CountMessages(LogLevel.Trace), this.Controller.CountMessages(LogLevel.Debug),
-                                                            this.Controller.CountMessages(LogLevel.Info), this.Controller.CountMessages(LogLevel.Warn), this.Controller.CountMessages(LogLevel.Error),
-                                                            this.Controller.CountMessages(LogLevel.Fatal), Controller.MessagesCount);
-            this.Controller.LoadLog(e.Result as string);
-            this.Controller.ReadRecentFiles();
-            if (this.textFilterChanging)
-            {
-                this.toolStripTextBox1.Focus();
-            }
+            this.Controller.ReadLog(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse);
         }
 
         private void OnClose(object sender, EventArgs e)
