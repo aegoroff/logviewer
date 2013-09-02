@@ -381,8 +381,8 @@ namespace logviewer.core
                 {
                     return;
                 }
-                var logCharsCount = (int)this.LogSize/sizeof (char);
-                this.messagesCache = new List<LogMessage>(logCharsCount/MeanLogStringLength);
+                var logCharsCount = (int)this.LogSize / sizeof (char);
+                this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
                 var message = LogMessage.Create();
                 while (!reader.EndOfStream && !this.cancellation.IsCancellationRequested)
                 {
