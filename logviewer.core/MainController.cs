@@ -439,7 +439,7 @@ namespace logviewer.core
             {
                 if (cancellation.IsCancellationRequested)
                 {
-                    return string.Empty;
+                    break;
                 }
                 this.AddMessage(doc, this.messages[i]);
             }
