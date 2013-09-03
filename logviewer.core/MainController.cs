@@ -279,6 +279,7 @@ namespace logviewer.core
         {
             this.currentPath = null;
             this.RebuildMessages = true;
+            GC.Collect();
         }
 
         public void MinFilter(int value)
