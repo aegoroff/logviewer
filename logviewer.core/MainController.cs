@@ -232,10 +232,6 @@ namespace logviewer.core
             var reader = new StreamReader(stream);
             using (reader)
             {
-                if (this.cancellation.IsCancellationRequested)
-                {
-                    return string.Empty;
-                }
                 var logCharsCount = (int)this.LogSize / sizeof(char);
                 this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
                 GC.Collect();
