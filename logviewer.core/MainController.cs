@@ -238,6 +238,7 @@ namespace logviewer.core
                 }
                 var logCharsCount = (int)this.LogSize / sizeof(char);
                 this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
+                GC.Collect();
                 var message = LogMessage.Create();
                 while (!reader.EndOfStream && !this.cancellation.IsCancellationRequested)
                 {
@@ -279,7 +280,6 @@ namespace logviewer.core
         {
             this.currentPath = null;
             this.RebuildMessages = true;
-            GC.Collect();
         }
 
         public void MinFilter(int value)
@@ -418,6 +418,7 @@ namespace logviewer.core
             if (this.RebuildMessages)
             {
                 this.messages = new List<LogMessage>(this.pageSize);
+                GC.Collect();
                 this.ReadFromCache();
             }
             this.byLevel.Clear();
