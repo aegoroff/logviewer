@@ -149,27 +149,6 @@ namespace logviewer.core
             }
         }
 
-        public void BeginLogReading(int min, int max, string filter, bool reverse)
-        {
-            this.CancelPreviousTask();
-            this.MinFilter(min);
-            this.MaxFilter(max);
-            this.TextFilter(filter);
-            this.Ordering(reverse);
-            var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
-            var path = string.Empty;
-            var realPath = string.Empty;
-            var size = new FileSize();
-            Action action = delegate
-            {
-                realPath = this.view.LogPath;
-                path = Executive.SafeRun<string>(this.ReadLog);
-                size = new FileSize((ulong)this.LogSize);
-            };
-            this.task = Task.Factory.StartNew(action, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(path, size, realPath), uiContext);
-        }
-
         private void CancelPreviousTask()
         {
             if (this.task == null || this.task.Status != TaskStatus.Running)
@@ -189,19 +168,31 @@ namespace logviewer.core
             }
         }
 
-        private void EndLogReading(string path, FileSize size, string realPath)
+        public void BeginLogReading(int min, int max, string filter, bool reverse)
         {
-            this.view.HumanReadableLogSize = size.ToString();
+            this.CancelPreviousTask();
+            this.MinFilter(min);
+            this.MaxFilter(max);
+            this.TextFilter(filter);
+            this.Ordering(reverse);
+            var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
+            var path = string.Empty;
+            Action action = delegate { path = Executive.SafeRun<string>(this.ReadLog); };
+            this.task = Task.Factory.StartNew(action, this.cancellation.Token);
+            this.task.ContinueWith(t => this.EndLogReading(path), uiContext);
+        }
+
+        private void EndLogReading(string path)
+        {
+            this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString();
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal), this.MessagesCount);
             this.LoadLog(path);
-            this.view.SetLoadedFileCapltion(realPath);
+            this.view.SetLoadedFileCapltion(this.view.LogPath);
             this.ReadRecentFiles();
             this.view.FocusOnTextFilterControl();
-            this.currentPath = realPath;
-            this.view.LogPath = realPath;
         }
 
         public string ReadLog()
@@ -210,13 +201,22 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var convertedPath = Executive.SafeRun<string>(this.Convert);
+            var convertedPath = this.Convert();
             var useConverted = !string.IsNullOrWhiteSpace(convertedPath) &&
                                !convertedPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
             var filePath = useConverted ? convertedPath : this.view.LogPath;
             try
             {
-                return Executive.SafeRun<string, string>(this.ReadLogInternal, filePath);
+                if (!File.Exists(this.view.LogPath))
+                {
+                    return string.Empty;
+                }
+                if (this.CurrentPathCached)
+                {
+                    return this.CreateRtf();
+                }
+                this.currentPath = this.view.LogPath;
+                return ReadLog(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             }
             finally
             {
@@ -229,7 +229,41 @@ namespace logviewer.core
 
         public string ReadLog(Stream stream)
         {
-            return Executive.SafeRun<string, Stream>(this.ReadLogInternal, stream);
+            var reader = new StreamReader(stream);
+            using (reader)
+            {
+                if (this.cancellation.IsCancellationRequested)
+                {
+                    return string.Empty;
+                }
+                var logCharsCount = (int)this.LogSize / sizeof(char);
+                this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
+                var message = LogMessage.Create();
+                while (!reader.EndOfStream && !this.cancellation.IsCancellationRequested)
+                {
+                    var line = reader.ReadLine();
+
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    if (this.messageHead.IsMatch(line))
+                    {
+                        this.AddMessageToCache(message);
+                        message = LogMessage.Create();
+                    }
+
+                    message.AddLine(line);
+                }
+                // Add last message
+                this.AddMessageToCache(message);
+                if (reader.BaseStream.CanSeek)
+                {
+                    this.LogSize = reader.BaseStream.Length;
+                }
+            }
+            return this.CreateRtf();
         }
 
         public void CancelReading()
@@ -364,65 +398,6 @@ namespace logviewer.core
             {
                 return !string.IsNullOrWhiteSpace(this.currentPath) &&
                        this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
-            }
-        }
-
-        private string ReadLogInternal(string path)
-        {
-            if (!File.Exists(this.view.LogPath))
-            {
-                return string.Empty;
-            }
-            if (this.CurrentPathCached)
-            {
-                return this.CreateRtf();
-            }
-            this.currentPath = this.view.LogPath;
-            var reader = File.OpenText(path);
-            this.CacheStream(reader);
-            return this.CreateRtf();
-        }
-
-        private string ReadLogInternal(Stream stream)
-        {
-            this.CacheStream(new StreamReader(stream));
-            return this.CreateRtf();
-        }
-
-        private void CacheStream(StreamReader reader)
-        {
-            using (reader)
-            {
-                if (this.cancellation.IsCancellationRequested)
-                {
-                    return;
-                }
-                var logCharsCount = (int)this.LogSize / sizeof (char);
-                this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
-                var message = LogMessage.Create();
-                while (!reader.EndOfStream && !this.cancellation.IsCancellationRequested)
-                {
-                    var line = reader.ReadLine();
-
-                    if (line == null)
-                    {
-                        break;
-                    }
-
-                    if (this.messageHead.IsMatch(line))
-                    {
-                        this.AddMessageToCache(message);
-                        message = LogMessage.Create();
-                    }
-
-                    message.AddLine(line);
-                }
-                // Add last message
-                this.AddMessageToCache(message);
-                if (reader.BaseStream.CanSeek)
-                {
-                    this.LogSize = reader.BaseStream.Length;
-                }
             }
         }
 
