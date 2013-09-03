@@ -240,7 +240,7 @@ namespace logviewer.core
                 this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
                 GC.Collect();
                 var message = LogMessage.Create();
-                while (!reader.EndOfStream && !this.cancellation.IsCancellationRequested)
+                while (!reader.EndOfStream && this.NotCancelled)
                 {
                     var line = reader.ReadLine();
 
@@ -265,6 +265,11 @@ namespace logviewer.core
                 }
             }
             return this.CreateRtf();
+        }
+
+        private bool NotCancelled
+        {
+            get { return !this.cancellation.IsCancellationRequested; }
         }
 
         public void CancelReading()
@@ -432,7 +437,7 @@ namespace logviewer.core
 
             var start = (this.CurrentPage - 1) * this.pageSize;
             var finish = Math.Min(start + this.pageSize, this.messages.Count);
-            for (var i = start; i < finish && !this.cancellation.IsCancellationRequested; i++)
+            for (var i = start; i < finish && this.NotCancelled; i++)
             {
                 this.AddMessage(doc, this.messages[i]);
             }
@@ -444,7 +449,7 @@ namespace logviewer.core
         {
             if (this.reverseChronological)
             {
-                for (var i = this.messagesCache.Count - 1; i >= 0 && !this.cancellation.IsCancellationRequested; i--)
+                for (var i = this.messagesCache.Count - 1; i >= 0 && this.NotCancelled; i--)
                 {
                     this.ReadFromCache(i);
                 }
@@ -452,7 +457,7 @@ namespace logviewer.core
             else
             {
                 // IMPORTANT: dont use LINQ due to performance reason
-                for (var i = 0; i < this.messagesCache.Count && !this.cancellation.IsCancellationRequested; i++)
+                for (var i = 0; i < this.messagesCache.Count && this.NotCancelled; i++)
                 {
                     this.ReadFromCache(i);
                 }
@@ -559,7 +564,7 @@ namespace logviewer.core
                     var sr = new StreamReader(stream, srcEncoding);
                     using (sr)
                     {
-                        while (!sr.EndOfStream && !this.cancellation.IsCancellationRequested)
+                        while (!sr.EndOfStream && this.NotCancelled)
                         {
                             var line = sr.ReadLine();
                             if (line == null)
