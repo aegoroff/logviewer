@@ -7,10 +7,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using NLog.Targets;
-using Net.Sgoliver.NRtfTree.Util;
-using Ude;
 using logviewer.core.Properties;
+using Net.Sgoliver.NRtfTree.Util;
+using NLog.Targets;
+using Ude;
 
 namespace logviewer.core
 {
@@ -30,6 +30,7 @@ namespace logviewer.core
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
+        private CancellationTokenSource cancellation = new CancellationTokenSource();
 
         private string currentPath;
 
@@ -39,14 +40,15 @@ namespace logviewer.core
         private bool reverseChronological;
         private Regex textFilter;
         private ILogView view;
-        private CancellationTokenSource cancellation = new CancellationTokenSource();
 
         #endregion
 
         #region Constructors and Destructors
 
-        public MainController(string startMessagePattern, string recentFilesFilePath, IEnumerable<string> levels,
-                              int pageSize = DefaultPageSize)
+        public MainController(string startMessagePattern,
+            string recentFilesFilePath,
+            IEnumerable<string> levels,
+            int pageSize = DefaultPageSize)
         {
             this.CurrentPage = 1;
             this.RebuildMessages = true;
@@ -88,7 +90,7 @@ namespace logviewer.core
                 {
                     return 1;
                 }
-                return (int) Math.Ceiling(this.messages.Count / (float) this.pageSize);
+                return (int)Math.Ceiling(this.messages.Count / (float)this.pageSize);
             }
         }
 
@@ -107,22 +109,24 @@ namespace logviewer.core
 
         #region Public Methods and Operators
 
+        private Task task;
+
         public void InitializeLogger()
         {
             var target = new RichTextBoxTarget
-                {
-                    Layout =
-                        @"${date:format=yyyy-MM-dd HH\:mm\:ss,fff} ${level:upperCase=True} ${logger} ${message}${newline}${onexception:Process\: ${processname}${newline}Process time\: ${processtime}${newline}Process ID\: ${processid}${newline}Thread ID\: ${threadid}${newline}Details\:${newline}${exception:format=ToString}}",
-                    ControlName = "syntaxRichTextBox1",
-                    FormName = "MainDlg",
-                    UseDefaultRowColoringRules = false
-                };
+            {
+                Layout =
+                    @"${date:format=yyyy-MM-dd HH\:mm\:ss,fff} ${level:upperCase=True} ${logger} ${message}${newline}${onexception:Process\: ${processname}${newline}Process time\: ${processtime}${newline}Process ID\: ${processid}${newline}Thread ID\: ${threadid}${newline}Details\:${newline}${exception:format=ToString}}",
+                ControlName = "syntaxRichTextBox1",
+                FormName = "MainDlg",
+                UseDefaultRowColoringRules = false
+            };
             target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Warn", "Orange", "White",
-                                                                       FontStyle.Regular));
+                FontStyle.Regular));
             target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Error", "Red", "White",
-                                                                       FontStyle.Regular));
+                FontStyle.Regular));
             target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White",
-                                                                       FontStyle.Regular));
+                FontStyle.Regular));
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
         }
 
@@ -162,30 +166,28 @@ namespace logviewer.core
                 path = Executive.SafeRun<string>(this.ReadLog);
                 size = new FileSize((ulong)this.LogSize);
             };
-            task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.EndLogReading(path, size, realPath), uiContext);
+            this.task = Task.Factory.StartNew(action, this.cancellation.Token);
+            this.task.ContinueWith(t => this.EndLogReading(path, size, realPath), uiContext);
         }
 
         private void CancelPreviousTask()
         {
-            if (task == null || task.Status != TaskStatus.Running)
+            if (this.task == null || this.task.Status != TaskStatus.Running)
             {
                 return;
             }
-            if (cancellation.IsCancellationRequested)
+            if (this.cancellation.IsCancellationRequested)
             {
-                task.Wait();
+                this.task.Wait();
             }
             else
             {
-                cancellation.Cancel();
-                task.Wait();
-                cancellation.Dispose();
-                cancellation = new CancellationTokenSource();
+                this.cancellation.Cancel();
+                this.task.Wait();
+                this.cancellation.Dispose();
+                this.cancellation = new CancellationTokenSource();
             }
         }
-
-        private Task task;
 
         private void EndLogReading(string path, FileSize size, string realPath)
         {
@@ -247,20 +249,20 @@ namespace logviewer.core
 
         public void MinFilter(int value)
         {
-            this.minFilter = (LogLevel) value;
+            this.minFilter = (LogLevel)value;
         }
 
         public void MaxFilter(int value)
         {
-            this.maxFilter = (LogLevel) value;
+            this.maxFilter = (LogLevel)value;
         }
 
         public void TextFilter(string value)
         {
             this.textFilter = string.IsNullOrWhiteSpace(value)
-                                  ? null
-                                  : new Regex(value,
-                                              RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+                ? null
+                : new Regex(value,
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
         }
 
         private void Ordering(bool reverse)
@@ -544,7 +546,7 @@ namespace logviewer.core
             {
                 if (this.markers[i].IsMatch(line))
                 {
-                    return (LogLevel) i;
+                    return (LogLevel)i;
                 }
             }
 
@@ -614,16 +616,16 @@ namespace logviewer.core
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
+
         private void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (task != null)
+                if (this.task != null)
                 {
-                    task.Dispose();
+                    this.task.Dispose();
                 }
-                cancellation.Dispose();
+                this.cancellation.Dispose();
             }
         }
     }
