@@ -432,12 +432,8 @@ namespace logviewer.core
 
             var start = (this.CurrentPage - 1) * this.pageSize;
             var finish = Math.Min(start + this.pageSize, this.messages.Count);
-            for (var i = start; i < finish; i++)
+            for (var i = start; i < finish && !this.cancellation.IsCancellationRequested; i++)
             {
-                if (this.cancellation.IsCancellationRequested)
-                {
-                    break;
-                }
                 this.AddMessage(doc, this.messages[i]);
             }
             doc.Close();
@@ -448,34 +444,26 @@ namespace logviewer.core
         {
             if (this.reverseChronological)
             {
-                for (var i = this.messagesCache.Count - 1; i >= 0; i--)
+                for (var i = this.messagesCache.Count - 1; i >= 0 && !this.cancellation.IsCancellationRequested; i--)
                 {
-                    if (this.cancellation.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                    if (!this.Filter(this.messagesCache[i]))
-                    {
-                        this.messages.Add(this.messagesCache[i]);
-                    }
+                    this.ReadFromCache(i);
                 }
             }
             else
             {
                 // IMPORTANT: dont use LINQ due to performance reason
-// ReSharper disable ForCanBeConvertedToForeach
-                for (var i = 0; i < this.messagesCache.Count; i++)
-// ReSharper restore ForCanBeConvertedToForeach
+                for (var i = 0; i < this.messagesCache.Count && !this.cancellation.IsCancellationRequested; i++)
                 {
-                    if (this.cancellation.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                    if (!this.Filter(this.messagesCache[i]))
-                    {
-                        this.messages.Add(this.messagesCache[i]);
-                    }
+                    this.ReadFromCache(i);
                 }
+            }
+        }
+
+        private void ReadFromCache(int i)
+        {
+            if (!this.Filter(this.messagesCache[i]))
+            {
+                this.messages.Add(this.messagesCache[i]);
             }
         }
 
