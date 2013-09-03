@@ -466,10 +466,18 @@ namespace logviewer.core
 
         private void ReadFromCache(int i)
         {
-            if (!this.Filter(this.messagesCache[i]))
+            var message = this.messagesCache[i];
+
+            if (message.Level < this.minFilter || message.Level > this.maxFilter)
             {
-                this.messages.Add(this.messagesCache[i]);
+                return;
             }
+            if (this.textFilter != null && !this.textFilter.IsMatch(message.ToString()))
+            {
+                return;
+            }
+            this.messages.Add(message);
+
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
@@ -494,16 +502,6 @@ namespace logviewer.core
             }
             doc.AddText(txt.Trim(), message.BodyFormat);
             doc.AddText("\n\n\n");
-        }
-
-        private bool Filter(LogMessage message)
-        {
-            var filteredByLevel = message.Level < this.minFilter || message.Level > this.maxFilter;
-            if (this.textFilter == null || filteredByLevel)
-            {
-                return filteredByLevel;
-            }
-            return !this.textFilter.IsMatch(message.ToString());
         }
 
         private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
