@@ -177,8 +177,7 @@ namespace logviewer.core
             this.Ordering(reverse);
             var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             var path = string.Empty;
-            Action action = delegate { path = Executive.SafeRun<string>(this.ReadLog); };
-            this.task = Task.Factory.StartNew(action, this.cancellation.Token);
+            this.task = Task.Factory.StartNew(() => path = this.ReadLog(), this.cancellation.Token);
             this.task.ContinueWith(t => this.EndLogReading(path), uiContext);
         }
 
