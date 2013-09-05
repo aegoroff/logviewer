@@ -229,6 +229,10 @@ namespace logviewer.core
                 }
                 this.currentPath = this.view.LogPath;
                 var fi = new FileInfo(filePath);
+                if (fi.Length == 0)
+                {
+                    return string.Empty;
+                }
                 using (var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0, MemoryMappedFileAccess.Read))
                 {
                     using (var mmStream = mmf.CreateViewStream(0, fi.Length, MemoryMappedFileAccess.Read))

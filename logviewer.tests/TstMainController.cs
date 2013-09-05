@@ -220,7 +220,7 @@ namespace logviewer.tests
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.Create(TestPath).Dispose();
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            Assert.IsEmpty(this.controller.ReadLog());
             Assert.That(this.controller.LogSize, NUnit.Framework.Is.EqualTo(0));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
         }
