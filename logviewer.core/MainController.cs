@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -215,7 +216,14 @@ namespace logviewer.core
                     return this.CreateRtf();
                 }
                 this.currentPath = this.view.LogPath;
-                return ReadLog(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                var fi = new FileInfo(filePath);
+                using (var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open))
+                {
+                    using (var mmStream = mmf.CreateViewStream(0, fi.Length, MemoryMappedFileAccess.Read))
+                    {
+                        return ReadLog(mmStream);
+                    }
+                }
             }
             finally
             {
