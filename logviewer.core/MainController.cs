@@ -223,16 +223,18 @@ namespace logviewer.core
                 {
                     return string.Empty;
                 }
+                var fi = new FileInfo(filePath);
+                this.LogSize = fi.Length;
+                if (fi.Length == 0)
+                {
+                    return string.Empty;
+                }
                 if (this.CurrentPathCached)
                 {
                     return this.CreateRtf();
                 }
                 this.currentPath = this.view.LogPath;
-                var fi = new FileInfo(filePath);
-                if (fi.Length == 0)
-                {
-                    return string.Empty;
-                }
+                
                 using (var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0, MemoryMappedFileAccess.Read))
                 {
                     using (var mmStream = mmf.CreateViewStream(0, fi.Length, MemoryMappedFileAccess.Read))
@@ -278,10 +280,6 @@ namespace logviewer.core
                 }
                 // Add last message
                 this.AddMessageToCache(message);
-                if (reader.BaseStream.CanSeek)
-                {
-                    this.LogSize = reader.BaseStream.Length;
-                }
             }
             return this.CreateRtf();
         }
