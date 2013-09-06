@@ -4,14 +4,12 @@ using System.Drawing;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
 using Net.Sgoliver.NRtfTree.Util;
 using NLog.Targets;
-using Ude;
 
 namespace logviewer.core
 {
@@ -544,54 +542,7 @@ namespace logviewer.core
             {
                 return this.view.LogPath;
             }
-
-            var stream = File.Open(this.view.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var result = Path.GetTempFileName();
-            using (stream)
-            {
-                Encoding srcEncoding;
-                var detector = new CharsetDetector();
-                detector.Feed(stream);
-                detector.DataEnd();
-                if (detector.Charset != null)
-                {
-                    srcEncoding = Encoding.GetEncoding(detector.Charset);
-                }
-                else
-                {
-                    return this.view.LogPath;
-                }
-
-                if (srcEncoding.Equals(Encoding.UTF8) || srcEncoding.Equals(Encoding.ASCII))
-                {
-                    return this.view.LogPath;
-                }
-
-                stream.Seek(0, SeekOrigin.Begin);
-
-                var f = File.Create(result);
-                using (f)
-                {
-                    f.WriteByte(0xEF);
-                    f.WriteByte(0xBB);
-                    f.WriteByte(0xBF);
-
-                    var sr = new StreamReader(stream, srcEncoding);
-                    using (sr)
-                    {
-                        while (!sr.EndOfStream && this.NotCancelled)
-                        {
-                            var line = sr.ReadLine();
-                            if (line == null)
-                            {
-                                break;
-                            }
-                            f.WriteLine(line, srcEncoding, Encoding.UTF8);
-                        }
-                    }
-                }
-            }
-            return result;
+            return this.view.LogPath.ConvertToUtf8(() => this.NotCancelled);
         }
 
         #endregion
