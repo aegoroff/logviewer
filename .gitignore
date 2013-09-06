@@ -17,3 +17,5 @@ packages/
 !lib/Release/
 !lib/x64/Debug/
 !lib/x64/Release/
+logviewer.core/x86/
+logviewer.core/x64/
