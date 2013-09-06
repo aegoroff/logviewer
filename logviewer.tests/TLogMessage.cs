@@ -95,5 +95,18 @@ namespace logviewer.tests
             this.m.Cache();
             Assert.That(this.m.ToString(), Is.EqualTo(H));
         }
+
+        [Test]
+        public void WriteToLogStore()
+        {
+            this.m.AddLine(H);
+            this.m.AddLine(B);
+            this.m.Cache();
+            var store = new LogStore();
+            using (store)
+            {
+                store.AddMessage(m);
+            }
+        }
     }
 }
