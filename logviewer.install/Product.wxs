@@ -74,6 +74,11 @@
 								Name="Ninject.dll"
 								Source="$(var.SourcePath)\Ninject.dll"
 								DiskId="1"/>
+                            <File
+								Id="System.Data.SQLite.dll"
+								Name="System.Data.SQLite.dll"
+								Source="$(var.SourcePath)\System.Data.SQLite.dll"
+								DiskId="1"/>
 						</Component>
                         <Directory Id="X86" Name="x86">
                             <Component Id="logviewer.bin.x86" Guid="{68BA3E47-2BB8-4D0E-8A46-B861390A4548}">

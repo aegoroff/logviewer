@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\packages\System.Data.SQLite.1.0.88.0\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
@@ -57,6 +58,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
+    <Compile Include="LogStore.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
