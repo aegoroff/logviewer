@@ -26,6 +26,8 @@
 
 		<Feature Id="ProductFeature" Title="logviewer.install" Level="1">
 			<ComponentRef Id="logviewer.bin" />
+			<ComponentRef Id="logviewer.bin.x86" />
+			<ComponentRef Id="logviewer.bin.x64" />
 			<ComponentRef Id="logviewer.shortcut" />
 		</Feature>
     
@@ -73,6 +75,24 @@
 								Source="$(var.SourcePath)\Ninject.dll"
 								DiskId="1"/>
 						</Component>
+                        <Directory Id="X86" Name="x86">
+                            <Component Id="logviewer.bin.x86" Guid="{68BA3E47-2BB8-4D0E-8A46-B861390A4548}">
+                                <File
+								    Id="x86.SQLite.Interop.dll"
+								    Name="SQLite.Interop.dll"
+								    Source="$(var.SourcePath)\x86\SQLite.Interop.dll"
+								    DiskId="1"/>
+                            </Component>
+                        </Directory>
+                        <Directory Id="X64" Name="x64">
+                            <Component Id="logviewer.bin.x64" Guid="{14FB1152-6AF8-47F7-BF19-6EEC442E2C57}">
+                                <File
+								    Id="x64.SQLite.Interop.dll"
+								    Name="SQLite.Interop.dll"
+								    Source="$(var.SourcePath)\x64\SQLite.Interop.dll"
+								    DiskId="1"/>
+                            </Component>
+                        </Directory>
                 </Directory>
             </Directory>
             <!-- logviewer Start menu folder -->
