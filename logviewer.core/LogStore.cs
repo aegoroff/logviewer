@@ -23,6 +23,7 @@ namespace logviewer.core
 
             RunSqlQuery(command => command.ExecuteNonQuery(), @"
                         CREATE TABLE Log (
+                                 Ix INTEGER NOT NULL,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
                                  Level INTEGER NOT NULL
