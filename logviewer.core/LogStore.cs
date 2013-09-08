@@ -10,6 +10,7 @@ namespace logviewer.core
 
         private readonly SQLiteConnectionStringBuilder conString;
         private readonly string databasePath;
+        private long index;
 
         #endregion
 
@@ -37,9 +38,10 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
+            const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
             RunSqlQuery(delegate(SQLiteCommand command)
             {
+                command.Parameters.AddWithValue("@Ix", index++);
                 command.Parameters.AddWithValue("@Header", message.Header);
                 command.Parameters.AddWithValue("@Body", message.Body);
                 command.Parameters.AddWithValue("@Level", (int)message.Level);
