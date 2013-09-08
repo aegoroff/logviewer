@@ -8,9 +8,10 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private readonly SQLiteConnectionStringBuilder conString;
         private readonly string databasePath;
         private long index;
+        private SQLiteTransaction transaction;
+        private readonly SQLiteConnection connection;
 
         #endregion
 
@@ -20,7 +21,9 @@ namespace logviewer.core
         {
             databasePath = databaseFilePath ?? Path.GetTempFileName();
             SQLiteConnection.CreateFile(databasePath);
-            conString = new SQLiteConnectionStringBuilder { DataSource = databasePath };
+            var conString = new SQLiteConnectionStringBuilder { DataSource = databasePath };
+            connection = new SQLiteConnection(conString.ToString());
+            connection.Open();
 
             RunSqlQuery(command => command.ExecuteNonQuery(), @"
                         CREATE TABLE Log (
@@ -35,6 +38,16 @@ namespace logviewer.core
         #endregion
 
         #region Public Methods and Operators
+
+        public void StartAddMessages()
+        {
+            transaction = connection.BeginTransaction();
+        }
+        
+        public void FinishAddMessages()
+        {
+            transaction.Commit();
+        }
 
         public void AddMessage(LogMessage message)
         {
@@ -62,6 +75,14 @@ namespace logviewer.core
         {
             if (disposing)
             {
+                if (transaction != null)
+                {
+                    transaction.Dispose();
+                }
+                if (connection != null)
+                {
+                    connection.Dispose();
+                }
                 if (File.Exists(databasePath))
                 {
                     File.Delete(databasePath);
@@ -69,29 +90,16 @@ namespace logviewer.core
             }
         }
 
-        private void RunSqlQuery(Action<SQLiteConnection> action)
-        {
-            var connection = new SQLiteConnection(conString.ToString());
-            using (connection)
-            {
-                connection.Open();
-                action(connection);
-            }
-        }
-
         private void RunSqlQuery(Action<SQLiteCommand> action, params string[] commands)
         {
-            RunSqlQuery(connection =>
+            foreach (var command in commands)
             {
-                foreach (var command in commands)
+                using (var sqLiteCommand = connection.CreateCommand())
                 {
-                    using (var sqLiteCommand = connection.CreateCommand())
-                    {
-                        sqLiteCommand.CommandText = command;
-                        action(sqLiteCommand);
-                    }
+                    sqLiteCommand.CommandText = command;
+                    action(sqLiteCommand);
                 }
-            });
+            }
         }
 
         #endregion

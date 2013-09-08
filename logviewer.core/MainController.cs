@@ -39,6 +39,7 @@ namespace logviewer.core
         private bool reverseChronological;
         private Regex textFilter;
         private ILogView view;
+        private LogStore store;
 
         #endregion
 
@@ -252,32 +253,45 @@ namespace logviewer.core
 
         public string ReadLog(Stream stream)
         {
+            if (store != null)
+            {
+                store.Dispose();
+            }
             var reader = new StreamReader(stream);
             using (reader)
             {
                 var logCharsCount = (int)this.LogSize / sizeof(char);
                 this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
+                this.store = new LogStore();
                 GC.Collect();
-                var message = LogMessage.Create();
-                while (!reader.EndOfStream && this.NotCancelled)
+                this.store.StartAddMessages();
+                try
                 {
-                    var line = reader.ReadLine();
-
-                    if (line == null)
+                    var message = LogMessage.Create();
+                    while (!reader.EndOfStream && this.NotCancelled)
                     {
-                        break;
-                    }
+                        var line = reader.ReadLine();
 
-                    if (this.messageHead.IsMatch(line))
-                    {
-                        this.AddMessageToCache(message);
-                        message = LogMessage.Create();
-                    }
+                        if (line == null)
+                        {
+                            break;
+                        }
 
-                    message.AddLine(line);
+                        if (this.messageHead.IsMatch(line))
+                        {
+                            this.AddMessageToCache(message);
+                            message = LogMessage.Create();
+                        }
+
+                        message.AddLine(line);
+                    }
+                    // Add last message
+                    this.AddMessageToCache(message);
                 }
-                // Add last message
-                this.AddMessageToCache(message);
+                finally
+                {
+                    this.store.FinishAddMessages();
+                }
             }
             return this.CreateRtf();
         }
@@ -431,6 +445,7 @@ namespace logviewer.core
             message.Level = this.DetectLevel(message.Header);
             message.Cache();
             this.messagesCache.Add(message);
+            this.store.AddMessage(message);
         }
 
         private string CreateRtf()
@@ -562,6 +577,10 @@ namespace logviewer.core
                     this.task.Dispose();
                 }
                 this.cancellation.Dispose();
+                if (store != null)
+                {
+                    store.Dispose();
+                }
             }
         }
     }
