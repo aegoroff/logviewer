@@ -31,6 +31,14 @@ namespace logviewer.core
 
         private static Dictionary<LogLevel, Color> levelsMap;
 
+        public LogMessage(string header, string body, LogLevel level)
+        {
+            this.head = header;
+            this.body = body;
+            this.Level = level;
+            this.strings = null;
+        }
+
         public bool IsEmpty
         {
             get { return this.head == null && this.body == null && (this.strings == null || this.strings.Count == 0); }

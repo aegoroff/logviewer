@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using logviewer.core;
 
 namespace logviewer.tests
@@ -106,6 +107,8 @@ namespace logviewer.tests
             using (store)
             {
                 store.AddMessage(m);
+                var count = store.ReadMessages(100).Count();
+                Assert.AreEqual(1, count);
             }
         }
     }
