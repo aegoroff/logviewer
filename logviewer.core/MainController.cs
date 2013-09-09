@@ -466,10 +466,10 @@ namespace logviewer.core
             }
 
             var start = (this.CurrentPage - 1) * this.pageSize;
-            var finish = Math.Min(start + this.pageSize, this.messages.Count);
-            for (var i = start; i < finish && this.NotCancelled; i++)
+            var fromStore = store.ReadMessages(pageSize, start, reverseChronological, this.minFilter, this.maxFilter, textFilter);
+            foreach (var message in fromStore)
             {
-                this.AddMessage(doc, this.messages[i]);
+                this.AddMessage(doc, message);
             }
             doc.Close();
             return rtfPath;
