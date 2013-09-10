@@ -27,14 +27,19 @@ namespace logviewer.core
             connection = new SQLiteConnection(conString.ToString());
             connection.Open();
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), @"
+            const string createTable = @"
                         CREATE TABLE Log (
                                  Ix INTEGER PRIMARY KEY,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
                                  Level INTEGER NOT NULL
                         );
-                    ");
+                    ";
+            const string createIndexOnLevel = @"
+                        CREATE INDEX IX_Level ON Log (Level)
+                    ";
+
+            RunSqlQuery(command => command.ExecuteNonQuery(), createTable, createIndexOnLevel);
         }
 
         #endregion
@@ -43,6 +48,15 @@ namespace logviewer.core
 
         public void StartAddMessages()
         {
+            const string syncOff = @"PRAGMA synchronous = OFF;";
+            RunSqlQuery(command => command.ExecuteNonQuery(), syncOff);
+
+            const string journal = @"PRAGMA journal_mode = MEMORY;";
+            RunSqlQuery(command => command.ExecuteNonQuery(), journal);
+
+            const string cache = @"PRAGMA cache_size = 20000;";
+            RunSqlQuery(command => command.ExecuteNonQuery(), cache);
+            
             transaction = connection.BeginTransaction();
         }
         
