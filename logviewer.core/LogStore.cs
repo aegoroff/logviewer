@@ -39,7 +39,11 @@ namespace logviewer.core
                         CREATE INDEX IX_Level ON Log (Level)
                     ";
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), createTable, createIndexOnLevel);
+            const string syncOff = @"PRAGMA synchronous = OFF;";
+            const string journal = @"PRAGMA journal_mode = MEMORY;";
+            const string cache = @"PRAGMA cache_size = 20000;";
+
+            RunSqlQuery(command => command.ExecuteNonQuery(), createTable, createIndexOnLevel, syncOff, journal, cache);
         }
 
         #endregion
@@ -48,15 +52,6 @@ namespace logviewer.core
 
         public void StartAddMessages()
         {
-            const string syncOff = @"PRAGMA synchronous = OFF;";
-            RunSqlQuery(command => command.ExecuteNonQuery(), syncOff);
-
-            const string journal = @"PRAGMA journal_mode = MEMORY;";
-            RunSqlQuery(command => command.ExecuteNonQuery(), journal);
-
-            const string cache = @"PRAGMA cache_size = 20000;";
-            RunSqlQuery(command => command.ExecuteNonQuery(), cache);
-            
             transaction = connection.BeginTransaction();
         }
         
