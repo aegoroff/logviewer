@@ -38,8 +38,9 @@ namespace logviewer.core
             const string Journal = @"PRAGMA journal_mode = MEMORY;";
             const string Cache = @"PRAGMA cache_size = 40000;";
             const string Temp = @"PRAGMA temp_store = 2;";
+            const string Encode = @"PRAGMA encoding = 'UTF-8';";
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, CreateTable, CreateIndexOnLevel);
+            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, Encode, CreateTable, CreateIndexOnLevel);
         }
 
         #endregion
