@@ -77,6 +77,11 @@ namespace logviewer
             }
         }
 
+        public void SetProgress(double value)
+        {
+            progressBar1.Value = (int)value;
+        }
+
         public void CreateRecentFileItem(string file)
         {
             var result = new ToolStripMenuItem(file) { Tag = file };

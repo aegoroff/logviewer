@@ -21,5 +21,6 @@ namespace logviewer.core
 	    void SetPageSize(int size);
 	    void Initialize();
 	    void FocusOnTextFilterControl();
+	    void SetProgress(double value);
 	}
 }

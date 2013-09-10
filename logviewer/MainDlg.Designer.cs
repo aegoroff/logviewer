@@ -52,10 +52,11 @@
             this.currentPage = new System.Windows.Forms.TextBox();
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -318,6 +319,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Controls.Add(this.pageSizeLabel);
             this.panel1.Controls.Add(this.last);
             this.panel1.Controls.Add(this.next);
@@ -401,19 +403,6 @@
             this.first.UseVisualStyleBackColor = true;
             this.first.Click += new System.EventHandler(this.OnFirst);
             // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 443);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
@@ -428,6 +417,27 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.progressBar1.Location = new System.Drawing.Point(311, 452);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(267, 15);
+            this.progressBar1.TabIndex = 7;
+            // 
+            // syntaxRichTextBox1
+            // 
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 443);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
             // 
             // MainDlg
             // 
@@ -502,6 +512,7 @@
         private System.Windows.Forms.Button last;
         private System.Windows.Forms.Label pageSizeLabel;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

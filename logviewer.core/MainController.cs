@@ -42,6 +42,7 @@ namespace logviewer.core
         private ILogView view;
         private Task task;
         private int totalMessages;
+        private readonly TaskScheduler uiContext;
 
         #endregion
 
@@ -56,9 +57,11 @@ namespace logviewer.core
             this.recentFilesFilePath = recentFilesFilePath;
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
+            this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
             SQLiteFunction.RegisterFunction(typeof(SqliteRegEx));
+            
         }
 
         #endregion
@@ -172,7 +175,8 @@ namespace logviewer.core
             this.MaxFilter(max);
             this.TextFilter(filter);
             this.Ordering(reverse);
-            var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
+            this.view.SetProgress(0);
+            
             var path = string.Empty;
             Func<string> function = delegate
             {
@@ -201,6 +205,11 @@ namespace logviewer.core
             this.view.SetLoadedFileCapltion(this.view.LogPath);
             this.ReadRecentFiles();
             this.view.FocusOnTextFilterControl();
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+            this.view.SetProgress(100);
         }
 
         public string ReadLog()
@@ -256,6 +265,9 @@ namespace logviewer.core
             {
                 this.store.Dispose();
             }
+            var total = stream.Length;
+            var fraction = total / 20L;
+            var signalCounter = 1;
             var reader = new StreamReader(stream, Encoding.UTF8);
             using (reader)
             {
@@ -279,6 +291,14 @@ namespace logviewer.core
                         {
                             this.AddMessageToCache(message);
                             message = LogMessage.Create();
+                        }
+
+                        if (stream.Position >= signalCounter * fraction)
+                        {
+                            ++signalCounter;
+                            var percent = (stream.Position / (double)total) * 100;
+                            Task.Factory.StartNew(() => view.SetProgress(percent), CancellationToken.None,
+                                TaskCreationOptions.None, uiContext);
                         }
 
                         message.AddLine(line);
@@ -529,20 +549,32 @@ namespace logviewer.core
         {
             if (disposing)
             {
-                if (!this.cancellation.IsCancellationRequested)
+                try
                 {
-                    this.cancellation.Cancel();
+                    if (!this.cancellation.IsCancellationRequested)
+                    {
+                        this.cancellation.Cancel();
+                    }
+
+                    if (this.task != null)
+                    {
+                        this.task.Wait();
+                        this.task.Dispose();
+                    }
+                    this.cancellation.Dispose();
                 }
-                
-                if (this.task != null)
+                catch (Exception e)
                 {
-                    this.task.Wait();
-                    this.task.Dispose();
+                    this.task = null;
+                    this.cancellation = null;
+                    Log.Instance.Fatal(e.Message, e);
                 }
-                this.cancellation.Dispose();
-                if (this.store != null)
+                finally
                 {
-                    this.store.Dispose();
+                    if (this.store != null)
+                    {
+                        this.store.Dispose();
+                    }
                 }
             }
         }

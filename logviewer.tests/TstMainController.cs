@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using NMock;
 using NUnit.Framework;
 using logviewer.core;
@@ -18,6 +19,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
             this.controller = new MainController(MessageStart, RecentPath, this.levels);
