@@ -11,7 +11,6 @@ namespace logviewer.core
         #region Constants and Fields
 
         private readonly string databasePath;
-        private long index;
         private SQLiteTransaction transaction;
         private readonly SQLiteConnection connection;
 
@@ -27,24 +26,21 @@ namespace logviewer.core
             connection = new SQLiteConnection(conString.ToString());
             connection.Open();
 
-            const string createTable = @"
+            const string CreateTable = @"
                         CREATE TABLE Log (
-                                 Ix INTEGER PRIMARY KEY,
+                                 Ix INTEGER PRIMARY KEY AUTOINCREMENT,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
                                  Level INTEGER NOT NULL
                         );
                     ";
-            const string createIndexOnLevel = @"
-                        CREATE INDEX IX_Level ON Log (Level)
-                    ";
+            const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
+            const string SyncOff = @"PRAGMA synchronous = OFF;";
+            const string Journal = @"PRAGMA journal_mode = MEMORY;";
+            const string Cache = @"PRAGMA cache_size = 40000;";
+            const string Temp = @"PRAGMA temp_store = 2;";
 
-            const string syncOff = @"PRAGMA synchronous = OFF;";
-            const string journal = @"PRAGMA journal_mode = MEMORY;";
-            const string cache = @"PRAGMA cache_size = 40000;";
-            const string temp = @"PRAGMA temp_store = 2;";
-
-            RunSqlQuery(command => command.ExecuteNonQuery(), createTable, createIndexOnLevel, syncOff, journal, cache, temp);
+            RunSqlQuery(command => command.ExecuteNonQuery(), CreateTable, CreateIndexOnLevel, SyncOff, Journal, Cache, Temp);
         }
 
         #endregion
@@ -63,10 +59,9 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
+            const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
             RunSqlQuery(delegate(SQLiteCommand command)
             {
-                command.Parameters.AddWithValue("@Ix", index++);
                 command.Parameters.AddWithValue("@Header", message.Header);
                 command.Parameters.AddWithValue("@Body", message.Body);
                 command.Parameters.AddWithValue("@Level", (int)message.Level);
