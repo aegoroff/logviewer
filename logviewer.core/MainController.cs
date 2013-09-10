@@ -476,7 +476,8 @@ namespace logviewer.core
 
             var start = (this.CurrentPage - 1) * this.pageSize;
             this.store.ReadMessages(
-                this.pageSize, m => this.AddMessage(doc, m), 
+                this.pageSize,
+                m => this.AddMessage(doc, m), 
                 () => this.NotCancelled, 
                 start, 
                 this.reverseChronological, 
