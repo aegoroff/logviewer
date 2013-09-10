@@ -523,8 +523,14 @@ namespace logviewer.core
         {
             if (disposing)
             {
+                if (!this.cancellation.IsCancellationRequested)
+                {
+                    this.cancellation.Cancel();
+                }
+                
                 if (this.task != null)
                 {
+                    this.task.Wait();
                     this.task.Dispose();
                 }
                 this.cancellation.Dispose();
