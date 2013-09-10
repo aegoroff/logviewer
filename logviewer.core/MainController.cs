@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -17,7 +18,6 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private const int MeanLogStringLength = 50;
         private const string NewLine = "\n";
         private const int DefaultPageSize = 10000;
 
@@ -34,12 +34,13 @@ namespace logviewer.core
         private string currentPath;
 
         private LogLevel maxFilter = LogLevel.Fatal;
-        private List<LogMessage> messagesCache;
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
-        private Regex textFilter;
-        private ILogView view;
         private LogStore store;
+        private string textFilter;
+        private ILogView view;
+        private Task task;
+        private int totalMessages;
 
         #endregion
 
@@ -51,33 +52,27 @@ namespace logviewer.core
             int pageSize = DefaultPageSize)
         {
             this.CurrentPage = 1;
-            this.RebuildMessages = true;
             this.recentFilesFilePath = recentFilesFilePath;
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
-            this.messages = new List<LogMessage>();
+            SQLiteFunction.RegisterFunction(typeof(SqliteRegEx));
         }
 
         #endregion
 
         #region Public Properties
 
-        private List<LogMessage> messages;
-
         public long LogSize { get; private set; }
 
-        public bool RebuildMessages { get; set; }
-
-        public int MessagesCount
+        public long MessagesCount
         {
-            get { return this.messages.Count; }
-        }
-
-        private int TotalMessages
-        {
-            get { return this.messagesCache == null ? 0 : this.messagesCache.Count; }
+            get
+            {
+                var start = (this.CurrentPage - 1) * this.pageSize;
+                return this.totalFiltered - start;
+            }
         }
 
         public int CurrentPage { get; set; }
@@ -86,22 +81,20 @@ namespace logviewer.core
         {
             get
             {
-                if (this.messagesCache == null)
+                if (this.totalFiltered == 0)
                 {
                     return 1;
                 }
-                return (int)Math.Ceiling(this.messages.Count / (float)this.pageSize);
+                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
             }
         }
 
-        public int DisplayedMessages
+        public long DisplayedMessages
         {
             get
             {
-                var start = (this.CurrentPage - 1) * this.pageSize;
-                var tail = this.messages.Count - start;
-                var finish = Math.Min(tail, this.pageSize);
-                return Math.Min(finish, this.messages.Count);
+                var finish = Math.Min(this.MessagesCount, this.pageSize);
+                return Math.Min(finish, this.totalFiltered);
             }
         }
 
@@ -109,7 +102,10 @@ namespace logviewer.core
 
         #region Public Methods and Operators
 
-        private Task task;
+        private bool NotCancelled
+        {
+            get { return !this.cancellation.IsCancellationRequested; }
+        }
 
         public void InitializeLogger()
         {
@@ -197,9 +193,9 @@ namespace logviewer.core
         {
             this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString();
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
-                this.TotalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
+                this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
-                this.CountMessages(LogLevel.Fatal), this.MessagesCount);
+                this.CountMessages(LogLevel.Fatal), this.totalFiltered);
             this.LoadLog(path);
             this.view.SetLoadedFileCapltion(this.view.LogPath);
             this.ReadRecentFiles();
@@ -233,12 +229,14 @@ namespace logviewer.core
                     return this.CreateRtf();
                 }
                 this.currentPath = this.view.LogPath;
-                
-                using (var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0, MemoryMappedFileAccess.Read))
+
+                using (
+                    var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0,
+                        MemoryMappedFileAccess.Read))
                 {
                     using (var mmStream = mmf.CreateViewStream(0, fi.Length, MemoryMappedFileAccess.Read))
                     {
-                        return ReadLog(mmStream);
+                        return this.ReadLog(mmStream);
                     }
                 }
             }
@@ -253,18 +251,17 @@ namespace logviewer.core
 
         public string ReadLog(Stream stream)
         {
-            if (store != null)
+            if (this.store != null)
             {
-                store.Dispose();
+                this.store.Dispose();
             }
             var reader = new StreamReader(stream);
             using (reader)
             {
-                var logCharsCount = (int)this.LogSize / sizeof(char);
-                this.messagesCache = new List<LogMessage>(logCharsCount / MeanLogStringLength);
                 this.store = new LogStore();
                 GC.Collect();
                 this.store.StartAddMessages();
+                this.totalMessages = 0;
                 try
                 {
                     var message = LogMessage.Create();
@@ -296,11 +293,6 @@ namespace logviewer.core
             return this.CreateRtf();
         }
 
-        private bool NotCancelled
-        {
-            get { return !this.cancellation.IsCancellationRequested; }
-        }
-
         public void CancelReading()
         {
             if (this.cancellation.IsCancellationRequested)
@@ -313,7 +305,6 @@ namespace logviewer.core
         public void ClearCache()
         {
             this.currentPath = null;
-            this.RebuildMessages = true;
         }
 
         public void MinFilter(int value)
@@ -330,8 +321,7 @@ namespace logviewer.core
         {
             this.textFilter = string.IsNullOrWhiteSpace(value)
                 ? null
-                : new Regex(value,
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+                : value;
         }
 
         private void Ordering(bool reverse)
@@ -427,6 +417,8 @@ namespace logviewer.core
 
         #region Methods
 
+        private long totalFiltered;
+
         private bool CurrentPathCached
         {
             get
@@ -444,21 +436,17 @@ namespace logviewer.core
             }
             message.Level = this.DetectLevel(message.Header);
             message.Cache();
-            this.messagesCache.Add(message);
+            ++this.totalMessages;
             this.store.AddMessage(message);
         }
 
         private string CreateRtf()
         {
-            if (this.RebuildMessages)
-            {
-                this.messages = new List<LogMessage>(this.pageSize);
-                GC.Collect();
-                this.ReadFromCache();
-            }
             this.byLevel.Clear();
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
+
+            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter);
 
             if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
             {
@@ -466,48 +454,14 @@ namespace logviewer.core
             }
 
             var start = (this.CurrentPage - 1) * this.pageSize;
-            var fromStore = store.ReadMessages(pageSize, start, reverseChronological, this.minFilter, this.maxFilter, textFilter);
+            var fromStore = this.store.ReadMessages(this.pageSize, start, this.reverseChronological, this.minFilter, this.maxFilter,
+                this.textFilter);
             foreach (var message in fromStore)
             {
                 this.AddMessage(doc, message);
             }
             doc.Close();
             return rtfPath;
-        }
-
-        private void ReadFromCache()
-        {
-            if (this.reverseChronological)
-            {
-                for (var i = this.messagesCache.Count - 1; i >= 0 && this.NotCancelled; i--)
-                {
-                    this.ReadFromCache(i);
-                }
-            }
-            else
-            {
-                // IMPORTANT: dont use LINQ due to performance reason
-                for (var i = 0; i < this.messagesCache.Count && this.NotCancelled; i++)
-                {
-                    this.ReadFromCache(i);
-                }
-            }
-        }
-
-        private void ReadFromCache(int i)
-        {
-            var message = this.messagesCache[i];
-
-            if (message.Level < this.minFilter || message.Level > this.maxFilter)
-            {
-                return;
-            }
-            if (this.textFilter != null && !this.textFilter.IsMatch(message.ToString()))
-            {
-                return;
-            }
-            this.messages.Add(message);
-
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
@@ -577,9 +531,9 @@ namespace logviewer.core
                     this.task.Dispose();
                 }
                 this.cancellation.Dispose();
-                if (store != null)
+                if (this.store != null)
                 {
-                    store.Dispose();
+                    this.store.Dispose();
                 }
             }
         }

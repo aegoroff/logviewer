@@ -145,7 +145,7 @@ namespace logviewer.tests
         [Test]
         public void FilterTextNotContainsTextInHead()
         {
-            this.controller.TextFilter("^(?!.*ERROR).*");
+            this.controller.TextFilter(".*ERROR.*");
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
@@ -153,7 +153,7 @@ namespace logviewer.tests
         [Test]
         public void FilterTextNotContainsTextInBody()
         {
-            this.controller.TextFilter("^(?!.*message body 2).*");
+            this.controller.TextFilter(".*message body 2.*");
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }

@@ -7,15 +7,15 @@ namespace logviewer
 {
     public class MainControllerModule : NinjectModule
     {
-        private static readonly string[] levels = new[]
-            {
-                ConfigurationManager.AppSettings["TraceMarker"],
-                ConfigurationManager.AppSettings["DebugMarker"],
-                ConfigurationManager.AppSettings["InfoMarker"],
-                ConfigurationManager.AppSettings["WarnMarker"],
-                ConfigurationManager.AppSettings["ErrorMarker"],
-                ConfigurationManager.AppSettings["FatalMarker"]
-            };
+        private static readonly string[] levels =
+        {
+            ConfigurationManager.AppSettings["TraceMarker"],
+            ConfigurationManager.AppSettings["DebugMarker"],
+            ConfigurationManager.AppSettings["InfoMarker"],
+            ConfigurationManager.AppSettings["WarnMarker"],
+            ConfigurationManager.AppSettings["ErrorMarker"],
+            ConfigurationManager.AppSettings["FatalMarker"]
+        };
 
         private static int PageSize()
         {

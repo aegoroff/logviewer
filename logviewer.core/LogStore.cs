@@ -29,7 +29,7 @@ namespace logviewer.core
 
             RunSqlQuery(command => command.ExecuteNonQuery(), @"
                         CREATE TABLE Log (
-                                 Ix INTEGER NOT NULL,
+                                 Ix INTEGER PRIMARY KEY,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
                                  Level INTEGER NOT NULL
@@ -65,51 +65,70 @@ namespace logviewer.core
         }
 
         public IEnumerable<LogMessage> ReadMessages(
-            int limit, 
-            long offset = 0, 
-            bool reverse = true, 
-            LogLevel min = LogLevel.Trace, 
+            int limit,
+            long offset = 0,
+            bool reverse = true,
+            LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
-            Regex filter = null)
+            string filter = null)
         {
             var order = reverse ? "DESC" : "ASC";
-            var ixSign = ">=";
             var result = new List<LogMessage>(limit);
-            
-            long lastIx = 0;
-            var filtered = 0;
-            var hasResults = true;
-            do
+            var filterClause = string.Empty;
+            if (!string.IsNullOrWhiteSpace(filter))
             {
-                const string Cmd = @"SELECT Header, Body, Level, Ix FROM Log WHERE Level >= @Min AND Level <= @Max AND Ix {3} @Ix ORDER BY Ix {0} LIMIT {1} OFFSET {2}";
-                var query = string.Format(Cmd, order, limit, offset, ixSign);
-                RunSqlQuery(delegate(SQLiteCommand command)
+                filterClause = " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
+            }
+            const string Cmd =
+                @"SELECT Header, Body, Level FROM Log WHERE Level >= @Min AND Level <= @Max {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}";
+            var query = string.Format(Cmd, order, limit, offset, filterClause);
+            this.RunSqlQuery(delegate(SQLiteCommand command)
+            {
+                command.Parameters.AddWithValue("@Min", (int)min);
+                command.Parameters.AddWithValue("@Max", (int)max);
+                if (!string.IsNullOrWhiteSpace(filter))
                 {
-                    command.Parameters.AddWithValue("@Min", (int)min);
-                    command.Parameters.AddWithValue("@Max", (int)max);
-                    command.Parameters.AddWithValue("@Ix", lastIx);
-                    var rdr = command.ExecuteReader();
-                    using (rdr)
+                    command.Parameters.AddWithValue("@Fiter", filter);
+                }
+                var rdr = command.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read())
                     {
-                        hasResults = rdr.HasRows;    
-                        while (rdr.Read())
-                        {
-                            lastIx = (long)rdr[3];
-                            var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel)((long)rdr[2]));
-
-                            if (filter != null && !filter.IsMatch(msg.ToString()))
-                            {
-                                ++filtered;
-                                continue;
-                            }
-                            result.Add(msg);
-                        }
+                        var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel)((long)rdr[2]));
+                        result.Add(msg);
                     }
-                }, query);
-                ixSign = reverse ? "<" : ">";
-                limit = limit - filtered;
+                }
+            }, query);
 
-            } while (result.Count <= limit && hasResults);
+            return result;
+        }
+        
+        public long CountMessages(
+            LogLevel min = LogLevel.Trace,
+            LogLevel max = LogLevel.Fatal,
+            string filter = null)
+        {
+            var result = 0L;
+            var filterClause = string.Empty;
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                filterClause = " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
+            }
+            const string Cmd =
+                @"SELECT count(1) FROM Log WHERE Level >= @Min AND Level <= @Max {0}";
+            var query = string.Format(Cmd, filterClause);
+            this.RunSqlQuery(delegate(SQLiteCommand command)
+            {
+                command.Parameters.AddWithValue("@Min", (int)min);
+                command.Parameters.AddWithValue("@Max", (int)max);
+                if (!string.IsNullOrWhiteSpace(filter))
+                {
+                    command.Parameters.AddWithValue("@Fiter", filter);
+                }
+                result = (long)command.ExecuteScalar();
+                
+            }, query);
 
             return result;
         }
@@ -155,5 +174,16 @@ namespace logviewer.core
         }
 
         #endregion
+    }
+
+    [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
+    class SqliteRegEx : SQLiteFunction
+    {
+        public override object Invoke(object[] args)
+        {
+            var input = Convert.ToString(args[1]);
+            var pattern = Convert.ToString(args[0]);
+            return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        }
     }
 }

@@ -235,7 +235,6 @@ namespace logviewer
         private void OnChangeFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            this.Controller.RebuildMessages = true;
             this.StartReading();
         }
 
@@ -262,7 +261,6 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            this.Controller.RebuildMessages = true;
             Settings.MessageFilter = this.toolStripTextBox1.Text;
             this.StartReading();
         }
@@ -281,7 +279,6 @@ namespace logviewer
         private void OnPrevPage(object sender, EventArgs e)
         {
             this.Controller.CurrentPage -= 1;
-            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
@@ -289,7 +286,6 @@ namespace logviewer
         private void OnNextPage(object sender, EventArgs e)
         {
             this.Controller.CurrentPage += 1;
-            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
@@ -297,7 +293,6 @@ namespace logviewer
         private void OnFirst(object sender, EventArgs e)
         {
             this.Controller.CurrentPage = 1;
-            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
@@ -305,7 +300,6 @@ namespace logviewer
         private void OnLast(object sender, EventArgs e)
         {
             this.Controller.CurrentPage = this.Controller.TotalPages;
-            this.Controller.RebuildMessages = false;
             this.textFilterChanging = false;
             this.StartReading();
         }
