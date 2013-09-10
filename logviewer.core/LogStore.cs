@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -69,8 +68,9 @@ namespace logviewer.core
             }, Cmd);
         }
 
-        public IEnumerable<LogMessage> ReadMessages(
+        public void ReadMessages(
             int limit,
+            Action<LogMessage> onReadMessage, 
             long offset = 0,
             bool reverse = true,
             LogLevel min = LogLevel.Trace,
@@ -78,7 +78,6 @@ namespace logviewer.core
             string filter = null)
         {
             var order = reverse ? "DESC" : "ASC";
-            var result = new List<LogMessage>(limit);
             var filterClause = string.Empty;
             if (!string.IsNullOrWhiteSpace(filter))
             {
@@ -101,12 +100,10 @@ namespace logviewer.core
                     while (rdr.Read())
                     {
                         var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel)((long)rdr[2]));
-                        result.Add(msg);
+                        onReadMessage(msg);
                     }
                 }
             }, query);
-
-            return result;
         }
         
         public long CountMessages(

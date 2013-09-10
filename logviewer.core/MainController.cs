@@ -454,12 +454,8 @@ namespace logviewer.core
             }
 
             var start = (this.CurrentPage - 1) * this.pageSize;
-            var fromStore = this.store.ReadMessages(this.pageSize, start, this.reverseChronological, this.minFilter, this.maxFilter,
+            this.store.ReadMessages(this.pageSize, m => this.AddMessage(doc, m), start, this.reverseChronological, this.minFilter, this.maxFilter,
                 this.textFilter);
-            foreach (var message in fromStore)
-            {
-                this.AddMessage(doc, message);
-            }
             doc.Close();
             return rtfPath;
         }
