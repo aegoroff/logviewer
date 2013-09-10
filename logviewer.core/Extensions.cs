@@ -9,15 +9,9 @@ namespace logviewer.core
 {
     public static class Extensions
     {
-        #region Delegates
-
-        internal delegate bool CancelPredicate();
-
-        #endregion
-
         #region Methods
 
-        internal static string ConvertToUtf8(this string originalPath, CancelPredicate predicate)
+        internal static string ConvertToUtf8(this string originalPath, Func<bool> predicate)
         {
             var fi = new FileInfo(originalPath);
             if (fi.Length == 0)
