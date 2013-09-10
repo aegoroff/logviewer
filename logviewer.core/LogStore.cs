@@ -39,7 +39,7 @@ namespace logviewer.core
             const string Cache = @"PRAGMA cache_size = 40000;";
             const string Temp = @"PRAGMA temp_store = 2;";
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), CreateTable, CreateIndexOnLevel, SyncOff, Journal, Cache, Temp);
+            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, CreateTable, CreateIndexOnLevel);
         }
 
         #endregion
