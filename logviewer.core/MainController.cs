@@ -236,7 +236,7 @@ namespace logviewer.core
                 }
                 if (this.CurrentPathCached)
                 {
-                    return this.CreateRtf();
+                    return this.CreateRtf(true);
                 }
                 this.currentPath = this.view.LogPath;
 
@@ -461,7 +461,7 @@ namespace logviewer.core
             this.store.AddMessage(message);
         }
 
-        private string CreateRtf()
+        private string CreateRtf(bool signalProgress = false)
         {
             this.byLevel.Clear();
             var rtfPath = Path.GetTempFileName();
@@ -474,10 +474,29 @@ namespace logviewer.core
                 this.CurrentPage = 1;
             }
 
+            var total = DisplayedMessages;
+            var fraction = total / 20L;
+            var signalCounter = 1;
+            var count = 0;
+
+            Action<LogMessage> onRead = delegate(LogMessage m)
+            {
+                this.AddMessage(doc, m);
+                ++count;
+                if (!signalProgress || count < signalCounter * fraction)
+                {
+                    return;
+                }
+                ++signalCounter;
+                var percent = (count / (double)total) * 100;
+                Task.Factory.StartNew(() => view.SetProgress(percent), CancellationToken.None,
+                    TaskCreationOptions.None, uiContext);
+            };
+
             var start = (this.CurrentPage - 1) * this.pageSize;
             this.store.ReadMessages(
                 this.pageSize,
-                m => this.AddMessage(doc, m), 
+                onRead, 
                 () => this.NotCancelled, 
                 start, 
                 this.reverseChronological, 
