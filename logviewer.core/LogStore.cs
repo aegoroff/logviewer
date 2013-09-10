@@ -42,8 +42,9 @@ namespace logviewer.core
             const string syncOff = @"PRAGMA synchronous = OFF;";
             const string journal = @"PRAGMA journal_mode = MEMORY;";
             const string cache = @"PRAGMA cache_size = 40000;";
+            const string temp = @"PRAGMA temp_store = 2;";
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), createTable, createIndexOnLevel, syncOff, journal, cache);
+            RunSqlQuery(command => command.ExecuteNonQuery(), createTable, createIndexOnLevel, syncOff, journal, cache, temp);
         }
 
         #endregion
