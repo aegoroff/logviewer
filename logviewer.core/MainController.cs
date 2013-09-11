@@ -230,8 +230,7 @@ namespace logviewer.core
                 var fi = new FileInfo(filePath);
                 this.LogSize = fi.Length;
 
-                Task.Factory.StartNew(() => this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString(), CancellationToken.None,
-                                TaskCreationOptions.None, uiContext);
+                Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
 
                 if (fi.Length == 0)
                 {
@@ -241,6 +240,7 @@ namespace logviewer.core
                 {
                     return this.CreateRtf(true);
                 }
+                Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
                 this.currentPath = this.view.LogPath;
 
                 using (
@@ -260,6 +260,16 @@ namespace logviewer.core
                     File.Delete(filePath);
                 }
             }
+        }
+
+        private void SetLogSize()
+        {
+            this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString();
+        }
+        
+        private void ResetLogStatistic()
+        {
+            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public string ReadLog(Stream stream)
