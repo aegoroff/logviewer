@@ -9,7 +9,6 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private readonly string databasePath;
         private SQLiteTransaction transaction;
         private readonly SQLiteConnection connection;
 
@@ -19,9 +18,9 @@ namespace logviewer.core
 
         public LogStore(long dbSize = 0L, string databaseFilePath = null)
         {
-            databasePath = databaseFilePath ?? Path.GetTempFileName();
-            SQLiteConnection.CreateFile(databasePath);
-            var conString = new SQLiteConnectionStringBuilder { DataSource = databasePath };
+            DatabasePath = databaseFilePath ?? Path.GetTempFileName();
+            SQLiteConnection.CreateFile(DatabasePath);
+            var conString = new SQLiteConnectionStringBuilder { DataSource = DatabasePath };
             connection = new SQLiteConnection(conString.ToString());
             connection.Open();
 
@@ -43,6 +42,8 @@ namespace logviewer.core
 
             RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, Encode, string.Format(Mmap, dbSize), CreateTable, CreateIndexOnLevel);
         }
+
+        public string DatabasePath { get; private set; }
 
         #endregion
 
@@ -154,9 +155,9 @@ namespace logviewer.core
                 {
                     connection.Dispose();
                 }
-                if (File.Exists(databasePath))
+                if (File.Exists(DatabasePath))
                 {
-                    File.Delete(databasePath);
+                    File.Delete(DatabasePath);
                 }
             }
         }
