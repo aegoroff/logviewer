@@ -37,15 +37,16 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
+            this.minLevelBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
+            this.maxLevelBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
+            this.sortingBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
+            this.filterBox = new System.Windows.Forms.ToolStripTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.logLoadPercent = new System.Windows.Forms.Label();
             this.logLoadProgress = new System.Windows.Forms.ProgressBar();
             this.pageSizeLabel = new System.Windows.Forms.Label();
             this.last = new System.Windows.Forms.Button();
@@ -56,7 +57,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.logLoadPercent = new System.Windows.Forms.Label();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -203,14 +203,14 @@
             this.toolStripButton2,
             this.toolStripSeparator3,
             this.toolStripLabel1,
-            this.toolStripComboBox1,
+            this.minLevelBox,
             this.toolStripLabel2,
-            this.toolStripComboBox2,
+            this.maxLevelBox,
             this.toolStripLabel3,
-            this.toolStripComboBox3,
+            this.sortingBox,
             this.toolStripSeparator4,
             this.toolStripLabel4,
-            this.toolStripTextBox1});
+            this.filterBox});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(840, 25);
@@ -246,20 +246,20 @@
             this.toolStripLabel1.Size = new System.Drawing.Size(61, 22);
             this.toolStripLabel1.Text = "Min level: ";
             // 
-            // toolStripComboBox1
+            // minLevelBox
             // 
-            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox1.Enabled = false;
-            this.toolStripComboBox1.Items.AddRange(new object[] {
+            this.minLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.minLevelBox.Enabled = false;
+            this.minLevelBox.Items.AddRange(new object[] {
             "TRACE - 0",
             "DEBUG - 1",
             "INFO - 2",
             "WARN - 3",
             "ERROR - 4",
             "FATAL - 5"});
-            this.toolStripComboBox1.Name = "toolStripComboBox1";
-            this.toolStripComboBox1.Size = new System.Drawing.Size(80, 25);
-            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
+            this.minLevelBox.Name = "minLevelBox";
+            this.minLevelBox.Size = new System.Drawing.Size(80, 25);
+            this.minLevelBox.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // toolStripLabel2
             // 
@@ -267,20 +267,20 @@
             this.toolStripLabel2.Size = new System.Drawing.Size(68, 22);
             this.toolStripLabel2.Text = "  Max level: ";
             // 
-            // toolStripComboBox2
+            // maxLevelBox
             // 
-            this.toolStripComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox2.Enabled = false;
-            this.toolStripComboBox2.Items.AddRange(new object[] {
+            this.maxLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.maxLevelBox.Enabled = false;
+            this.maxLevelBox.Items.AddRange(new object[] {
             "TRACE - 0",
             "DEBUG - 1",
             "INFO - 2",
             "WARN - 3",
             "ERROR - 4",
             "FATAL - 5"});
-            this.toolStripComboBox2.Name = "toolStripComboBox2";
-            this.toolStripComboBox2.Size = new System.Drawing.Size(80, 25);
-            this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
+            this.maxLevelBox.Name = "maxLevelBox";
+            this.maxLevelBox.Size = new System.Drawing.Size(80, 25);
+            this.maxLevelBox.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // toolStripLabel3
             // 
@@ -288,15 +288,15 @@
             this.toolStripLabel3.Size = new System.Drawing.Size(40, 22);
             this.toolStripLabel3.Text = "  Sort: ";
             // 
-            // toolStripComboBox3
+            // sortingBox
             // 
-            this.toolStripComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox3.Items.AddRange(new object[] {
+            this.sortingBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.sortingBox.Items.AddRange(new object[] {
             "Date, DESC",
             "Date, ASC"});
-            this.toolStripComboBox3.Name = "toolStripComboBox3";
-            this.toolStripComboBox3.Size = new System.Drawing.Size(90, 25);
-            this.toolStripComboBox3.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
+            this.sortingBox.Name = "sortingBox";
+            this.sortingBox.Size = new System.Drawing.Size(90, 25);
+            this.sortingBox.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // toolStripSeparator4
             // 
@@ -309,11 +309,11 @@
             this.toolStripLabel4.Size = new System.Drawing.Size(42, 22);
             this.toolStripLabel4.Text = " Filter: ";
             // 
-            // toolStripTextBox1
+            // filterBox
             // 
-            this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(190, 25);
-            this.toolStripTextBox1.TextChanged += new System.EventHandler(this.OnChangeTextFilter);
+            this.filterBox.Name = "filterBox";
+            this.filterBox.Size = new System.Drawing.Size(190, 25);
+            this.filterBox.TextChanged += new System.EventHandler(this.OnChangeTextFilter);
             // 
             // panel1
             // 
@@ -335,6 +335,16 @@
             this.panel1.Padding = new System.Windows.Forms.Padding(2);
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
+            // 
+            // logLoadPercent
+            // 
+            this.logLoadPercent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.logLoadPercent.AutoSize = true;
+            this.logLoadPercent.Location = new System.Drawing.Point(584, 453);
+            this.logLoadPercent.Name = "logLoadPercent";
+            this.logLoadPercent.Size = new System.Drawing.Size(10, 13);
+            this.logLoadPercent.TabIndex = 8;
+            this.logLoadPercent.Text = " ";
             // 
             // logLoadProgress
             // 
@@ -428,16 +438,6 @@
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
             // 
-            // logLoadPercent
-            // 
-            this.logLoadPercent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.logLoadPercent.AutoSize = true;
-            this.logLoadPercent.Location = new System.Drawing.Point(584, 453);
-            this.logLoadPercent.Name = "logLoadPercent";
-            this.logLoadPercent.Size = new System.Drawing.Size(10, 13);
-            this.logLoadPercent.TabIndex = 8;
-            this.logLoadPercent.Text = " ";
-            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -500,12 +500,12 @@
         private SyntaxRichTextBox syntaxRichTextBox1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
+        private System.Windows.Forms.ToolStripComboBox minLevelBox;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox2;
+        private System.Windows.Forms.ToolStripComboBox maxLevelBox;
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox3;
+        private System.Windows.Forms.ToolStripComboBox sortingBox;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.IO.FileSystemWatcher logWatch;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
@@ -513,7 +513,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripLabel toolStripLabel4;
-        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+        private System.Windows.Forms.ToolStripTextBox filterBox;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog exportDialog;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;

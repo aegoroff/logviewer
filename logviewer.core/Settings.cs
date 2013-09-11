@@ -12,6 +12,9 @@ namespace logviewer.core
         private const string FilterParameterName = @"MessageFilter";
         private const string LastOpenedFileParameterName = @"LastOpenedFile";
         private const string OpenLastFileParameterName = @"OpenLastFile";
+        private const string MinLevelParameterName = @"MinLevel";
+        private const string MaxLevelParameterName = @"MaxLevel";
+        private const string SortingParameterName = @"Sorting";
 
         private static RegistryKey RegistryKey
         {
@@ -39,15 +42,15 @@ namespace logviewer.core
             return result;
         }
         
-        private static int GetIntValue(RegistryKey rk, string key)
+        private static int GetIntValue(RegistryKey rk, string key, int defaultValue = default(int))
         {
-            var result = (int)rk.GetValue(key);
-            if (result == 0)
+            var obj = rk.GetValue(key);
+            if (obj == null)
             {
                 RegistryKey.SetValue(key, 0, RegistryValueKind.DWord);
-                return 0;
+                return defaultValue;
             }
-            return result;
+            return (int)obj;
         }
         
         private static string GetStringValue(string key)
@@ -59,15 +62,25 @@ namespace logviewer.core
         {
             RegistryKey.SetValue(key, value, RegistryValueKind.String);
         }
-        
-        private static int GetIntValue(string key)
+
+        private static int GetIntValue(string key, int defaultValue = default(int))
         {
-            return GetIntValue(RegistryKey, key);
+            return GetIntValue(RegistryKey, key, defaultValue);
+        }
+        
+        private static bool GetBoolValue(string key)
+        {
+            return GetIntValue(key) == 1;
         }
 
         private static void SetIntValue(string key, int value)
         {
             RegistryKey.SetValue(key, value, RegistryValueKind.DWord);
+        }
+        
+        private static void SetBoolValue(string key, bool value)
+        {
+            SetIntValue(key, value ? 1 : 0);
         }
 
         public static string MessageFilter
@@ -84,8 +97,26 @@ namespace logviewer.core
 
         public static bool OpenLastFile
         {
-            get { return GetIntValue(OpenLastFileParameterName) == 1; }
-            set { SetIntValue(OpenLastFileParameterName, value ? 1 : 0); }
+            get { return GetBoolValue(OpenLastFileParameterName); }
+            set { SetBoolValue(OpenLastFileParameterName, value); }
+        }
+        
+        public static int MinLevel
+        {
+            get { return GetIntValue(MinLevelParameterName); }
+            set { SetIntValue(MinLevelParameterName, value); }
+        }
+        
+        public static int MaxLevel
+        {
+            get { return GetIntValue(MaxLevelParameterName, (int)LogLevel.Fatal); }
+            set { SetIntValue(MaxLevelParameterName, value); }
+        }
+
+        public static bool Sorting
+        {
+            get { return GetBoolValue(SortingParameterName); }
+            set { SetBoolValue(SortingParameterName, value); }
         }
     }
 }

@@ -10,13 +10,14 @@ namespace logviewer
 {
     public partial class MainDlg : Form, ILogView
     {
-        private int logFilterMax;
+        private int logFilterMax = (int)LogLevel.Fatal;
         private int logFilterMin;
         private string logFilterText;
         private string originalCapion;
         private bool reverse;
         private bool textFilterChanging;
         private MainController controller;
+        private bool applicationInitialized;
 
         public MainDlg()
         {
@@ -59,13 +60,14 @@ namespace logviewer
         {
             Application.ThreadException += OnUnhandledException;
             this.KeepOriginalCaption();
-            this.toolStripComboBox1.SelectedIndex = 0;
-            this.toolStripComboBox2.SelectedIndex = this.toolStripComboBox2.Items.Count - 1;
-            this.toolStripComboBox3.SelectedIndex = 0;
-            this.toolStripTextBox1.Text = Settings.MessageFilter;
+            this.minLevelBox.SelectedIndex = Settings.MinLevel;
+            this.maxLevelBox.SelectedIndex = Settings.MaxLevel;
+            this.sortingBox.SelectedIndex = Settings.Sorting ? 0 : 1;
+            this.filterBox.Text = Settings.MessageFilter;
             this.EnableControls(false);
             this.Controller.ReadRecentFiles();
             this.Controller.SetPageSize();
+            this.applicationInitialized = true;
             this.Controller.LoadLastOpenedFile();
         }
 
@@ -73,7 +75,7 @@ namespace logviewer
         {
             if (this.textFilterChanging)
             {
-                this.toolStripTextBox1.Focus();
+                this.filterBox.Focus();
             }
         }
 
@@ -168,13 +170,13 @@ namespace logviewer
 
         private void EnableControls(bool enabled)
         {
-            this.toolStripComboBox1.Enabled = enabled;
-            this.toolStripComboBox2.Enabled = enabled;
-            this.toolStripComboBox3.Enabled = enabled;
+            this.minLevelBox.Enabled = enabled;
+            this.maxLevelBox.Enabled = enabled;
+            this.sortingBox.Enabled = enabled;
             this.toolStripButton2.Enabled = enabled;
             this.refreshToolStripMenuItem.Enabled = enabled;
             this.exportToolStripMenuItem.Enabled = enabled;
-            this.toolStripTextBox1.Enabled = enabled;
+            this.filterBox.Enabled = enabled;
             this.prev.Enabled = enabled;
             this.next.Enabled = enabled;
             this.last.Enabled = enabled;
@@ -214,13 +216,20 @@ namespace logviewer
 
         private void StartReading()
         {
+            if (!this.applicationInitialized)
+            {
+                return;
+            }
             this.EnableControls(true);
             this.DisableBack(true);
             this.DisableForward(true);
-            this.logFilterMin = this.toolStripComboBox1.SelectedIndex;
-            this.logFilterMax = this.toolStripComboBox2.SelectedIndex;
-            this.logFilterText = this.toolStripTextBox1.Text;
-            this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
+            this.logFilterMin = this.minLevelBox.SelectedIndex;
+            this.logFilterMax = this.maxLevelBox.SelectedIndex;
+            this.logFilterText = this.filterBox.Text;
+            this.reverse = this.sortingBox.SelectedIndex == 0;
+            Settings.MinLevel = this.logFilterMin;
+            Settings.MaxLevel = this.logFilterMax;
+            Settings.Sorting = this.reverse;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse);
@@ -272,7 +281,7 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            Settings.MessageFilter = this.toolStripTextBox1.Text;
+            Settings.MessageFilter = this.filterBox.Text;
             this.StartReading();
         }
 
