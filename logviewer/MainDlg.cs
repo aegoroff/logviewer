@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Ninject;
-using logviewer.Properties;
 using logviewer.core;
 using Settings = logviewer.core.Settings;
 
