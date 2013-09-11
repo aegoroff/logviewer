@@ -26,7 +26,7 @@ namespace logviewer.core
 
         private readonly List<Regex> markers;
         private readonly Regex messageHead;
-        private readonly int pageSize;
+        private int pageSize;
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
@@ -350,6 +350,12 @@ namespace logviewer.core
         public void MaxFilter(int value)
         {
             this.maxFilter = (LogLevel)value;
+        }
+        
+        public void PageSize(int value)
+        {
+            this.pageSize = value;
+            this.SetPageSize();
         }
 
         public void TextFilter(string value)

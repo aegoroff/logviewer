@@ -14,6 +14,7 @@ namespace logviewer
         private int logFilterMin;
         private string logFilterText;
         private string originalCapion;
+        private string originalPageSizeFormat;
         private bool reverse;
         private bool textFilterChanging;
         private MainController controller;
@@ -59,7 +60,7 @@ namespace logviewer
         public void Initialize()
         {
             Application.ThreadException += OnUnhandledException;
-            this.KeepOriginalCaption();
+            this.KeepFormatStrings();
             this.minLevelBox.SelectedIndex = Settings.MinLevel;
             this.maxLevelBox.SelectedIndex = Settings.MaxLevel;
             this.sortingBox.SelectedIndex = Settings.Sorting ? 0 : 1;
@@ -158,7 +159,7 @@ namespace logviewer
 
         public void SetPageSize(int size)
         {
-            this.pageSizeLabel.Text = string.Format(this.pageSizeLabel.Text, size);
+            this.pageSizeLabel.Text = string.Format(this.originalPageSizeFormat, size);
         }
 
         #endregion
@@ -197,10 +198,11 @@ namespace logviewer
             this.ReadLog();
         }
 
-        private void KeepOriginalCaption()
+        private void KeepFormatStrings()
         {
             this.originalCapion = this.Text;
             this.LogInfoFormatString = this.toolStripStatusLabel2.Text;
+            this.originalPageSizeFormat = this.pageSizeLabel.Text;
         }
 
         private void OnOpen(object sender, EventArgs e)
@@ -349,6 +351,7 @@ namespace logviewer
             using (dlg)
             {
                 dlg.ShowDialog();
+                controller.PageSize(Settings.PageSize);
             }
         }
 

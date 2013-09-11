@@ -15,6 +15,7 @@ namespace logviewer.core
         private const string MinLevelParameterName = @"MinLevel";
         private const string MaxLevelParameterName = @"MaxLevel";
         private const string SortingParameterName = @"Sorting";
+        private const string PageSizeParameterName = @"PageSize";
 
         private static RegistryKey RegistryKey
         {
@@ -111,6 +112,12 @@ namespace logviewer.core
         {
             get { return GetIntValue(MaxLevelParameterName, (int)LogLevel.Fatal); }
             set { SetIntValue(MaxLevelParameterName, value); }
+        }
+        
+        public static int PageSize
+        {
+            get { return GetIntValue(PageSizeParameterName, 5000); }
+            set { SetIntValue(PageSizeParameterName, value); }
         }
 
         public static bool Sorting

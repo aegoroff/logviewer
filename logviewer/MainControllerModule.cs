@@ -17,13 +17,6 @@ namespace logviewer
             ConfigurationManager.AppSettings["FatalMarker"]
         };
 
-        private static int PageSize()
-        {
-            int pageSize;
-            int.TryParse(ConfigurationManager.AppSettings["PageSize"], out pageSize);
-            return pageSize;
-        }
-
         public override void Load()
         {
             this.Bind<ILogView>().To<MainDlg>();
@@ -33,7 +26,7 @@ namespace logviewer
                 .WithConstructorArgument("recentFilesFilePath",
                                          Path.Combine(Path.GetTempPath(), "logviewerRecentFiles.txt"))
                 .WithConstructorArgument("levels", levels)
-                .WithConstructorArgument("pageSize", PageSize());
+                .WithConstructorArgument("pageSize", Settings.PageSize);
         }
     }
 }
