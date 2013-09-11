@@ -310,8 +310,7 @@ namespace logviewer.core
                         {
                             ++signalCounter;
                             var percent = (stream.Position / (double)total) * 100;
-                            Task.Factory.StartNew(() => view.SetProgress(percent), CancellationToken.None,
-                                TaskCreationOptions.None, uiContext);
+                            this.OnLogReadProgress(percent);
                         }
 
                         message.AddLine(line);
@@ -502,8 +501,7 @@ namespace logviewer.core
                 }
                 ++signalCounter;
                 var percent = (count / (double)total) * 100;
-                Task.Factory.StartNew(() => view.SetProgress(percent), CancellationToken.None,
-                    TaskCreationOptions.None, uiContext);
+                this.OnLogReadProgress(percent);
             };
 
             var start = (this.CurrentPage - 1) * this.pageSize;
@@ -518,6 +516,12 @@ namespace logviewer.core
                 this.textFilter);
             doc.Close();
             return rtfPath;
+        }
+
+        private void OnLogReadProgress(double percent)
+        {
+            Task.Factory.StartNew(() => this.view.SetProgress(percent), CancellationToken.None,
+                TaskCreationOptions.None, this.uiContext);
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
