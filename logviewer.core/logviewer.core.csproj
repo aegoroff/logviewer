@@ -100,12 +100,12 @@
   -->
   <Target Name="BeforeBuild">
 	<Copy
-		SourceFiles="$(MSBuildProjectDirectory)\packages\System.Data.SQLite.1.0.88.0\content\net40\x64\SQLite.Interop.dll"
+		SourceFiles="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.1.0.88.0\content\net40\x64\SQLite.Interop.dll"
 		DestinationFiles="$(MSBuildProjectDirectory)\logviewer.core\x64\SQLite.Interop.dll"
 		Condition=" $(TEAMCITY_VERSION) != ''"
 	/>
 	<Copy
-		SourceFiles="$(MSBuildProjectDirectory)\packages\System.Data.SQLite.1.0.88.0\content\net40\x86\SQLite.Interop.dll"
+		SourceFiles="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.1.0.88.0\content\net40\x86\SQLite.Interop.dll"
 		DestinationFiles="$(MSBuildProjectDirectory)\logviewer.core\x86\SQLite.Interop.dll"
 		Condition=" $(TEAMCITY_VERSION) != ''"
 	/>
