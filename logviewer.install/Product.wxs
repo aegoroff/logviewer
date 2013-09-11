@@ -22,7 +22,7 @@
 			Installed OR NETFRAMEWORK40FULL
 		</Condition>
         
-		<MediaTemplate />
+		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
 		<Feature Id="ProductFeature" Title="logviewer.install" Level="1">
 			<ComponentRef Id="logviewer.bin" />
