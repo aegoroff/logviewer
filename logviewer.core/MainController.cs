@@ -285,7 +285,7 @@ namespace logviewer.core
             var reader = new StreamReader(stream, Encoding.UTF8);
             using (reader)
             {
-                this.store = new LogStore();
+                this.store = new LogStore(total);
                 GC.Collect();
                 this.store.StartAddMessages();
                 this.totalMessages = 0;

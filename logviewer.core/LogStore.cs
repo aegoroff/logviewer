@@ -17,7 +17,7 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public LogStore(string databaseFilePath = null)
+        public LogStore(long dbSize = 0L, string databaseFilePath = null)
         {
             databasePath = databaseFilePath ?? Path.GetTempFileName();
             SQLiteConnection.CreateFile(databasePath);
@@ -39,8 +39,9 @@ namespace logviewer.core
             const string Cache = @"PRAGMA cache_size = 40000;";
             const string Temp = @"PRAGMA temp_store = 2;";
             const string Encode = @"PRAGMA encoding = 'UTF-8';";
+            const string Mmap = @"PRAGMA mmap_size={0};";
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, Encode, CreateTable, CreateIndexOnLevel);
+            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, Encode, string.Format(Mmap, dbSize), CreateTable, CreateIndexOnLevel);
         }
 
         #endregion
