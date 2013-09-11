@@ -22,7 +22,7 @@ namespace logviewer.tests
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(MessageStart, RecentPath, this.levels);
+            this.controller = new MainController(MessageStart, RecentPath, this.levels, 100);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
@@ -419,7 +419,7 @@ namespace logviewer.tests
         public void TotalPagesMessagesBelowPageSize()
         {
             var sb = new StringBuilder();
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < 10; i++)
             {
                 sb.AppendLine(MessageExamples);
             }
@@ -431,7 +431,7 @@ namespace logviewer.tests
         public void TotalPagesMessagesInexactlyAbovePageSize()
         {
             var sb = new StringBuilder();
-            for (var i = 0; i < 6000; i++)
+            for (var i = 0; i < 60; i++)
             {
                 sb.AppendLine(MessageExamples);
             }
@@ -443,7 +443,7 @@ namespace logviewer.tests
         public void TotalPagesMessagesExactlyAbovePageSize()
         {
             var sb = new StringBuilder();
-            for (var i = 0; i < 10000; i++)
+            for (var i = 0; i < 100; i++)
             {
                 sb.AppendLine(MessageExamples);
             }
