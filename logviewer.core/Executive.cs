@@ -3,34 +3,6 @@ using System;
 namespace logviewer.core
 {
     /// <summary>
-    ///     Represents method that accept and return nothing
-    /// </summary>
-    public delegate void VoidMethod();
-
-    /// <summary>
-    ///     Represents method that accept nothing and return a <typeparamref name="T" /> instance
-    /// </summary>
-    /// <typeparam name="T"> Method return type </typeparam>
-    /// <returns> </returns>
-    public delegate T ParameterlessMethod<out T>();
-
-    /// <summary>
-    ///     Represents method that accept an argument of type<typeparamref name="T" /> and return nothing.
-    /// </summary>
-    /// <typeparam name="T"> Argument type </typeparam>
-    /// <param name="argument"> Argument value </param>
-    public delegate void OneArgumentMethod<in T>(T argument);
-
-    /// <summary>
-    ///     Represents method that accept an argument of type<typeparamref name="TArg" /> and return a <typeparamref name="TReturn" /> instance.
-    /// </summary>
-    /// <typeparam name="TReturn"> Return type </typeparam>
-    /// <typeparam name="TArg"> Argument type </typeparam>
-    /// <param name="argument"> Argument value </param>
-    /// <returns> </returns>
-    public delegate TReturn OneArgumentReturningMethod<out TReturn, in TArg>(TArg argument);
-
-    /// <summary>
     ///     Provides useful excecutive primitives.
     /// </summary>
     public static class Executive
@@ -39,7 +11,7 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
-        public static void SafeRun(VoidMethod method)
+        public static void SafeRun(Action method)
         {
             try
             {
@@ -55,7 +27,7 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
-        public static T SafeRun<T>(ParameterlessMethod<T> method)
+        public static T SafeRun<T>(Func<T> method)
         {
             try
             {
@@ -74,7 +46,7 @@ namespace logviewer.core
         /// <typeparam name="T"> Argument type </typeparam>
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
-        public static void SafeRun<T>(OneArgumentMethod<T> method, T argument)
+        public static void SafeRun<T>(Action<T> method, T argument)
         {
             try
             {
@@ -93,7 +65,7 @@ namespace logviewer.core
         /// <typeparam name="TArg"> Argument type </typeparam>
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
-        public static TReturn SafeRun<TReturn, TArg>(OneArgumentReturningMethod<TReturn, TArg> method, TArg argument)
+        public static TReturn SafeRun<TReturn, TArg>(Func<TArg, TReturn> method, TArg argument)
         {
             try
             {
