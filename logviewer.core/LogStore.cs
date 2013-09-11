@@ -81,22 +81,12 @@ namespace logviewer.core
             string filter = null)
         {
             var order = reverse ? "DESC" : "ASC";
-            var filterClause = string.Empty;
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                filterClause = " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
-            }
             const string Cmd =
                 @"SELECT Header, Body, Level FROM Log WHERE Level >= @Min AND Level <= @Max {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}";
-            var query = string.Format(Cmd, order, limit, offset, filterClause);
+            var query = string.Format(Cmd, order, limit, offset, FilterClause(filter));
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
-                command.Parameters.AddWithValue("@Min", (int)min);
-                command.Parameters.AddWithValue("@Max", (int)max);
-                if (!string.IsNullOrWhiteSpace(filter))
-                {
-                    command.Parameters.AddWithValue("@Fiter", filter);
-                }
+                AddParameters(command, min, max, filter);
                 var rdr = command.ExecuteReader();
                 using (rdr)
                 {
@@ -108,34 +98,39 @@ namespace logviewer.core
                 }
             }, query);
         }
-        
+
         public long CountMessages(
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
             string filter = null)
         {
             var result = 0L;
-            var filterClause = string.Empty;
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                filterClause = " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
-            }
             const string Cmd =
                 @"SELECT count(1) FROM Log WHERE Level >= @Min AND Level <= @Max {0}";
-            var query = string.Format(Cmd, filterClause);
+            var query = string.Format(Cmd, FilterClause(filter));
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
-                command.Parameters.AddWithValue("@Min", (int)min);
-                command.Parameters.AddWithValue("@Max", (int)max);
-                if (!string.IsNullOrWhiteSpace(filter))
-                {
-                    command.Parameters.AddWithValue("@Fiter", filter);
-                }
+                AddParameters(command, min, max, filter);
                 result = (long)command.ExecuteScalar();
                 
             }, query);
 
             return result;
+        }
+
+        private static string FilterClause(string filter)
+        {
+            return string.IsNullOrWhiteSpace(filter) ? string.Empty : " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
+        }
+
+        private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter)
+        {
+            command.Parameters.AddWithValue("@Min", (int)min);
+            command.Parameters.AddWithValue("@Max", (int)max);
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                command.Parameters.AddWithValue("@Fiter", filter);
+            }
         }
 
         public void Dispose()
