@@ -79,7 +79,9 @@ namespace logviewer
 
         public void SetProgress(double value)
         {
-            progressBar1.Value = (int)value;
+            var percent = (int)value;
+            logLoadProgress.Value = percent;
+            logLoadPercent.Text = string.Format("{0} %", percent);
         }
 
         public void CreateRecentFileItem(string file)
@@ -214,7 +216,6 @@ namespace logviewer
             this.logFilterMax = this.toolStripComboBox2.SelectedIndex;
             this.logFilterText = this.toolStripTextBox1.Text;
             this.reverse = this.toolStripComboBox3.SelectedIndex == 0;
-            this.toolStripStatusLabel1.Text = Resources.ReadingLogMessage;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse);

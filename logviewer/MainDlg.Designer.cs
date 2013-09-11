@@ -46,6 +46,7 @@
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.logLoadProgress = new System.Windows.Forms.ProgressBar();
             this.pageSizeLabel = new System.Windows.Forms.Label();
             this.last = new System.Windows.Forms.Button();
             this.next = new System.Windows.Forms.Button();
@@ -55,7 +56,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.logLoadPercent = new System.Windows.Forms.Label();
             this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -319,7 +320,8 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.progressBar1);
+            this.panel1.Controls.Add(this.logLoadPercent);
+            this.panel1.Controls.Add(this.logLoadProgress);
             this.panel1.Controls.Add(this.pageSizeLabel);
             this.panel1.Controls.Add(this.last);
             this.panel1.Controls.Add(this.next);
@@ -333,6 +335,14 @@
             this.panel1.Padding = new System.Windows.Forms.Padding(2);
             this.panel1.Size = new System.Drawing.Size(840, 474);
             this.panel1.TabIndex = 3;
+            // 
+            // logLoadProgress
+            // 
+            this.logLoadProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.logLoadProgress.Location = new System.Drawing.Point(311, 452);
+            this.logLoadProgress.Name = "logLoadProgress";
+            this.logLoadProgress.Size = new System.Drawing.Size(267, 15);
+            this.logLoadProgress.TabIndex = 7;
             // 
             // pageSizeLabel
             // 
@@ -418,13 +428,15 @@
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
             // 
-            // progressBar1
+            // logLoadPercent
             // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.progressBar1.Location = new System.Drawing.Point(311, 452);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(267, 15);
-            this.progressBar1.TabIndex = 7;
+            this.logLoadPercent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.logLoadPercent.AutoSize = true;
+            this.logLoadPercent.Location = new System.Drawing.Point(584, 453);
+            this.logLoadPercent.Name = "logLoadPercent";
+            this.logLoadPercent.Size = new System.Drawing.Size(10, 13);
+            this.logLoadPercent.TabIndex = 8;
+            this.logLoadPercent.Text = " ";
             // 
             // syntaxRichTextBox1
             // 
@@ -512,7 +524,8 @@
         private System.Windows.Forms.Button last;
         private System.Windows.Forms.Label pageSizeLabel;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar logLoadProgress;
+        private System.Windows.Forms.Label logLoadPercent;
     }
 }
 

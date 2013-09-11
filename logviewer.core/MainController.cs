@@ -196,7 +196,6 @@ namespace logviewer.core
 
         private void EndLogReading(string path)
         {
-            this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString();
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
@@ -230,6 +229,10 @@ namespace logviewer.core
                 }
                 var fi = new FileInfo(filePath);
                 this.LogSize = fi.Length;
+
+                Task.Factory.StartNew(() => this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString(), CancellationToken.None,
+                                TaskCreationOptions.None, uiContext);
+
                 if (fi.Length == 0)
                 {
                     return string.Empty;
