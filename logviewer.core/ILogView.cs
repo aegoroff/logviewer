@@ -22,5 +22,6 @@ namespace logviewer.core
 	    void Initialize();
 	    void FocusOnTextFilterControl();
 	    void SetProgress(double value);
+	    void StartLoadingLog(string path);
 	}
 }

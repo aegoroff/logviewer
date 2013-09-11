@@ -208,6 +208,7 @@ namespace logviewer.core
             {
                 return;
             }
+            Settings.LastOpenedFile = this.view.LogPath;
             this.view.SetProgress(100);
         }
 
@@ -360,6 +361,14 @@ namespace logviewer.core
         private void Ordering(bool reverse)
         {
             this.reverseChronological = reverse;
+        }
+
+        public void LoadLastOpenedFile()
+        {
+            if (!string.IsNullOrWhiteSpace(Settings.LastOpenedFile))
+            {
+                this.view.StartLoadingLog(Settings.LastOpenedFile);
+            }
         }
 
         public void ReadRecentFiles()

@@ -10,6 +10,7 @@ namespace logviewer.core
         internal const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
+        private const string LastOpenedFileParameterName = @"LastOpenedFile";
 
         private static RegistryKey RegistryKey
         {
@@ -51,6 +52,12 @@ namespace logviewer.core
         {
             get { return GetStringValue(FilterParameterName); }
             set { SetStringValue(FilterParameterName, value); }
+        }
+        
+        public static string LastOpenedFile
+        {
+            get { return GetStringValue(LastOpenedFileParameterName); }
+            set { SetStringValue(LastOpenedFileParameterName, value); }
         }
     }
 }

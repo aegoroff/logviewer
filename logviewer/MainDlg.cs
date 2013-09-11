@@ -66,6 +66,7 @@ namespace logviewer
             this.EnableControls(false);
             this.Controller.ReadRecentFiles();
             this.Controller.SetPageSize();
+            this.Controller.LoadLastOpenedFile();
         }
 
         public void FocusOnTextFilterControl()
@@ -183,7 +184,12 @@ namespace logviewer
         private void OnOpenRecentLogFile(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem) sender;
-            this.LogPath = item.Tag as string;
+            this.StartLoadingLog(item.Tag as string);
+        }
+
+        public void StartLoadingLog(string path)
+        {
+            this.LogPath = path;
             this.Controller.CurrentPage = 1;
             this.Controller.ClearCache();
             this.ReadLog();
@@ -317,11 +323,7 @@ namespace logviewer
             {
                 return;
             }
-
-            this.LogPath = files[0];
-            this.Controller.CurrentPage = 1;
-            this.Controller.ClearCache();
-            this.ReadLog();
+            this.StartLoadingLog(files[0]);
         }
 
         private void OnDragEnter(object sender, DragEventArgs e)
