@@ -32,7 +32,11 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.generalSettingsBox = new System.Windows.Forms.GroupBox();
+            this.openLastFile = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.generalSettingsBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -48,6 +52,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.generalSettingsBox);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -66,6 +71,27 @@
             this.tabPage2.Text = "Templates";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // generalSettingsBox
+            // 
+            this.generalSettingsBox.Controls.Add(this.openLastFile);
+            this.generalSettingsBox.Location = new System.Drawing.Point(8, 6);
+            this.generalSettingsBox.Name = "generalSettingsBox";
+            this.generalSettingsBox.Size = new System.Drawing.Size(276, 394);
+            this.generalSettingsBox.TabIndex = 0;
+            this.generalSettingsBox.TabStop = false;
+            this.generalSettingsBox.Text = "General settings";
+            // 
+            // openLastFile
+            // 
+            this.openLastFile.AutoSize = true;
+            this.openLastFile.Location = new System.Drawing.Point(6, 19);
+            this.openLastFile.Name = "openLastFile";
+            this.openLastFile.Size = new System.Drawing.Size(87, 17);
+            this.openLastFile.TabIndex = 0;
+            this.openLastFile.Text = "Open last file";
+            this.openLastFile.UseVisualStyleBackColor = true;
+            this.openLastFile.CheckedChanged += new System.EventHandler(this.OnCheckLastOpenedFileOption);
+            // 
             // SettingsDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -77,6 +103,9 @@
             this.Name = "SettingsDlg";
             this.Text = "Settings";
             this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.generalSettingsBox.ResumeLayout(false);
+            this.generalSettingsBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -86,5 +115,7 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.GroupBox generalSettingsBox;
+        private System.Windows.Forms.CheckBox openLastFile;
     }
 }

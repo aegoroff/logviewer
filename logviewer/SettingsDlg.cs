@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using logviewer.core;
 
 namespace logviewer
 {
@@ -13,7 +8,13 @@ namespace logviewer
     {
         public SettingsDlg()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.openLastFile.Checked = Settings.OpenLastFile;
+        }
+
+        private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
+        {
+            Settings.OpenLastFile = this.openLastFile.Checked;
         }
     }
 }

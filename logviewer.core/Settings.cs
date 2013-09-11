@@ -11,6 +11,7 @@ namespace logviewer.core
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
         private const string LastOpenedFileParameterName = @"LastOpenedFile";
+        private const string OpenLastFileParameterName = @"OpenLastFile";
 
         private static RegistryKey RegistryKey
         {
@@ -38,6 +39,17 @@ namespace logviewer.core
             return result;
         }
         
+        private static int GetIntValue(RegistryKey rk, string key)
+        {
+            var result = (int)rk.GetValue(key);
+            if (result == 0)
+            {
+                RegistryKey.SetValue(key, 0, RegistryValueKind.DWord);
+                return 0;
+            }
+            return result;
+        }
+        
         private static string GetStringValue(string key)
         {
             return GetStringValue(RegistryKey, key);
@@ -46,6 +58,16 @@ namespace logviewer.core
         private static void SetStringValue(string key, string value)
         {
             RegistryKey.SetValue(key, value, RegistryValueKind.String);
+        }
+        
+        private static int GetIntValue(string key)
+        {
+            return GetIntValue(RegistryKey, key);
+        }
+
+        private static void SetIntValue(string key, int value)
+        {
+            RegistryKey.SetValue(key, value, RegistryValueKind.DWord);
         }
 
         public static string MessageFilter
@@ -58,6 +80,12 @@ namespace logviewer.core
         {
             get { return GetStringValue(LastOpenedFileParameterName); }
             set { SetStringValue(LastOpenedFileParameterName, value); }
+        }
+
+        public static bool OpenLastFile
+        {
+            get { return GetIntValue(OpenLastFileParameterName) == 1; }
+            set { SetIntValue(OpenLastFileParameterName, value ? 1 : 0); }
         }
     }
 }

@@ -365,7 +365,7 @@ namespace logviewer.core
 
         public void LoadLastOpenedFile()
         {
-            if (!string.IsNullOrWhiteSpace(Settings.LastOpenedFile))
+            if (Settings.OpenLastFile && !string.IsNullOrWhiteSpace(Settings.LastOpenedFile))
             {
                 this.view.StartLoadingLog(Settings.LastOpenedFile);
             }
