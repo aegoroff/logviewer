@@ -11,7 +11,8 @@ namespace logviewer.core
 
         private SQLiteTransaction transaction;
         private readonly SQLiteConnection connection;
-
+        const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
+        
         #endregion
 
         #region Constructors and Destructors
@@ -32,7 +33,7 @@ namespace logviewer.core
                                  Level INTEGER NOT NULL
                         );
                     ";
-            const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
+            
             const string SyncOff = @"PRAGMA synchronous = OFF;";
             const string Journal = @"PRAGMA journal_mode = MEMORY;";
             const string Cache = @"PRAGMA cache_size = 40000;";
@@ -51,12 +52,24 @@ namespace logviewer.core
 
         public void StartAddMessages()
         {
-            transaction = connection.BeginTransaction();
+            this.NoIndex();
+            this.transaction = this.connection.BeginTransaction();
         }
-        
+
         public void FinishAddMessages()
         {
-            transaction.Commit();
+            this.transaction.Commit();
+            this.Index();
+        }
+
+        public void Index()
+        {
+            this.RunSqlQuery(command => command.ExecuteNonQuery(), CreateIndexOnLevel);
+        }
+        
+        public void NoIndex()
+        {
+            this.RunSqlQuery(command => command.ExecuteNonQuery(), @"DROP INDEX IF EXISTS IX_Level");
         }
 
         public void AddMessage(LogMessage message)
