@@ -14,6 +14,7 @@ namespace logviewer.core
         private readonly SQLiteConnection connection;
         const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
         const int PageSize = 1024;
+        private long index;
         
         #endregion
 
@@ -29,10 +30,15 @@ namespace logviewer.core
 
             const string CreateTable = @"
                         CREATE TABLE Log (
-                                 Ix INTEGER PRIMARY KEY AUTOINCREMENT,
-                                 Header TEXT  NOT NULL,
-                                 Body  TEXT,
+                                 Ix INTEGER PRIMARY KEY,
                                  Level INTEGER NOT NULL
+                        );
+                    ";
+            const string CreateContentTable = @"
+                        CREATE VIRTUAL TABLE LogContent USING fts4 (
+                                 Ix INTEGER PRIMARY KEY,
+                                 Header TEXT  NOT NULL,
+                                 Body  TEXT
                         );
                     ";
             
@@ -50,7 +56,7 @@ namespace logviewer.core
 
             var mmap = string.Format(Mmap, dbSize);
             var cache = string.Format(Cache, pages);
-            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
+            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel, CreateContentTable);
         }
 
         public string DatabasePath { get; private set; }
@@ -83,14 +89,23 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
+            const string Cmd = @"INSERT INTO Log(Ix, Level) VALUES (@Ix, @Level)";
             RunSqlQuery(delegate(SQLiteCommand command)
             {
-                command.Parameters.AddWithValue("@Header", message.Header);
-                command.Parameters.AddWithValue("@Body", message.Body);
+                command.Parameters.AddWithValue("@Ix", index);
                 command.Parameters.AddWithValue("@Level", (int)message.Level);
                 command.ExecuteNonQuery();
             }, Cmd);
+
+            const string CmdContent = @"INSERT INTO LogContent(Ix, Header, Body) VALUES (@Ix, @Header, @Body)";
+            RunSqlQuery(delegate(SQLiteCommand command)
+            {
+                command.Parameters.AddWithValue("@Ix", index);
+                command.Parameters.AddWithValue("@Header", message.Header);
+                command.Parameters.AddWithValue("@Body", message.Body);
+                command.ExecuteNonQuery();
+            }, CmdContent);
+            ++index;
         }
 
         public void ReadMessages(
@@ -105,7 +120,12 @@ namespace logviewer.core
         {
             var order = reverse ? "DESC" : "ASC";
             const string Cmd =
-                @"SELECT Header, Body, Level FROM Log WHERE Level >= @Min AND Level <= @Max {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}";
+                @"  SELECT LogContent.Header, LogContent.Body, Log.Level 
+                    FROM Log, LogContent 
+                    WHERE
+                        Log.Ix = LogContent.Ix AND 
+                        Log.Level >= @Min AND Log.Level <= @Max {3} 
+                    ORDER BY Log.Ix {0} LIMIT {1} OFFSET {2}";
             var query = string.Format(Cmd, order, limit, offset, FilterClause(filter));
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
@@ -129,7 +149,7 @@ namespace logviewer.core
         {
             var result = 0L;
             const string Cmd =
-                @"SELECT count(1) FROM Log WHERE Level >= @Min AND Level <= @Max {0}";
+                @"SELECT count(1) FROM Log, LogContent WHERE Log.Ix = LogContent.Ix AND Level >= @Min AND Level <= @Max {0}";
             var query = string.Format(Cmd, FilterClause(filter));
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
@@ -143,7 +163,7 @@ namespace logviewer.core
 
         private static string FilterClause(string filter)
         {
-            return string.IsNullOrWhiteSpace(filter) ? string.Empty : " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
+            return string.IsNullOrWhiteSpace(filter) ? string.Empty : " AND LogContent MATCH @Fiter";
         }
 
         private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter)
