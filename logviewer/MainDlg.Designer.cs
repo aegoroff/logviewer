@@ -326,8 +326,8 @@
             this.useRegexp.Image = ((System.Drawing.Image)(resources.GetObject("useRegexp.Image")));
             this.useRegexp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.useRegexp.Name = "useRegexp";
-            this.useRegexp.Size = new System.Drawing.Size(128, 22);
-            this.useRegexp.Text = "Use regular expression";
+            this.useRegexp.Size = new System.Drawing.Size(71, 22);
+            this.useRegexp.Text = "Use Regexp";
             this.useRegexp.CheckedChanged += new System.EventHandler(this.OnChangeRegexpUsage);
             // 
             // panel1
