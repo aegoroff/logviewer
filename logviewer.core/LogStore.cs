@@ -28,7 +28,7 @@ namespace logviewer.core
             connection.Open();
 
             const string CreateTable = @"
-                        CREATE TABLE Log (
+                        CREATE VIRTUAL TABLE Log USING fts4 (
                                  Ix INTEGER PRIMARY KEY AUTOINCREMENT,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
@@ -50,7 +50,7 @@ namespace logviewer.core
 
             var mmap = string.Format(Mmap, dbSize);
             var cache = string.Format(Cache, pages);
-            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
+            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable);
         }
 
         public string DatabasePath { get; private set; }
@@ -61,14 +61,14 @@ namespace logviewer.core
 
         public void StartAddMessages()
         {
-            this.NoIndex();
+            //this.NoIndex();
             this.transaction = this.connection.BeginTransaction();
         }
 
         public void FinishAddMessages()
         {
             this.transaction.Commit();
-            this.Index();
+            //this.Index();
         }
 
         public void Index()
@@ -143,7 +143,7 @@ namespace logviewer.core
 
         private static string FilterClause(string filter)
         {
-            return string.IsNullOrWhiteSpace(filter) ? string.Empty : " AND (Header REGEXP @Fiter OR Body REGEXP @Fiter)";
+            return string.IsNullOrWhiteSpace(filter) ? string.Empty : " AND Log MATCH @Fiter";
         }
 
         private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter)
