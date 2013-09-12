@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.Devices;
 
@@ -119,14 +122,13 @@ namespace logviewer.core
             string filter = null)
         {
             var order = reverse ? "DESC" : "ASC";
+            var where = Where(min, max, filter);
             const string Cmd =
                 @"  SELECT LogContent.Header, LogContent.Body, Log.Level 
-                    FROM Log, LogContent 
-                    WHERE
-                        Log.Ix = LogContent.Ix AND 
-                        Log.Level >= @Min AND Log.Level <= @Max {3} 
+                    FROM Log NATURAL JOIN LogContent
+                    {3} 
                     ORDER BY Log.Ix {0} LIMIT {1} OFFSET {2}";
-            var query = string.Format(Cmd, order, limit, offset, FilterClause(filter));
+            var query = string.Format(Cmd, order, limit, offset, where);
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
                 AddParameters(command, min, max, filter);
@@ -142,15 +144,37 @@ namespace logviewer.core
             }, query);
         }
 
+        private static string Where(LogLevel min, LogLevel max, string filter)
+        {
+            var clauses = new[]
+            {
+                LevelClause(min, max),
+                FilterClause(filter)
+            };
+            var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
+            if (!notEmpty.Any())
+            {
+                return string.Empty;
+            }
+            return "WHERE " + string.Join(" AND ", notEmpty);
+        }
+
+
+        private static string LevelClause(LogLevel min, LogLevel max)
+        {
+            return min == LogLevel.Trace && max == LogLevel.Fatal ? string.Empty : "Level >= @Min AND Level <= @Max";
+        }
+
         public long CountMessages(
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
             string filter = null)
         {
             var result = 0L;
+            var where = Where(min, max, filter);
             const string Cmd =
-                @"SELECT count(1) FROM Log, LogContent WHERE Log.Ix = LogContent.Ix AND Level >= @Min AND Level <= @Max {0}";
-            var query = string.Format(Cmd, FilterClause(filter));
+                @"SELECT count(1) FROM Log NATURAL JOIN LogContent {0}";
+            var query = string.Format(Cmd, where);
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
                 AddParameters(command, min, max, filter);
@@ -163,13 +187,17 @@ namespace logviewer.core
 
         private static string FilterClause(string filter)
         {
-            return string.IsNullOrWhiteSpace(filter) ? string.Empty : " AND LogContent MATCH @Fiter";
+            return string.IsNullOrWhiteSpace(filter) ? string.Empty : "LogContent MATCH @Fiter";
         }
 
         private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter)
         {
-            command.Parameters.AddWithValue("@Min", (int)min);
-            command.Parameters.AddWithValue("@Max", (int)max);
+            if (min != LogLevel.Trace || max != LogLevel.Fatal)
+            {
+                command.Parameters.AddWithValue("@Min", (int)min);
+                command.Parameters.AddWithValue("@Max", (int)max);
+            }
+
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 command.Parameters.AddWithValue("@Fiter", filter);
