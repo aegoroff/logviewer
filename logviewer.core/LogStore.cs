@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.Devices;
 
 namespace logviewer.core
 {
@@ -12,6 +13,7 @@ namespace logviewer.core
         private SQLiteTransaction transaction;
         private readonly SQLiteConnection connection;
         const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
+        const int PageSize = 1024;
         
         #endregion
 
@@ -36,12 +38,19 @@ namespace logviewer.core
             
             const string SyncOff = @"PRAGMA synchronous = OFF;";
             const string Journal = @"PRAGMA journal_mode = MEMORY;";
-            const string Cache = @"PRAGMA cache_size = 40000;";
+            const string Cache = @"PRAGMA cache_size = {0};";
             const string Temp = @"PRAGMA temp_store = 2;";
             const string Encode = @"PRAGMA encoding = 'UTF-8';";
             const string Mmap = @"PRAGMA mmap_size={0};";
 
-            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, Cache, Temp, Encode, string.Format(Mmap, dbSize), CreateTable, CreateIndexOnLevel);
+            var freePages = new ComputerInfo().AvailablePhysicalMemory / PageSize;
+            var sqliteAvailablePages = (int)(freePages * 0.2);
+
+            var pages = Math.Min(sqliteAvailablePages, dbSize / PageSize + 1);
+
+            var mmap = string.Format(Mmap, dbSize);
+            var cache = string.Format(Cache, pages);
+            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
         }
 
         public string DatabasePath { get; private set; }
