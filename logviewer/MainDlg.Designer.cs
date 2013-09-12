@@ -45,6 +45,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.filterBox = new System.Windows.Forms.ToolStripTextBox();
+            this.useRegexp = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.logLoadPercent = new System.Windows.Forms.Label();
             this.logLoadProgress = new System.Windows.Forms.ProgressBar();
@@ -70,9 +71,9 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 523);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 584);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(840, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(965, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -97,7 +98,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(840, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(965, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -210,10 +211,11 @@
             this.sortingBox,
             this.toolStripSeparator4,
             this.toolStripLabel4,
-            this.filterBox});
+            this.filterBox,
+            this.useRegexp});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(840, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(965, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -315,6 +317,19 @@
             this.filterBox.Size = new System.Drawing.Size(190, 25);
             this.filterBox.TextChanged += new System.EventHandler(this.OnChangeTextFilter);
             // 
+            // useRegexp
+            // 
+            this.useRegexp.Checked = true;
+            this.useRegexp.CheckOnClick = true;
+            this.useRegexp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useRegexp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.useRegexp.Image = ((System.Drawing.Image)(resources.GetObject("useRegexp.Image")));
+            this.useRegexp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.useRegexp.Name = "useRegexp";
+            this.useRegexp.Size = new System.Drawing.Size(128, 22);
+            this.useRegexp.Text = "Use regular expression";
+            this.useRegexp.CheckedChanged += new System.EventHandler(this.OnChangeRegexpUsage);
+            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -333,14 +348,14 @@
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(2);
-            this.panel1.Size = new System.Drawing.Size(840, 474);
+            this.panel1.Size = new System.Drawing.Size(965, 535);
             this.panel1.TabIndex = 3;
             // 
             // logLoadPercent
             // 
             this.logLoadPercent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.logLoadPercent.AutoSize = true;
-            this.logLoadPercent.Location = new System.Drawing.Point(584, 453);
+            this.logLoadPercent.Location = new System.Drawing.Point(584, 514);
             this.logLoadPercent.Name = "logLoadPercent";
             this.logLoadPercent.Size = new System.Drawing.Size(10, 13);
             this.logLoadPercent.TabIndex = 8;
@@ -349,7 +364,7 @@
             // logLoadProgress
             // 
             this.logLoadProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.logLoadProgress.Location = new System.Drawing.Point(311, 452);
+            this.logLoadProgress.Location = new System.Drawing.Point(311, 513);
             this.logLoadProgress.Name = "logLoadProgress";
             this.logLoadProgress.Size = new System.Drawing.Size(267, 15);
             this.logLoadProgress.TabIndex = 7;
@@ -358,7 +373,7 @@
             // 
             this.pageSizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pageSizeLabel.AutoSize = true;
-            this.pageSizeLabel.Location = new System.Drawing.Point(163, 454);
+            this.pageSizeLabel.Location = new System.Drawing.Point(163, 515);
             this.pageSizeLabel.Name = "pageSizeLabel";
             this.pageSizeLabel.Size = new System.Drawing.Size(123, 13);
             this.pageSizeLabel.TabIndex = 6;
@@ -368,7 +383,7 @@
             // 
             this.last.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.last.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.last.Location = new System.Drawing.Point(135, 451);
+            this.last.Location = new System.Drawing.Point(135, 512);
             this.last.Name = "last";
             this.last.Size = new System.Drawing.Size(22, 20);
             this.last.TabIndex = 5;
@@ -380,7 +395,7 @@
             // 
             this.next.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.next.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.next.Location = new System.Drawing.Point(116, 451);
+            this.next.Location = new System.Drawing.Point(116, 512);
             this.next.Name = "next";
             this.next.Size = new System.Drawing.Size(19, 20);
             this.next.TabIndex = 4;
@@ -392,7 +407,7 @@
             // 
             this.currentPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.currentPage.BackColor = System.Drawing.SystemColors.Control;
-            this.currentPage.Location = new System.Drawing.Point(56, 450);
+            this.currentPage.Location = new System.Drawing.Point(56, 511);
             this.currentPage.Name = "currentPage";
             this.currentPage.ReadOnly = true;
             this.currentPage.Size = new System.Drawing.Size(57, 20);
@@ -403,7 +418,7 @@
             // 
             this.prev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.prev.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.prev.Location = new System.Drawing.Point(34, 451);
+            this.prev.Location = new System.Drawing.Point(34, 512);
             this.prev.Name = "prev";
             this.prev.Size = new System.Drawing.Size(19, 20);
             this.prev.TabIndex = 2;
@@ -415,7 +430,7 @@
             // 
             this.first.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.first.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.first.Location = new System.Drawing.Point(12, 451);
+            this.first.Location = new System.Drawing.Point(12, 512);
             this.first.Name = "first";
             this.first.Size = new System.Drawing.Size(22, 20);
             this.first.TabIndex = 1;
@@ -447,7 +462,7 @@
             this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
             this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
             this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(836, 443);
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
@@ -456,7 +471,7 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(840, 545);
+            this.ClientSize = new System.Drawing.Size(965, 606);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
@@ -526,6 +541,7 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ProgressBar logLoadProgress;
         private System.Windows.Forms.Label logLoadPercent;
+        private System.Windows.Forms.ToolStripButton useRegexp;
     }
 }
 

@@ -159,6 +159,15 @@ namespace logviewer.tests
             this.controller.ReadLog(CreateTestStream(MessageExamples));
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
+        
+        [Test]
+        public void FilterTextNotContainsTextInBodySubstr()
+        {
+            this.controller.TextFilter("message body 2");
+            this.controller.UserRegexp(false);
+            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
+        }
 
         [Test]
         public void LoadLog()

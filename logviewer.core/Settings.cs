@@ -16,6 +16,7 @@ namespace logviewer.core
         private const string MaxLevelParameterName = @"MaxLevel";
         private const string SortingParameterName = @"Sorting";
         private const string PageSizeParameterName = @"PageSize";
+        private const string UseRegexpParameterName = @"UseRegexp";
 
         private static RegistryKey RegistryKey
         {
@@ -124,6 +125,12 @@ namespace logviewer.core
         {
             get { return GetBoolValue(SortingParameterName); }
             set { SetBoolValue(SortingParameterName, value); }
+        }
+        
+        public static bool UseRegexp
+        {
+            get { return GetBoolValue(UseRegexpParameterName); }
+            set { SetBoolValue(UseRegexpParameterName, value); }
         }
     }
 }

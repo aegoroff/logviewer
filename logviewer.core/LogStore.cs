@@ -103,11 +103,12 @@ namespace logviewer.core
             bool reverse = true,
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
-            string filter = null)
+            string filter = null,
+            bool useRegexp = true)
         {
             var order = reverse ? "DESC" : "ASC";
 
-            var where = Where(min, max, filter);
+            var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset, where);
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
@@ -127,10 +128,11 @@ namespace logviewer.core
         public long CountMessages(
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
-            string filter = null)
+            string filter = null,
+            bool useRegexp = true)
         {
             var result = 0L;
-            var where = Where(min, max, filter);
+            var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
@@ -142,12 +144,12 @@ namespace logviewer.core
             return result;
         }
 
-        private static string Where(LogLevel min, LogLevel max, string filter)
+        private static string Where(LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
             var clauses = new[]
             {
                 LevelClause(min, max),
-                FilterClause(filter)
+                FilterClause(filter, useRegexp)
             };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
             if (!notEmpty.Any())
@@ -171,9 +173,10 @@ namespace logviewer.core
             return string.Join(" AND ", clause);
         }
 
-        private static string FilterClause(string filter)
+        private static string FilterClause(string filter, bool useRegexp)
         {
-            return string.IsNullOrWhiteSpace(filter) ? string.Empty : "(Header REGEXP @Fiter OR Body REGEXP @Fiter)";
+            var func = useRegexp ? "(Header REGEXP @Fiter OR Body REGEXP @Fiter)" : "(SUBSTR(Header, @Fiter) OR SUBSTR(Body, @Fiter))";
+            return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
         private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter)
@@ -243,6 +246,17 @@ namespace logviewer.core
             var input = Convert.ToString(args[1]);
             var pattern = Convert.ToString(args[0]);
             return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        }
+    }
+    
+    [SQLiteFunction(Name = "SUBSTR", Arguments = 2, FuncType = FunctionType.Scalar)]
+    class Substring : SQLiteFunction
+    {
+        public override object Invoke(object[] args)
+        {
+            var input = Convert.ToString(args[0]);
+            var pattern = Convert.ToString(args[1]);
+            return input.Contains(pattern);
         }
     }
 }

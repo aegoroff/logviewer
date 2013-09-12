@@ -37,6 +37,7 @@ namespace logviewer.core
         private LogLevel maxFilter = LogLevel.Fatal;
         private LogLevel minFilter = LogLevel.Trace;
         private bool reverseChronological;
+        private bool useRegexp = true;
         private LogStore store;
         private string textFilter;
         private ILogView view;
@@ -61,6 +62,7 @@ namespace logviewer.core
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
             SQLiteFunction.RegisterFunction(typeof(SqliteRegEx));
+            SQLiteFunction.RegisterFunction(typeof(Substring));
             
         }
 
@@ -168,12 +170,13 @@ namespace logviewer.core
             }
         }
 
-        public void BeginLogReading(int min, int max, string filter, bool reverse)
+        public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
         {
             this.CancelPreviousTask();
             this.MinFilter(min);
             this.MaxFilter(max);
             this.TextFilter(filter);
+            this.UserRegexp(regexp);
             this.Ordering(reverse);
             this.view.SetProgress(0);
             
@@ -365,6 +368,11 @@ namespace logviewer.core
                 : value;
         }
 
+        public void UserRegexp(bool enabled)
+        {
+            this.useRegexp = enabled;
+        }
+        
         private void Ordering(bool reverse)
         {
             this.reverseChronological = reverse;
@@ -495,7 +503,7 @@ namespace logviewer.core
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
-            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter);
+            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter, this.useRegexp);
 
             if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
             {
@@ -529,7 +537,8 @@ namespace logviewer.core
                 this.reverseChronological, 
                 this.minFilter, 
                 this.maxFilter,
-                this.textFilter);
+                this.textFilter,
+                this.useRegexp);
             doc.Close();
             return rtfPath;
         }
