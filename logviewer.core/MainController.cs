@@ -221,16 +221,16 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
+            if (!File.Exists(this.view.LogPath))
+            {
+                return string.Empty;
+            }
             var convertedPath = this.Convert();
             var useConverted = !string.IsNullOrWhiteSpace(convertedPath) &&
-                               !convertedPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
+                               !convertedPath.Equals(this.view.LogPath, StringComparison.CurrentCultureIgnoreCase);
             var filePath = useConverted ? convertedPath : this.view.LogPath;
             try
             {
-                if (!File.Exists(this.view.LogPath))
-                {
-                    return string.Empty;
-                }
                 var fi = new FileInfo(filePath);
                 this.LogSize = fi.Length;
 
@@ -481,7 +481,7 @@ namespace logviewer.core
             get
             {
                 return !string.IsNullOrWhiteSpace(this.currentPath) &&
-                       this.currentPath.Equals(this.view.LogPath, StringComparison.OrdinalIgnoreCase);
+                       this.currentPath.Equals(this.view.LogPath, StringComparison.CurrentCultureIgnoreCase);
             }
         }
 
@@ -592,7 +592,7 @@ namespace logviewer.core
 
         private string Convert()
         {
-            if (!File.Exists(this.view.LogPath) || this.CurrentPathCached)
+            if (this.CurrentPathCached)
             {
                 return this.view.LogPath;
             }
