@@ -244,12 +244,12 @@ namespace logviewer.core
                 {
                     return string.Empty;
                 }
+                this.currentPath = this.view.LogPath;
                 if (cached && lenghtNotChanged)
                 {
                     return this.CreateRtf(true);
                 }
                 Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
-                this.currentPath = this.view.LogPath;
 
                 using (
                     var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0,
