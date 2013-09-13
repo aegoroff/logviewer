@@ -175,7 +175,8 @@ namespace logviewer.core
 
         private static string FilterClause(string filter, bool useRegexp)
         {
-            var func = useRegexp ? "(Header REGEXP @Fiter OR Body REGEXP @Fiter)" : "(Header GLOB @Fiter OR Body GLOB @Fiter)";
+            var comparer = useRegexp ? "REGEXP" : "MATCH";
+            var func = string.Format("(Header {0} @Fiter OR Body {0} @Fiter)", comparer);
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
@@ -248,8 +249,8 @@ namespace logviewer.core
             return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
         }
     }
-    
-    [SQLiteFunction(Name = "SUBSTR", Arguments = 2, FuncType = FunctionType.Scalar)]
+
+    [SQLiteFunction(Name = "MATCH", Arguments = 2, FuncType = FunctionType.Scalar)]
     class Substring : SQLiteFunction
     {
         public override object Invoke(object[] args)
