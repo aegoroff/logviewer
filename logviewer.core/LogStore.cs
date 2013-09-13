@@ -175,7 +175,7 @@ namespace logviewer.core
 
         private static string FilterClause(string filter, bool useRegexp)
         {
-            var comparer = useRegexp ? "REGEXP" : "MATCH";
+            var comparer = useRegexp ? "REGEXP" : "GLOB";
             var func = string.Format("(Header {0} @Fiter OR Body {0} @Fiter)", comparer);
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
