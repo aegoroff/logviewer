@@ -232,6 +232,10 @@ namespace logviewer.core
                     return string.Empty;
                 }
                 var fi = new FileInfo(filePath);
+                var lenghtNotChanged = this.LogSize == fi.Length;
+                var prevLogSize = this.LogSize;
+                var cached = this.CurrentPathCached;
+                var fileShrinked = prevLogSize > fi.Length && cached;
                 this.LogSize = fi.Length;
 
                 Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
@@ -240,7 +244,7 @@ namespace logviewer.core
                 {
                     return string.Empty;
                 }
-                if (this.CurrentPathCached)
+                if (cached && lenghtNotChanged)
                 {
                     return this.CreateRtf(true);
                 }
@@ -251,9 +255,10 @@ namespace logviewer.core
                     var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0,
                         MemoryMappedFileAccess.Read))
                 {
-                    using (var mmStream = mmf.CreateViewStream(0, fi.Length, MemoryMappedFileAccess.Read))
+                    var size = cached && !fileShrinked ? prevLogSize : 0;
+                    using (var mmStream = mmf.CreateViewStream(0, size, MemoryMappedFileAccess.Read))
                     {
-                        return this.ReadLog(mmStream);
+                        return this.ReadLog(mmStream, !cached);
                     }
                 }
             }
@@ -276,9 +281,9 @@ namespace logviewer.core
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
-        public string ReadLog(Stream stream)
+        public string ReadLog(Stream stream, bool createNewDb = true)
         {
-            if (this.store != null)
+            if (this.store != null && createNewDb)
             {
                 this.store.Dispose();
             }
@@ -288,11 +293,15 @@ namespace logviewer.core
             var reader = new StreamReader(stream, Encoding.UTF8);
             using (reader)
             {
-                var dbSize = total + (total / 10) * 4; // +40% to log file
-                this.store = new LogStore(dbSize);
+                if (createNewDb || this.store == null)
+                {
+                    var dbSize = total + (total/10)*4; // +40% to log file
+                    this.store = new LogStore(dbSize);
+                    this.totalMessages = 0;
+                }
                 GC.Collect();
                 this.store.StartAddMessages();
-                this.totalMessages = 0;
+                
                 try
                 {
                     var message = LogMessage.Create();
