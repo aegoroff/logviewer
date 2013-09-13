@@ -272,7 +272,6 @@ namespace logviewer
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
-            this.Controller.ClearCache();
             this.StartReading();
         }
 
