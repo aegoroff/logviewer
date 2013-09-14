@@ -59,9 +59,8 @@ namespace logviewer.core
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
-            SQLiteFunction.RegisterFunction(typeof(SqliteRegEx));
-            SQLiteFunction.RegisterFunction(typeof(Substring));
-            
+            SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
+            SQLiteFunction.RegisterFunction(typeof (Substring));
         }
 
         #endregion
@@ -89,7 +88,7 @@ namespace logviewer.core
                 {
                     return 1;
                 }
-                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
+                return (int) Math.Ceiling(this.totalFiltered / (float) this.pageSize);
             }
         }
 
@@ -177,7 +176,7 @@ namespace logviewer.core
             this.UserRegexp(regexp);
             this.Ordering(reverse);
             this.view.SetProgress(0);
-            
+
             var path = string.Empty;
             Func<string> function = delegate
             {
@@ -233,9 +232,14 @@ namespace logviewer.core
                 return this.CreateRtf(true);
             }
             Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+            this.currentPath = this.view.LogPath;
 
 
             var dbSize = this.LogSize + (this.LogSize / 10) * 4; // +40% to log file
+            if (this.store != null)
+            {
+                this.store.Dispose();
+            }
             this.store = new LogStore(dbSize);
             GC.Collect();
             this.store.StartAddMessages();
@@ -254,16 +258,16 @@ namespace logviewer.core
             return this.CreateRtf();
         }
 
-        void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             this.OnLogReadProgress(e.ProgressPercentage);
         }
 
         private void SetLogSize()
         {
-            this.view.HumanReadableLogSize = new FileSize((ulong)this.LogSize).ToString();
+            this.view.HumanReadableLogSize = new FileSize((ulong) this.LogSize).ToString();
         }
-        
+
         private void ResetLogStatistic()
         {
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -290,14 +294,14 @@ namespace logviewer.core
 
         public void MinFilter(int value)
         {
-            this.minFilter = (LogLevel)value;
+            this.minFilter = (LogLevel) value;
         }
 
         public void MaxFilter(int value)
         {
-            this.maxFilter = (LogLevel)value;
+            this.maxFilter = (LogLevel) value;
         }
-        
+
         public void PageSize(int value)
         {
             this.pageSize = value;
@@ -315,7 +319,7 @@ namespace logviewer.core
         {
             this.useRegexp = enabled;
         }
-        
+
         private void Ordering(bool reverse)
         {
             this.reverseChronological = reverse;
@@ -446,7 +450,8 @@ namespace logviewer.core
             var rtfPath = Path.GetTempFileName();
             var doc = new RtfDocument(rtfPath);
 
-            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter, this.useRegexp);
+            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
+                this.useRegexp);
 
             if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
             {
@@ -467,18 +472,18 @@ namespace logviewer.core
                     return;
                 }
                 ++signalCounter;
-                var percent = (count / (double)total) * 100;
+                var percent = (count / (double) total) * 100;
                 this.OnLogReadProgress(percent);
             };
 
             var start = (this.CurrentPage - 1) * this.pageSize;
             this.store.ReadMessages(
                 this.pageSize,
-                onRead, 
-                () => this.NotCancelled, 
-                start, 
-                this.reverseChronological, 
-                this.minFilter, 
+                onRead,
+                () => this.NotCancelled,
+                start,
+                this.reverseChronological,
+                this.minFilter,
                 this.maxFilter,
                 this.textFilter,
                 this.useRegexp);
@@ -526,7 +531,7 @@ namespace logviewer.core
             {
                 if (this.markers[i].IsMatch(line))
                 {
-                    return (LogLevel)i;
+                    return (LogLevel) i;
                 }
             }
 
