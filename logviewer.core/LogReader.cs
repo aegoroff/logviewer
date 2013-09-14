@@ -11,15 +11,13 @@ namespace logviewer.core
     public sealed class LogReader
     {
         private readonly Regex messageHead;
-        private readonly long offset;
 
         public event ProgressChangedEventHandler ProgressChanged;
 
-        public LogReader(string logPath, Regex messageHead, long offset = 0)
+        public LogReader(string logPath, Regex messageHead)
         {
             this.LogPath = logPath;
             this.messageHead = messageHead;
-            this.offset = offset;
             this.Length = new FileInfo(logPath).Length;
         }
 
@@ -33,7 +31,7 @@ namespace logviewer.core
         /// </summary>
         public string LogPath { get; private set; }
 
-        public void Read(Action<LogMessage> onRead, Func<bool> canContinue)
+        public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
         {
             if (Length == 0)
             {
@@ -57,7 +55,7 @@ namespace logviewer.core
                 var mmf = MemoryMappedFile.CreateFromFile(LogPath, FileMode.Open, mapName, 0,
                     MemoryMappedFileAccess.Read))
             {
-                using (var stream = mmf.CreateViewStream(this.offset, Length, MemoryMappedFileAccess.Read))
+                using (var stream = mmf.CreateViewStream(offset, 0, MemoryMappedFileAccess.Read))
                 {
                     var total = stream.Length;
                     var fraction = total / 20L;

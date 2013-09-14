@@ -219,6 +219,10 @@ namespace logviewer.core
             }
             var reader = new LogReader(this.view.LogPath, messageHead);
 
+            var append = reader.Length > logSize && this.CurrentPathCached;
+
+            var offset = append ? logSize : 0L;
+            
             this.logSize = reader.Length;
 
             RunOnGuiThread(this.SetLogSize);
@@ -228,7 +232,7 @@ namespace logviewer.core
                 return string.Empty;
             }
 
-            if (this.CurrentPathCached)
+            if (this.CurrentPathCached && !append)
             {
                 return this.CreateRtf(true);
             }
@@ -239,19 +243,25 @@ namespace logviewer.core
 
 
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
-            if (this.store != null)
+            if (this.store != null && !append)
             {
                 this.store.Dispose();
             }
-            this.store = new LogStore(dbSize);
+            if (!append || this.store == null)
+            {
+                this.store = new LogStore(dbSize);
+            }
             GC.Collect();
             this.store.StartAddMessages();
-            this.totalMessages = 0;
+            if (!append)
+            {
+                this.totalMessages = 0;
+            }
 
             try
             {
                 reader.ProgressChanged += OnReadLogProgressChanged;
-                reader.Read(this.AddMessageToCache, () => this.NotCancelled);
+                reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
             }
             finally
             {
