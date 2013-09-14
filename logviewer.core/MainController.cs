@@ -17,8 +17,7 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private const string NewLine = "\n";
-        private const int DefaultPageSize = 10000;
+        private const int DefaultPageSize = 5000;
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
 
@@ -519,16 +518,16 @@ namespace logviewer.core
             }
 
             doc.AddText(message.Header.Trim(), message.HeadFormat);
-            doc.AddText(NewLine);
+            doc.AddNewLine();
 
             var txt = message.Body;
             if (string.IsNullOrWhiteSpace(txt))
             {
-                doc.AddText(NewLine);
+                doc.AddNewLine();
                 return;
             }
             doc.AddText(txt.Trim(), message.BodyFormat);
-            doc.AddText("\n\n\n");
+            doc.AddNewLine(3);
         }
 
         private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
