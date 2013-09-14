@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -445,7 +446,7 @@ namespace logviewer.core
         private string CreateRtf(bool signalProgress = false)
         {
             this.byLevel.Clear();
-            var doc = new RtfDocument();
+            var doc = new RtfDocument(Encoding.UTF8);
 
             this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
                 this.useRegexp);
