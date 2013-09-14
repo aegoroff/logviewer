@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -225,45 +223,40 @@ namespace logviewer.core
             {
                 return string.Empty;
             }
-            var convertedPath = this.Convert();
-            var useConverted = !string.IsNullOrWhiteSpace(convertedPath) &&
-                               !convertedPath.Equals(this.view.LogPath, StringComparison.CurrentCultureIgnoreCase);
-            var filePath = useConverted ? convertedPath : this.view.LogPath;
+            var reader = new LogReader(this.view.LogPath, messageHead);
+
+            this.LogSize = reader.Length;
+            Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+
+            if (this.CurrentPathCached)
+            {
+                return this.CreateRtf(true);
+            }
+            Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+
+
+            var dbSize = this.LogSize + (this.LogSize / 10) * 4; // +40% to log file
+            this.store = new LogStore(dbSize);
+            GC.Collect();
+            this.store.StartAddMessages();
+            this.totalMessages = 0;
+
             try
             {
-                var fi = new FileInfo(filePath);
-                this.LogSize = fi.Length;
-
-                Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
-
-                if (fi.Length == 0)
-                {
-                    return string.Empty;
-                }
-                if (this.CurrentPathCached)
-                {
-                    return this.CreateRtf(true);
-                }
-                Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
-                this.currentPath = this.view.LogPath;
-
-                using (
-                    var mmf = MemoryMappedFile.CreateFromFile(filePath, FileMode.Open, Guid.NewGuid().ToString(), 0,
-                        MemoryMappedFileAccess.Read))
-                {
-                    using (var mmStream = mmf.CreateViewStream(0, fi.Length, MemoryMappedFileAccess.Read))
-                    {
-                        return this.ReadLog(mmStream);
-                    }
-                }
+                reader.ProgressChanged += OnReadLogProgressChanged;
+                reader.Read(this.AddMessageToCache, () => this.NotCancelled);
             }
             finally
             {
-                if (useConverted && File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                reader.ProgressChanged -= OnReadLogProgressChanged;
+                this.store.FinishAddMessages();
             }
+            return this.CreateRtf();
+        }
+
+        void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            this.OnLogReadProgress(e.ProgressPercentage);
         }
 
         private void SetLogSize()
@@ -278,57 +271,7 @@ namespace logviewer.core
 
         public string ReadLog(Stream stream)
         {
-            if (this.store != null)
-            {
-                this.store.Dispose();
-            }
-            var total = stream.Length;
-            var fraction = total / 20L;
-            var signalCounter = 1;
-            var reader = new StreamReader(stream, Encoding.UTF8);
-            using (reader)
-            {
-                var dbSize = total + (total / 10) * 4; // +40% to log file
-                this.store = new LogStore(dbSize);
-                GC.Collect();
-                this.store.StartAddMessages();
-                this.totalMessages = 0;
-                try
-                {
-                    var message = LogMessage.Create();
-                    while (!reader.EndOfStream && this.NotCancelled)
-                    {
-                        var line = reader.ReadLine();
-
-                        if (line == null)
-                        {
-                            break;
-                        }
-
-                        if (this.messageHead.IsMatch(line))
-                        {
-                            this.AddMessageToCache(message);
-                            message = LogMessage.Create();
-                        }
-
-                        if (stream.Position >= signalCounter * fraction)
-                        {
-                            ++signalCounter;
-                            var percent = (stream.Position / (double)total) * 100;
-                            this.OnLogReadProgress(percent);
-                        }
-
-                        message.AddLine(line);
-                    }
-                    // Add last message
-                    this.AddMessageToCache(message);
-                }
-                finally
-                {
-                    this.store.FinishAddMessages();
-                }
-            }
-            return this.CreateRtf();
+            return string.Empty;
         }
 
         public void CancelReading()
@@ -588,15 +531,6 @@ namespace logviewer.core
             }
 
             return defaultLevel;
-        }
-
-        private string Convert()
-        {
-            if (this.CurrentPathCached)
-            {
-                return this.view.LogPath;
-            }
-            return this.view.LogPath.ConvertToUtf8(() => this.NotCancelled);
         }
 
         #endregion

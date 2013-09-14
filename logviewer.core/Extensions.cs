@@ -78,6 +78,20 @@ namespace logviewer.core
         }
 
         /// <summary>
+        ///     Decodes string into encoding specified
+        /// </summary>
+        /// <param name="line"> Source string </param>
+        /// <param name="srcEncoding"> Source string encoding </param>
+        /// <param name="dstEncoding"> Destination encoding </param>
+        /// <returns>Decoded string</returns>
+        internal static string Convert(this string line, Encoding srcEncoding, Encoding dstEncoding)
+        {
+            byte[] srcBytes = srcEncoding.GetBytes(line);
+            byte[] dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
+            return dstEncoding.GetString(dstBytes);
+        }
+
+        /// <summary>
         ///     Writes string specified into stream with converting if necessary
         /// </summary>
         /// <param name="stream"> Stream to write to </param>

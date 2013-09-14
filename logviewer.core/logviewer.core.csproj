@@ -60,6 +60,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
+    <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="LoggingService.cs" />
