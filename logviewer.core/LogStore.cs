@@ -112,7 +112,7 @@ namespace logviewer.core
             var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset, where);
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
-                AddParameters(command, min, max, filter);
+                AddParameters(command, min, max, filter, useRegexp);
                 var rdr = command.ExecuteReader();
                 using (rdr)
                 {
@@ -136,7 +136,7 @@ namespace logviewer.core
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
             this.RunSqlQuery(delegate(SQLiteCommand command)
             {
-                AddParameters(command, min, max, filter);
+                AddParameters(command, min, max, filter, useRegexp);
                 result = (long)command.ExecuteScalar();
                 
             }, query);
@@ -175,12 +175,12 @@ namespace logviewer.core
 
         private static string FilterClause(string filter, bool useRegexp)
         {
-            var comparer = useRegexp ? "REGEXP" : "MATCH";
-            var func = string.Format("(Header {0} @Fiter OR Body {0} @Fiter)", comparer);
+            var comparer = useRegexp ? "REGEXP" : "LIKE";
+            var func = string.Format("(Header {0} @Filter OR Body {0} @Filter)", comparer);
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
-        private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter)
+        private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
             if (min != LogLevel.Trace)
             {
@@ -192,7 +192,8 @@ namespace logviewer.core
             }
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                command.Parameters.AddWithValue("@Fiter", filter);
+                var f = useRegexp ? filter : string.Format("%{0}%", filter);
+                command.Parameters.AddWithValue("@Filter", f);
             }
         }
 
@@ -247,17 +248,6 @@ namespace logviewer.core
             var input = Convert.ToString(args[1]);
             var pattern = Convert.ToString(args[0]);
             return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        }
-    }
-
-    [SQLiteFunction(Name = "MATCH", Arguments = 2, FuncType = FunctionType.Scalar)]
-    class Substring : SQLiteFunction
-    {
-        public override object Invoke(object[] args)
-        {
-            var input = Convert.ToString(args[0]);
-            var pattern = Convert.ToString(args[1]);
-            return input.Contains(pattern);
         }
     }
 }

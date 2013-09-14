@@ -60,7 +60,6 @@ namespace logviewer.core
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
-            SQLiteFunction.RegisterFunction(typeof (Substring));
         }
 
         #endregion
