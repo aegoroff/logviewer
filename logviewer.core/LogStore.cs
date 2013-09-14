@@ -192,7 +192,7 @@ namespace logviewer.core
             }
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                var f = useRegexp ? filter : string.Format("%{0}%", filter);
+                var f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
                 command.Parameters.AddWithValue("@Filter", f);
             }
         }
