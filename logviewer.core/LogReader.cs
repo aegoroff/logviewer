@@ -11,6 +11,7 @@ namespace logviewer.core
     public sealed class LogReader
     {
         private readonly Regex messageHead;
+        private const int BufferSize = 0xFFFFF;
 
         public event ProgressChangedEventHandler ProgressChanged;
 
@@ -51,11 +52,10 @@ namespace logviewer.core
                 }
             }
 
-            using (
-                var mmf = MemoryMappedFile.CreateFromFile(LogPath, FileMode.Open, mapName, 0,
-                    MemoryMappedFileAccess.Read))
+            using (var fs = File.Open(LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                using (var stream = mmf.CreateViewStream(offset, 0, MemoryMappedFileAccess.Read))
+                fs.Seek(offset, SeekOrigin.Begin);
+                using (var stream = new BufferedStream(fs, BufferSize))
                 {
                     var total = stream.Length;
                     var fraction = total / 20L;
@@ -68,13 +68,13 @@ namespace logviewer.core
                         while (!sr.EndOfStream && canContinue())
                         {
                             var line = sr.ReadLine();
-                            if (line == null)
-                            {
-                                break;
-                            }
                             if (decode)
                             {
                                 line = line.Convert(srcEncoding, Encoding.UTF8);
+                            }
+                            if (line == null)
+                            {
+                                break;
                             }
                             if (this.messageHead.IsMatch(line))
                             {
