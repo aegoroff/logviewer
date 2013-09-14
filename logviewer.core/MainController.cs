@@ -10,8 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
 using logviewer.rtf.Rtf;
+using logviewer.rtf.Rtf.Contents;
 using logviewer.rtf.Rtf.Contents.Paragraphs;
-using logviewer.rtf.Rtf.Contents.Text;
 using logviewer.rtf.Rtf.Formatting;
 using logviewer.rtf.Rtf.Header;
 using NLog.Targets;
@@ -22,7 +22,6 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private const string NewLine = "\n";
         private const int DefaultPageSize = 10000;
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
@@ -525,6 +524,7 @@ namespace logviewer.core
 
             var body = new RtfFormattedParagraph(new RtfParagraphFormatting(10, RtfTextAlign.Left));
             body.AppendText(message.BodyFormat);
+            body.AppendText(new RtfLineBreak());
             rtf.Contents.Add(body);
         }
 

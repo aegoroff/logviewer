@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using logviewer.rtf.Rtf.Contents;
 using logviewer.rtf.Rtf.Contents.Text;
 
 namespace logviewer.core
@@ -45,12 +46,16 @@ namespace logviewer.core
             }
         }
 
-        public RtfFormattedText BodyFormat
+        public RtfParagraphContentBase BodyFormat
         {
             get
             {
-                var txt = Body ?? "\n";
-                return new RtfFormattedText(txt.Trim(), RtfCharacterFormatting.Regular)
+                if (Body == null)
+                {
+                    return new RtfFormattedText();
+                }
+                
+                return new RtfFormattedText(Body.Trim(), RtfCharacterFormatting.Regular)
                 {
                     TextColorIndex = (int)Level + 1
                 };
