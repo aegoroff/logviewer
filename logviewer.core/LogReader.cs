@@ -12,13 +12,15 @@ namespace logviewer.core
     {
         private readonly string path;
         private readonly Regex messageHead;
+        private readonly long offset;
 
         public event ProgressChangedEventHandler ProgressChanged;
 
-        public LogReader(string path, Regex messageHead)
+        public LogReader(string path, Regex messageHead, long offset = 0)
         {
             this.path = path;
             this.messageHead = messageHead;
+            this.offset = offset;
         }
 
         public long Length
@@ -33,24 +35,21 @@ namespace logviewer.core
                 return;
             }
 
-            using (
-                var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open,
-                    Guid.NewGuid().ToString(), 0, MemoryMappedFileAccess.Read))
+            bool decode;
+            Encoding srcEncoding;
+            string mapName = Guid.NewGuid().ToString();
+            using(var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, mapName, 0, MemoryMappedFileAccess.Read))
             {
                 using (var stream = mmf.CreateViewStream(0, Length, MemoryMappedFileAccess.Read))
                 {
-                    Encoding srcEncoding = null;
-                    var detector = new CharsetDetector();
-                    detector.Feed(stream);
-                    detector.DataEnd();
-                    if (detector.Charset != null)
-                    {
-                        srcEncoding = Encoding.GetEncoding(detector.Charset);
-                    }
-                    var decode = srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) &&
-                                 !srcEncoding.Equals(Encoding.ASCII);
-                    stream.Seek(0, SeekOrigin.Begin);
+                    srcEncoding = SrcEncoding(stream, out decode);
+                }
+            }
 
+            using(var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, mapName, 0, MemoryMappedFileAccess.Read))
+            {
+                using (var stream = mmf.CreateViewStream(this.offset, Length, MemoryMappedFileAccess.Read))
+                {
                     var total = stream.Length;
                     var fraction = total / 20L;
                     var signalCounter = 1;
@@ -94,6 +93,21 @@ namespace logviewer.core
                     }
                 }
             }
+        }
+
+        private static Encoding SrcEncoding(Stream stream, out bool decode)
+        {
+            Encoding srcEncoding = null;
+            var detector = new CharsetDetector();
+            detector.Feed(stream);
+            detector.DataEnd();
+            if (detector.Charset != null)
+            {
+                srcEncoding = Encoding.GetEncoding(detector.Charset);
+            }
+            decode = srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) &&
+                     !srcEncoding.Equals(Encoding.ASCII);
+            return srcEncoding;
         }
     }
 }
