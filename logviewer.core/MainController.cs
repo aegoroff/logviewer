@@ -67,8 +67,6 @@ namespace logviewer.core
 
         #region Public Properties
 
-        public long LogSize { get; private set; }
-
         public long MessagesCount
         {
             get
@@ -212,6 +210,10 @@ namespace logviewer.core
             this.view.SetProgress(100);
         }
 
+        /// <summary>
+        /// Reads log from file
+        /// </summary>
+        /// <returns>Path to RTF document to be loaded into control</returns>
         public string ReadLog()
         {
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
@@ -224,11 +226,11 @@ namespace logviewer.core
             }
             var reader = new LogReader(this.view.LogPath, messageHead);
 
-            this.LogSize = reader.Length;
-
+            this.logSize = reader.Length;
+            
             Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
 
-            if (this.LogSize == 0)
+            if (this.logSize == 0)
             {
                 return string.Empty;
             }
@@ -238,10 +240,10 @@ namespace logviewer.core
                 return this.CreateRtf(true);
             }
             Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
-            this.currentPath = this.view.LogPath;
+            this.currentPath = reader.LogPath;
 
 
-            var dbSize = this.LogSize + (this.LogSize / 10) * 4; // +40% to log file
+            var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
             if (this.store != null)
             {
                 this.store.Dispose();
@@ -271,7 +273,7 @@ namespace logviewer.core
 
         private void SetLogSize()
         {
-            this.view.HumanReadableLogSize = new FileSize((ulong) this.LogSize).ToString();
+            this.view.HumanReadableLogSize = new FileSize((ulong)this.logSize).ToString();
         }
 
         private void ResetLogStatistic()
@@ -423,6 +425,7 @@ namespace logviewer.core
         #region Methods
 
         private long totalFiltered;
+        private long logSize;
 
         private bool CurrentPathCached
         {

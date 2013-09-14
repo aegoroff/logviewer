@@ -10,23 +10,28 @@ namespace logviewer.core
 {
     public sealed class LogReader
     {
-        private readonly string path;
         private readonly Regex messageHead;
         private readonly long offset;
 
         public event ProgressChangedEventHandler ProgressChanged;
 
-        public LogReader(string path, Regex messageHead, long offset = 0)
+        public LogReader(string logPath, Regex messageHead, long offset = 0)
         {
-            this.path = path;
+            this.LogPath = logPath;
             this.messageHead = messageHead;
             this.offset = offset;
+            this.Length = new FileInfo(logPath).Length;
         }
 
-        public long Length
-        {
-            get { return new FileInfo(path).Length; }
-        }
+        /// <summary>
+        /// Gets log file length in bytes
+        /// </summary>
+        public long Length { get; private set; }
+
+        /// <summary>
+        /// Gets full path to log file
+        /// </summary>
+        public string LogPath { get; private set; }
 
         public void Read(Action<LogMessage> onRead, Func<bool> canContinue)
         {
@@ -38,7 +43,9 @@ namespace logviewer.core
             bool decode;
             Encoding srcEncoding;
             string mapName = Guid.NewGuid().ToString();
-            using(var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, mapName, 0, MemoryMappedFileAccess.Read))
+            using (
+                var mmf = MemoryMappedFile.CreateFromFile(LogPath, FileMode.Open, mapName, 0,
+                    MemoryMappedFileAccess.Read))
             {
                 using (var stream = mmf.CreateViewStream(0, Length, MemoryMappedFileAccess.Read))
                 {
@@ -46,7 +53,9 @@ namespace logviewer.core
                 }
             }
 
-            using(var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, mapName, 0, MemoryMappedFileAccess.Read))
+            using (
+                var mmf = MemoryMappedFile.CreateFromFile(LogPath, FileMode.Open, mapName, 0,
+                    MemoryMappedFileAccess.Read))
             {
                 using (var stream = mmf.CreateViewStream(this.offset, Length, MemoryMappedFileAccess.Read))
                 {
