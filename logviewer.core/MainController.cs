@@ -227,8 +227,8 @@ namespace logviewer.core
             var reader = new LogReader(this.view.LogPath, messageHead);
 
             this.logSize = reader.Length;
-            
-            Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+
+            RunOnGuiThread(this.SetLogSize);
 
             if (this.logSize == 0)
             {
@@ -239,7 +239,9 @@ namespace logviewer.core
             {
                 return this.CreateRtf(true);
             }
-            Task.Factory.StartNew(this.ResetLogStatistic, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+
+            RunOnGuiThread(ResetLogStatistic);
+
             this.currentPath = reader.LogPath;
 
 
@@ -497,8 +499,12 @@ namespace logviewer.core
 
         private void OnLogReadProgress(double percent)
         {
-            Task.Factory.StartNew(() => this.view.SetProgress(percent), CancellationToken.None,
-                TaskCreationOptions.None, this.uiContext);
+            RunOnGuiThread(() => this.view.SetProgress(percent));
+        }
+
+        void RunOnGuiThread(Action action)
+        {
+            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
