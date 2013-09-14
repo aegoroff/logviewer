@@ -1,33 +1,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using Net.Sgoliver.NRtfTree.Util;
+using logviewer.rtf.Rtf.Contents.Text;
 
 namespace logviewer.core
 {
     public struct LogMessage
     {
         private const string NewLine = "\n";
-
-        private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>
-            {
-                { LogLevel.Trace, FormatBody(LogLevel.Trace) },
-                { LogLevel.Debug, FormatBody(LogLevel.Debug) },
-                { LogLevel.Info, FormatBody(LogLevel.Info) },
-                { LogLevel.Warn, FormatBody(LogLevel.Warn) },
-                { LogLevel.Error, FormatBody(LogLevel.Error) },
-                { LogLevel.Fatal, FormatBody(LogLevel.Fatal) },
-            };
-
-        private static readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>
-            {
-                { LogLevel.Trace, FormatHead(LogLevel.Trace) },
-                { LogLevel.Debug, FormatHead(LogLevel.Debug) },
-                { LogLevel.Info, FormatHead(LogLevel.Info) },
-                { LogLevel.Warn, FormatHead(LogLevel.Warn) },
-                { LogLevel.Error, FormatHead(LogLevel.Error) },
-                { LogLevel.Fatal, FormatHead(LogLevel.Fatal) },
-            };
 
         private static Dictionary<LogLevel, Color> levelsMap;
 
@@ -54,14 +34,27 @@ namespace logviewer.core
             get { return this.body ?? (this.strings.Count < 2 ? string.Empty : this.ToString(1)); }
         }
 
-        public RtfCharFormat HeadFormat
+        public RtfFormattedText HeadFormat
         {
-            get { return headerFormatsMap[this.Level]; }
+            get
+            {
+                return new RtfFormattedText(Header.Trim(), RtfCharacterFormatting.Bold)
+                {
+                    TextColorIndex = (int)Level + 1
+                };
+            }
         }
 
-        public RtfCharFormat BodyFormat
+        public RtfFormattedText BodyFormat
         {
-            get { return bodyFormatsMap[this.Level]; }
+            get
+            {
+                var txt = Body ?? "\n";
+                return new RtfFormattedText(txt.Trim(), RtfCharacterFormatting.Regular)
+                {
+                    TextColorIndex = (int)Level + 1
+                };
+            }
         }
 
         public void AddLine(string line)
@@ -81,25 +74,7 @@ namespace logviewer.core
             this.strings = null;
         }
 
-        private static RtfCharFormat FormatHead(LogLevel level)
-        {
-            return new RtfCharFormat
-                {
-                    Color = Colorize(level),
-                    Font = "Courier New",
-                    Size = 10,
-                    Bold = true
-                };
-        }
-
-        private static RtfCharFormat FormatBody(LogLevel level)
-        {
-            var f = FormatHead(level);
-            f.Bold = false;
-            return f;
-        }
-
-        private static Color Colorize(LogLevel level)
+        internal static Color Colorize(LogLevel level)
         {
             if (levelsMap == null)
             {

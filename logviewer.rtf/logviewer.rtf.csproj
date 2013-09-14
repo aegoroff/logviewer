@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{09090C84-84D1-4884-B30E-80B5E9D5C598}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>logviewer.rtf</RootNamespace>
+    <AssemblyName>logviewer.rtf</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Rtf\Attributes\RtfControlGroupAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfControlWordAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfControlWordDenotingEndAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfEnclosingBracesAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfEnumAsControlWordAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfIgnoreAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfIncludeAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfIndexAttribute.cs" />
+    <Compile Include="Rtf\Attributes\RtfTextDataAttribute.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfTabCollection.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfParagraphCollection.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfParagraphBase.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfParagraphContentsCollection.cs" />
+    <Compile Include="Rtf\Contents\RtfImage.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfFormattedParagraph.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfParagraph.cs" />
+    <Compile Include="Rtf\Contents\RtfSpecialCharacter.cs" />
+    <Compile Include="Rtf\Contents\Table\Collections\RtfTableCellCollection.cs" />
+    <Compile Include="Rtf\Contents\Table\Collections\RtfTableCellDefinitionCollection.cs" />
+    <Compile Include="Rtf\Contents\Table\Collections\RtfTableColumnCollection.cs" />
+    <Compile Include="Rtf\Contents\Table\Collections\RtfTableRowCollection.cs" />
+    <Compile Include="Rtf\Contents\Table\RtfTable.cs" />
+    <Compile Include="Rtf\Contents\Table\RtfTableCell.cs" />
+    <Compile Include="Rtf\Contents\Table\RtfTableCellDefinition.cs" />
+    <Compile Include="Rtf\Contents\Table\RtfTableCellStyle.cs" />
+    <Compile Include="Rtf\Contents\Table\RtfTableColumn.cs" />
+    <Compile Include="Rtf\Contents\Table\RtfTableRow.cs" />
+    <Compile Include="Rtf\Contents\Text\RtfHyperlink.cs" />
+    <Compile Include="Rtf\Contents\Text\RtfTextBase.cs" />
+    <Compile Include="Rtf\Contents\Text\RtfFormattedText.cs" />
+    <Compile Include="Rtf\Contents\Text\RtfText.cs" />
+    <Compile Include="Rtf\DocumentInfo %28Internal%29\RtfTypeInfo.cs" />
+    <Compile Include="Rtf\DocumentInfo %28Internal%29\RtfDocumentInfo.cs" />
+    <Compile Include="Rtf\DocumentInfo %28Internal%29\RtfAttributeInfo.cs" />
+    <Compile Include="Rtf\Contents\Paragraphs\RtfTab.cs" />
+    <Compile Include="Rtf\Formatting\RtfBorder.cs" />
+    <Compile Include="Rtf\Formatting\RtfParagraphFormatting.cs" />
+    <Compile Include="Rtf\Formatting\RtfTableCellBorders.cs" />
+    <Compile Include="Rtf\Formatting\RtfTablePadding.cs" />
+    <Compile Include="Rtf\Header\RtfFontCollection.cs" />
+    <Compile Include="Rtf\Header\RtfColor.cs" />
+    <Compile Include="Rtf\Header\RtfFont.cs" />
+    <Compile Include="Rtf\Header\RtfColorCollection.cs" />
+    <Compile Include="Rtf\RtfDocumentContentBase.cs" />
+    <Compile Include="Rtf\Contents\Text\RtfParagraphContentBase.cs" />
+    <Compile Include="Rtf\RtfDocument.cs" />
+    <Compile Include="Rtf\RtfDocumentContentCollection.cs" />
+    <Compile Include="Rtf\RtfWriter.cs" />
+    <Compile Include="TwipConverter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

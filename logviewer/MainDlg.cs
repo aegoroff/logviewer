@@ -121,7 +121,7 @@ namespace logviewer
         public void LoadLog(string path)
         {
             this.syntaxRichTextBox1.SuspendLayout();
-            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
+            this.syntaxRichTextBox1.Rtf = path;
             this.syntaxRichTextBox1.ResumeLayout();
         }
 

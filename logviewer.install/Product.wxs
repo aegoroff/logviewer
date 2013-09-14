@@ -54,10 +54,10 @@
 								Name="logviewer.core.dll"
 								Source="$(var.SourcePath)\logviewer.core.dll"
 								DiskId="1"/>
-							<File
-								Id="NRtfTree.dll"
-								Name="NRtfTree.dll"
-								Source="$(var.SourcePath)\NRtfTree.dll"
+                            <File
+								Id="logviewer.rtf.dll"
+								Name="logviewer.rtf.dll"
+								Source="$(var.SourcePath)\logviewer.rtf.dll"
 								DiskId="1"/>
                             <File
 								Id="Ude.dll"

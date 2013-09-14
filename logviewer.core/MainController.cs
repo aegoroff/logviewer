@@ -4,11 +4,16 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
-using Net.Sgoliver.NRtfTree.Util;
+using logviewer.rtf.Rtf;
+using logviewer.rtf.Rtf.Contents.Paragraphs;
+using logviewer.rtf.Rtf.Contents.Text;
+using logviewer.rtf.Rtf.Formatting;
+using logviewer.rtf.Rtf.Header;
 using NLog.Targets;
 
 namespace logviewer.core
@@ -129,21 +134,14 @@ namespace logviewer.core
 
         public void LoadLog(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            if (string.IsNullOrWhiteSpace(path))
             {
                 return;
             }
-            try
-            {
-                this.view.LoadLog(path);
-                this.view.SetCurrentPage(this.CurrentPage);
-                this.view.DisableBack(this.CurrentPage <= 1);
-                this.view.DisableForward(this.CurrentPage >= this.TotalPages);
-            }
-            finally
-            {
-                File.Delete(path);
-            }
+            this.view.LoadLog(path);
+            this.view.SetCurrentPage(this.CurrentPage);
+            this.view.DisableBack(this.CurrentPage <= 1);
+            this.view.DisableForward(this.CurrentPage >= this.TotalPages);
         }
 
         private void CancelPreviousTask()
@@ -451,8 +449,12 @@ namespace logviewer.core
         private string CreateRtf(bool signalProgress = false)
         {
             this.byLevel.Clear();
-            var rtfPath = Path.GetTempFileName();
-            var doc = new RtfDocument(rtfPath);
+            var rtf = new RtfDocument();
+            rtf.FontTable.Add(new RtfFont("Courier New"));
+            for (var i = (int)LogLevel.Trace; i <= (int)LogLevel.Fatal; i++)
+            {
+                rtf.ColorTable.Add(new RtfColor(LogMessage.Colorize((LogLevel)i)));
+            }
 
             this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
                 this.useRegexp);
@@ -469,7 +471,7 @@ namespace logviewer.core
 
             Action<LogMessage> onRead = delegate(LogMessage m)
             {
-                this.AddMessage(doc, m);
+                this.AddMessage(m, rtf);
                 ++count;
                 if (!signalProgress || count < signalCounter * fraction)
                 {
@@ -491,8 +493,14 @@ namespace logviewer.core
                 this.maxFilter,
                 this.textFilter,
                 this.useRegexp);
-            doc.Close();
-            return rtfPath;
+            var rtfWriter = new RtfWriter();
+            var sb = new StringBuilder();
+            TextWriter tw = new StringWriter(sb);
+            using (tw)
+            {
+                rtfWriter.Write(tw, rtf);
+            }
+            return sb.ToString();
         }
 
         private void OnLogReadProgress(double percent)
@@ -501,7 +509,7 @@ namespace logviewer.core
                 TaskCreationOptions.None, this.uiContext);
         }
 
-        private void AddMessage(RtfDocument doc, LogMessage message)
+        private void AddMessage(LogMessage message, RtfDocument rtf)
         {
             if (this.byLevel.ContainsKey(message.Level))
             {
@@ -511,18 +519,13 @@ namespace logviewer.core
             {
                 this.byLevel.Add(message.Level, 1);
             }
+            var header = new RtfFormattedParagraph(new RtfParagraphFormatting(10, RtfTextAlign.Left));
+            header.AppendText(message.HeadFormat);
+            rtf.Contents.Add(header);
 
-            doc.AddText(message.Header.Trim(), message.HeadFormat);
-            doc.AddText(NewLine);
-
-            var txt = message.Body;
-            if (string.IsNullOrWhiteSpace(txt))
-            {
-                doc.AddText(NewLine);
-                return;
-            }
-            doc.AddText(txt.Trim(), message.BodyFormat);
-            doc.AddText("\n\n\n");
+            var body = new RtfFormattedParagraph(new RtfParagraphFormatting(10, RtfTextAlign.Left));
+            body.AppendText(message.BodyFormat);
+            rtf.Contents.Add(body);
         }
 
         private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
