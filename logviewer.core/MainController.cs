@@ -226,12 +226,12 @@ namespace logviewer.core
 
             this.LogSize = reader.Length;
 
+            Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+
             if (this.LogSize == 0)
             {
                 return string.Empty;
             }
-
-            Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
 
             if (this.CurrentPathCached)
             {
