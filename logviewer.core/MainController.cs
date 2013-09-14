@@ -225,6 +225,12 @@ namespace logviewer.core
             var reader = new LogReader(this.view.LogPath, messageHead);
 
             this.LogSize = reader.Length;
+
+            if (this.LogSize == 0)
+            {
+                return string.Empty;
+            }
+
             Task.Factory.StartNew(this.SetLogSize, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
 
             if (this.CurrentPathCached)
@@ -271,11 +277,6 @@ namespace logviewer.core
         private void ResetLogStatistic()
         {
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        }
-
-        public string ReadLog(Stream stream)
-        {
-            return string.Empty;
         }
 
         public void CancelReading()

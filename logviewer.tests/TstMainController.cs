@@ -70,22 +70,15 @@ namespace logviewer.tests
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
 
-        private static Stream CreateTestStream(string data)
-        {
-            var result = new MemoryStream();
-            var bytes = Encoding.UTF8.GetBytes(data);
-            result.Write(bytes, 0, bytes.Length);
-            result.Seek(0, SeekOrigin.Begin);
-            return result;
-        }
-
         [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
-        [TestCase((int) LogLevel.Error, (int) LogLevel.Warn, MessageExamples, 0)]
+        [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples, 0)]
         public void MaxAndMaxFilter(int min, int max, string msg, int count)
         {
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, msg);
             this.controller.MinFilter(min);
             this.controller.MaxFilter(max);
-            this.controller.ReadLog(CreateTestStream(msg));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(count));
         }
 
@@ -96,11 +89,13 @@ namespace logviewer.tests
         [TestCase(LogLevel.Trace, new[] { "TRACE", "DEBUG", @"\[?InFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
         public void MaxFilter(LogLevel filter, string[] markers, int c)
         {
+            File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.controller = new MainController(MessageStart, RecentPath, markers);
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
         
@@ -111,11 +106,13 @@ namespace logviewer.tests
         [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERRoR\]?", "FATAL" }, 0)]
         public void MinFilter(LogLevel filter, string[] markers, int c)
         {
+            File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.controller = new MainController(MessageStart, RecentPath, markers);
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
 
@@ -139,33 +136,41 @@ namespace logviewer.tests
         [Test]
         public void FilterText()
         {
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(".*5272.*");
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
         
         [Test]
         public void FilterTextNotContainsTextInHead()
         {
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(".*ERROR.*");
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
         
         [Test]
         public void FilterTextNotContainsTextInBody()
         {
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(".*message body 2.*");
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
         
         [Test]
         public void FilterTextNotContainsTextInBodySubstr()
         {
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter("message body 2");
             this.controller.UserRegexp(false);
-            this.controller.ReadLog(CreateTestStream(MessageExamples));
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
@@ -264,7 +269,9 @@ namespace logviewer.tests
             {
                 sb.AppendLine(MessageExamples);
             }
-            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, sb.ToString());
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2000));
         }
 
@@ -432,7 +439,9 @@ namespace logviewer.tests
             {
                 sb.AppendLine(MessageExamples);
             }
-            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, sb.ToString());
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
         }
         
@@ -444,7 +453,9 @@ namespace logviewer.tests
             {
                 sb.AppendLine(MessageExamples);
             }
-            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, sb.ToString());
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
         }
         
@@ -456,7 +467,9 @@ namespace logviewer.tests
             {
                 sb.AppendLine(MessageExamples);
             }
-            Assert.IsNotEmpty(this.controller.ReadLog(CreateTestStream(sb.ToString())));
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, sb.ToString());
+            Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
         }
     }
