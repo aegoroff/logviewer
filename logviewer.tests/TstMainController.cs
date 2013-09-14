@@ -177,15 +177,12 @@ namespace logviewer.tests
         [Test]
         public void LoadLog()
         {
-            File.WriteAllText(TestPath, string.Empty);
             this.view.Expects.One.MethodWith(v => v.LoadLog(TestPath));
             this.view.Expects.One.MethodWith(v => v.SetCurrentPage(1));
             this.view.Expects.One.MethodWith(v => v.DisableBack(true));
             this.view.Expects.One.MethodWith(v => v.DisableForward(true));
 
-            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             this.controller.LoadLog(TestPath);
-            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
         }
 
         [Test]
@@ -198,12 +195,10 @@ namespace logviewer.tests
         [Test]
         public void LoadLogThatThrows()
         {
-            File.WriteAllText(TestPath, string.Empty);
             this.view.Expects.One.MethodWith(v => v.LoadLog(TestPath)).Will(Throw.Exception(new Exception()));
             this.view.Expects.One.MethodWith(v => v.DisableBack(true));
             this.view.Expects.One.MethodWith(v => v.DisableForward(true));
 
-            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.True);
             var thrown = false;
             try
             {
@@ -214,14 +209,6 @@ namespace logviewer.tests
                 thrown = true;
             }
             Assert.That(thrown, NUnit.Framework.Is.True);
-            Assert.That(File.Exists(TestPath), NUnit.Framework.Is.False);
-        }
-
-        [Test]
-        public void LoadLogUnexistPath()
-        {
-            this.view.Expects.No.Method(v => v.LoadLog(null)).WithAnyArguments();
-            this.controller.LoadLog(TestPath);
         }
 
         [Test]

@@ -118,10 +118,10 @@ namespace logviewer
             this.Controller.SaveRecentFiles();
         }
 
-        public void LoadLog(string path)
+        public void LoadLog(string rtf)
         {
             this.syntaxRichTextBox1.SuspendLayout();
-            this.syntaxRichTextBox1.LoadFile(path, RichTextBoxStreamType.RichText);
+            this.syntaxRichTextBox1.Rtf = rtf;
             this.syntaxRichTextBox1.ResumeLayout();
         }
 

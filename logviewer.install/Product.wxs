@@ -55,9 +55,9 @@
 								Source="$(var.SourcePath)\logviewer.core.dll"
 								DiskId="1"/>
 							<File
-								Id="NRtfTree.dll"
-								Name="NRtfTree.dll"
-								Source="$(var.SourcePath)\NRtfTree.dll"
+								Id="nrtftree_library.dll"
+								Name="nrtftree-library.dll"
+								Source="$(var.SourcePath)\nrtftree-library.dll"
 								DiskId="1"/>
                             <File
 								Id="Ude.dll"

@@ -126,23 +126,16 @@ namespace logviewer.core
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
         }
 
-        public void LoadLog(string path)
+        public void LoadLog(string rtf)
         {
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            if (string.IsNullOrWhiteSpace(rtf))
             {
                 return;
             }
-            try
-            {
-                this.view.LoadLog(path);
-                this.view.SetCurrentPage(this.CurrentPage);
-                this.view.DisableBack(this.CurrentPage <= 1);
-                this.view.DisableForward(this.CurrentPage >= this.TotalPages);
-            }
-            finally
-            {
-                File.Delete(path);
-            }
+            this.view.LoadLog(rtf);
+            this.view.SetCurrentPage(this.CurrentPage);
+            this.view.DisableBack(this.CurrentPage <= 1);
+            this.view.DisableForward(this.CurrentPage >= this.TotalPages);
         }
 
         private void CancelPreviousTask()
@@ -452,8 +445,7 @@ namespace logviewer.core
         private string CreateRtf(bool signalProgress = false)
         {
             this.byLevel.Clear();
-            var rtfPath = Path.GetTempFileName();
-            var doc = new RtfDocument(rtfPath);
+            var doc = new RtfDocument();
 
             this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
                 this.useRegexp);
@@ -492,8 +484,7 @@ namespace logviewer.core
                 this.maxFilter,
                 this.textFilter,
                 this.useRegexp);
-            doc.Close();
-            return rtfPath;
+            return doc.Rtf;
         }
 
         private void OnLogReadProgress(double percent)
