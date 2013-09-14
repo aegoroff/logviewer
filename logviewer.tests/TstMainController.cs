@@ -70,6 +70,20 @@ namespace logviewer.tests
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
 
+        [Test]
+        public void AllFilters()
+        {
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            File.WriteAllText(TestPath, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN \n2008-12-27 19:42:11,906 [5555] WARN ");
+            this.controller.MinFilter((int)LogLevel.Warn);
+            this.controller.MaxFilter((int)LogLevel.Warn);
+            this.controller.TextFilter("5555");
+            this.controller.UserRegexp(false);
+
+            Assert.IsNotEmpty(this.controller.ReadLog());
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
+        }
+        
         [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
         [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples, 0)]
         public void MaxAndMaxFilter(int min, int max, string msg, int count)
