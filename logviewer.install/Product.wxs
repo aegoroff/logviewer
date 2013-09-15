@@ -35,6 +35,9 @@
 	</Product>
 
 	<Fragment>
+
+        <Icon Id="IconServerExe" SourceFile="$(var.SourcePath)\logviewer.exe"/>
+        
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
                 <Directory Id="INSTALLFOLDER" Name="logviewer">
