@@ -23,7 +23,7 @@ namespace logviewer.core
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
 
         private readonly List<Regex> markers;
-        private readonly Regex messageHead;
+        private Regex messageHead;
         private int pageSize;
 
         private readonly List<string> recentFiles = new List<string>();
@@ -57,9 +57,20 @@ namespace logviewer.core
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
-            this.markers.AddRange(levels.Select(level => level.ToMarker()));
-            this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
+            this.CreateMarkers(levels);
+            this.CreateMessageHead(startMessagePattern);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
+        }
+
+        public void CreateMessageHead(string startMessagePattern)
+        {
+            this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
+        }
+
+        public void CreateMarkers(IEnumerable<string> levels)
+        {
+            this.markers.Clear();
+            this.markers.AddRange(levels.Select(level => level.ToMarker()));
         }
 
         #endregion

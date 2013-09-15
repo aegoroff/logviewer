@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Ninject;
@@ -352,6 +353,8 @@ namespace logviewer
             {
                 dlg.ShowDialog();
                 controller.PageSize(Settings.PageSize);
+                controller.CreateMarkers(Settings.LevelReaders.Select(r => r()));
+                controller.CreateMessageHead(Settings.StartMessageTemplate);
             }
         }
 

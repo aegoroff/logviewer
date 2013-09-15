@@ -19,16 +19,6 @@ namespace logviewer
            "FatalMarker"
         };
         
-        private static readonly Func<string>[] levelReaders =
-        {
-           () => Settings.TraceLevel,
-           () => Settings.DebugLevel,
-           () => Settings.InfoLevel,
-           () => Settings.WarnLevel,
-           () => Settings.ErrorLevel,
-           () => Settings.FatalLevel
-        };
-        
         private static readonly Action<string>[] levelSetters =
         {
            l => Settings.TraceLevel = l,
@@ -68,7 +58,7 @@ namespace logviewer
             {
                 for (var i = 0; i < markers.Length; i++)
                 {
-                    var userDefined = levelReaders[i]();
+                    var userDefined = Settings.LevelReaders[i]();
                     if(string.IsNullOrWhiteSpace(userDefined))
                     {
                         var vendorDefined = ConfigurationManager.AppSettings[markers[i]];

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using Microsoft.Win32;
 
 namespace logviewer.core
 {
@@ -180,6 +181,22 @@ namespace logviewer.core
         {
             get { return GetStringValue(FatalParameterName); }
             set { SetStringValue(FatalParameterName, value); }
+        }
+
+        public static Func<string>[] LevelReaders
+        {
+            get
+            {
+                return new Func<string>[]
+                {
+                    () => TraceLevel,
+                    () => DebugLevel,
+                    () => InfoLevel,
+                    () => WarnLevel,
+                    () => ErrorLevel,
+                    () => FatalLevel
+                };
+            }
         }
     }
 }
