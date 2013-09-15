@@ -195,6 +195,7 @@
             this.messageStartPatternBox.Name = "messageStartPatternBox";
             this.messageStartPatternBox.Size = new System.Drawing.Size(393, 20);
             this.messageStartPatternBox.TabIndex = 1;
+            this.messageStartPatternBox.TextChanged += new System.EventHandler(this.OnSetMessageStartPattern);
             // 
             // traceLabel
             // 
@@ -222,6 +223,7 @@
             this.traceBox.Name = "traceBox";
             this.traceBox.Size = new System.Drawing.Size(393, 20);
             this.traceBox.TabIndex = 2;
+            this.traceBox.TextChanged += new System.EventHandler(this.OnSetTraceLevel);
             // 
             // debugBox
             // 
@@ -229,6 +231,7 @@
             this.debugBox.Name = "debugBox";
             this.debugBox.Size = new System.Drawing.Size(393, 20);
             this.debugBox.TabIndex = 3;
+            this.debugBox.TextChanged += new System.EventHandler(this.OnSetDebugLevel);
             // 
             // infoBox
             // 
@@ -236,6 +239,7 @@
             this.infoBox.Name = "infoBox";
             this.infoBox.Size = new System.Drawing.Size(393, 20);
             this.infoBox.TabIndex = 4;
+            this.infoBox.TextChanged += new System.EventHandler(this.OnSetInfoLevel);
             // 
             // infoLabel
             // 
@@ -253,6 +257,7 @@
             this.warnBox.Name = "warnBox";
             this.warnBox.Size = new System.Drawing.Size(393, 20);
             this.warnBox.TabIndex = 6;
+            this.warnBox.TextChanged += new System.EventHandler(this.OnSetWarnLevel);
             // 
             // warnLabel
             // 
@@ -270,6 +275,7 @@
             this.errorBox.Name = "errorBox";
             this.errorBox.Size = new System.Drawing.Size(393, 20);
             this.errorBox.TabIndex = 8;
+            this.errorBox.TextChanged += new System.EventHandler(this.OnSetErrorLevel);
             // 
             // errorLabel
             // 
@@ -287,6 +293,7 @@
             this.fatalBox.Name = "fatalBox";
             this.fatalBox.Size = new System.Drawing.Size(393, 20);
             this.fatalBox.TabIndex = 10;
+            this.fatalBox.TextChanged += new System.EventHandler(this.OnSetFatalLevel);
             // 
             // fatalLabel
             // 

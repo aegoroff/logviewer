@@ -12,6 +12,13 @@ namespace logviewer
             this.InitializeComponent();
             this.openLastFile.Checked = Settings.OpenLastFile;
             pageSizeBox.Text = Settings.PageSize.ToString(CultureInfo.CurrentUICulture);
+            messageStartPatternBox.Text = Settings.StartMessageTemplate;
+            traceBox.Text = Settings.TraceLevel;
+            debugBox.Text = Settings.DebugLevel;
+            infoBox.Text = Settings.InfoLevel;
+            warnBox.Text = Settings.WarnLevel;
+            errorBox.Text = Settings.ErrorLevel;
+            fatalBox.Text = Settings.FatalLevel;
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
@@ -31,6 +38,41 @@ namespace logviewer
         private void OnKeyPressInPageSizeBox(object sender, KeyPressEventArgs e)
         {
             e.Handled = !char.IsNumber(e.KeyChar) && !char.IsControl(e.KeyChar);
+        }
+
+        private void OnSetMessageStartPattern(object sender, EventArgs e)
+        {
+            Settings.StartMessageTemplate = messageStartPatternBox.Text;
+        }
+
+        private void OnSetTraceLevel(object sender, EventArgs e)
+        {
+            Settings.TraceLevel = traceBox.Text;
+        }
+
+        private void OnSetDebugLevel(object sender, EventArgs e)
+        {
+            Settings.DebugLevel = debugBox.Text;
+        }
+
+        private void OnSetInfoLevel(object sender, EventArgs e)
+        {
+            Settings.InfoLevel = infoBox.Text;
+        }
+
+        private void OnSetWarnLevel(object sender, EventArgs e)
+        {
+            Settings.WarnLevel = warnBox.Text;
+        }
+
+        private void OnSetErrorLevel(object sender, EventArgs e)
+        {
+            Settings.ErrorLevel = errorBox.Text;
+        }
+
+        private void OnSetFatalLevel(object sender, EventArgs e)
+        {
+            Settings.FatalLevel = fatalBox.Text;
         }
     }
 }
