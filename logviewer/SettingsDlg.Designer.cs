@@ -191,6 +191,7 @@
             // 
             // messageStartPatternBox
             // 
+            this.messageStartPatternBox.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.messageStartPatternBox.Location = new System.Drawing.Point(124, 25);
             this.messageStartPatternBox.Name = "messageStartPatternBox";
             this.messageStartPatternBox.Size = new System.Drawing.Size(393, 20);
@@ -219,6 +220,7 @@
             // 
             // traceBox
             // 
+            this.traceBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.traceBox.Location = new System.Drawing.Point(124, 28);
             this.traceBox.Name = "traceBox";
             this.traceBox.Size = new System.Drawing.Size(393, 20);
@@ -227,6 +229,7 @@
             // 
             // debugBox
             // 
+            this.debugBox.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.debugBox.Location = new System.Drawing.Point(124, 55);
             this.debugBox.Name = "debugBox";
             this.debugBox.Size = new System.Drawing.Size(393, 20);
@@ -235,6 +238,7 @@
             // 
             // infoBox
             // 
+            this.infoBox.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.infoBox.Location = new System.Drawing.Point(124, 81);
             this.infoBox.Name = "infoBox";
             this.infoBox.Size = new System.Drawing.Size(393, 20);
@@ -253,6 +257,7 @@
             // 
             // warnBox
             // 
+            this.warnBox.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.warnBox.Location = new System.Drawing.Point(124, 107);
             this.warnBox.Name = "warnBox";
             this.warnBox.Size = new System.Drawing.Size(393, 20);
@@ -271,6 +276,7 @@
             // 
             // errorBox
             // 
+            this.errorBox.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.errorBox.Location = new System.Drawing.Point(124, 133);
             this.errorBox.Name = "errorBox";
             this.errorBox.Size = new System.Drawing.Size(393, 20);
@@ -289,6 +295,7 @@
             // 
             // fatalBox
             // 
+            this.fatalBox.Font = new System.Drawing.Font("Courier New", 8.25F);
             this.fatalBox.Location = new System.Drawing.Point(124, 159);
             this.fatalBox.Name = "fatalBox";
             this.fatalBox.Size = new System.Drawing.Size(393, 20);
