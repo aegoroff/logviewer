@@ -11,7 +11,7 @@ namespace logviewer.core
     public sealed class LogReader
     {
         private readonly Regex messageHead;
-        private const int BufferSize = 0xFFFFF;
+        private const int BufferSize = 0xFFFFFF;
 
         public event ProgressChangedEventHandler ProgressChanged;
 
@@ -51,8 +51,8 @@ namespace logviewer.core
                     srcEncoding = SrcEncoding(stream, out decode);
                 }
             }
-
-            using (var fs = File.Open(LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            var fs = new FileStream(LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
+            using (fs)
             {
                 fs.Seek(offset, SeekOrigin.Begin);
                 using (var stream = new BufferedStream(fs, BufferSize))
