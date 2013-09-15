@@ -17,6 +17,13 @@ namespace logviewer.core
         private const string SortingParameterName = @"Sorting";
         private const string PageSizeParameterName = @"PageSize";
         private const string UseRegexpParameterName = @"UseRegexp";
+        private const string StartMessageParameterName = @"StartMessageTemplate";
+        private const string TraceParameterName = @"TraceLevel";
+        private const string DebugParameterName = @"DebugLevel";
+        private const string InfoParameterName = @"InfoLevel";
+        private const string WarnParameterName = @"WarnLevel";
+        private const string ErrorParameterName = @"ErrorLevel";
+        private const string FatalParameterName = @"FatalLevel";
 
         private static RegistryKey RegistryKey
         {
@@ -131,6 +138,48 @@ namespace logviewer.core
         {
             get { return GetBoolValue(UseRegexpParameterName); }
             set { SetBoolValue(UseRegexpParameterName, value); }
+        }
+
+        public static string StartMessageTemplate
+        {
+            get { return GetStringValue(StartMessageParameterName); }
+            set { SetStringValue(StartMessageParameterName, value); }
+        }
+        
+        public static string TraceLevel
+        {
+            get { return GetStringValue(TraceParameterName); }
+            set { SetStringValue(TraceParameterName, value); }
+        }
+        
+        public static string DebugLevel
+        {
+            get { return GetStringValue(DebugParameterName); }
+            set { SetStringValue(DebugParameterName, value); }
+        }
+        
+        public static string InfoLevel
+        {
+            get { return GetStringValue(InfoParameterName); }
+            set { SetStringValue(InfoParameterName, value); }
+        }
+        
+        public static string WarnLevel
+        {
+            get { return GetStringValue(WarnParameterName); }
+            set { SetStringValue(WarnParameterName, value); }
+        }
+        
+        public static string ErrorLevel
+        {
+            get { return GetStringValue(ErrorParameterName); }
+            set { SetStringValue(ErrorParameterName, value); }
+        }
+        
+        public static string FatalLevel
+        {
+            get { return GetStringValue(FatalParameterName); }
+            set { SetStringValue(FatalParameterName, value); }
         }
     }
 }
