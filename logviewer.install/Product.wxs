@@ -36,7 +36,8 @@
 
 	<Fragment>
 
-        <Icon Id="IconServerExe" SourceFile="$(var.SourcePath)\logviewer.exe"/>
+        <Icon Id="AppIcon" SourceFile="$(var.SourcePath)\logviewer.exe"/>
+        <Property Id="ARPPRODUCTICON" Value="AppIcon" />
         
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
