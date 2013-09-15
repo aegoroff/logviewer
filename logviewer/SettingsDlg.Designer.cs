@@ -37,29 +37,29 @@
             this.fileSettingsBox = new System.Windows.Forms.GroupBox();
             this.openLastFile = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.logLevelsBox = new System.Windows.Forms.GroupBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
-            this.messageStartPatternLabel = new System.Windows.Forms.Label();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
-            this.traceLabel = new System.Windows.Forms.Label();
-            this.debugLabel = new System.Windows.Forms.Label();
-            this.traceBox = new System.Windows.Forms.TextBox();
-            this.debugBox = new System.Windows.Forms.TextBox();
-            this.infoBox = new System.Windows.Forms.TextBox();
-            this.infoLabel = new System.Windows.Forms.Label();
-            this.warnBox = new System.Windows.Forms.TextBox();
-            this.warnLabel = new System.Windows.Forms.Label();
-            this.errorBox = new System.Windows.Forms.TextBox();
-            this.errorLabel = new System.Windows.Forms.Label();
-            this.fatalBox = new System.Windows.Forms.TextBox();
+            this.messageStartPatternLabel = new System.Windows.Forms.Label();
+            this.logLevelsBox = new System.Windows.Forms.GroupBox();
             this.fatalLabel = new System.Windows.Forms.Label();
+            this.fatalBox = new System.Windows.Forms.TextBox();
+            this.errorLabel = new System.Windows.Forms.Label();
+            this.errorBox = new System.Windows.Forms.TextBox();
+            this.warnLabel = new System.Windows.Forms.Label();
+            this.warnBox = new System.Windows.Forms.TextBox();
+            this.infoLabel = new System.Windows.Forms.Label();
+            this.infoBox = new System.Windows.Forms.TextBox();
+            this.debugBox = new System.Windows.Forms.TextBox();
+            this.traceBox = new System.Windows.Forms.TextBox();
+            this.debugLabel = new System.Windows.Forms.Label();
+            this.traceLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
             this.fileSettingsBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.logLevelsBox.SuspendLayout();
             this.commonTemplatesBox.SuspendLayout();
+            this.logLevelsBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -147,6 +147,36 @@
             this.tabPage2.Text = "Templates";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // commonTemplatesBox
+            // 
+            this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
+            this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
+            this.commonTemplatesBox.Location = new System.Drawing.Point(8, 6);
+            this.commonTemplatesBox.Name = "commonTemplatesBox";
+            this.commonTemplatesBox.Size = new System.Drawing.Size(531, 65);
+            this.commonTemplatesBox.TabIndex = 1;
+            this.commonTemplatesBox.TabStop = false;
+            this.commonTemplatesBox.Text = "Common";
+            // 
+            // messageStartPatternBox
+            // 
+            this.messageStartPatternBox.Font = new System.Drawing.Font("Courier New", 8.25F);
+            this.messageStartPatternBox.Location = new System.Drawing.Point(124, 25);
+            this.messageStartPatternBox.Name = "messageStartPatternBox";
+            this.messageStartPatternBox.Size = new System.Drawing.Size(393, 20);
+            this.messageStartPatternBox.TabIndex = 1;
+            this.messageStartPatternBox.TextChanged += new System.EventHandler(this.OnSetMessageStartPattern);
+            // 
+            // messageStartPatternLabel
+            // 
+            this.messageStartPatternLabel.AutoSize = true;
+            this.messageStartPatternLabel.Location = new System.Drawing.Point(6, 28);
+            this.messageStartPatternLabel.Name = "messageStartPatternLabel";
+            this.messageStartPatternLabel.Size = new System.Drawing.Size(112, 13);
+            this.messageStartPatternLabel.TabIndex = 0;
+            this.messageStartPatternLabel.Text = "Message start pattern:";
+            this.messageStartPatternLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // logLevelsBox
             // 
             this.logLevelsBox.Controls.Add(this.fatalLabel);
@@ -168,120 +198,24 @@
             this.logLevelsBox.TabStop = false;
             this.logLevelsBox.Text = "Log level parsing templates";
             // 
-            // commonTemplatesBox
+            // fatalLabel
             // 
-            this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
-            this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
-            this.commonTemplatesBox.Location = new System.Drawing.Point(8, 6);
-            this.commonTemplatesBox.Name = "commonTemplatesBox";
-            this.commonTemplatesBox.Size = new System.Drawing.Size(531, 65);
-            this.commonTemplatesBox.TabIndex = 1;
-            this.commonTemplatesBox.TabStop = false;
-            this.commonTemplatesBox.Text = "Common";
+            this.fatalLabel.AutoSize = true;
+            this.fatalLabel.Location = new System.Drawing.Point(85, 162);
+            this.fatalLabel.Name = "fatalLabel";
+            this.fatalLabel.Size = new System.Drawing.Size(33, 13);
+            this.fatalLabel.TabIndex = 11;
+            this.fatalLabel.Text = "Fatal:";
+            this.fatalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // messageStartPatternLabel
+            // fatalBox
             // 
-            this.messageStartPatternLabel.AutoSize = true;
-            this.messageStartPatternLabel.Location = new System.Drawing.Point(6, 28);
-            this.messageStartPatternLabel.Name = "messageStartPatternLabel";
-            this.messageStartPatternLabel.Size = new System.Drawing.Size(112, 13);
-            this.messageStartPatternLabel.TabIndex = 0;
-            this.messageStartPatternLabel.Text = "Message start pattern:";
-            this.messageStartPatternLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // messageStartPatternBox
-            // 
-            this.messageStartPatternBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.messageStartPatternBox.Location = new System.Drawing.Point(124, 25);
-            this.messageStartPatternBox.Name = "messageStartPatternBox";
-            this.messageStartPatternBox.Size = new System.Drawing.Size(393, 20);
-            this.messageStartPatternBox.TabIndex = 1;
-            this.messageStartPatternBox.TextChanged += new System.EventHandler(this.OnSetMessageStartPattern);
-            // 
-            // traceLabel
-            // 
-            this.traceLabel.AutoSize = true;
-            this.traceLabel.Location = new System.Drawing.Point(80, 31);
-            this.traceLabel.Name = "traceLabel";
-            this.traceLabel.Size = new System.Drawing.Size(38, 13);
-            this.traceLabel.TabIndex = 0;
-            this.traceLabel.Text = "Trace:";
-            this.traceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // debugLabel
-            // 
-            this.debugLabel.AutoSize = true;
-            this.debugLabel.Location = new System.Drawing.Point(76, 58);
-            this.debugLabel.Name = "debugLabel";
-            this.debugLabel.Size = new System.Drawing.Size(42, 13);
-            this.debugLabel.TabIndex = 1;
-            this.debugLabel.Text = "Debug:";
-            this.debugLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // traceBox
-            // 
-            this.traceBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.traceBox.Location = new System.Drawing.Point(124, 28);
-            this.traceBox.Name = "traceBox";
-            this.traceBox.Size = new System.Drawing.Size(393, 20);
-            this.traceBox.TabIndex = 2;
-            this.traceBox.TextChanged += new System.EventHandler(this.OnSetTraceLevel);
-            // 
-            // debugBox
-            // 
-            this.debugBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.debugBox.Location = new System.Drawing.Point(124, 55);
-            this.debugBox.Name = "debugBox";
-            this.debugBox.Size = new System.Drawing.Size(393, 20);
-            this.debugBox.TabIndex = 3;
-            this.debugBox.TextChanged += new System.EventHandler(this.OnSetDebugLevel);
-            // 
-            // infoBox
-            // 
-            this.infoBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.infoBox.Location = new System.Drawing.Point(124, 81);
-            this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(393, 20);
-            this.infoBox.TabIndex = 4;
-            this.infoBox.TextChanged += new System.EventHandler(this.OnSetInfoLevel);
-            // 
-            // infoLabel
-            // 
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(56, 84);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(62, 13);
-            this.infoLabel.TabIndex = 5;
-            this.infoLabel.Text = "Information:";
-            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // warnBox
-            // 
-            this.warnBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.warnBox.Location = new System.Drawing.Point(124, 107);
-            this.warnBox.Name = "warnBox";
-            this.warnBox.Size = new System.Drawing.Size(393, 20);
-            this.warnBox.TabIndex = 6;
-            this.warnBox.TextChanged += new System.EventHandler(this.OnSetWarnLevel);
-            // 
-            // warnLabel
-            // 
-            this.warnLabel.AutoSize = true;
-            this.warnLabel.Location = new System.Drawing.Point(68, 110);
-            this.warnLabel.Name = "warnLabel";
-            this.warnLabel.Size = new System.Drawing.Size(50, 13);
-            this.warnLabel.TabIndex = 7;
-            this.warnLabel.Text = "Warning:";
-            this.warnLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // errorBox
-            // 
-            this.errorBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.errorBox.Location = new System.Drawing.Point(124, 133);
-            this.errorBox.Name = "errorBox";
-            this.errorBox.Size = new System.Drawing.Size(393, 20);
-            this.errorBox.TabIndex = 8;
-            this.errorBox.TextChanged += new System.EventHandler(this.OnSetErrorLevel);
+            this.fatalBox.Font = new System.Drawing.Font("Courier New", 8.25F);
+            this.fatalBox.Location = new System.Drawing.Point(124, 159);
+            this.fatalBox.Name = "fatalBox";
+            this.fatalBox.Size = new System.Drawing.Size(393, 20);
+            this.fatalBox.TabIndex = 10;
+            this.fatalBox.TextChanged += new System.EventHandler(this.OnSetFatalLevel);
             // 
             // errorLabel
             // 
@@ -293,24 +227,90 @@
             this.errorLabel.Text = "Error:";
             this.errorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // fatalBox
+            // errorBox
             // 
-            this.fatalBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.fatalBox.Location = new System.Drawing.Point(124, 159);
-            this.fatalBox.Name = "fatalBox";
-            this.fatalBox.Size = new System.Drawing.Size(393, 20);
-            this.fatalBox.TabIndex = 10;
-            this.fatalBox.TextChanged += new System.EventHandler(this.OnSetFatalLevel);
+            this.errorBox.Font = new System.Drawing.Font("Courier New", 8.25F);
+            this.errorBox.Location = new System.Drawing.Point(124, 133);
+            this.errorBox.Name = "errorBox";
+            this.errorBox.Size = new System.Drawing.Size(393, 20);
+            this.errorBox.TabIndex = 8;
+            this.errorBox.TextChanged += new System.EventHandler(this.OnSetErrorLevel);
             // 
-            // fatalLabel
+            // warnLabel
             // 
-            this.fatalLabel.AutoSize = true;
-            this.fatalLabel.Location = new System.Drawing.Point(85, 162);
-            this.fatalLabel.Name = "fatalLabel";
-            this.fatalLabel.Size = new System.Drawing.Size(33, 13);
-            this.fatalLabel.TabIndex = 11;
-            this.fatalLabel.Text = "Fatal:";
-            this.fatalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.warnLabel.AutoSize = true;
+            this.warnLabel.Location = new System.Drawing.Point(68, 110);
+            this.warnLabel.Name = "warnLabel";
+            this.warnLabel.Size = new System.Drawing.Size(50, 13);
+            this.warnLabel.TabIndex = 7;
+            this.warnLabel.Text = "Warning:";
+            this.warnLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // warnBox
+            // 
+            this.warnBox.Font = new System.Drawing.Font("Courier New", 8.25F);
+            this.warnBox.Location = new System.Drawing.Point(124, 107);
+            this.warnBox.Name = "warnBox";
+            this.warnBox.Size = new System.Drawing.Size(393, 20);
+            this.warnBox.TabIndex = 6;
+            this.warnBox.TextChanged += new System.EventHandler(this.OnSetWarnLevel);
+            // 
+            // infoLabel
+            // 
+            this.infoLabel.AutoSize = true;
+            this.infoLabel.Location = new System.Drawing.Point(56, 84);
+            this.infoLabel.Name = "infoLabel";
+            this.infoLabel.Size = new System.Drawing.Size(62, 13);
+            this.infoLabel.TabIndex = 5;
+            this.infoLabel.Text = "Information:";
+            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // infoBox
+            // 
+            this.infoBox.Font = new System.Drawing.Font("Courier New", 8.25F);
+            this.infoBox.Location = new System.Drawing.Point(124, 81);
+            this.infoBox.Name = "infoBox";
+            this.infoBox.Size = new System.Drawing.Size(393, 20);
+            this.infoBox.TabIndex = 4;
+            this.infoBox.TextChanged += new System.EventHandler(this.OnSetInfoLevel);
+            // 
+            // debugBox
+            // 
+            this.debugBox.Font = new System.Drawing.Font("Courier New", 8.25F);
+            this.debugBox.Location = new System.Drawing.Point(124, 55);
+            this.debugBox.Name = "debugBox";
+            this.debugBox.Size = new System.Drawing.Size(393, 20);
+            this.debugBox.TabIndex = 3;
+            this.debugBox.TextChanged += new System.EventHandler(this.OnSetDebugLevel);
+            // 
+            // traceBox
+            // 
+            this.traceBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.traceBox.Location = new System.Drawing.Point(124, 28);
+            this.traceBox.Name = "traceBox";
+            this.traceBox.Size = new System.Drawing.Size(393, 20);
+            this.traceBox.TabIndex = 2;
+            this.traceBox.TextChanged += new System.EventHandler(this.OnSetTraceLevel);
+            // 
+            // debugLabel
+            // 
+            this.debugLabel.AutoSize = true;
+            this.debugLabel.Location = new System.Drawing.Point(76, 58);
+            this.debugLabel.Name = "debugLabel";
+            this.debugLabel.Size = new System.Drawing.Size(42, 13);
+            this.debugLabel.TabIndex = 1;
+            this.debugLabel.Text = "Debug:";
+            this.debugLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // traceLabel
+            // 
+            this.traceLabel.AutoSize = true;
+            this.traceLabel.Location = new System.Drawing.Point(80, 31);
+            this.traceLabel.Name = "traceLabel";
+            this.traceLabel.Size = new System.Drawing.Size(38, 13);
+            this.traceLabel.TabIndex = 0;
+            this.traceLabel.Text = "Trace:";
+            this.traceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // SettingsDlg
             // 
@@ -329,10 +329,10 @@
             this.fileSettingsBox.ResumeLayout(false);
             this.fileSettingsBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
-            this.logLevelsBox.ResumeLayout(false);
-            this.logLevelsBox.PerformLayout();
             this.commonTemplatesBox.ResumeLayout(false);
             this.commonTemplatesBox.PerformLayout();
+            this.logLevelsBox.ResumeLayout(false);
+            this.logLevelsBox.PerformLayout();
             this.ResumeLayout(false);
 
         }

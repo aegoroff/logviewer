@@ -55,10 +55,10 @@
             this.currentPage = new System.Windows.Forms.TextBox();
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -438,6 +438,19 @@
             this.first.UseVisualStyleBackColor = true;
             this.first.Click += new System.EventHandler(this.OnFirst);
             // 
+            // syntaxRichTextBox1
+            // 
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
@@ -452,19 +465,6 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
-            // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
             // 
             // MainDlg
             // 
