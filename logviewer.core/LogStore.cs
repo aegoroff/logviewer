@@ -52,7 +52,7 @@ namespace logviewer.core
 
             var mmap = string.Format(Mmap, dbSize);
             var cache = string.Format(Cache, pages);
-            RunSqlQuery(command => command.ExecuteNonQuery(), SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
+            this.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
         }
 
         public string DatabasePath { get; private set; }
@@ -75,12 +75,17 @@ namespace logviewer.core
 
         public void Index()
         {
-            this.RunSqlQuery(command => command.ExecuteNonQuery(), CreateIndexOnLevel);
+            this.ExecuteNonQuery(CreateIndexOnLevel);
         }
         
         public void NoIndex()
         {
-            this.RunSqlQuery(command => command.ExecuteNonQuery(), @"DROP INDEX IF EXISTS IX_Level");
+            this.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
+        }
+
+        private void ExecuteNonQuery(params string[] queries)
+        {
+            this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
         }
 
         public void AddMessage(LogMessage message)
