@@ -178,12 +178,12 @@ namespace logviewer.core
             this.Ordering(reverse);
             this.view.SetProgress(0);
 
-            var path = string.Empty;
+            var rtf = string.Empty;
             Func<string> function = delegate
             {
                 try
                 {
-                    return path = this.ReadLog();
+                    return rtf = this.ReadLog();
                 }
                 catch (Exception e)
                 {
@@ -192,20 +192,20 @@ namespace logviewer.core
                 }
             };
             this.task = Task.Factory.StartNew(function, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(path), uiContext);
+            this.task.ContinueWith(t => this.EndLogReading(rtf), uiContext);
         }
 
-        private void EndLogReading(string path)
+        private void EndLogReading(string rtf)
         {
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal), this.totalFiltered);
-            this.LoadLog(path);
+            this.LoadLog(rtf);
             this.view.SetLoadedFileCapltion(this.view.LogPath);
             this.ReadRecentFiles();
             this.view.FocusOnTextFilterControl();
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(rtf))
             {
                 return;
             }
