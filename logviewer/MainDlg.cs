@@ -352,9 +352,9 @@ namespace logviewer
             using (dlg)
             {
                 dlg.ShowDialog();
-                controller.PageSize(Settings.PageSize);
                 controller.CreateMarkers(Settings.LevelReaders.Select(r => r()));
                 controller.CreateMessageHead(Settings.StartMessageTemplate);
+                controller.PageSize(Settings.PageSize);
             }
         }
 

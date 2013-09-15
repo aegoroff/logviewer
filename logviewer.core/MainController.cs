@@ -322,6 +322,11 @@ namespace logviewer.core
 
         public void PageSize(int value)
         {
+            if (this.pageSize != value)
+            {
+                CurrentPage = 1;
+                this.BeginLogReading((int)minFilter, (int)maxFilter, textFilter, reverseChronological, useRegexp);
+            }
             this.pageSize = value;
             this.SetPageSize();
         }
