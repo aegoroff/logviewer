@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using logviewer.core;
 
 namespace logviewer.tests
@@ -39,23 +38,6 @@ namespace logviewer.tests
         }
 
         [Test]
-        public void FullToString()
-        {
-            this.m.AddLine(H);
-            this.m.AddLine(B);
-            Assert.That(this.m.ToString(), Is.EqualTo(H + "\n" + B));
-        }
-        
-        [Test]
-        public void FullToStringCached()
-        {
-            this.m.AddLine(H);
-            this.m.AddLine(B);
-            this.m.Cache();
-            Assert.That(this.m.ToString(), Is.EqualTo(H + "\n" + B));
-        }
-
-        [Test]
         public void IsEmpty()
         {
             Assert.That(this.m.IsEmpty);
@@ -80,21 +62,6 @@ namespace logviewer.tests
             Assert.That(this.m.IsEmpty, Is.False);
             Assert.That(this.m.Header, Is.EqualTo(H));
             Assert.That(this.m.Body, Is.Empty);
-        }
-
-        [Test]
-        public void OnlyHeadToString()
-        {
-            this.m.AddLine(H);
-            Assert.That(this.m.ToString(), Is.EqualTo(H));
-        }
-        
-        [Test]
-        public void OnlyHeadCachedToString()
-        {
-            this.m.AddLine(H);
-            this.m.Cache();
-            Assert.That(this.m.ToString(), Is.EqualTo(H));
         }
     }
 }

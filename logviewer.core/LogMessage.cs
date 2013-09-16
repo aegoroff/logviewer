@@ -116,18 +116,11 @@ namespace logviewer.core
             return levelsMap[level];
         }
 
-        public override string ToString()
-        {
-            return this.head == null && this.body == null ? this.ToString(0) : head + (string.IsNullOrEmpty(body) ? string.Empty : NewLine + body);
-        }
-
         private string ToString(int start)
         {
             var sb = new StringBuilder();
             var count = this.strings.Count;
-// ReSharper disable ForCanBeConvertedToForeach
             for (var i = start; i < count; i++)
-// ReSharper restore ForCanBeConvertedToForeach
             {
                 sb.Append(this.strings[i]);
                 if (i < count - 1)
