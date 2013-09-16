@@ -55,10 +55,11 @@
             this.currentPage = new System.Windows.Forms.TextBox();
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
+            this.settingsButton = new System.Windows.Forms.ToolStripButton();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -129,6 +130,7 @@
             // 
             // exportToolStripMenuItem
             // 
+            this.exportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripMenuItem.Image")));
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.exportToolStripMenuItem.Text = "Export ...";
@@ -147,6 +149,7 @@
             // 
             // settingsToolStripMenuItem
             // 
+            this.settingsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("settingsToolStripMenuItem.Image")));
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -202,6 +205,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
+            this.settingsButton,
             this.toolStripSeparator3,
             this.toolStripLabel1,
             this.minLevelBox,
@@ -438,19 +442,6 @@
             this.first.UseVisualStyleBackColor = true;
             this.first.Click += new System.EventHandler(this.OnFirst);
             // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
@@ -465,6 +456,29 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
+            // 
+            // settingsButton
+            // 
+            this.settingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.settingsButton.Image = ((System.Drawing.Image)(resources.GetObject("settingsButton.Image")));
+            this.settingsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(23, 22);
+            this.settingsButton.Text = "Settings";
+            this.settingsButton.Click += new System.EventHandler(this.OnSettings);
+            // 
+            // syntaxRichTextBox1
+            // 
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
             // 
             // MainDlg
             // 
@@ -542,6 +556,7 @@
         private System.Windows.Forms.ProgressBar logLoadProgress;
         private System.Windows.Forms.Label logLoadPercent;
         private System.Windows.Forms.ToolStripButton useRegexp;
+        private System.Windows.Forms.ToolStripButton settingsButton;
     }
 }
 
