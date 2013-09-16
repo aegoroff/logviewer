@@ -121,6 +121,7 @@ namespace logviewer
 
         public void LoadLog(string rtf)
         {
+            this.EnableControls(true);
             this.syntaxRichTextBox1.SuspendLayout();
             this.syntaxRichTextBox1.Rtf = rtf;
             this.syntaxRichTextBox1.ResumeLayout();
@@ -184,6 +185,7 @@ namespace logviewer
             this.next.Enabled = enabled;
             this.last.Enabled = enabled;
             this.first.Enabled = enabled;
+            this.useRegexp.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
@@ -224,7 +226,7 @@ namespace logviewer
             {
                 return;
             }
-            this.EnableControls(true);
+            this.EnableControls(false);
             this.DisableBack(true);
             this.DisableForward(true);
             this.logFilterMin = this.minLevelBox.SelectedIndex;
