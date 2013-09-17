@@ -11,7 +11,7 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
+        private const string CreateIndexOnLevel = @"CREATE INDEX IF NOT EXISTS IX_Level ON Log (Level)";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
 
@@ -35,7 +35,7 @@ namespace logviewer.core
                 return;
             }
             const string CreateTable = @"
-                        CREATE TABLE Log (
+                        CREATE TABLE IF NOT EXISTS Log (
                                  Ix INTEGER PRIMARY KEY AUTOINCREMENT,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
