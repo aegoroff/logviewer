@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
 
@@ -38,7 +39,7 @@ namespace logviewer.core
             this.transaction.Commit();
         }
 
-        internal void RunSqlQuery(Action<SQLiteCommand> action, params string[] commands)
+        internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
             foreach (var command in commands)
             {
@@ -48,6 +49,18 @@ namespace logviewer.core
                     action(sqLiteCommand);
                 }
             }
+        }
+
+        internal static void AddParameter(IDbCommand cmd, string name, object value)
+        {
+            var parameter = SQLiteFactory.Instance.CreateParameter();
+            if (parameter == null)
+            {
+                return;
+            }
+            parameter.ParameterName = name;
+            parameter.Value = value;
+            cmd.Parameters.Add(parameter);
         }
 
         internal void ExecuteNonQuery(params string[] queries)

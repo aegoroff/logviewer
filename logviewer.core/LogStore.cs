@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.Devices;
 
 namespace logviewer.core
@@ -82,11 +81,11 @@ namespace logviewer.core
         public void AddMessage(LogMessage message)
         {
             const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
-            this.connection.RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
-                command.Parameters.AddWithValue("@Header", message.Header);
-                command.Parameters.AddWithValue("@Body", message.Body);
-                command.Parameters.AddWithValue("@Level", (int)message.Level);
+                DatabaseConnection.AddParameter(command, "@Header", message.Header);
+                DatabaseConnection.AddParameter(command, "@Body", message.Body);
+                DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);
                 command.ExecuteNonQuery();
             }, Cmd);
         }
@@ -106,7 +105,7 @@ namespace logviewer.core
 
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset, where);
-            this.connection.RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 var rdr = command.ExecuteReader();
@@ -130,7 +129,7 @@ namespace logviewer.core
             var result = 0L;
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            this.connection.RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 result = (long)command.ExecuteScalar();
@@ -176,20 +175,20 @@ namespace logviewer.core
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
-        private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
+        private static void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
             if (min != LogLevel.Trace)
             {
-                command.Parameters.AddWithValue("@Min", (int)min);
+                DatabaseConnection.AddParameter(command, "@Min", (int)min);
             }
             if (max != LogLevel.Fatal)
             {
-                command.Parameters.AddWithValue("@Max", (int)max);
+                DatabaseConnection.AddParameter(command, "@Max", (int)max);
             }
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 var f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
-                command.Parameters.AddWithValue("@Filter", f);
+                DatabaseConnection.AddParameter(command, "@Filter", f);
             }
         }
 
@@ -218,16 +217,5 @@ namespace logviewer.core
         }
 
         #endregion
-    }
-
-    [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
-    class SqliteRegEx : SQLiteFunction
-    {
-        public override object Invoke(object[] args)
-        {
-            var input = Convert.ToString(args[1]);
-            var pattern = Convert.ToString(args[0]);
-            return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        }
     }
 }
