@@ -23,7 +23,6 @@ namespace logviewer.core
         public LogStore(long dbSize = 0L, string databaseFilePath = null)
         {
             DatabasePath = databaseFilePath ?? Path.GetTempFileName();
-            SQLiteConnection.CreateFile(DatabasePath);
             connection = new DatabaseConnection(DatabasePath) ;
 
             const string CreateTable = @"
