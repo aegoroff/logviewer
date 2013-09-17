@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.Devices;
 
 namespace logviewer.core
@@ -12,32 +11,38 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private SQLiteTransaction transaction;
-        private readonly SQLiteConnection connection;
-        const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
-        const int PageSize = 1024;
-        
+        private const string CreateIndexOnLevel = @"CREATE INDEX IF NOT EXISTS IX_Level ON Log (Level)";
+        private const int PageSize = 1024;
+        private readonly DatabaseConnection connection;
+
         #endregion
 
         #region Constructors and Destructors
 
         public LogStore(long dbSize = 0L, string databaseFilePath = null)
         {
-            DatabasePath = databaseFilePath ?? Path.GetTempFileName();
-            SQLiteConnection.CreateFile(DatabasePath);
-            var conString = new SQLiteConnectionStringBuilder { DataSource = DatabasePath };
-            connection = new SQLiteConnection(conString.ToString());
-            connection.Open();
+            this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
+            this.connection = new DatabaseConnection(this.DatabasePath);
+            this.CreateTables(dbSize);
+        }
 
+        public string DatabasePath { get; private set; }
+
+        private void CreateTables(long dbSize)
+        {
+            if (!this.connection.IsEmpty)
+            {
+                return;
+            }
             const string CreateTable = @"
-                        CREATE TABLE Log (
+                        CREATE TABLE IF NOT EXISTS Log (
                                  Ix INTEGER PRIMARY KEY AUTOINCREMENT,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
                                  Level INTEGER NOT NULL
                         );
                     ";
-            
+
             const string SyncOff = @"PRAGMA synchronous = OFF;";
             const string Journal = @"PRAGMA journal_mode = MEMORY;";
             const string Cache = @"PRAGMA cache_size = {0};";
@@ -52,50 +57,48 @@ namespace logviewer.core
 
             var mmap = string.Format(Mmap, dbSize);
             var cache = string.Format(Cache, pages);
-            this.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
+            this.connection.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
         }
-
-        public string DatabasePath { get; private set; }
 
         #endregion
 
         #region Public Methods and Operators
 
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
         public void StartAddMessages()
         {
             this.NoIndex();
-            this.transaction = this.connection.BeginTransaction();
+            this.connection.BeginTran();
         }
 
         public void FinishAddMessages()
         {
-            this.transaction.Commit();
+            this.connection.CommitTran();
             this.Index();
         }
 
         public void Index()
         {
-            this.ExecuteNonQuery(CreateIndexOnLevel);
-        }
-        
-        public void NoIndex()
-        {
-            this.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
+            this.connection.ExecuteNonQuery(CreateIndexOnLevel);
         }
 
-        private void ExecuteNonQuery(params string[] queries)
+        public void NoIndex()
         {
-            this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
+            this.connection.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
         }
 
         public void AddMessage(LogMessage message)
         {
             const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
-            RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
-                command.Parameters.AddWithValue("@Header", message.Header);
-                command.Parameters.AddWithValue("@Body", message.Body);
-                command.Parameters.AddWithValue("@Level", (int)message.Level);
+                DatabaseConnection.AddParameter(command, "@Header", message.Header);
+                DatabaseConnection.AddParameter(command, "@Body", message.Body);
+                DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);
                 command.ExecuteNonQuery();
             }, Cmd);
         }
@@ -114,8 +117,9 @@ namespace logviewer.core
             var order = reverse ? "DESC" : "ASC";
 
             var where = Where(min, max, filter, useRegexp);
-            var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset, where);
-            this.RunSqlQuery(delegate(SQLiteCommand command)
+            var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset,
+                where);
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 var rdr = command.ExecuteReader();
@@ -139,11 +143,10 @@ namespace logviewer.core
             var result = 0L;
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            this.RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 result = (long)command.ExecuteScalar();
-                
             }, query);
 
             return result;
@@ -185,26 +188,21 @@ namespace logviewer.core
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
-        private static void AddParameters(SQLiteCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
+        private static void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
             if (min != LogLevel.Trace)
             {
-                command.Parameters.AddWithValue("@Min", (int)min);
+                DatabaseConnection.AddParameter(command, "@Min", (int)min);
             }
             if (max != LogLevel.Fatal)
             {
-                command.Parameters.AddWithValue("@Max", (int)max);
+                DatabaseConnection.AddParameter(command, "@Max", (int)max);
             }
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 var f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
-                command.Parameters.AddWithValue("@Filter", f);
+                DatabaseConnection.AddParameter(command, "@Filter", f);
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
 
         #endregion
@@ -215,44 +213,17 @@ namespace logviewer.core
         {
             if (disposing)
             {
-                if (transaction != null)
+                if (this.connection != null)
                 {
-                    transaction.Dispose();
+                    this.connection.Dispose();
                 }
-                if (connection != null)
+                if (File.Exists(this.DatabasePath))
                 {
-                    connection.Dispose();
-                }
-                if (File.Exists(DatabasePath))
-                {
-                    File.Delete(DatabasePath);
-                }
-            }
-        }
-
-        private void RunSqlQuery(Action<SQLiteCommand> action, params string[] commands)
-        {
-            foreach (var command in commands)
-            {
-                using (var sqLiteCommand = connection.CreateCommand())
-                {
-                    sqLiteCommand.CommandText = command;
-                    action(sqLiteCommand);
+                    File.Delete(this.DatabasePath);
                 }
             }
         }
 
         #endregion
-    }
-
-    [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
-    class SqliteRegEx : SQLiteFunction
-    {
-        public override object Invoke(object[] args)
-        {
-            var input = Convert.ToString(args[1]);
-            var pattern = Convert.ToString(args[0]);
-            return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        }
     }
 }

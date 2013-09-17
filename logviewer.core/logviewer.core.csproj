@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Executive.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="SafeRunner.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SizeUnit.cs" />
+    <Compile Include="SqliteRegEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
