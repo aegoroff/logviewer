@@ -96,7 +96,7 @@ namespace logviewer.core
                 {
                     return 1;
                 }
-                return (int) Math.Ceiling(this.totalFiltered / (float) this.pageSize);
+                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
             }
         }
 
@@ -192,7 +192,7 @@ namespace logviewer.core
                 }
             };
             this.task = Task.Factory.StartNew(function, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(rtf), uiContext);
+            this.task.ContinueWith(t => this.EndLogReading(rtf), this.uiContext);
         }
 
         private void EndLogReading(string rtf)
@@ -227,15 +227,15 @@ namespace logviewer.core
             {
                 return string.Empty;
             }
-            var reader = new LogReader(this.view.LogPath, messageHead);
+            var reader = new LogReader(this.view.LogPath, this.messageHead);
 
-            var append = reader.Length > logSize && this.CurrentPathCached;
+            var append = reader.Length > this.logSize && this.CurrentPathCached;
 
-            var offset = append ? logSize : 0L;
-            
+            var offset = append ? this.logSize : 0L;
+
             this.logSize = reader.Length;
 
-            RunOnGuiThread(this.SetLogSize);
+            this.RunOnGuiThread(this.SetLogSize);
 
             if (this.logSize == 0)
             {
@@ -247,7 +247,7 @@ namespace logviewer.core
                 return this.CreateRtf(true);
             }
 
-            RunOnGuiThread(ResetLogStatistic);
+            this.RunOnGuiThread(this.ResetLogStatistic);
 
             this.currentPath = reader.LogPath;
 
@@ -270,12 +270,12 @@ namespace logviewer.core
 
             try
             {
-                reader.ProgressChanged += OnReadLogProgressChanged;
+                reader.ProgressChanged += this.OnReadLogProgressChanged;
                 reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
             }
             finally
             {
-                reader.ProgressChanged -= OnReadLogProgressChanged;
+                reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 this.store.FinishAddMessages();
             }
             return this.CreateRtf();
@@ -312,20 +312,21 @@ namespace logviewer.core
 
         public void MinFilter(int value)
         {
-            this.minFilter = (LogLevel) value;
+            this.minFilter = (LogLevel)value;
         }
 
         public void MaxFilter(int value)
         {
-            this.maxFilter = (LogLevel) value;
+            this.maxFilter = (LogLevel)value;
         }
 
         public void PageSize(int value)
         {
             if (this.pageSize != value)
             {
-                CurrentPage = 1;
-                this.BeginLogReading((int)minFilter, (int)maxFilter, textFilter, reverseChronological, useRegexp);
+                this.CurrentPage = 1;
+                this.BeginLogReading((int)this.minFilter, (int)this.maxFilter, this.textFilter,
+                    this.reverseChronological, this.useRegexp);
             }
             this.pageSize = value;
             this.SetPageSize();
@@ -400,7 +401,8 @@ namespace logviewer.core
                 this.recentFiles.Remove(this.view.LogPath);
                 this.recentFiles.Add(this.view.LogPath);
             }
-            File.WriteAllLines(this.recentFilesFilePath, this.recentFiles.GetRange(0, Math.Min(recentFiles.Count, Settings.KeepLastNFiles)));
+            File.WriteAllLines(this.recentFilesFilePath,
+                this.recentFiles.GetRange(0, Math.Min(this.recentFiles.Count, Settings.KeepLastNFiles)));
         }
 
         public void OpenLogFile()
@@ -481,7 +483,7 @@ namespace logviewer.core
                 this.CurrentPage = 1;
             }
 
-            var total = DisplayedMessages;
+            var total = this.DisplayedMessages;
             var fraction = total / 20L;
             var signalCounter = 1;
             var count = 0;
@@ -495,7 +497,7 @@ namespace logviewer.core
                     return;
                 }
                 ++signalCounter;
-                var percent = (count / (double) total) * 100;
+                var percent = (count / (double)total) * 100;
                 this.OnLogReadProgress(percent);
             };
 
@@ -515,10 +517,10 @@ namespace logviewer.core
 
         private void OnLogReadProgress(double percent)
         {
-            RunOnGuiThread(() => this.view.SetProgress(percent));
+            this.RunOnGuiThread(() => this.view.SetProgress(percent));
         }
 
-        void RunOnGuiThread(Action action)
+        private void RunOnGuiThread(Action action)
         {
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
         }
@@ -557,7 +559,7 @@ namespace logviewer.core
             {
                 if (this.markers[i].IsMatch(line))
                 {
-                    return (LogLevel) i;
+                    return (LogLevel)i;
                 }
             }
 
