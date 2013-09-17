@@ -35,7 +35,7 @@ namespace logviewer
             }
         }
 
-        private void OnKeyPressInPageSizeBox(object sender, KeyPressEventArgs e)
+        private void OnKeyPressInNumberOnlyBox(object sender, KeyPressEventArgs e)
         {
             e.Handled = !char.IsNumber(e.KeyChar) && !char.IsControl(e.KeyChar);
         }
