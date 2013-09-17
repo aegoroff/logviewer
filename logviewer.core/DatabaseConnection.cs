@@ -13,7 +13,7 @@ namespace logviewer.core
         internal DatabaseConnection(string databaseFilePath)
         {
             this.DatabasePath = databaseFilePath;
-            if (!File.Exists(this.DatabasePath))
+            if (!File.Exists(this.DatabasePath) || new FileInfo(this.DatabasePath).Length == 0)
             {
                 SQLiteConnection.CreateFile(this.DatabasePath);
                 this.IsEmpty = true;

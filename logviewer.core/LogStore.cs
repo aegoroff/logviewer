@@ -11,19 +11,29 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
-        const int PageSize = 1024;
+        private const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
+        private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
-        
+
         #endregion
 
         #region Constructors and Destructors
 
         public LogStore(long dbSize = 0L, string databaseFilePath = null)
         {
-            DatabasePath = databaseFilePath ?? Path.GetTempFileName();
-            connection = new DatabaseConnection(DatabasePath) ;
+            this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
+            this.connection = new DatabaseConnection(this.DatabasePath);
+            this.CreateTables(dbSize);
+        }
 
+        public string DatabasePath { get; private set; }
+
+        private void CreateTables(long dbSize)
+        {
+            if (!this.connection.IsEmpty)
+            {
+                return;
+            }
             const string CreateTable = @"
                         CREATE TABLE Log (
                                  Ix INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +42,7 @@ namespace logviewer.core
                                  Level INTEGER NOT NULL
                         );
                     ";
-            
+
             const string SyncOff = @"PRAGMA synchronous = OFF;";
             const string Journal = @"PRAGMA journal_mode = MEMORY;";
             const string Cache = @"PRAGMA cache_size = {0};";
@@ -50,11 +60,14 @@ namespace logviewer.core
             this.connection.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
         }
 
-        public string DatabasePath { get; private set; }
-
         #endregion
 
         #region Public Methods and Operators
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
 
         public void StartAddMessages()
         {
@@ -72,7 +85,7 @@ namespace logviewer.core
         {
             this.connection.ExecuteNonQuery(CreateIndexOnLevel);
         }
-        
+
         public void NoIndex()
         {
             this.connection.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
@@ -104,7 +117,8 @@ namespace logviewer.core
             var order = reverse ? "DESC" : "ASC";
 
             var where = Where(min, max, filter, useRegexp);
-            var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset, where);
+            var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset,
+                where);
             this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
@@ -133,7 +147,6 @@ namespace logviewer.core
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 result = (long)command.ExecuteScalar();
-                
             }, query);
 
             return result;
@@ -192,11 +205,6 @@ namespace logviewer.core
             }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
         #endregion
 
         #region Methods
@@ -205,13 +213,13 @@ namespace logviewer.core
         {
             if (disposing)
             {
-                if (connection != null)
+                if (this.connection != null)
                 {
-                    connection.Dispose();
+                    this.connection.Dispose();
                 }
-                if (File.Exists(DatabasePath))
+                if (File.Exists(this.DatabasePath))
                 {
-                    File.Delete(DatabasePath);
+                    File.Delete(this.DatabasePath);
                 }
             }
         }
