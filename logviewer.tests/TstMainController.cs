@@ -17,17 +17,22 @@ namespace logviewer.tests
     {
         private const string f1 = "1";
         private const string f2 = "2";
-        private const string Settings = "test.db";
+        private const string f3 = "3";
+        private const string SettingsDb = "test.db";
+        int originalLimit;
 
         #region Setup/Teardown
 
         [SetUp]
         public void Setup()
         {
+            CleanupTestFiles();
+            originalLimit = Settings.KeepLastNFiles;
+            Settings.KeepLastNFiles = 2;
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(MessageStart, this.levels, Settings, 100);
+            this.controller = new MainController(MessageStart, this.levels, SettingsDb, 100);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
@@ -35,6 +40,7 @@ namespace logviewer.tests
         [TearDown]
         public void Teardown()
         {
+            Settings.KeepLastNFiles = originalLimit;
             if (File.Exists(TestPath))
             {
                 File.Delete(TestPath);
@@ -43,6 +49,16 @@ namespace logviewer.tests
             {
                 File.Delete(RecentPath);
             }
+            CleanupTestFiles();
+            if (File.Exists(SettingsDb))
+            {
+                File.Delete(SettingsDb);
+            }
+            this.controller.Dispose();
+        }
+
+        private static void CleanupTestFiles()
+        {
             if (File.Exists(f1))
             {
                 File.Delete(f1);
@@ -51,11 +67,10 @@ namespace logviewer.tests
             {
                 File.Delete(f2);
             }
-            if (File.Exists(Settings))
+            if (File.Exists(f3))
             {
-                File.Delete(Settings);
+                File.Delete(f3);
             }
-            this.controller.Dispose();
         }
 
         #endregion
@@ -119,7 +134,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, markers, Settings);
+            this.controller = new MainController(MessageStart, markers, SettingsDb);
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -136,7 +151,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, markers, Settings);
+            this.controller = new MainController(MessageStart, markers, SettingsDb);
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -323,7 +338,7 @@ namespace logviewer.tests
         }
 
         [Test]
-        public void SaveAndReadRecentFilesOneFile()
+        public void SaveAndReadRecentFilesNoFile()
         {
             using (this.mockery.Ordered())
             {
@@ -338,6 +353,12 @@ namespace logviewer.tests
         [Test]
         public void SaveAndReadRecentFiles()
         {
+            using (File.Open(f1, FileMode.Create))
+            {
+            }
+            using (File.Open(f2, FileMode.Create))
+            {
+            }
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
@@ -346,6 +367,56 @@ namespace logviewer.tests
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
             }
+            this.controller.AddCurrentFileToRecentFilesList();
+            this.controller.AddCurrentFileToRecentFilesList();
+            this.controller.ReadRecentFiles();
+        }
+        
+        [Test]
+        public void RecentFilesMoreThenLimit()
+        {
+            using (File.Open(f1, FileMode.Create))
+            {
+            }
+            using (File.Open(f2, FileMode.Create))
+            {
+            }
+            using (File.Open("3", FileMode.Create))
+            {
+            }
+            using (this.mockery.Ordered())
+            {
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn("3");
+                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem("3"));
+                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
+            }
+            this.controller.AddCurrentFileToRecentFilesList();
+            this.controller.AddCurrentFileToRecentFilesList();
+            this.controller.AddCurrentFileToRecentFilesList();
+            this.controller.ReadRecentFiles();
+        }
+        
+        [Test]
+        public void RecentFilesMoreThenLimitNoOneFile()
+        {
+            using (File.Open(f1, FileMode.Create))
+            {
+            }
+            using (File.Open(f2, FileMode.Create))
+            {
+            }
+            using (this.mockery.Ordered())
+            {
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn("file_3");
+                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
+            }
+            this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();

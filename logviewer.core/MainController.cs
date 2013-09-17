@@ -370,20 +370,13 @@ namespace logviewer.core
 
             this.view.ClearRecentFilesList();
 
-            try
-            {
-                foreach (
+            foreach (
                     var item in
                         from file in files
                         where !string.IsNullOrWhiteSpace(file) && File.Exists(file)
                         select file)
-                {
-                    this.view.CreateRecentFileItem(item);
-                }
-            }
-            catch (Exception e)
             {
-                Log.Instance.Error(e.Message, e);
+                this.view.CreateRecentFileItem(item);
             }
         }
 
