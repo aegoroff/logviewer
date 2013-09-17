@@ -400,7 +400,7 @@ namespace logviewer.core
                 this.recentFiles.Remove(this.view.LogPath);
                 this.recentFiles.Add(this.view.LogPath);
             }
-            File.WriteAllLines(this.recentFilesFilePath, this.recentFiles);
+            File.WriteAllLines(this.recentFilesFilePath, this.recentFiles.GetRange(0, Math.Min(recentFiles.Count, Settings.KeepLastNFiles)));
         }
 
         public void OpenLogFile()
