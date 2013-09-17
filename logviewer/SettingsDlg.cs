@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 14.09.2013
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.Globalization;
 using System.Windows.Forms;
 using logviewer.core;
@@ -11,15 +15,15 @@ namespace logviewer
         {
             this.InitializeComponent();
             this.openLastFile.Checked = Settings.OpenLastFile;
-            pageSizeBox.Text = Settings.PageSize.ToString(CultureInfo.CurrentUICulture);
-            keepLastNFilesBox.Text = Settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
-            messageStartPatternBox.Text = Settings.StartMessageTemplate;
-            traceBox.Text = Settings.TraceLevel;
-            debugBox.Text = Settings.DebugLevel;
-            infoBox.Text = Settings.InfoLevel;
-            warnBox.Text = Settings.WarnLevel;
-            errorBox.Text = Settings.ErrorLevel;
-            fatalBox.Text = Settings.FatalLevel;
+            this.pageSizeBox.Text = Settings.PageSize.ToString(CultureInfo.CurrentUICulture);
+            this.keepLastNFilesBox.Text = Settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
+            this.messageStartPatternBox.Text = Settings.StartMessageTemplate;
+            this.traceBox.Text = Settings.TraceLevel;
+            this.debugBox.Text = Settings.DebugLevel;
+            this.infoBox.Text = Settings.InfoLevel;
+            this.warnBox.Text = Settings.WarnLevel;
+            this.errorBox.Text = Settings.ErrorLevel;
+            this.fatalBox.Text = Settings.FatalLevel;
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
@@ -30,7 +34,7 @@ namespace logviewer
         private void OnSetPageSize(object sender, EventArgs e)
         {
             int pageSize;
-            if (int.TryParse(pageSizeBox.Text, out pageSize))
+            if (int.TryParse(this.pageSizeBox.Text, out pageSize))
             {
                 Settings.PageSize = pageSize;
             }
@@ -43,43 +47,43 @@ namespace logviewer
 
         private void OnSetMessageStartPattern(object sender, EventArgs e)
         {
-            Settings.StartMessageTemplate = messageStartPatternBox.Text;
+            Settings.StartMessageTemplate = this.messageStartPatternBox.Text;
         }
 
         private void OnSetTraceLevel(object sender, EventArgs e)
         {
-            Settings.TraceLevel = traceBox.Text;
+            Settings.TraceLevel = this.traceBox.Text;
         }
 
         private void OnSetDebugLevel(object sender, EventArgs e)
         {
-            Settings.DebugLevel = debugBox.Text;
+            Settings.DebugLevel = this.debugBox.Text;
         }
 
         private void OnSetInfoLevel(object sender, EventArgs e)
         {
-            Settings.InfoLevel = infoBox.Text;
+            Settings.InfoLevel = this.infoBox.Text;
         }
 
         private void OnSetWarnLevel(object sender, EventArgs e)
         {
-            Settings.WarnLevel = warnBox.Text;
+            Settings.WarnLevel = this.warnBox.Text;
         }
 
         private void OnSetErrorLevel(object sender, EventArgs e)
         {
-            Settings.ErrorLevel = errorBox.Text;
+            Settings.ErrorLevel = this.errorBox.Text;
         }
 
         private void OnSetFatalLevel(object sender, EventArgs e)
         {
-            Settings.FatalLevel = fatalBox.Text;
+            Settings.FatalLevel = this.fatalBox.Text;
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)
         {
             int value;
-            if (int.TryParse(keepLastNFilesBox.Text, out value))
+            if (int.TryParse(this.keepLastNFilesBox.Text, out value))
             {
                 Settings.KeepLastNFiles = value;
             }

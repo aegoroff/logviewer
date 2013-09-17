@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 16.09.2012
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.Windows.Forms;
 using Ninject;
 

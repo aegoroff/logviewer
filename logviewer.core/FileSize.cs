@@ -1,3 +1,7 @@
+// Created by: egr
+// Created at: 19.09.2012
+// © 2012-2013 Alexander Egorov
+
 using System;
 using System.Globalization;
 using logviewer.core.Properties;
@@ -38,9 +42,9 @@ namespace logviewer.core
             this.bytes = bytes;
             this.sizeUnit = SizeUnit.Bytes;
             this.sizeUnit = bytes == 0
-                                ? SizeUnit.Bytes
-                                : (SizeUnit) (IntegerLogarithm(bytes) / IntegerLogarithm(BinaryThousand));
-            this.value = this.sizeUnit == SizeUnit.Bytes ? 0 : bytes / Math.Pow(BinaryThousand, (int) this.sizeUnit);
+                ? SizeUnit.Bytes
+                : (SizeUnit)(IntegerLogarithm(bytes) / IntegerLogarithm(BinaryThousand));
+            this.value = this.sizeUnit == SizeUnit.Bytes ? 0 : bytes / Math.Pow(BinaryThousand, (int)this.sizeUnit);
         }
 
         /// <summary>
@@ -77,7 +81,7 @@ namespace logviewer.core
                 var y = x >> c;
                 if (y != 0)
                 {
-                    n -= (ulong) c;
+                    n -= (ulong)c;
                     x = y;
                 }
                 c >>= 1;

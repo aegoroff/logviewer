@@ -1,5 +1,9 @@
-﻿using NUnit.Framework;
+﻿// Created by: egr
+// Created at: 02.01.2013
+// © 2012-2013 Alexander Egorov
+
 using logviewer.core;
+using NUnit.Framework;
 
 namespace logviewer.tests
 {
@@ -25,7 +29,7 @@ namespace logviewer.tests
             Assert.That(this.m.Header, Is.EqualTo(H));
             Assert.That(this.m.Body, Is.EqualTo(B));
         }
-        
+
         [Test]
         public void FullCached()
         {
@@ -53,7 +57,7 @@ namespace logviewer.tests
             Assert.That(this.m.Header, Is.EqualTo(H));
             Assert.That(this.m.Body, Is.Empty);
         }
-        
+
         [Test]
         public void OnlyHeadCached()
         {

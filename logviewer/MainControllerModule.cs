@@ -1,9 +1,13 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 14.09.2013
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using Ninject.Modules;
 using logviewer.core;
+using Ninject.Modules;
 
 namespace logviewer
 {
@@ -11,26 +15,26 @@ namespace logviewer
     {
         private static readonly string[] markers =
         {
-           "TraceMarker",
-           "DebugMarker",
-           "InfoMarker",
-           "WarnMarker",
-           "ErrorMarker",
-           "FatalMarker"
-        };
-        
-        private static readonly Action<string>[] levelSetters =
-        {
-           l => Settings.TraceLevel = l,
-           l => Settings.DebugLevel = l,
-           l => Settings.InfoLevel = l,
-           l => Settings.WarnLevel = l,
-           l => Settings.ErrorLevel = l,
-           l => Settings.FatalLevel = l
+            "TraceMarker",
+            "DebugMarker",
+            "InfoMarker",
+            "WarnMarker",
+            "ErrorMarker",
+            "FatalMarker"
         };
 
-        const string ApplicationOptionsFolder = "logviewer";
-        const string RecentFilesFileName = "logviewerRecentFiles.txt";
+        private static readonly Action<string>[] levelSetters =
+        {
+            l => Settings.TraceLevel = l,
+            l => Settings.DebugLevel = l,
+            l => Settings.InfoLevel = l,
+            l => Settings.WarnLevel = l,
+            l => Settings.ErrorLevel = l,
+            l => Settings.FatalLevel = l
+        };
+
+        private const string ApplicationOptionsFolder = "logviewer";
+        private const string RecentFilesFileName = "logviewerRecentFiles.txt";
 
         public override void Load()
         {
@@ -42,12 +46,12 @@ namespace logviewer
             {
                 Directory.CreateDirectory(applicationFolder);
             }
-            
+
             if (File.Exists(oldRecentFilesPath))
             {
                 File.Move(oldRecentFilesPath, recentFilesPath);
             }
-            
+
             this.Bind<ILogView>().To<MainDlg>();
             this.Bind<MainController>().ToSelf()
                 .WithConstructorArgument("startMessagePattern", StartMessageTemplate)
@@ -68,14 +72,14 @@ namespace logviewer
             }
         }
 
-        static IEnumerable<string> Levels
+        private static IEnumerable<string> Levels
         {
             get
             {
                 for (var i = 0; i < markers.Length; i++)
                 {
                     var userDefined = Settings.LevelReaders[i]();
-                    if(string.IsNullOrWhiteSpace(userDefined))
+                    if (string.IsNullOrWhiteSpace(userDefined))
                     {
                         var vendorDefined = ConfigurationManager.AppSettings[markers[i]];
                         levelSetters[i](vendorDefined);

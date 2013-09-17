@@ -1,10 +1,14 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 19.09.2012
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using logviewer.core;
 using NMock;
 using NUnit.Framework;
-using logviewer.core;
 
 namespace logviewer.tests
 {
@@ -66,7 +70,9 @@ namespace logviewer.tests
         private MockFactory mockery;
         private Mock<ILogView> view;
         private MainController controller;
-        private const string MessageExamples = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
+
+        private const string MessageExamples =
+            "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
         private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
 
@@ -74,7 +80,8 @@ namespace logviewer.tests
         public void AllFilters()
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            File.WriteAllText(TestPath, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN \n2008-12-27 19:42:11,906 [5555] WARN ");
+            File.WriteAllText(TestPath,
+                MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN \n2008-12-27 19:42:11,906 [5555] WARN ");
             this.controller.MinFilter((int)LogLevel.Warn);
             this.controller.MaxFilter((int)LogLevel.Warn);
             this.controller.TextFilter("5555");
@@ -83,9 +90,10 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
-        
-        [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
-        [TestCase((int) LogLevel.Warn, (int) LogLevel.Warn, MessageExamples, 0)]
+
+        [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)
+        ]
+        [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples, 0)]
         public void MaxAndMaxFilter(int min, int max, string msg, int count)
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
@@ -112,7 +120,7 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
-        
+
         [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
         [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERROR\]?", "FATAL" }, 1)]
         [TestCase(LogLevel.Info, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 2)]
@@ -156,7 +164,7 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
-        
+
         [Test]
         public void FilterTextNotContainsTextInHead()
         {
@@ -166,7 +174,7 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
-        
+
         [Test]
         public void FilterTextNotContainsTextInBody()
         {
@@ -176,7 +184,7 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
-        
+
         [Test]
         public void FilterTextNotContainsTextInBodySubstr()
         {
@@ -240,9 +248,9 @@ namespace logviewer.tests
             Assert.IsEmpty(this.controller.ReadLog());
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
         }
-        
+
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof (ArgumentException))]
         public void ReadEmptyWhenMinGreaterThenMax()
         {
             this.controller.MinFilter((int)LogLevel.Error);
@@ -308,7 +316,7 @@ namespace logviewer.tests
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
             this.controller.ReadRecentFiles();
         }
-        
+
         [Test]
         public void ReadRecentFilesSingleUnexistFile()
         {
@@ -316,11 +324,10 @@ namespace logviewer.tests
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
             this.controller.ReadRecentFiles();
         }
-        
+
         [Test]
         public void ReadRecentFilesSingleExistFile()
         {
-            
             using (File.Open(f1, FileMode.Create))
             {
             }
@@ -329,11 +336,10 @@ namespace logviewer.tests
             this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
             this.controller.ReadRecentFiles();
         }
-        
+
         [Test]
         public void ReadRecentFilesManyExistFile()
         {
-            
             using (File.Open(f1, FileMode.Create))
             {
             }
@@ -341,7 +347,7 @@ namespace logviewer.tests
             {
             }
             File.WriteAllLines(RecentPath, new[] { f1, f2 });
-            using (mockery.Ordered())
+            using (this.mockery.Ordered())
             {
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
@@ -353,7 +359,7 @@ namespace logviewer.tests
         [Test]
         public void SaveAndReadRecentFilesNoFile()
         {
-            using (mockery.Ordered())
+            using (this.mockery.Ordered())
             {
                 this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
@@ -362,14 +368,14 @@ namespace logviewer.tests
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
         }
-        
+
         [Test]
         public void SaveAndReadRecentFiles()
         {
             using (File.Open(TestPath, FileMode.Create))
             {
             }
-            using (mockery.Ordered())
+            using (this.mockery.Ordered())
             {
                 this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
@@ -378,7 +384,7 @@ namespace logviewer.tests
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
         }
-        
+
         [Test]
         public void SaveAndReadRecentFilesSeveralTimes()
         {
@@ -392,7 +398,7 @@ namespace logviewer.tests
             {
             }
 
-            using (mockery.Ordered())
+            using (this.mockery.Ordered())
             {
                 this.view.Expects.One.Method(_ => _.Initialize());
                 this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
@@ -430,7 +436,7 @@ namespace logviewer.tests
         {
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
         }
-        
+
         [Test]
         public void TotalPagesMessagesBelowPageSize()
         {
@@ -444,7 +450,7 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
         }
-        
+
         [Test]
         public void TotalPagesMessagesInexactlyAbovePageSize()
         {
@@ -458,7 +464,7 @@ namespace logviewer.tests
             Assert.IsNotEmpty(this.controller.ReadLog());
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
         }
-        
+
         [Test]
         public void TotalPagesMessagesExactlyAbovePageSize()
         {

@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿// Created by: egr
+// Created at: 20.09.2012
+// © 2012-2013 Alexander Egorov
+
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace logviewer.core

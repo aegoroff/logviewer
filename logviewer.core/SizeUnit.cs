@@ -1,3 +1,7 @@
+// Created by: egr
+// Created at: 19.09.2012
+// © 2012-2013 Alexander Egorov
+
 namespace logviewer.core
 {
     /// <summary>

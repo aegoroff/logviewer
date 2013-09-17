@@ -1,3 +1,7 @@
+// Created by: egr
+// Created at: 19.09.2012
+// © 2012-2013 Alexander Egorov
+
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -9,25 +13,27 @@ namespace logviewer.core
     {
         private const string NewLine = "\n";
 
-        private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>
-            {
-                { LogLevel.Trace, FormatBody(LogLevel.Trace) },
-                { LogLevel.Debug, FormatBody(LogLevel.Debug) },
-                { LogLevel.Info, FormatBody(LogLevel.Info) },
-                { LogLevel.Warn, FormatBody(LogLevel.Warn) },
-                { LogLevel.Error, FormatBody(LogLevel.Error) },
-                { LogLevel.Fatal, FormatBody(LogLevel.Fatal) },
-            };
+        private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary
+            <LogLevel, RtfCharFormat>
+        {
+            { LogLevel.Trace, FormatBody(LogLevel.Trace) },
+            { LogLevel.Debug, FormatBody(LogLevel.Debug) },
+            { LogLevel.Info, FormatBody(LogLevel.Info) },
+            { LogLevel.Warn, FormatBody(LogLevel.Warn) },
+            { LogLevel.Error, FormatBody(LogLevel.Error) },
+            { LogLevel.Fatal, FormatBody(LogLevel.Fatal) },
+        };
 
-        private static readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>
-            {
-                { LogLevel.Trace, FormatHead(LogLevel.Trace) },
-                { LogLevel.Debug, FormatHead(LogLevel.Debug) },
-                { LogLevel.Info, FormatHead(LogLevel.Info) },
-                { LogLevel.Warn, FormatHead(LogLevel.Warn) },
-                { LogLevel.Error, FormatHead(LogLevel.Error) },
-                { LogLevel.Fatal, FormatHead(LogLevel.Fatal) },
-            };
+        private static readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary
+            <LogLevel, RtfCharFormat>
+        {
+            { LogLevel.Trace, FormatHead(LogLevel.Trace) },
+            { LogLevel.Debug, FormatHead(LogLevel.Debug) },
+            { LogLevel.Info, FormatHead(LogLevel.Info) },
+            { LogLevel.Warn, FormatHead(LogLevel.Warn) },
+            { LogLevel.Error, FormatHead(LogLevel.Error) },
+            { LogLevel.Fatal, FormatHead(LogLevel.Fatal) },
+        };
 
         private static Dictionary<LogLevel, Color> levelsMap;
 
@@ -43,7 +49,7 @@ namespace logviewer.core
         {
             get { return this.head == null && this.body == null && (this.strings == null || this.strings.Count == 0); }
         }
-        
+
         public string Header
         {
             get { return this.head ?? (this.IsEmpty ? string.Empty : this.strings[0]); }
@@ -84,12 +90,12 @@ namespace logviewer.core
         private static RtfCharFormat FormatHead(LogLevel level)
         {
             return new RtfCharFormat
-                {
-                    Color = Colorize(level),
-                    Font = "Courier New",
-                    Size = 10,
-                    Bold = true
-                };
+            {
+                Color = Colorize(level),
+                Font = "Courier New",
+                Size = 10,
+                Bold = true
+            };
         }
 
         private static RtfCharFormat FormatBody(LogLevel level)
@@ -104,14 +110,14 @@ namespace logviewer.core
             if (levelsMap == null)
             {
                 levelsMap = new Dictionary<LogLevel, Color>
-                    {
-                        { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
-                        { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
-                        { LogLevel.Info, Color.Green },
-                        { LogLevel.Warn, Color.Orange },
-                        { LogLevel.Error, Color.Red },
-                        { LogLevel.Fatal, Color.DarkViolet }
-                    };
+                {
+                    { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
+                    { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
+                    { LogLevel.Info, Color.Green },
+                    { LogLevel.Warn, Color.Orange },
+                    { LogLevel.Error, Color.Red },
+                    { LogLevel.Fatal, Color.DarkViolet }
+                };
             }
             return levelsMap[level];
         }

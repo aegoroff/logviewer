@@ -1,11 +1,14 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 16.09.2012
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Ninject;
 using logviewer.core;
-using Settings = logviewer.core.Settings;
+using Ninject;
 
 namespace logviewer
 {
@@ -50,10 +53,10 @@ namespace logviewer
         [Inject]
         public MainController Controller
         {
-            get { return controller; }
+            get { return this.controller; }
             set
             {
-                controller = value;
+                this.controller = value;
                 this.controller.SetView(this);
             }
         }
@@ -85,8 +88,8 @@ namespace logviewer
         public void SetProgress(double value)
         {
             var percent = (int)value;
-            logLoadProgress.Value = percent;
-            logLoadPercent.Text = string.Format("{0} %", percent);
+            this.logLoadProgress.Value = percent;
+            this.logLoadPercent.Text = string.Format("{0} %", percent);
         }
 
         public void CreateRecentFileItem(string file)
@@ -190,7 +193,7 @@ namespace logviewer
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
         {
-            var item = (ToolStripMenuItem) sender;
+            var item = (ToolStripMenuItem)sender;
             this.StartLoadingLog(item.Tag as string);
         }
 
@@ -238,7 +241,8 @@ namespace logviewer
             Settings.Sorting = this.reverse;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
-            this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse, this.useRegexp.Checked);
+            this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse,
+                this.useRegexp.Checked);
         }
 
         private void OnClose(object sender, EventArgs e)
@@ -354,9 +358,9 @@ namespace logviewer
             using (dlg)
             {
                 dlg.ShowDialog();
-                controller.CreateMarkers(Settings.LevelReaders.Select(r => r()));
-                controller.CreateMessageHead(Settings.StartMessageTemplate);
-                controller.PageSize(Settings.PageSize);
+                this.controller.CreateMarkers(Settings.LevelReaders.Select(r => r()));
+                this.controller.CreateMessageHead(Settings.StartMessageTemplate);
+                this.controller.PageSize(Settings.PageSize);
             }
         }
 
@@ -376,7 +380,7 @@ namespace logviewer
 
         private void OnChangeRegexpUsage(object sender, EventArgs e)
         {
-            Settings.UseRegexp = useRegexp.Checked;
+            Settings.UseRegexp = this.useRegexp.Checked;
         }
     }
 }

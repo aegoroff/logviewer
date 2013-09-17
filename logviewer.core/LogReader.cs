@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 14.09.2013
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -34,7 +38,7 @@ namespace logviewer.core
 
         public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
         {
-            if (Length == 0)
+            if (this.Length == 0)
             {
                 return;
             }
@@ -43,15 +47,15 @@ namespace logviewer.core
             Encoding srcEncoding;
             string mapName = Guid.NewGuid().ToString();
             using (
-                var mmf = MemoryMappedFile.CreateFromFile(LogPath, FileMode.Open, mapName, 0,
+                var mmf = MemoryMappedFile.CreateFromFile(this.LogPath, FileMode.Open, mapName, 0,
                     MemoryMappedFileAccess.Read))
             {
-                using (var stream = mmf.CreateViewStream(0, Length, MemoryMappedFileAccess.Read))
+                using (var stream = mmf.CreateViewStream(0, this.Length, MemoryMappedFileAccess.Read))
                 {
                     srcEncoding = SrcEncoding(stream, out decode);
                 }
             }
-            var fs = new FileStream(LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
+            var fs = new FileStream(this.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
             using (fs)
             {
                 fs.Seek(offset, SeekOrigin.Begin);
@@ -85,10 +89,10 @@ namespace logviewer.core
                             if (stream.Position >= signalCounter * fraction)
                             {
                                 ++signalCounter;
-                                var percent = (stream.Position / (double) total) * 100;
-                                if (ProgressChanged != null)
+                                var percent = (stream.Position / (double)total) * 100;
+                                if (this.ProgressChanged != null)
                                 {
-                                    ProgressChanged(this, new ProgressChangedEventArgs((int) percent, null));
+                                    this.ProgressChanged(this, new ProgressChangedEventArgs((int)percent, null));
                                 }
                             }
 

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 02.05.2013
+// © 2012-2013 Alexander Egorov
+
+using System;
 using Microsoft.Win32;
 
 namespace logviewer.core
@@ -9,6 +13,7 @@ namespace logviewer.core
         /// Base name of registry key of application options
         /// </summary>
         internal const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
+
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
         private const string LastOpenedFileParameterName = @"LastOpenedFile";
@@ -52,7 +57,7 @@ namespace logviewer.core
             }
             return result;
         }
-        
+
         private static int GetIntValue(RegistryKey rk, string key, int defaultValue = default(int))
         {
             var obj = rk.GetValue(key);
@@ -63,7 +68,7 @@ namespace logviewer.core
             }
             return (int)obj;
         }
-        
+
         private static string GetStringValue(string key)
         {
             return GetStringValue(RegistryKey, key);
@@ -78,7 +83,7 @@ namespace logviewer.core
         {
             return GetIntValue(RegistryKey, key, defaultValue);
         }
-        
+
         private static bool GetBoolValue(string key)
         {
             return GetIntValue(key) == 1;
@@ -88,7 +93,7 @@ namespace logviewer.core
         {
             RegistryKey.SetValue(key, value, RegistryValueKind.DWord);
         }
-        
+
         private static void SetBoolValue(string key, bool value)
         {
             SetIntValue(key, value ? 1 : 0);
@@ -99,7 +104,7 @@ namespace logviewer.core
             get { return GetStringValue(FilterParameterName); }
             set { SetStringValue(FilterParameterName, value); }
         }
-        
+
         public static string LastOpenedFile
         {
             get { return GetStringValue(LastOpenedFileParameterName); }
@@ -111,19 +116,19 @@ namespace logviewer.core
             get { return GetBoolValue(OpenLastFileParameterName); }
             set { SetBoolValue(OpenLastFileParameterName, value); }
         }
-        
+
         public static int MinLevel
         {
             get { return GetIntValue(MinLevelParameterName); }
             set { SetIntValue(MinLevelParameterName, value); }
         }
-        
+
         public static int MaxLevel
         {
             get { return GetIntValue(MaxLevelParameterName, (int)LogLevel.Fatal); }
             set { SetIntValue(MaxLevelParameterName, value); }
         }
-        
+
         public static int PageSize
         {
             get { return GetIntValue(PageSizeParameterName, 5000); }
@@ -135,7 +140,7 @@ namespace logviewer.core
             get { return GetBoolValue(SortingParameterName); }
             set { SetBoolValue(SortingParameterName, value); }
         }
-        
+
         public static bool UseRegexp
         {
             get { return GetBoolValue(UseRegexpParameterName); }
@@ -147,37 +152,37 @@ namespace logviewer.core
             get { return GetStringValue(StartMessageParameterName); }
             set { SetStringValue(StartMessageParameterName, value); }
         }
-        
+
         public static string TraceLevel
         {
             get { return GetStringValue(TraceParameterName); }
             set { SetStringValue(TraceParameterName, value); }
         }
-        
+
         public static string DebugLevel
         {
             get { return GetStringValue(DebugParameterName); }
             set { SetStringValue(DebugParameterName, value); }
         }
-        
+
         public static string InfoLevel
         {
             get { return GetStringValue(InfoParameterName); }
             set { SetStringValue(InfoParameterName, value); }
         }
-        
+
         public static string WarnLevel
         {
             get { return GetStringValue(WarnParameterName); }
             set { SetStringValue(WarnParameterName, value); }
         }
-        
+
         public static string ErrorLevel
         {
             get { return GetStringValue(ErrorParameterName); }
             set { SetStringValue(ErrorParameterName, value); }
         }
-        
+
         public static string FatalLevel
         {
             get { return GetStringValue(FatalParameterName); }
