@@ -16,12 +16,14 @@ namespace logviewer.core
             if (!File.Exists(this.DatabasePath))
             {
                 SQLiteConnection.CreateFile(this.DatabasePath);
+                this.IsEmpty = true;
             }
             var conString = new SQLiteConnectionStringBuilder { DataSource = this.DatabasePath };
             this.connection = new SQLiteConnection(conString.ToString());
             this.connection.Open();
         }
 
+        internal bool IsEmpty { get; private set; }
         internal string DatabasePath { get; private set; }
 
         public void Dispose()
