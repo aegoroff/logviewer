@@ -30,8 +30,6 @@ namespace logviewer.core
         private Regex messageHead;
         private int pageSize;
 
-        private readonly List<string> recentFiles = new List<string>();
-        private readonly string recentFilesFilePath;
         private readonly string settingsDatabaseFilePath;
         private CancellationTokenSource cancellation = new CancellationTokenSource();
 
@@ -53,13 +51,11 @@ namespace logviewer.core
         #region Constructors and Destructors
 
         public MainController(string startMessagePattern,
-            string recentFilesFilePath,
             IEnumerable<string> levels,
             string settingsDatabaseFileName,
             int pageSize = DefaultPageSize)
         {
             this.CurrentPage = 1;
-            this.recentFilesFilePath = recentFilesFilePath;
             this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
@@ -366,24 +362,19 @@ namespace logviewer.core
 
         public void ReadRecentFiles()
         {
-            if (!File.Exists(this.recentFilesFilePath))
+            IEnumerable<string> files;
+            using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, Settings.KeepLastNFiles))
             {
-                using (File.Open(this.recentFilesFilePath, FileMode.Create))
-                {
-                }
+                files = filesStore.ReadFiles();
             }
-            var files = File.ReadAllLines(this.recentFilesFilePath);
-            this.recentFiles.Clear();
-            this.view.ClearRecentFilesList();
 
-            this.recentFiles.AddRange(files);
-            this.recentFiles.Reverse();
+            this.view.ClearRecentFilesList();
 
             try
             {
                 foreach (
                     var item in
-                        from file in this.recentFiles
+                        from file in files
                         where !string.IsNullOrWhiteSpace(file) && File.Exists(file)
                         select file)
                 {
@@ -396,20 +387,12 @@ namespace logviewer.core
             }
         }
 
-        public void SaveRecentFiles()
+        public void AddCurrentFileToRecentFilesList()
         {
-            this.recentFiles.Reverse();
-            if (!this.recentFiles.Contains(this.view.LogPath))
+            using (var filesStore = new RecentFilesStore(settingsDatabaseFilePath, Settings.KeepLastNFiles))
             {
-                this.recentFiles.Add(this.view.LogPath);
+                filesStore.Add(this.view.LogPath);
             }
-            else
-            {
-                this.recentFiles.Remove(this.view.LogPath);
-                this.recentFiles.Add(this.view.LogPath);
-            }
-            File.WriteAllLines(this.recentFilesFilePath,
-                this.recentFiles.GetRange(0, Math.Min(this.recentFiles.Count, Settings.KeepLastNFiles)));
         }
 
         public void OpenLogFile()

@@ -27,7 +27,7 @@ namespace logviewer.tests
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(MessageStart, RecentPath, this.levels, Settings, 100);
+            this.controller = new MainController(MessageStart, this.levels, Settings, 100);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
@@ -50,6 +50,10 @@ namespace logviewer.tests
             if (File.Exists(f2))
             {
                 File.Delete(f2);
+            }
+            if (File.Exists(Settings))
+            {
+                File.Delete(Settings);
             }
             this.controller.Dispose();
         }
@@ -115,7 +119,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, RecentPath, markers, Settings);
+            this.controller = new MainController(MessageStart, markers, Settings);
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -132,7 +136,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, RecentPath, markers, Settings);
+            this.controller = new MainController(MessageStart, markers, Settings);
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -312,124 +316,39 @@ namespace logviewer.tests
         }
 
         [Test]
-        public void ReadRecentFilesNoFile()
+        public void ReadRecentFilesEmpty()
         {
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
             this.controller.ReadRecentFiles();
         }
 
         [Test]
-        public void ReadRecentFilesSingleUnexistFile()
-        {
-            File.WriteAllLines(RecentPath, new[] { "1" });
-            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-            this.controller.ReadRecentFiles();
-        }
-
-        [Test]
-        public void ReadRecentFilesSingleExistFile()
-        {
-            using (File.Open(f1, FileMode.Create))
-            {
-            }
-            File.WriteAllLines(RecentPath, new[] { f1 });
-            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-            this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
-            this.controller.ReadRecentFiles();
-        }
-
-        [Test]
-        public void ReadRecentFilesManyExistFile()
-        {
-            using (File.Open(f1, FileMode.Create))
-            {
-            }
-            using (File.Open(f2, FileMode.Create))
-            {
-            }
-            File.WriteAllLines(RecentPath, new[] { f1, f2 });
-            using (this.mockery.Ordered())
-            {
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
-            }
-            this.controller.ReadRecentFiles();
-        }
-
-        [Test]
-        public void SaveAndReadRecentFilesNoFile()
+        public void SaveAndReadRecentFilesOneFile()
         {
             using (this.mockery.Ordered())
             {
-                this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(TestPath);
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
                 this.view.Expects.No.MethodWith(v => v.CreateRecentFileItem(TestPath));
             }
-            this.controller.SaveRecentFiles();
+            this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();
         }
 
         [Test]
         public void SaveAndReadRecentFiles()
         {
-            using (File.Open(TestPath, FileMode.Create))
-            {
-            }
             using (this.mockery.Ordered())
             {
-                this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
-            }
-            this.controller.SaveRecentFiles();
-            this.controller.ReadRecentFiles();
-        }
-
-        [Test]
-        public void SaveAndReadRecentFilesSeveralTimes()
-        {
-            using (File.Open(TestPath, FileMode.Create))
-            {
-            }
-            using (File.Open(f1, FileMode.Create))
-            {
-            }
-            using (File.Open(f2, FileMode.Create))
-            {
-            }
-
-            using (this.mockery.Ordered())
-            {
-                this.view.Expects.One.Method(_ => _.Initialize());
-                this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
-                this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(f1);
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
-                this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(f2);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
             }
-            this.controller = new MainController(MessageStart, RecentPath, this.levels, Settings);
-            this.controller.SetView(this.view.MockObject);
-            this.controller.SaveRecentFiles();
+            this.controller.AddCurrentFileToRecentFilesList();
+            this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();
-            this.controller.SaveRecentFiles();
-            this.controller.ReadRecentFiles();
-            this.controller.SaveRecentFiles();
-            this.controller.ReadRecentFiles();
-        }
-
-        [Test]
-        public void SaveRecentFiles()
-        {
-            this.view.Expects.Exactly(2).GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller.SaveRecentFiles();
         }
 
         [Test]

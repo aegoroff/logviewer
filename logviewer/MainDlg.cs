@@ -119,7 +119,7 @@ namespace logviewer
         {
             Executive.SafeRun(this.WatchLogFile);
             this.StartReading();
-            this.Controller.SaveRecentFiles();
+            this.Controller.AddCurrentFileToRecentFilesList();
         }
 
         public void LoadLog(string rtf)

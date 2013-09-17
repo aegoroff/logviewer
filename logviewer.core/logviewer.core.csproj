@@ -72,6 +72,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RecentFilesStore.cs" />
     <Compile Include="SafeRunner.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SizeUnit.cs" />
