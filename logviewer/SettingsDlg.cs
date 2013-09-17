@@ -12,6 +12,7 @@ namespace logviewer
             this.InitializeComponent();
             this.openLastFile.Checked = Settings.OpenLastFile;
             pageSizeBox.Text = Settings.PageSize.ToString(CultureInfo.CurrentUICulture);
+            keepLastNFilesBox.Text = Settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
             messageStartPatternBox.Text = Settings.StartMessageTemplate;
             traceBox.Text = Settings.TraceLevel;
             debugBox.Text = Settings.DebugLevel;
@@ -73,6 +74,15 @@ namespace logviewer
         private void OnSetFatalLevel(object sender, EventArgs e)
         {
             Settings.FatalLevel = fatalBox.Text;
+        }
+
+        private void OnKeepLastNFilesChange(object sender, EventArgs e)
+        {
+            int value;
+            if (int.TryParse(keepLastNFilesBox.Text, out value))
+            {
+                Settings.KeepLastNFiles = value;
+            }
         }
     }
 }

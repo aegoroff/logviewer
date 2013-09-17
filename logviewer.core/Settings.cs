@@ -25,6 +25,7 @@ namespace logviewer.core
         private const string WarnParameterName = @"WarnLevel";
         private const string ErrorParameterName = @"ErrorLevel";
         private const string FatalParameterName = @"FatalLevel";
+        private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
 
         private static RegistryKey RegistryKey
         {
@@ -181,6 +182,12 @@ namespace logviewer.core
         {
             get { return GetStringValue(FatalParameterName); }
             set { SetStringValue(FatalParameterName, value); }
+        }
+
+        public static int KeepLastNFiles
+        {
+            get { return GetIntValue(KeepLastNFilesParameterName, 10); }
+            set { SetIntValue(KeepLastNFilesParameterName, value); }
         }
 
         public static Func<string>[] LevelReaders

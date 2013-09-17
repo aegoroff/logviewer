@@ -35,6 +35,9 @@
             this.pageSizeBox = new System.Windows.Forms.TextBox();
             this.pageSizeLabel = new System.Windows.Forms.Label();
             this.fileSettingsBox = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.keepLastNFilesBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.openLastFile = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
@@ -53,9 +56,6 @@
             this.traceBox = new System.Windows.Forms.TextBox();
             this.debugLabel = new System.Windows.Forms.Label();
             this.traceLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
@@ -120,7 +120,7 @@
             // fileSettingsBox
             // 
             this.fileSettingsBox.Controls.Add(this.label2);
-            this.fileSettingsBox.Controls.Add(this.textBox1);
+            this.fileSettingsBox.Controls.Add(this.keepLastNFilesBox);
             this.fileSettingsBox.Controls.Add(this.label1);
             this.fileSettingsBox.Controls.Add(this.openLastFile);
             this.fileSettingsBox.Location = new System.Drawing.Point(8, 6);
@@ -129,6 +129,34 @@
             this.fileSettingsBox.TabIndex = 0;
             this.fileSettingsBox.TabStop = false;
             this.fileSettingsBox.Text = "File settings";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(99, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(64, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "opened files";
+            // 
+            // keepLastNFilesBox
+            // 
+            this.keepLastNFilesBox.Location = new System.Drawing.Point(63, 45);
+            this.keepLastNFilesBox.Name = "keepLastNFilesBox";
+            this.keepLastNFilesBox.Size = new System.Drawing.Size(30, 20);
+            this.keepLastNFilesBox.TabIndex = 2;
+            this.keepLastNFilesBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.keepLastNFilesBox.TextChanged += new System.EventHandler(this.OnKeepLastNFilesChange);
+            this.keepLastNFilesBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPressInNumberOnlyBox);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 48);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Keep last";
             // 
             // openLastFile
             // 
@@ -318,33 +346,6 @@
             this.traceLabel.Text = "Trace:";
             this.traceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Keep last";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(63, 45);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(30, 20);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPressInNumberOnlyBox);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(99, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "opened files";
-            // 
             // SettingsDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,7 +398,7 @@
         private System.Windows.Forms.Label fatalLabel;
         private System.Windows.Forms.TextBox fatalBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox keepLastNFilesBox;
         private System.Windows.Forms.Label label1;
     }
 }
