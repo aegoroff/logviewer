@@ -32,6 +32,7 @@ namespace logviewer.core
 
         private readonly List<string> recentFiles = new List<string>();
         private readonly string recentFilesFilePath;
+        private readonly string settingsDatabaseFilePath;
         private CancellationTokenSource cancellation = new CancellationTokenSource();
 
         private string currentPath;
@@ -54,10 +55,12 @@ namespace logviewer.core
         public MainController(string startMessagePattern,
             string recentFilesFilePath,
             IEnumerable<string> levels,
+            string settingsDatabaseFileName,
             int pageSize = DefaultPageSize)
         {
             this.CurrentPage = 1;
             this.recentFilesFilePath = recentFilesFilePath;
+            this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
             this.markers = new List<Regex>();
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();

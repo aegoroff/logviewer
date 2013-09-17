@@ -33,21 +33,14 @@ namespace logviewer
             l => Settings.FatalLevel = l
         };
 
-        private const string ApplicationOptionsFolder = "logviewer";
         private const string RecentFilesFileName = "logviewerRecentFiles.txt";
 
         public override void Load()
         {
-            var baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
-            var recentFilesPath = Path.Combine(applicationFolder, RecentFilesFileName);
+            var recentFilesPath = Path.Combine(Settings.ApplicationFolder, RecentFilesFileName);
             var oldRecentFilesPath = Path.Combine(Path.GetTempPath(), RecentFilesFileName);
-            if (!Directory.Exists(applicationFolder))
-            {
-                Directory.CreateDirectory(applicationFolder);
-            }
 
-            if (File.Exists(oldRecentFilesPath))
+            if (File.Exists(oldRecentFilesPath) && !File.Exists(recentFilesPath))
             {
                 File.Move(oldRecentFilesPath, recentFilesPath);
             }
@@ -57,6 +50,7 @@ namespace logviewer
                 .WithConstructorArgument("startMessagePattern", StartMessageTemplate)
                 .WithConstructorArgument("recentFilesFilePath", recentFilesPath)
                 .WithConstructorArgument("levels", Levels)
+                .WithConstructorArgument("settingsDatabaseFileName", ConfigurationManager.AppSettings["SettingsDatabase"])
                 .WithConstructorArgument("pageSize", Settings.PageSize);
         }
 

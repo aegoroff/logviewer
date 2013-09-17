@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.IO;
 using Microsoft.Win32;
 
 namespace logviewer.core
@@ -97,6 +98,23 @@ namespace logviewer.core
         private static void SetBoolValue(string key, bool value)
         {
             SetIntValue(key, value ? 1 : 0);
+        }
+
+        private const string ApplicationOptionsFolder = "logviewer";
+        private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
+
+        public static string ApplicationFolder
+        {
+            get
+            {
+                if (!Directory.Exists(applicationFolder))
+                {
+                    Directory.CreateDirectory(applicationFolder);
+                }
+                return applicationFolder;
+            }
         }
 
         public static string MessageFilter

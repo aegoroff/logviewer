@@ -17,6 +17,7 @@ namespace logviewer.tests
     {
         private const string f1 = "1";
         private const string f2 = "2";
+        private const string Settings = "test.db";
 
         #region Setup/Teardown
 
@@ -26,7 +27,7 @@ namespace logviewer.tests
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(MessageStart, RecentPath, this.levels, 100);
+            this.controller = new MainController(MessageStart, RecentPath, this.levels, Settings, 100);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
@@ -114,7 +115,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, RecentPath, markers);
+            this.controller = new MainController(MessageStart, RecentPath, markers, Settings);
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -131,7 +132,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, RecentPath, markers);
+            this.controller = new MainController(MessageStart, RecentPath, markers, Settings);
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -414,7 +415,7 @@ namespace logviewer.tests
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(TestPath));
             }
-            this.controller = new MainController(MessageStart, RecentPath, this.levels);
+            this.controller = new MainController(MessageStart, RecentPath, this.levels, Settings);
             this.controller.SetView(this.view.MockObject);
             this.controller.SaveRecentFiles();
             this.controller.ReadRecentFiles();
