@@ -117,7 +117,8 @@ namespace logviewer.core
             var order = reverse ? "DESC" : "ASC";
 
             var where = Where(min, max, filter, useRegexp);
-            var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset,
+            var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
+                order, limit, offset,
                 where);
             this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
