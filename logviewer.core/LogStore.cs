@@ -12,10 +12,9 @@ namespace logviewer.core
     {
         #region Constants and Fields
 
-        private SQLiteTransaction transaction;
-        private readonly SQLiteConnection connection;
         const string CreateIndexOnLevel = @"CREATE INDEX IX_Level ON Log (Level)";
         const int PageSize = 1024;
+        private readonly DatabaseConnection connection;
         
         #endregion
 
@@ -25,9 +24,7 @@ namespace logviewer.core
         {
             DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             SQLiteConnection.CreateFile(DatabasePath);
-            var conString = new SQLiteConnectionStringBuilder { DataSource = DatabasePath };
-            connection = new SQLiteConnection(conString.ToString());
-            connection.Open();
+            connection = new DatabaseConnection(DatabasePath) ;
 
             const string CreateTable = @"
                         CREATE TABLE Log (
@@ -52,7 +49,7 @@ namespace logviewer.core
 
             var mmap = string.Format(Mmap, dbSize);
             var cache = string.Format(Cache, pages);
-            this.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
+            this.connection.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
         }
 
         public string DatabasePath { get; private set; }
@@ -64,34 +61,29 @@ namespace logviewer.core
         public void StartAddMessages()
         {
             this.NoIndex();
-            this.transaction = this.connection.BeginTransaction();
+            this.connection.BeginTran();
         }
 
         public void FinishAddMessages()
         {
-            this.transaction.Commit();
+            this.connection.CommitTran();
             this.Index();
         }
 
         public void Index()
         {
-            this.ExecuteNonQuery(CreateIndexOnLevel);
+            this.connection.ExecuteNonQuery(CreateIndexOnLevel);
         }
         
         public void NoIndex()
         {
-            this.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
-        }
-
-        private void ExecuteNonQuery(params string[] queries)
-        {
-            this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
+            this.connection.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
         }
 
         public void AddMessage(LogMessage message)
         {
             const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
-            RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(SQLiteCommand command)
             {
                 command.Parameters.AddWithValue("@Header", message.Header);
                 command.Parameters.AddWithValue("@Body", message.Body);
@@ -115,7 +107,7 @@ namespace logviewer.core
 
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}", order, limit, offset, where);
-            this.RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(SQLiteCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 var rdr = command.ExecuteReader();
@@ -139,7 +131,7 @@ namespace logviewer.core
             var result = 0L;
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            this.RunSqlQuery(delegate(SQLiteCommand command)
+            this.connection.RunSqlQuery(delegate(SQLiteCommand command)
             {
                 AddParameters(command, min, max, filter, useRegexp);
                 result = (long)command.ExecuteScalar();
@@ -215,10 +207,6 @@ namespace logviewer.core
         {
             if (disposing)
             {
-                if (transaction != null)
-                {
-                    transaction.Dispose();
-                }
                 if (connection != null)
                 {
                     connection.Dispose();
@@ -226,18 +214,6 @@ namespace logviewer.core
                 if (File.Exists(DatabasePath))
                 {
                     File.Delete(DatabasePath);
-                }
-            }
-        }
-
-        private void RunSqlQuery(Action<SQLiteCommand> action, params string[] commands)
-        {
-            foreach (var command in commands)
-            {
-                using (var sqLiteCommand = connection.CreateCommand())
-                {
-                    sqLiteCommand.CommandText = command;
-                    action(sqLiteCommand);
                 }
             }
         }
