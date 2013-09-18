@@ -338,12 +338,13 @@
             this.useRegexp.Checked = true;
             this.useRegexp.CheckOnClick = true;
             this.useRegexp.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.useRegexp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.useRegexp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.useRegexp.Image = ((System.Drawing.Image)(resources.GetObject("useRegexp.Image")));
             this.useRegexp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.useRegexp.Name = "useRegexp";
-            this.useRegexp.Size = new System.Drawing.Size(71, 22);
+            this.useRegexp.Size = new System.Drawing.Size(23, 22);
             this.useRegexp.Text = "Use Regexp";
+            this.useRegexp.ToolTipText = "Use regular expression in filter";
             this.useRegexp.CheckedChanged += new System.EventHandler(this.OnChangeRegexpUsage);
             // 
             // panel1
