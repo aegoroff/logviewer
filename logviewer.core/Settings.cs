@@ -17,7 +17,6 @@ namespace logviewer.core
 
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
-        private const string LastOpenedFileParameterName = @"LastOpenedFile";
         private const string OpenLastFileParameterName = @"OpenLastFile";
         private const string MinLevelParameterName = @"MinLevel";
         private const string MaxLevelParameterName = @"MaxLevel";
@@ -121,12 +120,6 @@ namespace logviewer.core
         {
             get { return GetStringValue(FilterParameterName); }
             set { SetStringValue(FilterParameterName, value); }
-        }
-
-        public static string LastOpenedFile
-        {
-            get { return GetStringValue(LastOpenedFileParameterName); }
-            set { SetStringValue(LastOpenedFileParameterName, value); }
         }
 
         public static bool OpenLastFile

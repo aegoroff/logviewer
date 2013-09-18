@@ -112,6 +112,23 @@ namespace logviewer.core
             }, @"SELECT Path FROM RecentFiles ORDER BY OpenedAt DESC");
             return result;
         }
+        
+        public string ReadLastOpenedFile()
+        {
+            var result = string.Empty;
+            this.connection.RunSqlQuery(delegate(IDbCommand command)
+            {
+                var rdr = command.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read())
+                    {
+                        result = rdr[0] as string;
+                    }
+                }
+            }, @"SELECT Path FROM RecentFiles ORDER BY OpenedAt DESC LIMIT 1");
+            return result;
+        }
 
         public void Dispose()
         {

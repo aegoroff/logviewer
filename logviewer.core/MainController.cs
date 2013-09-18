@@ -212,7 +212,6 @@ namespace logviewer.core
             {
                 return;
             }
-            Settings.LastOpenedFile = this.view.LogPath;
             this.view.SetProgress(100);
         }
 
@@ -354,29 +353,40 @@ namespace logviewer.core
 
         public void LoadLastOpenedFile()
         {
-            if (Settings.OpenLastFile && !string.IsNullOrWhiteSpace(Settings.LastOpenedFile))
+            if (!Settings.OpenLastFile)
             {
-                this.view.StartLoadingLog(Settings.LastOpenedFile);
+                return;
+            }
+            
+            var lastOpenedFile = string.Empty;
+
+            Action<RecentFilesStore> method = delegate(RecentFilesStore filesStore)
+            {
+                lastOpenedFile = filesStore.ReadLastOpenedFile();
+            };
+            this.UseRecentFilesStore(method);
+
+            if (!string.IsNullOrWhiteSpace(lastOpenedFile))
+            {
+                this.view.StartLoadingLog(lastOpenedFile);
             }
         }
 
         public void ReadRecentFiles()
         {
-            IEnumerable<string> files;
-            using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, Settings.KeepLastNFiles))
-            {
-                files = filesStore.ReadFiles();
-            }
+            IEnumerable<string> files = null;
+
+            this.UseRecentFilesStore(delegate(RecentFilesStore filesStore) { files = filesStore.ReadFiles(); });
 
             this.view.ClearRecentFilesList();
 
             var notExistFiles = new List<string>();
 
             foreach (
-                    var item in
-                        from file in files
-                        where !string.IsNullOrWhiteSpace(file)
-                        select file)
+                var item in
+                    from file in files
+                    where !string.IsNullOrWhiteSpace(file)
+                    select file)
             {
                 if (File.Exists(item))
                 {
@@ -387,18 +397,20 @@ namespace logviewer.core
                     notExistFiles.Add(item);
                 }
             }
+            this.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
+        }
+
+        private void UseRecentFilesStore(Action<RecentFilesStore> action)
+        {
             using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, Settings.KeepLastNFiles))
             {
-                filesStore.Remove(notExistFiles.ToArray());
+                action(filesStore);
             }
         }
 
         public void AddCurrentFileToRecentFilesList()
         {
-            using (var filesStore = new RecentFilesStore(settingsDatabaseFilePath, Settings.KeepLastNFiles))
-            {
-                filesStore.Add(this.view.LogPath);
-            }
+            this.UseRecentFilesStore(s => s.Add(this.view.LogPath));
         }
 
         public void OpenLogFile()
