@@ -50,9 +50,10 @@ namespace logviewer.tests
                 File.Delete(RecentPath);
             }
             CleanupTestFiles();
-            if (File.Exists(SettingsDb))
+            var settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, SettingsDb);
+            if (File.Exists(settingsDatabaseFilePath))
             {
-                File.Delete(SettingsDb);
+                File.Delete(settingsDatabaseFilePath);
             }
             this.controller.Dispose();
         }
