@@ -154,20 +154,30 @@ namespace logviewer.core
 
         private void CancelPreviousTask()
         {
-            if (this.task == null || this.task.Status != TaskStatus.Running)
+            try
             {
-                return;
+                if (this.task == null || this.task.Status != TaskStatus.Running)
+                {
+                    return;
+                }
+                if (this.cancellation.IsCancellationRequested)
+                {
+                    SafeRunner.Run(this.task.Wait);
+                }
+                else
+                {
+                    SafeRunner.Run(this.cancellation.Cancel);
+                    SafeRunner.Run(this.task.Wait);
+                    SafeRunner.Run(this.cancellation.Dispose);
+                    this.cancellation = new CancellationTokenSource();
+                }
             }
-            if (this.cancellation.IsCancellationRequested)
+            finally
             {
-                this.task.Wait();
-            }
-            else
-            {
-                this.cancellation.Cancel();
-                this.task.Wait();
-                this.cancellation.Dispose();
-                this.cancellation = new CancellationTokenSource();
+                if (this.task != null)
+                {
+                    this.task.Dispose();
+                }
             }
         }
 
@@ -590,15 +600,15 @@ namespace logviewer.core
                 {
                     if (!this.cancellation.IsCancellationRequested)
                     {
-                        this.cancellation.Cancel();
+                        SafeRunner.Run(this.cancellation.Cancel);
                     }
 
                     if (this.task != null)
                     {
-                        this.task.Wait();
-                        this.task.Dispose();
+                        SafeRunner.Run(this.task.Wait);
+                        SafeRunner.Run(this.task.Dispose);
                     }
-                    this.cancellation.Dispose();
+                    SafeRunner.Run(this.cancellation.Dispose);
                 }
                 catch (Exception e)
                 {

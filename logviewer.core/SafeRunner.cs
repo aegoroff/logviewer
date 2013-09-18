@@ -15,6 +15,22 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
+        internal static void Run(Action method)
+        {
+            try
+            {
+                method();
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Trace.WriteLine(e.ToString());
+            }
+        }
+        
+        /// <summary>
+        ///     Runs specified method and handles all errors. Error messaged are written into log.
+        /// </summary>
+        /// <param name="method"> Method to run </param>
         internal static T Run<T>(Func<T> method)
         {
             try
