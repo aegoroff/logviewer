@@ -370,13 +370,26 @@ namespace logviewer.core
 
             this.view.ClearRecentFilesList();
 
+            var notExistFiles = new List<string>();
+
             foreach (
                     var item in
                         from file in files
-                        where !string.IsNullOrWhiteSpace(file) && File.Exists(file)
+                        where !string.IsNullOrWhiteSpace(file)
                         select file)
             {
-                this.view.CreateRecentFileItem(item);
+                if (File.Exists(item))
+                {
+                    this.view.CreateRecentFileItem(item);
+                }
+                else
+                {
+                    notExistFiles.Add(item);
+                }
+            }
+            using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, Settings.KeepLastNFiles))
+            {
+                filesStore.Remove(notExistFiles.ToArray());
             }
         }
 

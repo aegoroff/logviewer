@@ -80,6 +80,22 @@ namespace logviewer.core
             this.connection.ExecuteNonQuery(cmdDelete);
         }
 
+        public void Remove(params string[] files)
+        {
+            const string Cmd = @"DELETE FROM RecentFiles WHERE Path = @Path";
+
+            this.connection.BeginTran();
+            foreach (var file in files)
+            {
+                this.connection.RunSqlQuery(delegate(IDbCommand command)
+                {
+                    DatabaseConnection.AddParameter(command, "@Path", file);
+                    command.ExecuteNonQuery();
+                }, Cmd);
+            }
+            this.connection.CommitTran();
+        }
+
         public IEnumerable<string> ReadFiles()
         {
             var result = new List<string>(maxFiles);
