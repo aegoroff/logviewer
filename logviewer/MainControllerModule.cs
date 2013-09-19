@@ -39,6 +39,7 @@ namespace logviewer
                 .WithConstructorArgument("startMessagePattern", StartMessageTemplate)
                 .WithConstructorArgument("levels", Levels)
                 .WithConstructorArgument("settingsDatabaseFileName", ConfigurationManager.AppSettings["SettingsDatabase"])
+                .WithConstructorArgument("keepLastNFiles", Settings.KeepLastNFiles)
                 .WithConstructorArgument("pageSize", Settings.PageSize);
         }
 

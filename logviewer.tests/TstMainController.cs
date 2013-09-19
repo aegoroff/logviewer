@@ -19,7 +19,7 @@ namespace logviewer.tests
         private const string f2 = "2";
         private const string f3 = "3";
         private const string SettingsDb = "test.db";
-        int originalLimit;
+        private const int KeepLastNFiles = 2;
 
         #region Setup/Teardown
 
@@ -27,12 +27,10 @@ namespace logviewer.tests
         public void Setup()
         {
             CleanupTestFiles();
-            originalLimit = Settings.KeepLastNFiles;
-            Settings.KeepLastNFiles = 2;
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(MessageStart, this.levels, SettingsDb, 100);
+            this.controller = new MainController(MessageStart, this.levels, SettingsDb, KeepLastNFiles, 100);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
@@ -40,7 +38,6 @@ namespace logviewer.tests
         [TearDown]
         public void Teardown()
         {
-            Settings.KeepLastNFiles = originalLimit;
             if (File.Exists(TestPath))
             {
                 File.Delete(TestPath);
@@ -135,7 +132,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, markers, SettingsDb);
+            this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());
@@ -152,7 +149,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.controller = new MainController(MessageStart, markers, SettingsDb);
+            this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             Assert.IsNotEmpty(this.controller.ReadLog());

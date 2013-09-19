@@ -20,6 +20,8 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
+        private int keepLastNFiles;
+
         #region Constants and Fields
 
         private const int DefaultPageSize = 5000;
@@ -53,8 +55,10 @@ namespace logviewer.core
         public MainController(string startMessagePattern,
             IEnumerable<string> levels,
             string settingsDatabaseFileName,
+            int keepLastNFiles,
             int pageSize = DefaultPageSize)
         {
+            this.keepLastNFiles = keepLastNFiles;
             this.CurrentPage = 1;
             this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
             this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
@@ -412,10 +416,15 @@ namespace logviewer.core
 
         private void UseRecentFilesStore(Action<RecentFilesStore> action)
         {
-            using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, Settings.KeepLastNFiles))
+            using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, this.keepLastNFiles))
             {
                 action(filesStore);
             }
+        }
+
+        public void UpdateKeepLastNFiles(int value)
+        {
+            this.keepLastNFiles = value;
         }
 
         public void AddCurrentFileToRecentFilesList()

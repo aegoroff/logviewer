@@ -369,6 +369,7 @@ namespace logviewer
                 this.controller.CreateMarkers(Settings.LevelReaders.Select(r => r()));
                 this.controller.CreateMessageHead(Settings.StartMessageTemplate);
                 this.controller.PageSize(Settings.PageSize);
+                this.controller.UpdateKeepLastNFiles(Settings.KeepLastNFiles);
             }
         }
 
