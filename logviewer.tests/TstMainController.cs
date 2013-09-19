@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using logviewer.core;
@@ -38,14 +39,7 @@ namespace logviewer.tests
         [TearDown]
         public void Teardown()
         {
-            if (File.Exists(TestPath))
-            {
-                File.Delete(TestPath);
-            }
-            if (File.Exists(RecentPath))
-            {
-                File.Delete(RecentPath);
-            }
+            Cleanup(TestPath, RecentPath);
             CleanupTestFiles();
             var settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, SettingsDb);
             if (File.Exists(settingsDatabaseFilePath))
@@ -57,17 +51,21 @@ namespace logviewer.tests
 
         private static void CleanupTestFiles()
         {
-            if (File.Exists(f1))
+            Cleanup(f1, f2, f3);
+        }
+        
+        private static void Cleanup(params string[] files)
+        {
+            foreach (var file in files.Where(File.Exists))
             {
-                File.Delete(f1);
-            }
-            if (File.Exists(f2))
-            {
-                File.Delete(f2);
-            }
-            if (File.Exists(f3))
-            {
-                File.Delete(f3);
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
@@ -379,16 +377,16 @@ namespace logviewer.tests
             using (File.Open(f2, FileMode.Create))
             {
             }
-            using (File.Open("3", FileMode.Create))
+            using (File.Open(f3, FileMode.Create))
             {
             }
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn("3");
+                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f3);
                 this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem("3"));
+                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f3));
                 this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
             }
             this.controller.AddCurrentFileToRecentFilesList();
