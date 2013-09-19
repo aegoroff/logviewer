@@ -416,46 +416,20 @@ namespace logviewer.tests
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
         }
 
-        [Test]
-        public void TotalPagesMessagesBelowPageSize()
+        [TestCase(10, 1)]
+        [TestCase(60, 2)]
+        [TestCase(100, 2)]
+        public void PagingTests(int messages, int pages)
         {
             var sb = new StringBuilder();
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < messages; i++)
             {
                 sb.AppendLine(MessageExamples);
             }
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, sb.ToString());
             Assert.IsNotEmpty(this.controller.ReadLog());
-            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(1));
-        }
-
-        [Test]
-        public void TotalPagesMessagesInexactlyAbovePageSize()
-        {
-            var sb = new StringBuilder();
-            for (var i = 0; i < 60; i++)
-            {
-                sb.AppendLine(MessageExamples);
-            }
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            File.WriteAllText(TestPath, sb.ToString());
-            Assert.IsNotEmpty(this.controller.ReadLog());
-            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
-        }
-
-        [Test]
-        public void TotalPagesMessagesExactlyAbovePageSize()
-        {
-            var sb = new StringBuilder();
-            for (var i = 0; i < 100; i++)
-            {
-                sb.AppendLine(MessageExamples);
-            }
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            File.WriteAllText(TestPath, sb.ToString());
-            Assert.IsNotEmpty(this.controller.ReadLog());
-            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(2));
+            Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(pages));
         }
     }
 }
