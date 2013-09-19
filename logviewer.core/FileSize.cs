@@ -15,9 +15,10 @@ namespace logviewer.core
     {
         private const int Int64BitsCount = 64;
         private const int BinaryThousand = 1024;
-        private readonly ulong bytes;
-        private readonly SizeUnit sizeUnit;
-        private readonly double value;
+
+        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
+        private const string BigFileFormatNoBytes = "{0:F2} {1}";
+        private const string SmallFileFormat = "{0} {1}";
 
         private static readonly string[] sizes =
         {
@@ -30,16 +31,20 @@ namespace logviewer.core
             Resources.SizeEBytes
         };
 
-        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
-        private const string SmallFileFormat = "{0} {1}";
+        private readonly bool bigWithoutBytes;
+        private readonly ulong bytes;
+        private readonly SizeUnit sizeUnit;
+        private readonly double value;
 
         /// <summary>
-        ///     Initializes new instance of <see cref = "FileSize" /> structure using raw file size
+        ///     Initializes new instance of <see cref="FileSize" /> structure using raw file size
         /// </summary>
-        /// <param name = "bytes">File size in bytes</param>
-        public FileSize(ulong bytes)
+        /// <param name="bytes">File size in bytes</param>
+        /// <param name="bigWithoutBytes">Whether to output bytes info if size is greater then 1024 bytes. False by default</param>
+        public FileSize(ulong bytes, bool bigWithoutBytes = false)
         {
             this.bytes = bytes;
+            this.bigWithoutBytes = bigWithoutBytes;
             this.sizeUnit = SizeUnit.Bytes;
             this.sizeUnit = bytes == 0
                 ? SizeUnit.Bytes
@@ -96,6 +101,10 @@ namespace logviewer.core
             {
                 return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, this.Bytes,
                     sizes[(int)this.Unit]);
+            }
+            if (this.bigWithoutBytes)
+            {
+                return string.Format(CultureInfo.CurrentCulture, BigFileFormatNoBytes, this.Value, sizes[(int)this.Unit]);
             }
             return string.Format(CultureInfo.CurrentCulture, BigFileFormat, this.Value,
                 sizes[(int)this.Unit], this.Bytes,

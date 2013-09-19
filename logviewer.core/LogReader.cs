@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Text;
@@ -65,10 +66,14 @@ namespace logviewer.core
                     var fraction = total / 20L;
                     var signalCounter = 1;
 
+                    Stopwatch stopWatch = new Stopwatch();
                     var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
                     using (sr)
                     {
                         var message = LogMessage.Create();
+                        
+                        stopWatch.Start();
+                        var measureStart = 0L;
                         while (!sr.EndOfStream && canContinue())
                         {
                             var line = sr.ReadLine();
@@ -88,11 +93,16 @@ namespace logviewer.core
 
                             if (stream.Position >= signalCounter * fraction)
                             {
+                                var elapsed = stopWatch.Elapsed;
+                                var read = stream.Position - measureStart;
+                                measureStart = stream.Position;
+                                var speed = read / elapsed.TotalSeconds;
+                                stopWatch.Restart();
                                 ++signalCounter;
                                 var percent = (stream.Position / (double)total) * 100;
                                 if (this.ProgressChanged != null)
                                 {
-                                    this.ProgressChanged(this, new ProgressChangedEventArgs((int)percent, null));
+                                    this.ProgressChanged(this, new ProgressChangedEventArgs((int)percent, speed));
                                 }
                             }
 
