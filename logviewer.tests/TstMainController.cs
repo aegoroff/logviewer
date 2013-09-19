@@ -39,13 +39,8 @@ namespace logviewer.tests
         [TearDown]
         public void Teardown()
         {
-            Cleanup(TestPath, RecentPath);
+            Cleanup(TestPath, RecentPath, Path.Combine(Settings.ApplicationFolder, SettingsDb));
             CleanupTestFiles();
-            var settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, SettingsDb);
-            if (File.Exists(settingsDatabaseFilePath))
-            {
-                File.Delete(settingsDatabaseFilePath);
-            }
             this.controller.Dispose();
         }
 
