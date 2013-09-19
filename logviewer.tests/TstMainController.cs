@@ -68,6 +68,16 @@ namespace logviewer.tests
                 }
             }
         }
+        
+        private static void CreateEmpty(params string[] files)
+        {
+            foreach (var file in files)
+            {
+                using (File.Open(file, FileMode.Create))
+                {
+                }
+            }
+        }
 
         #endregion
 
@@ -349,12 +359,7 @@ namespace logviewer.tests
         [Test]
         public void SaveAndReadRecentFiles()
         {
-            using (File.Open(f1, FileMode.Create))
-            {
-            }
-            using (File.Open(f2, FileMode.Create))
-            {
-            }
+            CreateEmpty(f1, f2);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
@@ -371,15 +376,7 @@ namespace logviewer.tests
         [Test]
         public void RecentFilesMoreThenLimit()
         {
-            using (File.Open(f1, FileMode.Create))
-            {
-            }
-            using (File.Open(f2, FileMode.Create))
-            {
-            }
-            using (File.Open(f3, FileMode.Create))
-            {
-            }
+            CreateEmpty(f1, f2, f3);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
@@ -398,12 +395,7 @@ namespace logviewer.tests
         [Test]
         public void RecentFilesMoreThenLimitNoOneFile()
         {
-            using (File.Open(f1, FileMode.Create))
-            {
-            }
-            using (File.Open(f2, FileMode.Create))
-            {
-            }
+            CreateEmpty(f1, f2);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
