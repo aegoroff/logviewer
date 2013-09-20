@@ -195,12 +195,12 @@ namespace logviewer.core
             this.Ordering(reverse);
             this.view.SetProgress(LoadProgress.FromPercent(0));
 
-            var rtf = string.Empty;
-            Func<string> function = delegate
+            LogReader reader = null;
+            Func<LogReader> function = delegate
             {
                 try
                 {
-                    return rtf = this.ReadLog();
+                    return reader = this.ReadLog();
                 }
                 catch (Exception e)
                 {
@@ -209,15 +209,23 @@ namespace logviewer.core
                 }
             };
             this.task = Task.Factory.StartNew(function, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(rtf), this.uiContext);
+            this.task.ContinueWith(t => this.EndLogReading(reader), this.uiContext);
         }
 
-        private void EndLogReading(string rtf)
+        private void EndLogReading(LogReader reader)
         {
+            if (reader != null)
+            {
+                reader.ProgressChanged -= this.OnReadLogProgressChanged;
+            }
+            this.store.FinishAddMessages();
+
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
                 this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal), this.totalFiltered);
+
+            var rtf = this.CreateRtf();
             this.LoadLog(rtf);
             this.view.SetLoadedFileCapltion(this.view.LogPath);
             this.ReadRecentFiles();
@@ -233,7 +241,7 @@ namespace logviewer.core
         /// Reads log from file
         /// </summary>
         /// <returns>Path to RTF document to be loaded into control</returns>
-        public string ReadLog()
+        public LogReader ReadLog()
         {
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
@@ -241,7 +249,7 @@ namespace logviewer.core
             }
             if (!File.Exists(this.view.LogPath))
             {
-                return string.Empty;
+                return null;
             }
             var reader = new LogReader(this.view.LogPath, this.messageHead);
 
@@ -255,12 +263,12 @@ namespace logviewer.core
 
             if (this.logSize == 0)
             {
-                return string.Empty;
+                return null;
             }
 
             if (this.CurrentPathCached && !append)
             {
-                return this.CreateRtf(true);
+                return null;
             }
 
             this.RunOnGuiThread(this.ResetLogStatistic);
@@ -284,17 +292,10 @@ namespace logviewer.core
                 this.totalMessages = 0;
             }
 
-            try
-            {
-                reader.ProgressChanged += this.OnReadLogProgressChanged;
-                reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
-            }
-            finally
-            {
-                reader.ProgressChanged -= this.OnReadLogProgressChanged;
-                this.store.FinishAddMessages();
-            }
-            return this.CreateRtf();
+
+            reader.ProgressChanged += this.OnReadLogProgressChanged;
+            reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
+            return reader;
         }
 
         private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)

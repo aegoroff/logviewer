@@ -37,7 +37,7 @@ namespace logviewer.core
 
         public event ProgressChangedEventHandler ProgressChanged;
 
-        public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
+        public async void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
         {
             if (this.Length == 0)
             {
@@ -76,20 +76,7 @@ namespace logviewer.core
                         var measureStart = 0L;
                         while (!sr.EndOfStream && canContinue())
                         {
-                            var line = sr.ReadLine();
-                            if (decode)
-                            {
-                                line = line.Convert(srcEncoding, Encoding.UTF8);
-                            }
-                            if (line == null)
-                            {
-                                break;
-                            }
-                            if (this.messageHead.IsMatch(line))
-                            {
-                                onRead(message);
-                                message = LogMessage.Create();
-                            }
+                            var t = sr.ReadLineAsync();
 
                             if (stream.Position >= signalCounter * fraction && this.ProgressChanged != null)
                             {
@@ -108,6 +95,23 @@ namespace logviewer.core
                                 };
                                 this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
                             }
+                            var line = await t;
+                            
+                            if (decode)
+                            {
+                                line = line.Convert(srcEncoding, Encoding.UTF8);
+                            }
+                            if (line == null)
+                            {
+                                break;
+                            }
+                            if (this.messageHead.IsMatch(line))
+                            {
+                                onRead(message);
+                                message = LogMessage.Create();
+                            }
+
+                            
 
                             message.AddLine(line);
                         }
