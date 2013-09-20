@@ -263,7 +263,7 @@ namespace logviewer
 
         private void OnChangeFilter(object sender, EventArgs e)
         {
-            this.textFilterChanging = true;
+            this.textFilterChanging = false;
             this.StartReading();
         }
 
