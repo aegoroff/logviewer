@@ -72,7 +72,9 @@ namespace logviewer
             this.filterBox.Text = Settings.MessageFilter;
             this.EnableControls(false);
             this.Controller.ReadRecentFiles();
+            this.Controller.ReadCompleted += this.OnReadCompleted;
             this.Controller.SetPageSize();
+            this.Controller.ResetLogStatistic();
             this.applicationInitialized = true;
             this.Controller.LoadLastOpenedFile();
         }
@@ -121,7 +123,7 @@ namespace logviewer
             this.Controller.AddCurrentFileToRecentFilesList();
         }
 
-        public void OnSuccessRead(string rtf)
+        private void OnSuccessRead(string rtf)
         {
             this.EnableControls(true);
             this.syntaxRichTextBox1.SuspendLayout();
@@ -129,10 +131,10 @@ namespace logviewer
             this.syntaxRichTextBox1.ResumeLayout();
         }
         
-        public void OnFailureRead(string rtf)
+        public void OnFailureRead(string errorMessage)
         {
             this.EnableControls(true);
-            Log.Instance.Error(rtf);
+            Log.Instance.Error(errorMessage);
         }
 
         public bool OpenExport(string path)
@@ -141,7 +143,7 @@ namespace logviewer
             return this.exportDialog.ShowDialog() == DialogResult.OK;
         }
 
-        public void SetLoadedFileCapltion(string path)
+        private void SetLoadedFileCapltion(string path)
         {
             this.Text = string.Format("{0}: {1}", this.originalCapion, path);
         }
@@ -156,13 +158,13 @@ namespace logviewer
             this.currentPage.Text = string.Format("{0} / {1}", page, this.Controller.TotalPages);
         }
 
-        public void DisableForward(bool disabled)
+        private void DisableForward(bool disabled)
         {
             this.next.Enabled = !disabled;
             this.last.Enabled = !disabled;
         }
 
-        public void DisableBack(bool disabled)
+        private void DisableBack(bool disabled)
         {
             this.prev.Enabled = !disabled;
             this.first.Enabled = !disabled;
@@ -248,6 +250,24 @@ namespace logviewer
             this.toolStrip1.Focus();
             this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse,
                 this.useRegexp.Checked);
+        }
+
+        void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
+        {
+            this.LogInfo = string.Format(this.LogInfoFormatString, this.Controller.DisplayedMessages,
+                this.Controller.TotalMessages, this.Controller.CountMessages(LogLevel.Trace), this.Controller.CountMessages(LogLevel.Debug),
+                this.Controller.CountMessages(LogLevel.Info), this.Controller.CountMessages(LogLevel.Warn), this.Controller.CountMessages(LogLevel.Error),
+                this.Controller.CountMessages(LogLevel.Fatal), this.Controller.TotalFiltered);
+
+            this.OnSuccessRead(e.Rtf);
+            this.SetCurrentPage(this.Controller.CurrentPage);
+            this.DisableBack(this.Controller.CurrentPage <= 1);
+            this.DisableForward(this.Controller.CurrentPage >= this.Controller.TotalPages);
+
+            this.SetLoadedFileCapltion(this.LogPath);
+            this.Controller.ReadRecentFiles();
+            this.FocusOnTextFilterControl();
+            this.SetProgress(LoadProgress.FromPercent(100));
         }
 
         private void OnClose(object sender, EventArgs e)

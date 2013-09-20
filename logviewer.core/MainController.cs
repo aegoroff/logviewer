@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -44,9 +45,10 @@ namespace logviewer.core
         private LogStore store;
         private string textFilter;
         private ILogView view;
-        private Task task;
         private int totalMessages;
         private readonly TaskScheduler uiContext;
+        readonly List<Task> runningTasks = new List<Task>();
+        public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
 
         #endregion
 
@@ -89,7 +91,7 @@ namespace logviewer.core
             get
             {
                 var start = (this.CurrentPage - 1) * this.pageSize;
-                return this.totalFiltered - start;
+                return this.TotalFiltered - start;
             }
         }
 
@@ -99,11 +101,11 @@ namespace logviewer.core
         {
             get
             {
-                if (this.totalFiltered == 0)
+                if (this.TotalFiltered == 0)
                 {
                     return 1;
                 }
-                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
+                return (int)Math.Ceiling(this.TotalFiltered / (float)this.pageSize);
             }
         }
 
@@ -112,7 +114,7 @@ namespace logviewer.core
             get
             {
                 var finish = Math.Min(this.MessagesCount, this.pageSize);
-                return Math.Min(finish, this.totalFiltered);
+                return Math.Min(finish, this.TotalFiltered);
             }
         }
 
@@ -144,45 +146,28 @@ namespace logviewer.core
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
         }
 
-        public void LoadLog(string rtf)
-        {
-            if (string.IsNullOrWhiteSpace(rtf))
-            {
-                return;
-            }
-            this.view.OnSuccessRead(rtf);
-            this.view.SetCurrentPage(this.CurrentPage);
-            this.view.DisableBack(this.CurrentPage <= 1);
-            this.view.DisableForward(this.CurrentPage >= this.TotalPages);
-        }
-
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private void CancelPreviousTask()
         {
-            try
+            if (!this.cancellation.IsCancellationRequested)
             {
-                if (this.task == null || this.task.Status != TaskStatus.Running)
-                {
-                    return;
-                }
-                if (this.cancellation.IsCancellationRequested)
-                {
-                    SafeRunner.Run(this.task.Wait);
-                }
-                else
-                {
-                    SafeRunner.Run(this.cancellation.Cancel);
-                    SafeRunner.Run(this.task.Wait);
-                    SafeRunner.Run(this.cancellation.Dispose);
-                    this.cancellation = new CancellationTokenSource();
-                }
+                SafeRunner.Run(this.cancellation.Cancel);
             }
-            finally
+            if (this.runningTasks.Count > 0)
             {
-                if (this.task != null)
-                {
-                    this.task.Dispose();
-                }
+                Task.WaitAll(this.runningTasks.ToArray());
             }
+            SafeRunner.Run(this.cancellation.Dispose);
+            foreach (
+                var task in
+                    this.runningTasks.Where(
+                        task =>
+                            task.Status == TaskStatus.RanToCompletion || task.Status == TaskStatus.Faulted ||
+                            task.Status == TaskStatus.Canceled))
+            {
+                SafeRunner.Run(task.Dispose);
+            }
+            this.runningTasks.Clear();
         }
 
         public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
@@ -195,46 +180,32 @@ namespace logviewer.core
             this.Ordering(reverse);
             this.view.SetProgress(LoadProgress.FromPercent(0));
 
-            var rtf = string.Empty;
+            var errorMessage = string.Empty;
             Action action = delegate
             {
                 try
                 {
-                    rtf = this.ReadLog();
+                    this.StartReadLog();
                 }
                 catch (Exception e)
                 {
-                    rtf = e.ToString();
+                    errorMessage = e.ToString();
                     throw;
                 }
             };
-            this.task = Task.Factory.StartNew(action, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiContext);
-            this.task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
-        }
-
-        private void EndLogReading(string rtf)
-        {
-            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
-                this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
-                this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
-                this.CountMessages(LogLevel.Fatal), this.totalFiltered);
-            this.LoadLog(rtf);
-            this.view.SetLoadedFileCapltion(this.view.LogPath);
-            this.ReadRecentFiles();
-            this.view.FocusOnTextFilterControl();
-            if (string.IsNullOrWhiteSpace(rtf))
-            {
-                return;
-            }
-            this.view.SetProgress(LoadProgress.FromPercent(100));
+            this.cancellation = new CancellationTokenSource();
+            var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
+            task.ContinueWith(t => this.view.OnFailureRead(errorMessage), CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
+            this.runningTasks.Add(task);
         }
 
         /// <summary>
         /// Reads log from file
         /// </summary>
         /// <returns>Path to RTF document to be loaded into control</returns>
-        public string ReadLog()
+        public void StartReadLog()
         {
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
@@ -257,7 +228,8 @@ namespace logviewer.core
 
             if (this.CurrentPathCached && !append)
             {
-                return this.CreateRtf(true);
+                this.ReadLogFromInternalStore(true);
+                return;
             }
 
             this.RunOnGuiThread(this.ResetLogStatistic);
@@ -280,18 +252,47 @@ namespace logviewer.core
             {
                 this.totalMessages = 0;
             }
+            reader.ProgressChanged += this.OnReadLogProgressChanged;
+            reader.ReadCompleted += this.OnReadCompleted;
+            reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
+        }
 
-            try
+        void OnReadCompleted(object sender, EventArgs e)
+        {
+            this.store.FinishAddMessages();
+            var reader = (LogReader)sender;
+            reader.ProgressChanged -= this.OnReadLogProgressChanged;
+            reader.ReadCompleted -= this.OnReadCompleted;
+            this.ReadLogFromInternalStore(false);
+        }
+
+        void ReadLogFromInternalStore(bool signalProcess)
+        {
+            var rtf = string.Empty;
+            Action action = delegate
             {
-                reader.ProgressChanged += this.OnReadLogProgressChanged;
-                reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
-            }
-            finally
+                try
+                {
+                    rtf = this.CreateRtf(signalProcess);
+                }
+                catch (Exception e)
+                {
+                    rtf = e.ToString();
+                    throw;
+                }
+            };
+            var task = Task.Factory.StartNew(action, this.cancellation.Token);
+            task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiContext);
+            task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
+            this.runningTasks.Add(task);
+        }
+
+        private void OnSuccessRtfCreate(string rtf)
+        {
+            if (this.ReadCompleted != null)
             {
-                reader.ProgressChanged -= this.OnReadLogProgressChanged;
-                this.store.FinishAddMessages();
+                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf));
             }
-            return this.CreateRtf();
         }
 
         private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -304,7 +305,7 @@ namespace logviewer.core
             this.view.HumanReadableLogSize = new FileSize((ulong)this.logSize).ToString();
         }
 
-        private void ResetLogStatistic()
+        public void ResetLogStatistic()
         {
             this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
@@ -450,7 +451,7 @@ namespace logviewer.core
             }
         }
 
-        private int CountMessages(LogLevel level)
+        public int CountMessages(LogLevel level)
         {
             return this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0;
         }
@@ -482,6 +483,16 @@ namespace logviewer.core
             }
         }
 
+        public int TotalMessages
+        {
+            get { return this.totalMessages; }
+        }
+
+        public long TotalFiltered
+        {
+            get { return this.totalFiltered; }
+        }
+
         private void AddMessageToCache(LogMessage message)
         {
             if (message.IsEmpty)
@@ -490,7 +501,7 @@ namespace logviewer.core
             }
             message.Level = this.DetectLevel(message.Header);
             message.Cache();
-            ++this.totalMessages;
+            this.totalMessages = this.TotalMessages + 1;
             this.store.AddMessage(message);
         }
 
@@ -604,23 +615,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    if (!this.cancellation.IsCancellationRequested)
-                    {
-                        SafeRunner.Run(this.cancellation.Cancel);
-                    }
-
-                    if (this.task != null)
-                    {
-                        SafeRunner.Run(this.task.Wait);
-                        SafeRunner.Run(this.task.Dispose);
-                    }
-                    SafeRunner.Run(this.cancellation.Dispose);
-                }
-                catch (Exception e)
-                {
-                    this.task = null;
-                    this.cancellation = null;
-                    Log.Instance.Fatal(e.Message, e);
+                    this.CancelPreviousTask();
                 }
                 finally
                 {
