@@ -189,49 +189,20 @@ namespace logviewer.tests
             this.controller.ExportToRtf();
         }
 
-        [Test]
-        public void FilterText()
+        [TestCase(".*5272.*", 1, true)]
+        [TestCase(".*ERROR.*", 1, true)]
+        [TestCase(".*message body 2.*", 1, true)]
+        [TestCase("t[", 0, true)]
+        [TestCase("message body 2", 1, false)]
+        public void FilterText(string filter, int messages, bool useRegexp)
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, MessageExamples);
-            this.controller.TextFilter(".*5272.*");
+            this.controller.TextFilter(filter);
+            this.controller.UserRegexp(useRegexp);
             this.controller.StartReadLog();
             SpinWait.SpinUntil(() => completed);
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
-        }
-
-        [Test]
-        public void FilterTextNotContainsTextInHead()
-        {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            File.WriteAllText(TestPath, MessageExamples);
-            this.controller.TextFilter(".*ERROR.*");
-            this.controller.StartReadLog();
-            SpinWait.SpinUntil(() => completed);
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
-        }
-
-        [Test]
-        public void FilterTextNotContainsTextInBody()
-        {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            File.WriteAllText(TestPath, MessageExamples);
-            this.controller.TextFilter(".*message body 2.*");
-            this.controller.StartReadLog();
-            SpinWait.SpinUntil(() => completed);
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
-        }
-
-        [Test]
-        public void FilterTextNotContainsTextInBodySubstr()
-        {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            File.WriteAllText(TestPath, MessageExamples);
-            this.controller.TextFilter("message body 2");
-            this.controller.UserRegexp(false);
-            this.controller.StartReadLog();
-            SpinWait.SpinUntil(() => completed);
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(messages));
         }
 
         [Test]
