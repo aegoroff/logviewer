@@ -27,7 +27,7 @@ namespace logviewer.core
             }
             catch (Exception e)
             {
-                Log.Instance.Info(e.Message, e);
+                Log.Instance.Error(e.Message, e);
                 invalid = pattern;
             }
             return false;
