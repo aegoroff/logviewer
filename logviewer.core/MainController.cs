@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Drawing;
@@ -47,7 +48,7 @@ namespace logviewer.core
         private ILogView view;
         private int totalMessages;
         private readonly TaskScheduler uiContext;
-        readonly List<Task> runningTasks = new List<Task>();
+        readonly IDictionary<Task, bool> runningTasks = new ConcurrentDictionary<Task, bool>();
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
 
         #endregion
@@ -153,14 +154,19 @@ namespace logviewer.core
             {
                 SafeRunner.Run(this.cancellation.Cancel);
             }
-            if (this.runningTasks.Count > 0)
+            foreach (
+                var task in
+                    this.runningTasks.Keys.Where(
+                        task =>
+                            task.Status == TaskStatus.Running || task.Status == TaskStatus.WaitingForChildrenToComplete ||
+                            task.Status == TaskStatus.WaitingForActivation))
             {
-                Task.WaitAll(this.runningTasks.ToArray());
+                task.Wait();
             }
             SafeRunner.Run(this.cancellation.Dispose);
             foreach (
                 var task in
-                    this.runningTasks.Where(
+                    this.runningTasks.Keys.Where(
                         task =>
                             task.Status == TaskStatus.RanToCompletion || task.Status == TaskStatus.Faulted ||
                             task.Status == TaskStatus.Canceled))
@@ -198,7 +204,7 @@ namespace logviewer.core
                 TaskScheduler.Default);
             task.ContinueWith(t => this.view.OnFailureRead(errorMessage), CancellationToken.None,
                 TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
-            this.runningTasks.Add(task);
+            this.runningTasks.Add(task, true);
         }
 
         /// <summary>
@@ -284,7 +290,7 @@ namespace logviewer.core
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
             task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiContext);
             task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
-            this.runningTasks.Add(task);
+            this.runningTasks.Add(task, true);
         }
 
         private void OnSuccessRtfCreate(string rtf)
@@ -615,13 +621,13 @@ namespace logviewer.core
             {
                 try
                 {
-                    this.CancelPreviousTask();
+                    SafeRunner.Run(this.CancelPreviousTask);
                 }
                 finally
                 {
                     if (this.store != null)
                     {
-                        this.store.Dispose();
+                        SafeRunner.Run(this.store.Dispose);
                     }
                 }
             }
