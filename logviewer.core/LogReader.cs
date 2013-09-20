@@ -105,7 +105,7 @@ namespace logviewer.core
                                     Remainig = TimeSpan.FromSeconds((total - stream.Position) / speed),
                                     Percent = (int)((stream.Position / (double)total) * 100)
                                 };
-                                this.ProgressChanged(this, new ProgressChangedEventArgs(0, progress));
+                                this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
                             }
 
                             message.AddLine(line);
