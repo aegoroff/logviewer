@@ -131,5 +131,14 @@ namespace logviewer.core.Properties {
                 return ResourceManager.GetString("SizeTBytes", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty file detected. File must be not empty to be displayed..
+        /// </summary>
+        internal static string ZeroFileDetected {
+            get {
+                return ResourceManager.GetString("ZeroFileDetected", resourceCulture);
+            }
+        }
     }
 }

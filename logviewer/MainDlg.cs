@@ -121,12 +121,18 @@ namespace logviewer
             this.Controller.AddCurrentFileToRecentFilesList();
         }
 
-        public void LoadLog(string rtf)
+        public void OnSuccessRead(string rtf)
         {
             this.EnableControls(true);
             this.syntaxRichTextBox1.SuspendLayout();
             this.syntaxRichTextBox1.Rtf = rtf;
             this.syntaxRichTextBox1.ResumeLayout();
+        }
+        
+        public void OnFailureRead(string rtf)
+        {
+            this.EnableControls(true);
+            Log.Instance.Error(rtf);
         }
 
         public bool OpenExport(string path)

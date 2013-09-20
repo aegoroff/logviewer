@@ -141,4 +141,7 @@
   <data name="SizeTBytes" xml:space="preserve">
     <value>Tb</value>
   </data>
+  <data name="ZeroFileDetected" xml:space="preserve">
+    <value>Empty file detected. File must be not empty to be displayed.</value>
+  </data>
 </root>

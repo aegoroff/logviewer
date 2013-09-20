@@ -15,7 +15,8 @@ namespace logviewer.core
         void CreateRecentFileItem(string file);
         bool OpenLogFile();
         void ReadLog();
-        void LoadLog(string rtf);
+        void OnSuccessRead(string rtf);
+        void OnFailureRead(string rtf);
         bool OpenExport(string path);
         void SetLoadedFileCapltion(string path);
         void SaveRtf();
