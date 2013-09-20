@@ -27,6 +27,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
+            completed = false;
             CleanupTestFiles();
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
@@ -108,13 +109,12 @@ namespace logviewer.tests
             this.controller.MaxFilter((int)LogLevel.Warn);
             this.controller.TextFilter("5555");
             this.controller.UserRegexp(false);
-
             this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
-        [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)
-        ]
+        [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
         [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples, 0)]
         public void MaxAndMaxFilter(int min, int max, string msg, int count)
         {
@@ -123,6 +123,7 @@ namespace logviewer.tests
             this.controller.MinFilter(min);
             this.controller.MaxFilter(max);
             this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(count));
         }
 
@@ -141,6 +142,7 @@ namespace logviewer.tests
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
 
@@ -166,6 +168,7 @@ namespace logviewer.tests
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
 
