@@ -40,6 +40,21 @@ namespace logviewer.core
 
         public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
         {
+            try
+            {
+                this.ReadInternal(onRead, canContinue, offset);
+            }
+            finally
+            {
+                if (this.ReadCompleted != null)
+                {
+                    this.ReadCompleted(this, new EventArgs());
+                }
+            }
+        }
+
+        private void ReadInternal(Action<LogMessage> onRead, Func<bool> canContinue, long offset)
+        {
             if (this.Length == 0)
             {
                 return;
@@ -47,7 +62,7 @@ namespace logviewer.core
 
             bool decode;
             Encoding srcEncoding;
-            string mapName = Guid.NewGuid().ToString();
+            var mapName = Guid.NewGuid().ToString();
             using (
                 var mmf = MemoryMappedFile.CreateFromFile(this.LogPath, FileMode.Open, mapName, 0,
                     MemoryMappedFileAccess.Read))
@@ -67,7 +82,7 @@ namespace logviewer.core
                     var fraction = total / 20L;
                     var signalCounter = 1;
 
-                    Stopwatch stopWatch = new Stopwatch();
+                    var stopWatch = new Stopwatch();
                     var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
                     using (sr)
                     {
@@ -100,7 +115,9 @@ namespace logviewer.core
                                 var speed = read / elapsed.TotalSeconds;
                                 stopWatch.Restart();
                                 ++signalCounter;
-                                var remain = Math.Abs(speed) < 0.001 ? TimeSpan.FromSeconds(0) : TimeSpan.FromSeconds((total - stream.Position) / speed);
+                                var remain = Math.Abs(speed) < 0.001
+                                    ? TimeSpan.FromSeconds(0)
+                                    : TimeSpan.FromSeconds((total - stream.Position) / speed);
                                 var progress = new LoadProgress
                                 {
                                     Speed = new FileSize((ulong)speed, true),
@@ -117,10 +134,6 @@ namespace logviewer.core
                         onRead(message);
                     }
                 }
-            }
-            if (this.ReadCompleted != null)
-            {
-                this.ReadCompleted(this, new EventArgs());
             }
         }
 

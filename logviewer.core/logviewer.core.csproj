@@ -62,6 +62,7 @@
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
     <Compile Include="LoadProgress.cs" />
+    <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />
     <Compile Include="MainController.cs" />

@@ -27,11 +27,13 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
+            completed = false;
             CleanupTestFiles();
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
             this.controller = new MainController(MessageStart, this.levels, SettingsDb, KeepLastNFiles, 100);
+            this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
@@ -107,13 +109,12 @@ namespace logviewer.tests
             this.controller.MaxFilter((int)LogLevel.Warn);
             this.controller.TextFilter("5555");
             this.controller.UserRegexp(false);
-
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
-        [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)
-        ]
+        [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
         [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples, 0)]
         public void MaxAndMaxFilter(int min, int max, string msg, int count)
         {
@@ -121,7 +122,8 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, msg);
             this.controller.MinFilter(min);
             this.controller.MaxFilter(max);
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(count));
         }
 
@@ -136,10 +138,19 @@ namespace logviewer.tests
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
+            this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
+        }
+
+        private bool completed;
+
+        void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
+        {
+            completed = true;
         }
 
         [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
@@ -153,9 +164,11 @@ namespace logviewer.tests
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
+            this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
         }
 
@@ -182,7 +195,8 @@ namespace logviewer.tests
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(".*5272.*");
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
@@ -192,7 +206,8 @@ namespace logviewer.tests
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(".*ERROR.*");
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
@@ -202,7 +217,8 @@ namespace logviewer.tests
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(".*message body 2.*");
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
@@ -213,45 +229,9 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter("message body 2");
             this.controller.UserRegexp(false);
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
-        }
-
-        [Test]
-        public void LoadLog()
-        {
-            this.view.Expects.One.MethodWith(v => v.OnSuccessRead(TestPath));
-            this.view.Expects.One.MethodWith(v => v.SetCurrentPage(1));
-            this.view.Expects.One.MethodWith(v => v.DisableBack(true));
-            this.view.Expects.One.MethodWith(v => v.DisableForward(true));
-
-            this.controller.LoadLog(TestPath);
-        }
-
-        [Test]
-        public void LoadLogEmpty()
-        {
-            this.view.Expects.No.Method(v => v.OnSuccessRead(null)).WithAnyArguments();
-            this.controller.LoadLog(string.Empty);
-        }
-
-        [Test]
-        public void LoadLogThatThrows()
-        {
-            this.view.Expects.One.MethodWith(v => v.OnSuccessRead(TestPath)).Will(Throw.Exception(new Exception()));
-            this.view.Expects.One.MethodWith(v => v.DisableBack(true));
-            this.view.Expects.One.MethodWith(v => v.DisableForward(true));
-
-            var thrown = false;
-            try
-            {
-                this.controller.LoadLog(TestPath);
-            }
-            catch (Exception)
-            {
-                thrown = true;
-            }
-            Assert.That(thrown, NUnit.Framework.Is.True);
         }
 
         [Test]
@@ -267,7 +247,7 @@ namespace logviewer.tests
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.Create(TestPath).Dispose();
-            Assert.IsEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
         }
 
@@ -278,7 +258,7 @@ namespace logviewer.tests
             this.controller.MinFilter((int)LogLevel.Error);
             this.controller.MaxFilter((int)LogLevel.Info);
             File.Create(TestPath).Dispose();
-            this.controller.ReadLog();
+            this.controller.StartReadLog();
         }
 
         [Test]
@@ -288,7 +268,8 @@ namespace logviewer.tests
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(string.Empty);
-            Assert.IsEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
         }
 
@@ -302,7 +283,8 @@ namespace logviewer.tests
             }
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, sb.ToString());
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2000));
         }
 
@@ -311,7 +293,8 @@ namespace logviewer.tests
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, MessageExamples);
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
         }
 
@@ -320,7 +303,8 @@ namespace logviewer.tests
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, MessageExamples, Encoding.GetEncoding("windows-1251"));
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
         }
 
@@ -329,7 +313,8 @@ namespace logviewer.tests
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, "test log");
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
 
@@ -425,7 +410,8 @@ namespace logviewer.tests
             }
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             File.WriteAllText(TestPath, sb.ToString());
-            Assert.IsNotEmpty(this.controller.ReadLog());
+            this.controller.StartReadLog();
+            SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(pages));
         }
     }

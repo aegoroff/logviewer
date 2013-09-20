@@ -15,14 +15,10 @@ namespace logviewer.core
         void CreateRecentFileItem(string file);
         bool OpenLogFile();
         void ReadLog();
-        void OnSuccessRead(string rtf);
-        void OnFailureRead(string rtf);
+        void OnFailureRead(string errorMessage);
         bool OpenExport(string path);
-        void SetLoadedFileCapltion(string path);
         void SaveRtf();
         void SetCurrentPage(int page);
-        void DisableForward(bool disabled);
-        void DisableBack(bool disabled);
         void SetPageSize(int size);
         void Initialize();
         void FocusOnTextFilterControl();
