@@ -85,19 +85,10 @@ namespace logviewer
             }
         }
 
-        public void SetProgress(double value, object speed)
+        public void SetProgress(LoadProgress progress)
         {
-            var percent = (int)value;
-            this.logLoadProgress.Value = percent;
-            if (speed == null)
-            {
-                this.logLoadPercent.Text = string.Format("{0} %", percent);
-            }
-            else
-            {
-                var progress = (LoadProgress)speed;
-                this.logLoadPercent.Text = progress.ToString();
-            }
+            this.logLoadProgress.Value = progress.Percent;
+            this.logLoadPercent.Text = progress.ToString();
         }
 
         public void CreateRecentFileItem(string file)

@@ -25,7 +25,7 @@ namespace logviewer.core
         void SetPageSize(int size);
         void Initialize();
         void FocusOnTextFilterControl();
-        void SetProgress(double value, object speed);
+        void SetProgress(LoadProgress progress);
         void StartLoadingLog(string path);
     }
 }

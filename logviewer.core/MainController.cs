@@ -193,7 +193,7 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.UserRegexp(regexp);
             this.Ordering(reverse);
-            this.view.SetProgress(0, null);
+            this.view.SetProgress(LoadProgress.FromPercent(0));
 
             var rtf = string.Empty;
             Func<string> function = delegate
@@ -226,7 +226,7 @@ namespace logviewer.core
             {
                 return;
             }
-            this.view.SetProgress(100, null);
+            this.view.SetProgress(LoadProgress.FromPercent(100));
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace logviewer.core
 
         private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            this.OnLogReadProgress(e.ProgressPercentage, e.UserState);
+            this.OnLogReadProgress(e.UserState);
         }
 
         private void SetLogSize()
@@ -525,7 +525,7 @@ namespace logviewer.core
                 }
                 ++signalCounter;
                 var percent = (count / (double)total) * 100;
-                this.OnLogReadProgress(percent, null);
+                this.OnLogReadProgress(LoadProgress.FromPercent((int)percent));
             };
 
             var start = (this.CurrentPage - 1) * this.pageSize;
@@ -542,9 +542,9 @@ namespace logviewer.core
             return doc.Rtf;
         }
 
-        private void OnLogReadProgress(double percent, object speed)
+        private void OnLogReadProgress(object progress)
         {
-            this.RunOnGuiThread(() => this.view.SetProgress(percent, speed));
+            this.RunOnGuiThread(() => this.view.SetProgress((LoadProgress)progress));
         }
 
         private void RunOnGuiThread(Action action)

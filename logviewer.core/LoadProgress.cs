@@ -10,11 +10,18 @@ namespace logviewer.core
     {
         internal FileSize Speed { get; set; }
         internal TimeSpan Remainig { get; set; }
-        internal int Percent { get; set; }
+        public int Percent { get; set; }
+
+        public static LoadProgress FromPercent(int percent)
+        {
+            return new LoadProgress { Percent = percent };
+        }
 
         public override string ToString()
         {
-            return string.Format("{0} %  ({1}/second) remain {2}", this.Percent, this.Speed, this.RemainigToString());
+            return this.Speed.Bytes == 0
+                ? string.Format("{0} %", this.Percent)
+                : string.Format("{0} %  ({1}/second) remain {2}", this.Percent, this.Speed, this.RemainigToString());
         }
 
         private string RemainigToString()
