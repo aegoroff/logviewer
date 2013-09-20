@@ -95,8 +95,8 @@ namespace logviewer
             }
             else
             {
-                var sz = new FileSize((ulong)(double)speed, true);
-                this.logLoadPercent.Text = string.Format("{0} %  ({1}/second)", percent, sz);
+                var progress = (LoadProgress)speed;
+                this.logLoadPercent.Text = progress.ToString();
             }
         }
 

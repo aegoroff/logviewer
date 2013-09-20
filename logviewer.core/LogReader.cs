@@ -15,10 +15,8 @@ namespace logviewer.core
 {
     public sealed class LogReader
     {
-        private readonly Regex messageHead;
         private const int BufferSize = 0xFFFFFF;
-
-        public event ProgressChangedEventHandler ProgressChanged;
+        private readonly Regex messageHead;
 
         public LogReader(string logPath, Regex messageHead)
         {
@@ -28,14 +26,16 @@ namespace logviewer.core
         }
 
         /// <summary>
-        /// Gets log file length in bytes
+        ///     Gets log file length in bytes
         /// </summary>
         public long Length { get; private set; }
 
         /// <summary>
-        /// Gets full path to log file
+        ///     Gets full path to log file
         /// </summary>
         public string LogPath { get; private set; }
+
+        public event ProgressChangedEventHandler ProgressChanged;
 
         public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
         {
@@ -71,7 +71,7 @@ namespace logviewer.core
                     using (sr)
                     {
                         var message = LogMessage.Create();
-                        
+
                         stopWatch.Start();
                         var measureStart = 0L;
                         while (!sr.EndOfStream && canContinue())
@@ -91,7 +91,7 @@ namespace logviewer.core
                                 message = LogMessage.Create();
                             }
 
-                            if (stream.Position >= signalCounter * fraction)
+                            if (stream.Position >= signalCounter * fraction && this.ProgressChanged != null)
                             {
                                 var elapsed = stopWatch.Elapsed;
                                 var read = stream.Position - measureStart;
@@ -99,11 +99,13 @@ namespace logviewer.core
                                 var speed = read / elapsed.TotalSeconds;
                                 stopWatch.Restart();
                                 ++signalCounter;
-                                var percent = (stream.Position / (double)total) * 100;
-                                if (this.ProgressChanged != null)
+                                var progress = new LoadProgress
                                 {
-                                    this.ProgressChanged(this, new ProgressChangedEventArgs((int)percent, speed));
-                                }
+                                    Speed = new FileSize((ulong)speed, true),
+                                    Remainig = TimeSpan.FromSeconds((total - stream.Position) / speed),
+                                    Percent = (int)((stream.Position / (double)total) * 100)
+                                };
+                                this.ProgressChanged(this, new ProgressChangedEventArgs(0, progress));
                             }
 
                             message.AddLine(line);
