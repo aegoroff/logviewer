@@ -150,7 +150,7 @@ namespace logviewer.core
             {
                 return;
             }
-            this.view.LoadLog(rtf);
+            this.view.OnSuccessRead(rtf);
             this.view.SetCurrentPage(this.CurrentPage);
             this.view.DisableBack(this.CurrentPage <= 1);
             this.view.DisableForward(this.CurrentPage >= this.TotalPages);
@@ -196,20 +196,21 @@ namespace logviewer.core
             this.view.SetProgress(LoadProgress.FromPercent(0));
 
             var rtf = string.Empty;
-            Func<string> function = delegate
+            Action action = delegate
             {
                 try
                 {
-                    return rtf = this.ReadLog();
+                    rtf = this.ReadLog();
                 }
                 catch (Exception e)
                 {
-                    Log.Instance.Error(e.Message, e);
+                    rtf = e.ToString();
                     throw;
                 }
             };
-            this.task = Task.Factory.StartNew(function, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(rtf), this.uiContext);
+            this.task = Task.Factory.StartNew(action, this.cancellation.Token);
+            this.task.ContinueWith(t => this.EndLogReading(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiContext);
+            this.task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
         }
 
         private void EndLogReading(string rtf)
@@ -239,10 +240,6 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            if (!File.Exists(this.view.LogPath))
-            {
-                return string.Empty;
-            }
             var reader = new LogReader(this.view.LogPath, this.messageHead);
 
             var append = reader.Length > this.logSize && this.CurrentPathCached;
@@ -255,7 +252,7 @@ namespace logviewer.core
 
             if (this.logSize == 0)
             {
-                return string.Empty;
+                throw new ArgumentException(Resources.ZeroFileDetected);
             }
 
             if (this.CurrentPathCached && !append)

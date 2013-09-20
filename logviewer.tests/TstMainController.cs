@@ -220,7 +220,7 @@ namespace logviewer.tests
         [Test]
         public void LoadLog()
         {
-            this.view.Expects.One.MethodWith(v => v.LoadLog(TestPath));
+            this.view.Expects.One.MethodWith(v => v.OnSuccessRead(TestPath));
             this.view.Expects.One.MethodWith(v => v.SetCurrentPage(1));
             this.view.Expects.One.MethodWith(v => v.DisableBack(true));
             this.view.Expects.One.MethodWith(v => v.DisableForward(true));
@@ -231,14 +231,14 @@ namespace logviewer.tests
         [Test]
         public void LoadLogEmpty()
         {
-            this.view.Expects.No.Method(v => v.LoadLog(null)).WithAnyArguments();
+            this.view.Expects.No.Method(v => v.OnSuccessRead(null)).WithAnyArguments();
             this.controller.LoadLog(string.Empty);
         }
 
         [Test]
         public void LoadLogThatThrows()
         {
-            this.view.Expects.One.MethodWith(v => v.LoadLog(TestPath)).Will(Throw.Exception(new Exception()));
+            this.view.Expects.One.MethodWith(v => v.OnSuccessRead(TestPath)).Will(Throw.Exception(new Exception()));
             this.view.Expects.One.MethodWith(v => v.DisableBack(true));
             this.view.Expects.One.MethodWith(v => v.DisableForward(true));
 
@@ -262,6 +262,7 @@ namespace logviewer.tests
         }
 
         [Test]
+        [ExpectedException(typeof(ArgumentException))]
         public void ReadEmptyFile()
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
@@ -271,7 +272,7 @@ namespace logviewer.tests
         }
 
         [Test]
-        [ExpectedException(typeof (ArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void ReadEmptyWhenMinGreaterThenMax()
         {
             this.controller.MinFilter((int)LogLevel.Error);
@@ -281,6 +282,7 @@ namespace logviewer.tests
         }
 
         [Test]
+        [ExpectedException(typeof(FileNotFoundException))]
         public void ReadFromBadPath()
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
