@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Drawing;
@@ -33,8 +34,6 @@ namespace logviewer.core
         private int pageSize;
 
         private readonly string settingsDatabaseFilePath;
-        private CancellationTokenSource cancellation = new CancellationTokenSource();
-
         private string currentPath;
 
         private LogLevel maxFilter = LogLevel.Fatal;
@@ -44,9 +43,10 @@ namespace logviewer.core
         private LogStore store;
         private string textFilter;
         private ILogView view;
-        private Task task;
         private int totalMessages;
         private readonly TaskScheduler uiContext;
+        private volatile bool notCancelled;
+        readonly ConcurrentQueue<Task> runningTasks = new ConcurrentQueue<Task>(); 
 
         #endregion
 
@@ -120,11 +120,6 @@ namespace logviewer.core
 
         #region Public Methods and Operators
 
-        private bool NotCancelled
-        {
-            get { return !this.cancellation.IsCancellationRequested; }
-        }
-
         public void InitializeLogger()
         {
             var target = new RichTextBoxTarget
@@ -156,100 +151,23 @@ namespace logviewer.core
             this.view.DisableForward(this.CurrentPage >= this.TotalPages);
         }
 
-        private void CancelPreviousTask()
-        {
-            try
-            {
-                if (this.task == null || this.task.Status != TaskStatus.Running)
-                {
-                    return;
-                }
-                if (this.cancellation.IsCancellationRequested)
-                {
-                    SafeRunner.Run(this.task.Wait);
-                }
-                else
-                {
-                    SafeRunner.Run(this.cancellation.Cancel);
-                    SafeRunner.Run(this.task.Wait);
-                    SafeRunner.Run(this.cancellation.Dispose);
-                    this.cancellation = new CancellationTokenSource();
-                }
-            }
-            finally
-            {
-                if (this.task != null)
-                {
-                    this.task.Dispose();
-                }
-            }
-        }
-
         public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
         {
-            this.CancelPreviousTask();
+            this.CancelReading();
             this.MinFilter(min);
             this.MaxFilter(max);
             this.TextFilter(filter);
             this.UserRegexp(regexp);
             this.Ordering(reverse);
             this.view.SetProgress(LoadProgress.FromPercent(0));
-
-            LogReader reader = null;
-            Func<LogReader> function = delegate
-            {
-                try
-                {
-                    return reader = this.ReadLog();
-                }
-                catch (Exception e)
-                {
-                    Log.Instance.Error(e.Message, e);
-                    throw;
-                }
-            };
-            this.task = Task.Factory.StartNew(function, this.cancellation.Token);
-            this.task.ContinueWith(t => this.EndLogReading(reader), this.uiContext);
-        }
-
-        private void EndLogReading(LogReader reader)
-        {
-            if (reader != null)
-            {
-                reader.ProgressChanged -= this.OnReadLogProgressChanged;
-            }
-            this.store.FinishAddMessages();
-
-            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
-                this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
-                this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
-                this.CountMessages(LogLevel.Fatal), this.totalFiltered);
-
-            var rtf = this.CreateRtf();
-            this.LoadLog(rtf);
-            this.view.SetLoadedFileCapltion(this.view.LogPath);
-            this.ReadRecentFiles();
-            this.view.FocusOnTextFilterControl();
-            if (string.IsNullOrWhiteSpace(rtf))
-            {
-                return;
-            }
-            this.view.SetProgress(LoadProgress.FromPercent(100));
-        }
-
-        /// <summary>
-        /// Reads log from file
-        /// </summary>
-        /// <returns>Path to RTF document to be loaded into control</returns>
-        public LogReader ReadLog()
-        {
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
             if (!File.Exists(this.view.LogPath))
             {
-                return null;
+                // TODO: Signal about error
+                return;
             }
             var reader = new LogReader(this.view.LogPath, this.messageHead);
 
@@ -263,12 +181,14 @@ namespace logviewer.core
 
             if (this.logSize == 0)
             {
-                return null;
+                // TODO: Signal about zero file
+                return;
             }
 
             if (this.CurrentPathCached && !append)
             {
-                return null;
+                this.DisplayLog(true);
+                return;
             }
 
             this.RunOnGuiThread(this.ResetLogStatistic);
@@ -292,10 +212,45 @@ namespace logviewer.core
                 this.totalMessages = 0;
             }
 
-
             reader.ProgressChanged += this.OnReadLogProgressChanged;
-            reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
-            return reader;
+            reader.ReadCompleted += this.OnCompleteLoadingLog;
+            var task = Task.Factory.StartNew(() => reader.Read(this.AddMessageToCache, () => this.notCancelled, offset));
+            this.runningTasks.Enqueue(task);
+        }
+
+        private void EndLogReading(string rtf)
+        {
+            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, this.DisplayedMessages,
+                this.totalMessages, this.CountMessages(LogLevel.Trace), this.CountMessages(LogLevel.Debug),
+                this.CountMessages(LogLevel.Info), this.CountMessages(LogLevel.Warn), this.CountMessages(LogLevel.Error),
+                this.CountMessages(LogLevel.Fatal), this.totalFiltered);
+
+            this.LoadLog(rtf);
+            this.view.SetLoadedFileCapltion(this.view.LogPath);
+            this.ReadRecentFiles();
+            this.view.FocusOnTextFilterControl();
+            if (string.IsNullOrWhiteSpace(rtf))
+            {
+                return;
+            }
+            this.view.SetProgress(LoadProgress.FromPercent(100));
+        }
+
+        private void OnCompleteLoadingLog(object sender, EventArgs e)
+        {
+            var reader = (LogReader)sender;
+            reader.ProgressChanged -= this.OnReadLogProgressChanged;
+            reader.ReadCompleted -= this.OnCompleteLoadingLog;
+            this.store.FinishAddMessages();
+            this.DisplayLog();
+        }
+
+        private void DisplayLog(bool signalProgress = false)
+        {
+            var rtf = string.Empty;
+            var completition = Task.Factory.StartNew(() => rtf = this.CreateRtf(signalProgress))
+                .ContinueWith(t => this.EndLogReading(rtf), this.uiContext);
+            this.runningTasks.Enqueue(completition);
         }
 
         private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -315,11 +270,17 @@ namespace logviewer.core
 
         public void CancelReading()
         {
-            if (this.cancellation.IsCancellationRequested)
+            this.notCancelled = false;
+            if (!this.runningTasks.IsEmpty)
             {
-                return;
+                Task.WaitAll(this.runningTasks.ToArray());
+                for (var i = 0; i < this.runningTasks.Count; i++)
+                {
+                    Task t;
+                    this.runningTasks.TryDequeue(out t);
+                }
             }
-            this.cancellation.Cancel();
+            this.notCancelled = true;
         }
 
         public void ClearCache()
@@ -533,7 +494,7 @@ namespace logviewer.core
             this.store.ReadMessages(
                 this.pageSize,
                 onRead,
-                () => this.NotCancelled,
+                () => this.notCancelled,
                 start,
                 this.reverseChronological,
                 this.minFilter,
@@ -606,32 +567,9 @@ namespace logviewer.core
         {
             if (disposing)
             {
-                try
+                if (this.store != null)
                 {
-                    if (!this.cancellation.IsCancellationRequested)
-                    {
-                        SafeRunner.Run(this.cancellation.Cancel);
-                    }
-
-                    if (this.task != null)
-                    {
-                        SafeRunner.Run(this.task.Wait);
-                        SafeRunner.Run(this.task.Dispose);
-                    }
-                    SafeRunner.Run(this.cancellation.Dispose);
-                }
-                catch (Exception e)
-                {
-                    this.task = null;
-                    this.cancellation = null;
-                    Log.Instance.Fatal(e.Message, e);
-                }
-                finally
-                {
-                    if (this.store != null)
-                    {
-                        this.store.Dispose();
-                    }
+                    this.store.Dispose();
                 }
             }
         }
