@@ -36,6 +36,7 @@ namespace logviewer.core
         public string LogPath { get; private set; }
 
         public event ProgressChangedEventHandler ProgressChanged;
+        public event EventHandler ReadCompleted;
 
         public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
         {
@@ -116,6 +117,10 @@ namespace logviewer.core
                         onRead(message);
                     }
                 }
+            }
+            if (this.ReadCompleted != null)
+            {
+                this.ReadCompleted(this, new EventArgs());
             }
         }
 
