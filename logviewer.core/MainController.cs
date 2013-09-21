@@ -48,7 +48,7 @@ namespace logviewer.core
         private ILogView view;
         private int totalMessages;
         private readonly TaskScheduler uiContext;
-        readonly IDictionary<Task, bool> runningTasks = new ConcurrentDictionary<Task, bool>();
+        readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
 
         #endregion
@@ -161,7 +161,7 @@ namespace logviewer.core
                             task.Status == TaskStatus.Running || task.Status == TaskStatus.WaitingForChildrenToComplete ||
                             task.Status == TaskStatus.WaitingForActivation))
             {
-                task.Wait();
+                SafeRunner.Run(task.Wait);
             }
             SafeRunner.Run(this.cancellation.Dispose);
             foreach (
@@ -204,7 +204,7 @@ namespace logviewer.core
                 TaskScheduler.Default);
             task.ContinueWith(t => this.view.OnFailureRead(errorMessage), CancellationToken.None,
                 TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
-            this.runningTasks.Add(task, true);
+            this.runningTasks.Add(task, this.view.LogPath);
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace logviewer.core
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
             task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiContext);
             task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
-            this.runningTasks.Add(task, true);
+            this.runningTasks.Add(task, this.view.LogPath);
         }
 
         private void OnSuccessRtfCreate(string rtf)
