@@ -316,7 +316,10 @@ namespace logviewer
         {
             this.textFilterChanging = true;
             Settings.MessageFilter = this.filterBox.Text;
-            this.StartReading();
+            if (MainController.IsValidFilter(this.filterBox.Text, this.useRegexp.Checked))
+            {
+                this.StartReading();
+            }
         }
 
         private void OnRefresh(object sender, EventArgs e)

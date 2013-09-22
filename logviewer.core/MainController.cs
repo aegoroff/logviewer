@@ -176,6 +176,28 @@ namespace logviewer.core
             this.runningTasks.Clear();
         }
 
+        public static bool IsValidFilter(string filter, bool regexp)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return true;
+            }
+            if (!regexp)
+            {
+                return true;
+            }
+            try
+            {
+                new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Info(e.Message, e);
+                return false;
+            }
+        }
+
         public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
         {
             this.CancelPreviousTask();
@@ -184,6 +206,7 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.UserRegexp(regexp);
             this.Ordering(reverse);
+
             this.view.SetProgress(LoadProgress.FromPercent(0));
 
             var errorMessage = string.Empty;
