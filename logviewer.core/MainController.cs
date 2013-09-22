@@ -225,8 +225,6 @@ namespace logviewer.core
 
             this.logSize = reader.Length;
 
-            this.RunOnGuiThread(this.SetLogSize);
-
             if (this.logSize == 0)
             {
                 throw new ArgumentException(Resources.ZeroFileDetected);
@@ -238,6 +236,7 @@ namespace logviewer.core
                 return;
             }
 
+            this.RunOnGuiThread(this.SetLogSize);
             this.RunOnGuiThread(this.ResetLogStatistic);
 
             this.currentPath = reader.LogPath;
