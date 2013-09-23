@@ -38,11 +38,11 @@ namespace logviewer.core
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler ReadCompleted;
 
-        public void Read(Action<LogMessage> onRead, Func<bool> canContinue, long offset = 0)
+        public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
         {
             try
             {
-                this.ReadInternal(onRead, canContinue, offset);
+                return this.ReadInternal(onRead, canContinue, offset, encoding);
             }
             finally
             {
@@ -53,25 +53,32 @@ namespace logviewer.core
             }
         }
 
-        private void ReadInternal(Action<LogMessage> onRead, Func<bool> canContinue, long offset)
+        private Encoding ReadInternal(Action<LogMessage> onRead, Func<bool> canContinue, long offset, Encoding encoding)
         {
             if (this.Length == 0)
             {
-                return;
+                return null;
             }
 
-            bool decode;
             Encoding srcEncoding;
-            var mapName = Guid.NewGuid().ToString();
-            using (
-                var mmf = MemoryMappedFile.CreateFromFile(this.LogPath, FileMode.Open, mapName, 0,
-                    MemoryMappedFileAccess.Read))
+            if (encoding != null)
             {
-                using (var stream = mmf.CreateViewStream(0, this.Length, MemoryMappedFileAccess.Read))
+                srcEncoding = encoding;
+            }
+            else
+            {
+                var mapName = Guid.NewGuid().ToString();
+                using (
+                    var mmf = MemoryMappedFile.CreateFromFile(this.LogPath, FileMode.Open, mapName, 0,
+                        MemoryMappedFileAccess.Read))
                 {
-                    srcEncoding = SrcEncoding(stream, out decode);
+                    using (var stream = mmf.CreateViewStream(0, this.Length, MemoryMappedFileAccess.Read))
+                    {
+                        srcEncoding = SrcEncoding(stream);
+                    }
                 }
             }
+            var decode = DecodeNeeded(srcEncoding);
             var fs = new FileStream(this.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
             using (fs)
             {
@@ -135,9 +142,10 @@ namespace logviewer.core
                     }
                 }
             }
+            return srcEncoding;
         }
 
-        private static Encoding SrcEncoding(Stream stream, out bool decode)
+        private static Encoding SrcEncoding(Stream stream)
         {
             Encoding srcEncoding = null;
             var detector = new CharsetDetector();
@@ -147,9 +155,13 @@ namespace logviewer.core
             {
                 srcEncoding = Encoding.GetEncoding(detector.Charset);
             }
-            decode = srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) &&
-                     !srcEncoding.Equals(Encoding.ASCII);
             return srcEncoding;
+        }
+
+        private static bool DecodeNeeded(Encoding srcEncoding)
+        {
+            return srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) &&
+                   !srcEncoding.Equals(Encoding.ASCII);
         }
     }
 }

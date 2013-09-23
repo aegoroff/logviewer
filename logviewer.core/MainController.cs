@@ -49,6 +49,7 @@ namespace logviewer.core
         private int totalMessages;
         private readonly TaskScheduler uiContext;
         readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
+        readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
 
         #endregion
@@ -282,7 +283,13 @@ namespace logviewer.core
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
             reader.ReadCompleted += this.OnReadCompleted;
-            reader.Read(this.AddMessageToCache, () => this.NotCancelled, offset);
+            Encoding inputEncoding;
+            this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
+            var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+            if (this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
+            {
+                this.filesEncodingCache.Add(this.currentPath, encoding);
+            }
         }
 
         void OnReadCompleted(object sender, EventArgs e)
