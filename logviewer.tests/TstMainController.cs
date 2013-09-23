@@ -194,6 +194,7 @@ namespace logviewer.tests
         [TestCase(".*message body 2.*", 1, true)]
         [TestCase("t[", 0, true)]
         [TestCase("message body 2", 1, false)]
+        [TestCase("^(?!.*message body 2).*", 1, true)]
         public void FilterText(string filter, int messages, bool useRegexp)
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
