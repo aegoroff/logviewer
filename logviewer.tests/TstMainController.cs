@@ -390,6 +390,8 @@ namespace logviewer.tests
         [TestCase("t[", false, true)]
         [TestCase("t[", true, false)]
         [TestCase("t[1]", true, true)]
+        [TestCase(null, true, true)]
+        [TestCase(null, false, true)]
         public void FilterValidation(string filter, bool useRegex, bool result)
         {
             Assert.That(MainController.IsValidFilter(filter, useRegex), NUnit.Framework.Is.EqualTo(result));
