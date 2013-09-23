@@ -48,6 +48,11 @@
 								Name="logviewer.exe"
 								Source="$(var.SourcePath)\logviewer.exe"
 								DiskId="1"/>
+                            <File
+								Id="logviewer.pdb"
+								Name="logviewer.pdb"
+								Source="$(var.SourcePath)\logviewer.pdb"
+								DiskId="1"/>
 							<File
 								Id="logviewer.exe.config"
 								Name="logviewer.exe.config"
@@ -57,6 +62,11 @@
 								Id="logviewer.core.dll"
 								Name="logviewer.core.dll"
 								Source="$(var.SourcePath)\logviewer.core.dll"
+								DiskId="1"/>
+                            <File
+								Id="logviewer.core.pdb"
+								Name="logviewer.core.pdb"
+								Source="$(var.SourcePath)\logviewer.core.pdb"
 								DiskId="1"/>
 							<File
 								Id="nrtftree_library.dll"
@@ -77,6 +87,11 @@
 								Id="Ninject.dll"
 								Name="Ninject.dll"
 								Source="$(var.SourcePath)\Ninject.dll"
+								DiskId="1"/>
+                            <File
+								Id="Ninject.pdb"
+								Name="Ninject.pdb"
+								Source="$(var.SourcePath)\Ninject.pdb"
 								DiskId="1"/>
                             <File
 								Id="System.Data.SQLite.dll"
