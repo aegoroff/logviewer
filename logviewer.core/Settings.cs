@@ -63,7 +63,7 @@ namespace logviewer.core
             var obj = rk.GetValue(key);
             if (obj == null)
             {
-                RegistryKey.SetValue(key, 0, RegistryValueKind.DWord);
+                RegistryKey.SetValue(key, defaultValue, RegistryValueKind.DWord);
                 return defaultValue;
             }
             return (int)obj;
