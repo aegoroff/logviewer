@@ -385,5 +385,14 @@ namespace logviewer.tests
             SpinWait.SpinUntil(() => completed);
             Assert.That(this.controller.TotalPages, NUnit.Framework.Is.EqualTo(pages));
         }
+
+        [TestCase("test", false, true)]
+        [TestCase("t[", false, true)]
+        [TestCase("t[", true, false)]
+        [TestCase("t[1]", true, true)]
+        public void FilterValidation(string filter, bool useRegex, bool result)
+        {
+            Assert.That(MainController.IsValidFilter(filter, useRegex), NUnit.Framework.Is.EqualTo(result));
+        }
     }
 }
