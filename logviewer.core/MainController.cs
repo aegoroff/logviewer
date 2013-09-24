@@ -155,16 +155,14 @@ namespace logviewer.core
             {
                 SafeRunner.Run(this.cancellation.Cancel);
             }
-            foreach (
-                var task in
-                    this.runningTasks.Keys.Where(
-                        task =>
-                            task.Status == TaskStatus.Running || task.Status == TaskStatus.WaitingForChildrenToComplete ||
-                            task.Status == TaskStatus.WaitingForActivation))
-            {
-                SafeRunner.Run(task.Wait);
-            }
+            this.WaitRunningTasks();
             SafeRunner.Run(this.cancellation.Dispose);
+            this.DisposeRunningTasks();
+            this.runningTasks.Clear();
+        }
+
+        private void DisposeRunningTasks()
+        {
             foreach (
                 var task in
                     this.runningTasks.Keys.Where(
@@ -174,7 +172,19 @@ namespace logviewer.core
             {
                 SafeRunner.Run(task.Dispose);
             }
-            this.runningTasks.Clear();
+        }
+
+        private void WaitRunningTasks()
+        {
+            foreach (
+                var task in
+                    this.runningTasks.Keys.Where(
+                        task =>
+                            task.Status == TaskStatus.Running || task.Status == TaskStatus.WaitingForChildrenToComplete ||
+                            task.Status == TaskStatus.WaitingForActivation))
+            {
+                SafeRunner.Run(task.Wait);
+            }
         }
 
         public static bool IsValidFilter(string filter, bool regexp)
@@ -207,7 +217,11 @@ namespace logviewer.core
             this.TextFilter(filter);
             this.UserRegexp(regexp);
             this.Ordering(reverse);
+            this.BeginLogReading();
+        }
 
+        private void BeginLogReading()
+        {
             this.view.SetProgress(LoadProgress.FromPercent(0));
 
             var errorMessage = string.Empty;
@@ -229,6 +243,24 @@ namespace logviewer.core
             task.ContinueWith(t => this.view.OnFailureRead(errorMessage), CancellationToken.None,
                 TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
             this.runningTasks.Add(task, this.view.LogPath);
+        }
+
+        public void UpdateLog(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return;
+            }
+            Action action = delegate
+            {
+                this.WaitRunningTasks();
+                var f = new FileInfo(path);
+                if (f.Length > this.logSize)
+                {
+                    this.BeginLogReading();
+                }
+            };
+            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         /// <summary>

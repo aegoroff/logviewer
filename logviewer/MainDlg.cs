@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -304,7 +305,7 @@ namespace logviewer
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
-            this.StartReading();
+            this.Controller.UpdateLog(e.FullPath);
         }
 
         private void OnExport(object sender, EventArgs e)
