@@ -12,7 +12,7 @@ namespace logviewer
     public partial class SettingsDlg : Form
     {
         private readonly Settings settings;
-        private ParsingTemplate template;
+        private readonly ParsingTemplate template;
 
         public SettingsDlg(Settings settings)
         {
@@ -21,7 +21,7 @@ namespace logviewer
             this.openLastFile.Checked = settings.OpenLastFile;
             this.pageSizeBox.Text = settings.PageSize.ToString(CultureInfo.CurrentUICulture);
             this.keepLastNFilesBox.Text = settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
-            
+
             this.template = settings.ReadParsingTemplate();
             this.messageStartPatternBox.Text = this.Template.StartMessage;
 
@@ -40,7 +40,7 @@ namespace logviewer
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
-            settings.OpenLastFile = this.openLastFile.Checked;
+            this.settings.OpenLastFile = this.openLastFile.Checked;
         }
 
         private void OnSetPageSize(object sender, EventArgs e)
@@ -48,7 +48,7 @@ namespace logviewer
             int pageSize;
             if (int.TryParse(this.pageSizeBox.Text, out pageSize))
             {
-                settings.PageSize = pageSize;
+                this.settings.PageSize = pageSize;
             }
         }
 
@@ -104,7 +104,7 @@ namespace logviewer
             int value;
             if (int.TryParse(this.keepLastNFilesBox.Text, out value))
             {
-                settings.KeepLastNFiles = value;
+                this.settings.KeepLastNFiles = value;
             }
         }
     }

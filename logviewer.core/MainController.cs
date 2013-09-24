@@ -78,12 +78,12 @@ namespace logviewer.core
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
-        public void CreateMessageHead(string startMessagePattern)
+        void CreateMessageHead(string startMessagePattern)
         {
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
         }
 
-        public void CreateMarkers(IEnumerable<string> levels)
+        void CreateMarkers(IEnumerable<string> levels)
         {
             this.markers.Clear();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
@@ -406,7 +406,7 @@ namespace logviewer.core
             this.maxFilter = (LogLevel)value;
         }
 
-        public void PageSize()
+        void PageSize()
         {
             var value = settings.PageSize;
             if (this.pageSize != value)
@@ -493,7 +493,19 @@ namespace logviewer.core
             }
         }
 
-        public void UpdateKeepLastNFiles()
+        public void UpdateSettings()
+        {
+            var template = this.Settings.ReadParsingTemplate();
+            if (!template.IsEmpty)
+            {
+                this.CreateMarkers(template.Levels);
+                this.CreateMessageHead(template.StartMessage);
+            }
+            this.PageSize();
+            this.UpdateKeepLastNFiles();
+        }
+
+        void UpdateKeepLastNFiles()
         {
             this.keepLastNFiles = this.settings.KeepLastNFiles;
         }

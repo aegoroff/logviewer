@@ -64,11 +64,11 @@ namespace logviewer
         {
             Application.ThreadException += OnUnhandledException;
             this.KeepFormatStrings();
-            this.minLevelBox.SelectedIndex = Controller.Settings.MinLevel;
-            this.maxLevelBox.SelectedIndex = Controller.Settings.MaxLevel;
-            this.sortingBox.SelectedIndex = Controller.Settings.Sorting ? 0 : 1;
-            this.useRegexp.Checked = Controller.Settings.UseRegexp;
-            this.filterBox.Text = Controller.Settings.MessageFilter;
+            this.minLevelBox.SelectedIndex = this.Controller.Settings.MinLevel;
+            this.maxLevelBox.SelectedIndex = this.Controller.Settings.MaxLevel;
+            this.sortingBox.SelectedIndex = this.Controller.Settings.Sorting ? 0 : 1;
+            this.useRegexp.Checked = this.Controller.Settings.UseRegexp;
+            this.filterBox.Text = this.Controller.Settings.MessageFilter;
             this.EnableControls(false);
             this.Controller.ReadRecentFiles();
             this.Controller.ReadCompleted += this.OnReadCompleted;
@@ -129,7 +129,7 @@ namespace logviewer
             this.syntaxRichTextBox1.Rtf = rtf;
             this.syntaxRichTextBox1.ResumeLayout();
         }
-        
+
         public void OnFailureRead(string errorMessage)
         {
             this.EnableControls(true);
@@ -242,20 +242,22 @@ namespace logviewer
             this.logFilterMax = this.maxLevelBox.SelectedIndex;
             this.logFilterText = this.filterBox.Text;
             this.reverse = this.sortingBox.SelectedIndex == 0;
-            Controller.Settings.MinLevel = this.logFilterMin;
-            Controller.Settings.MaxLevel = this.logFilterMax;
-            Controller.Settings.Sorting = this.reverse;
+            this.Controller.Settings.MinLevel = this.logFilterMin;
+            this.Controller.Settings.MaxLevel = this.logFilterMax;
+            this.Controller.Settings.Sorting = this.reverse;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse,
                 this.useRegexp.Checked);
         }
 
-        void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
+        private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
             this.LogInfo = string.Format(this.LogInfoFormatString, this.Controller.DisplayedMessages,
-                this.Controller.TotalMessages, this.Controller.CountMessages(LogLevel.Trace), this.Controller.CountMessages(LogLevel.Debug),
-                this.Controller.CountMessages(LogLevel.Info), this.Controller.CountMessages(LogLevel.Warn), this.Controller.CountMessages(LogLevel.Error),
+                this.Controller.TotalMessages, this.Controller.CountMessages(LogLevel.Trace),
+                this.Controller.CountMessages(LogLevel.Debug),
+                this.Controller.CountMessages(LogLevel.Info), this.Controller.CountMessages(LogLevel.Warn),
+                this.Controller.CountMessages(LogLevel.Error),
                 this.Controller.CountMessages(LogLevel.Fatal), this.Controller.TotalFiltered);
 
             this.OnSuccessRead(e.Rtf);
@@ -314,7 +316,7 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            Controller.Settings.MessageFilter = this.filterBox.Text;
+            this.Controller.Settings.MessageFilter = this.filterBox.Text;
             if (MainController.IsValidFilter(this.filterBox.Text, this.useRegexp.Checked))
             {
                 this.StartReading();
@@ -385,15 +387,7 @@ namespace logviewer
             using (dlg)
             {
                 dlg.ShowDialog();
-                var template = this.Controller.Settings.ReadParsingTemplate();
-                var levels = new[]
-                {
-                    template.Trace, template.Debug, template.Info, template.Warn, template.Error, template.Fatal
-                };
-                this.controller.CreateMarkers(levels);
-                this.controller.CreateMessageHead(template.StartMessage);
-                this.controller.PageSize();
-                this.controller.UpdateKeepLastNFiles();
+                this.controller.UpdateSettings();
             }
         }
 
@@ -413,7 +407,7 @@ namespace logviewer
 
         private void OnChangeRegexpUsage(object sender, EventArgs e)
         {
-            Controller.Settings.UseRegexp = this.useRegexp.Checked;
+            this.Controller.Settings.UseRegexp = this.useRegexp.Checked;
         }
     }
 }
