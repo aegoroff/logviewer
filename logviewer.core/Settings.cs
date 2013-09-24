@@ -34,6 +34,7 @@ namespace logviewer.core
         private const string ErrorParameterName = @"ErrorLevel";
         private const string FatalParameterName = @"FatalLevel";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
+        private const int DefaultParsingProfileIndex = 0;
 
         private static RegistryKey RegistryKey
         {
@@ -44,6 +45,7 @@ namespace logviewer.core
         {
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.CreateTables();
+            this.MigrateFromRegistry();
         }
 
         private void CreateTables()
@@ -66,7 +68,19 @@ namespace logviewer.core
                                  Value BOOLEAN
                         );
                     ";
-            this.ExecuteNonQuery(StringOptions, IntegerOptions, BooleanOptions);
+            const string ParsingTemplates = @"
+                        CREATE TABLE IF NOT EXISTS ParsingTemplates (
+                                 Ix INTEGER PRIMARY KEY,
+                                 StartMessage TEXT NOT NULL,
+                                 Trace TEXT NOT NULL,
+                                 Debug TEXT NOT NULL,
+                                 Info TEXT NOT NULL,
+                                 Warn TEXT NOT NULL,
+                                 Error TEXT NOT NULL,
+                                 Fatal TEXT NOT NULL
+                        );
+                    ";
+            this.ExecuteNonQuery(StringOptions, IntegerOptions, BooleanOptions, ParsingTemplates);
         }
 
         private void ExecuteNonQuery(params string[] queries)
@@ -87,6 +101,223 @@ namespace logviewer.core
             }
         }
 
+        private void MigrateFromRegistry()
+        {
+            if (!MigrationNeeded)
+            {
+                return;
+            }
+            this.UpdateStringOption(FilterParameterName, GetStringValue(FilterParameterName));
+
+            this.UpdateBooleanOption(UseRegexpParameterName, GetBoolValue(UseRegexpParameterName));
+            this.UpdateBooleanOption(OpenLastFileParameterName, GetBoolValue(OpenLastFileParameterName));
+            this.UpdateBooleanOption(SortingParameterName, GetBoolValue(SortingParameterName));
+
+            this.UpdateIntegerOption(MinLevelParameterName, GetIntValue(MinLevelParameterName));
+            this.UpdateIntegerOption(MaxLevelParameterName, GetIntValue(MaxLevelParameterName));
+            this.UpdateIntegerOption(PageSizeParameterName, GetIntValue(PageSizeParameterName));
+            this.UpdateIntegerOption(KeepLastNFilesParameterName, GetIntValue(KeepLastNFilesParameterName));
+
+            var template = new ParsingTemplate
+            {
+                Index = DefaultParsingProfileIndex,
+                Debug = DebugLevel,
+                Trace = TraceLevel,
+                Info = InfoLevel,
+                Warn = WarnLevel,
+                Error = ErrorLevel,
+                Fatal = FatalLevel,
+                StartMessage = StartMessageTemplate
+            };
+            this.InsertParsingProfile(template);
+
+            Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
+        }
+
+        private void UpdateStringOption(string option, string value)
+        {
+            this.UpdateOption("StringOptions", option, value);
+        }
+
+        private void UpdateBooleanOption(string option, bool value)
+        {
+            this.UpdateOption("BooleanOptions", option, value);
+        }
+
+        private void UpdateIntegerOption(string option, int value)
+        {
+            this.UpdateOption("IntegerOptions", option, value);
+        }
+
+        private void UpdateOption<T>(string table, string option, T value)
+        {
+            const string InsertCmd = @"INSERT INTO {0}(Option, Value) VALUES (@Option, @Value)";
+
+            const string UpdateCmd = @"
+                    UPDATE
+                        {0}
+                    SET
+                        Value = @Value
+                    WHERE
+                        Option = @Option
+                    ";
+
+            var query = string.Format(@"SELECT count(1) FROM {0} WHERE Option = @Option", table);
+            var exist = false;
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Option", option);
+                exist = (long)command.ExecuteScalar() > 0;
+            }, query);
+
+            
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Option", option);
+                DatabaseConnection.AddParameter(command, "@Value", value);
+                command.ExecuteNonQuery();
+            }, string.Format(exist ? UpdateCmd : InsertCmd, table));
+        }
+
+        private string ReadStringOption(string option)
+        {
+            return this.ReadOption<string>("StringOptions", option);
+        }
+
+        private bool ReadBooleanOption(string option)
+        {
+            return this.ReadOption<bool>("BooleanOptions", option);
+        }
+        
+        private int ReadIntegerOption(string option)
+        {
+            return (int)this.ReadOption<long>("IntegerOptions", option);
+        }
+
+        
+        private T ReadOption<T>(string table, string option)
+        {
+            const string Cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
+            var result = default(T);
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Option", option);
+                var rdr = command.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read())
+                    {
+                        result = (T)rdr[0];
+                    }
+                }
+            }, string.Format(Cmd, table));
+            return result;
+        }
+
+        public void InsertParsingProfile(ParsingTemplate template)
+        {
+            const string Cmd = @"
+                    INSERT INTO ParsingTemplates (
+                        Ix, 
+                        StartMessage,
+                        Trace,
+                        Debug,
+                        Info,
+                        Warn,
+                        Error,
+                        Fatal
+                    )
+                    VALUES (
+                        @Ix,
+                        @StartMessage,
+                        @Trace,
+                        @Debug,
+                        @Info,
+                        @Warn,
+                        @Error,
+                        @Fatal
+                    )";
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                AddParsingTemplateIntoCommand(command, template);
+                command.ExecuteNonQuery();
+            }, Cmd);
+        }
+
+        public void UpdateDefaultParsingProfile(ParsingTemplate template)
+        {
+            const string Cmd = @"
+                    UPDATE
+                        ParsingTemplates
+                    SET
+                        StartMessage = @StartMessage,
+                        Trace = @Trace,
+                        Debug = @Debug,
+                        Info = @Info,
+                        Warn = @Warn,
+                        Error = @Error,
+                        Fatal = @Fatal
+                    WHERE
+                        Ix = @Ix
+                    ";
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                AddParsingTemplateIntoCommand(command, template);
+                command.ExecuteNonQuery();
+            }, Cmd);
+        }
+
+        public ParsingTemplate ReadParsingTemplate(int index = DefaultParsingProfileIndex)
+        {
+            const string Cmd = @"
+                    SELECT
+                        Trace,
+                        Debug,
+                        Info,
+                        Warn,
+                        Error,
+                        Fatal,
+                        StartMessage
+                    FROM
+                        ParsingTemplates
+                    WHERE
+                        Ix = @Ix
+                    ";
+
+            var result = new ParsingTemplate { Index = index };
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Ix", index);
+                var rdr = command.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read())
+                    {
+                        result.Trace = rdr[0] as string;
+                        result.Debug = rdr[1] as string;
+                        result.Info = rdr[2] as string;
+                        result.Warn = rdr[3] as string;
+                        result.Error = rdr[4] as string;
+                        result.Fatal = rdr[5] as string;
+                        result.StartMessage = rdr[6] as string;
+                    }
+                }
+            }, Cmd);
+            return result;
+        }
+
+        private static void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
+        {
+            DatabaseConnection.AddParameter(command, "@Ix", template.Index);
+            DatabaseConnection.AddParameter(command, "@StartMessage", template.StartMessage);
+            DatabaseConnection.AddParameter(command, "@Trace", template.Trace);
+            DatabaseConnection.AddParameter(command, "@Debug", template.Debug);
+            DatabaseConnection.AddParameter(command, "@Info", template.Info);
+            DatabaseConnection.AddParameter(command, "@Warn", template.Warn);
+            DatabaseConnection.AddParameter(command, "@Error", template.Error);
+            DatabaseConnection.AddParameter(command, "@Fatal", template.Fatal);
+        }
+
         /// <summary>
         /// Open/create regkey for keeping data
         /// </summary>
@@ -95,6 +326,11 @@ namespace logviewer.core
         private static RegistryKey GetRegKey(string key)
         {
             return Registry.CurrentUser.OpenSubKey(key, true) ?? Registry.CurrentUser.CreateSubKey(key);
+        }
+
+        private static bool MigrationNeeded
+        {
+            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
         }
 
         private static string GetStringValue(RegistryKey rk, string key)
@@ -124,11 +360,6 @@ namespace logviewer.core
             return GetStringValue(RegistryKey, key);
         }
 
-        private static void SetStringValue(string key, string value)
-        {
-            RegistryKey.SetValue(key, value, RegistryValueKind.String);
-        }
-
         private static int GetIntValue(string key, int defaultValue = default(int))
         {
             return GetIntValue(RegistryKey, key, defaultValue);
@@ -137,16 +368,6 @@ namespace logviewer.core
         private static bool GetBoolValue(string key)
         {
             return GetIntValue(key) == 1;
-        }
-
-        private static void SetIntValue(string key, int value)
-        {
-            RegistryKey.SetValue(key, value, RegistryValueKind.DWord);
-        }
-
-        private static void SetBoolValue(string key, bool value)
-        {
-            SetIntValue(key, value ? 1 : 0);
         }
 
         private const string ApplicationOptionsFolder = "logviewer";
@@ -166,115 +387,87 @@ namespace logviewer.core
             }
         }
 
-        public static string MessageFilter
+        public string MessageFilter
         {
-            get { return GetStringValue(FilterParameterName); }
-            set { SetStringValue(FilterParameterName, value); }
+            get { return this.ReadStringOption(FilterParameterName); }
+            set { this.UpdateStringOption(FilterParameterName, value); }
         }
 
-        public static bool OpenLastFile
+        public bool OpenLastFile
         {
-            get { return GetBoolValue(OpenLastFileParameterName); }
-            set { SetBoolValue(OpenLastFileParameterName, value); }
+            get { return this.ReadBooleanOption(OpenLastFileParameterName); }
+            set { this.UpdateBooleanOption(OpenLastFileParameterName, value); }
         }
 
-        public static int MinLevel
+        public int MinLevel
         {
-            get { return GetIntValue(MinLevelParameterName); }
-            set { SetIntValue(MinLevelParameterName, value); }
+            get { return this.ReadIntegerOption(MinLevelParameterName); }
+            set { this.UpdateIntegerOption(MinLevelParameterName, value); }
         }
 
-        public static int MaxLevel
+        public int MaxLevel
         {
-            get { return GetIntValue(MaxLevelParameterName, (int)LogLevel.Fatal); }
-            set { SetIntValue(MaxLevelParameterName, value); }
+            get { return this.ReadIntegerOption(MaxLevelParameterName); }
+            set { this.UpdateIntegerOption(MaxLevelParameterName, value); }
         }
 
-        public static int PageSize
+        public int PageSize
         {
-            get { return GetIntValue(PageSizeParameterName, 5000); }
-            set { SetIntValue(PageSizeParameterName, value); }
+            get { return this.ReadIntegerOption(PageSizeParameterName); }
+            set { this.UpdateIntegerOption(PageSizeParameterName, value); }
         }
 
-        public static bool Sorting
+        public bool Sorting
         {
-            get { return GetBoolValue(SortingParameterName); }
-            set { SetBoolValue(SortingParameterName, value); }
+            get { return this.ReadBooleanOption(SortingParameterName); }
+            set { this.UpdateBooleanOption(SortingParameterName, value); }
         }
 
-        public static bool UseRegexp
+        public bool UseRegexp
         {
-            get { return GetBoolValue(UseRegexpParameterName); }
-            set { SetBoolValue(UseRegexpParameterName, value); }
+            get { return this.ReadBooleanOption(UseRegexpParameterName); }
+            set { this.UpdateBooleanOption(UseRegexpParameterName, value); }
         }
 
-        public static string StartMessageTemplate
+        public int KeepLastNFiles
+        {
+            get { return this.ReadIntegerOption(KeepLastNFilesParameterName); }
+            set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
+        }
+
+        private static string StartMessageTemplate
         {
             get { return GetStringValue(StartMessageParameterName); }
-            set { SetStringValue(StartMessageParameterName, value); }
         }
 
-        public static string TraceLevel
+        private static string TraceLevel
         {
             get { return GetStringValue(TraceParameterName); }
-            set { SetStringValue(TraceParameterName, value); }
         }
 
-        public static string DebugLevel
+        private static string DebugLevel
         {
             get { return GetStringValue(DebugParameterName); }
-            set { SetStringValue(DebugParameterName, value); }
         }
 
-        public static string InfoLevel
+        private static string InfoLevel
         {
             get { return GetStringValue(InfoParameterName); }
-            set { SetStringValue(InfoParameterName, value); }
         }
 
-        public static string WarnLevel
+        private static string WarnLevel
         {
             get { return GetStringValue(WarnParameterName); }
-            set { SetStringValue(WarnParameterName, value); }
         }
 
-        public static string ErrorLevel
+        private static string ErrorLevel
         {
             get { return GetStringValue(ErrorParameterName); }
-            set { SetStringValue(ErrorParameterName, value); }
         }
 
-        public static string FatalLevel
+        private static string FatalLevel
         {
             get { return GetStringValue(FatalParameterName); }
-            set { SetStringValue(FatalParameterName, value); }
-        }
-
-        public static int KeepLastNFiles
-        {
-            get { return GetIntValue(KeepLastNFilesParameterName, 10); }
-            set { SetIntValue(KeepLastNFilesParameterName, value); }
-        }
-
-        public static Func<string>[] LevelReaders
-        {
-            get
-            {
-                return new Func<string>[]
-                {
-                    () => TraceLevel,
-                    () => DebugLevel,
-                    () => InfoLevel,
-                    () => WarnLevel,
-                    () => ErrorLevel,
-                    () => FatalLevel
-                };
-            }
-        }
-
-        public string SettingsDatabaseFilePath
-        {
-            get { return this.settingsDatabaseFilePath; }
         }
     }
 }

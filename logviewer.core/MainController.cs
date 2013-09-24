@@ -23,6 +23,7 @@ namespace logviewer.core
     public sealed class MainController : IDisposable
     {
         private int keepLastNFiles;
+        private readonly Settings settings;
 
         #region Constants and Fields
 
@@ -65,11 +66,15 @@ namespace logviewer.core
             this.keepLastNFiles = keepLastNFiles;
             this.CurrentPage = 1;
             this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
-            this.pageSize = pageSize <= 0 ? DefaultPageSize : pageSize;
+            this.settings = new Settings(settingsDatabaseFileName);
+
+            var fromSettings = this.settings.PageSize;
+            this.pageSize = fromSettings <= 0 ? pageSize : fromSettings;
             this.markers = new List<Regex>();
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
-            this.CreateMarkers(levels);
-            this.CreateMessageHead(startMessagePattern);
+            var template = this.settings.ReadParsingTemplate();
+            this.CreateMarkers(template.IsEmpty ? levels : template.Levels);
+            this.CreateMessageHead(template.IsEmpty ? startMessagePattern : template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
@@ -401,8 +406,9 @@ namespace logviewer.core
             this.maxFilter = (LogLevel)value;
         }
 
-        public void PageSize(int value)
+        public void PageSize()
         {
+            var value = settings.PageSize;
             if (this.pageSize != value)
             {
                 this.CurrentPage = 1;
@@ -487,9 +493,9 @@ namespace logviewer.core
             }
         }
 
-        public void UpdateKeepLastNFiles(int value)
+        public void UpdateKeepLastNFiles()
         {
-            this.keepLastNFiles = value;
+            this.keepLastNFiles = this.settings.KeepLastNFiles;
         }
 
         public void AddCurrentFileToRecentFilesList()
@@ -558,6 +564,11 @@ namespace logviewer.core
         public long TotalFiltered
         {
             get { return this.totalFiltered; }
+        }
+
+        public Settings Settings
+        {
+            get { return this.settings; }
         }
 
         private void AddMessageToCache(LogMessage message)

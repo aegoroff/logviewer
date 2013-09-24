@@ -11,24 +11,36 @@ namespace logviewer
 {
     public partial class SettingsDlg : Form
     {
-        public SettingsDlg()
+        private readonly Settings settings;
+        private ParsingTemplate template;
+
+        public SettingsDlg(Settings settings)
         {
+            this.settings = settings;
             this.InitializeComponent();
-            this.openLastFile.Checked = Settings.OpenLastFile;
-            this.pageSizeBox.Text = Settings.PageSize.ToString(CultureInfo.CurrentUICulture);
-            this.keepLastNFilesBox.Text = Settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
-            this.messageStartPatternBox.Text = Settings.StartMessageTemplate;
-            this.traceBox.Text = Settings.TraceLevel;
-            this.debugBox.Text = Settings.DebugLevel;
-            this.infoBox.Text = Settings.InfoLevel;
-            this.warnBox.Text = Settings.WarnLevel;
-            this.errorBox.Text = Settings.ErrorLevel;
-            this.fatalBox.Text = Settings.FatalLevel;
+            this.openLastFile.Checked = settings.OpenLastFile;
+            this.pageSizeBox.Text = settings.PageSize.ToString(CultureInfo.CurrentUICulture);
+            this.keepLastNFilesBox.Text = settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
+            
+            this.template = settings.ReadParsingTemplate();
+            this.messageStartPatternBox.Text = this.Template.StartMessage;
+
+            this.traceBox.Text = this.Template.Trace;
+            this.debugBox.Text = this.Template.Debug;
+            this.infoBox.Text = this.Template.Info;
+            this.warnBox.Text = this.Template.Warn;
+            this.errorBox.Text = this.Template.Error;
+            this.fatalBox.Text = this.Template.Fatal;
+        }
+
+        public ParsingTemplate Template
+        {
+            get { return this.template; }
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
-            Settings.OpenLastFile = this.openLastFile.Checked;
+            settings.OpenLastFile = this.openLastFile.Checked;
         }
 
         private void OnSetPageSize(object sender, EventArgs e)
@@ -36,7 +48,7 @@ namespace logviewer
             int pageSize;
             if (int.TryParse(this.pageSizeBox.Text, out pageSize))
             {
-                Settings.PageSize = pageSize;
+                settings.PageSize = pageSize;
             }
         }
 
@@ -47,37 +59,44 @@ namespace logviewer
 
         private void OnSetMessageStartPattern(object sender, EventArgs e)
         {
-            Settings.StartMessageTemplate = this.messageStartPatternBox.Text;
+            this.template.StartMessage = this.messageStartPatternBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnSetTraceLevel(object sender, EventArgs e)
         {
-            Settings.TraceLevel = this.traceBox.Text;
+            this.template.Trace = this.traceBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnSetDebugLevel(object sender, EventArgs e)
         {
-            Settings.DebugLevel = this.debugBox.Text;
+            this.template.Debug = this.debugBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnSetInfoLevel(object sender, EventArgs e)
         {
-            Settings.InfoLevel = this.infoBox.Text;
+            this.template.Info = this.infoBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnSetWarnLevel(object sender, EventArgs e)
         {
-            Settings.WarnLevel = this.warnBox.Text;
+            this.template.Warn = this.warnBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnSetErrorLevel(object sender, EventArgs e)
         {
-            Settings.ErrorLevel = this.errorBox.Text;
+            this.template.Error = this.errorBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnSetFatalLevel(object sender, EventArgs e)
         {
-            Settings.FatalLevel = this.fatalBox.Text;
+            this.template.Fatal = this.fatalBox.Text;
+            this.settings.UpdateDefaultParsingProfile(this.template);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)
@@ -85,7 +104,7 @@ namespace logviewer
             int value;
             if (int.TryParse(this.keepLastNFilesBox.Text, out value))
             {
-                Settings.KeepLastNFiles = value;
+                settings.KeepLastNFiles = value;
             }
         }
     }

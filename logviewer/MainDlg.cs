@@ -3,9 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using logviewer.core;
@@ -66,11 +64,11 @@ namespace logviewer
         {
             Application.ThreadException += OnUnhandledException;
             this.KeepFormatStrings();
-            this.minLevelBox.SelectedIndex = Settings.MinLevel;
-            this.maxLevelBox.SelectedIndex = Settings.MaxLevel;
-            this.sortingBox.SelectedIndex = Settings.Sorting ? 0 : 1;
-            this.useRegexp.Checked = Settings.UseRegexp;
-            this.filterBox.Text = Settings.MessageFilter;
+            this.minLevelBox.SelectedIndex = Controller.Settings.MinLevel;
+            this.maxLevelBox.SelectedIndex = Controller.Settings.MaxLevel;
+            this.sortingBox.SelectedIndex = Controller.Settings.Sorting ? 0 : 1;
+            this.useRegexp.Checked = Controller.Settings.UseRegexp;
+            this.filterBox.Text = Controller.Settings.MessageFilter;
             this.EnableControls(false);
             this.Controller.ReadRecentFiles();
             this.Controller.ReadCompleted += this.OnReadCompleted;
@@ -244,9 +242,9 @@ namespace logviewer
             this.logFilterMax = this.maxLevelBox.SelectedIndex;
             this.logFilterText = this.filterBox.Text;
             this.reverse = this.sortingBox.SelectedIndex == 0;
-            Settings.MinLevel = this.logFilterMin;
-            Settings.MaxLevel = this.logFilterMax;
-            Settings.Sorting = this.reverse;
+            Controller.Settings.MinLevel = this.logFilterMin;
+            Controller.Settings.MaxLevel = this.logFilterMax;
+            Controller.Settings.Sorting = this.reverse;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse,
@@ -316,7 +314,7 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            Settings.MessageFilter = this.filterBox.Text;
+            Controller.Settings.MessageFilter = this.filterBox.Text;
             if (MainController.IsValidFilter(this.filterBox.Text, this.useRegexp.Checked))
             {
                 this.StartReading();
@@ -383,14 +381,19 @@ namespace logviewer
 
         private void OnSettings(object sender, EventArgs e)
         {
-            var dlg = new SettingsDlg();
+            var dlg = new SettingsDlg(this.Controller.Settings);
             using (dlg)
             {
                 dlg.ShowDialog();
-                this.controller.CreateMarkers(Settings.LevelReaders.Select(r => r()));
-                this.controller.CreateMessageHead(Settings.StartMessageTemplate);
-                this.controller.PageSize(Settings.PageSize);
-                this.controller.UpdateKeepLastNFiles(Settings.KeepLastNFiles);
+                var template = this.Controller.Settings.ReadParsingTemplate();
+                var levels = new[]
+                {
+                    template.Trace, template.Debug, template.Info, template.Warn, template.Error, template.Fatal
+                };
+                this.controller.CreateMarkers(levels);
+                this.controller.CreateMessageHead(template.StartMessage);
+                this.controller.PageSize();
+                this.controller.UpdateKeepLastNFiles();
             }
         }
 
@@ -410,7 +413,7 @@ namespace logviewer
 
         private void OnChangeRegexpUsage(object sender, EventArgs e)
         {
-            Settings.UseRegexp = this.useRegexp.Checked;
+            Controller.Settings.UseRegexp = this.useRegexp.Checked;
         }
     }
 }
