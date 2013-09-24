@@ -3,13 +3,16 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Data;
 using System.IO;
 using Microsoft.Win32;
 
 namespace logviewer.core
 {
-    public static class Settings
+    public class Settings
     {
+        private readonly string settingsDatabaseFilePath;
+
         /// <summary>
         /// Base name of registry key of application options
         /// </summary>
@@ -35,6 +38,53 @@ namespace logviewer.core
         private static RegistryKey RegistryKey
         {
             get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
+        }
+
+        public Settings(string settingsDatabaseFileName)
+        {
+            this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
+            this.CreateTables();
+        }
+
+        private void CreateTables()
+        {
+            const string StringOptions = @"
+                        CREATE TABLE IF NOT EXISTS StringOptions (
+                                 Option TEXT PRIMARY KEY,
+                                 Value TEXT
+                        );
+                    ";
+            const string IntegerOptions = @"
+                        CREATE TABLE IF NOT EXISTS IntegerOptions (
+                                 Option TEXT PRIMARY KEY,
+                                 Value INTEGER
+                        );
+                    ";
+            const string BooleanOptions = @"
+                        CREATE TABLE IF NOT EXISTS BooleanOptions (
+                                 Option TEXT PRIMARY KEY,
+                                 Value BOOLEAN
+                        );
+                    ";
+            this.ExecuteNonQuery(StringOptions, IntegerOptions, BooleanOptions);
+        }
+
+        private void ExecuteNonQuery(params string[] queries)
+        {
+            var connection = new DatabaseConnection(this.settingsDatabaseFilePath);
+            using (connection)
+            {
+                connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
+            }
+        }
+
+        private void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
+        {
+            var connection = new DatabaseConnection(this.settingsDatabaseFilePath);
+            using (connection)
+            {
+                connection.RunSqlQuery(action, commands);
+            }
         }
 
         /// <summary>
@@ -220,6 +270,11 @@ namespace logviewer.core
                     () => FatalLevel
                 };
             }
+        }
+
+        public string SettingsDatabaseFilePath
+        {
+            get { return this.settingsDatabaseFilePath; }
         }
     }
 }
