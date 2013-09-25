@@ -13,6 +13,8 @@ namespace logviewer.core
 {
     public sealed class Settings
     {
+        private readonly int defaultPageSize;
+        private readonly int defaultKeepLastNFiles;
         private readonly string settingsDatabaseFilePath;
         private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
@@ -42,8 +44,10 @@ namespace logviewer.core
             get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
         }
 
-        public Settings(string settingsDatabaseFileName, IEnumerable<string> defaultLeveles, string defaultStartMessageTemplate)
+        public Settings(string settingsDatabaseFileName, IEnumerable<string> defaultLeveles, string defaultStartMessageTemplate, int defaultPageSize, int defaultKeepLastNFiles)
         {
+            this.defaultPageSize = defaultPageSize;
+            this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -198,26 +202,27 @@ namespace logviewer.core
             }, string.Format(exist ? UpdateCmd : InsertCmd, table));
         }
 
-        private string ReadStringOption(string option)
+        private string ReadStringOption(string option, string defaultValue = null)
         {
-            return this.ReadOption<string>("StringOptions", option);
+            return this.ReadOption("StringOptions", option, defaultValue);
         }
 
-        private bool ReadBooleanOption(string option)
+        private bool ReadBooleanOption(string option, bool defaultValue = false)
         {
-            return this.ReadOption<bool>("BooleanOptions", option);
+            return this.ReadOption("BooleanOptions", option, defaultValue);
         }
         
-        private int ReadIntegerOption(string option)
+        private int ReadIntegerOption(string option, int defaultValue = 0)
         {
-            return (int)this.ReadOption<long>("IntegerOptions", option);
+            return (int)this.ReadOption<long>("IntegerOptions", option, defaultValue);
         }
 
         
-        private T ReadOption<T>(string table, string option)
+        private T ReadOption<T>(string table, string option, T defaultValue = default(T))
         {
             const string Cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
             var result = default(T);
+            var read = false;
             this.RunSqlQuery(delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Option", option);
@@ -227,9 +232,16 @@ namespace logviewer.core
                     while (rdr.Read())
                     {
                         result = (T)rdr[0];
+                        read = true;
                     }
                 }
             }, string.Format(Cmd, table));
+            if (read)
+            {
+                return result;
+            }
+            this.UpdateOption(table, option, defaultValue);
+            result = defaultValue;
             return result;
         }
 
@@ -421,13 +433,13 @@ namespace logviewer.core
 
         public int MaxLevel
         {
-            get { return this.ReadIntegerOption(MaxLevelParameterName); }
+            get { return this.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal); }
             set { this.UpdateIntegerOption(MaxLevelParameterName, value); }
         }
 
         public int PageSize
         {
-            get { return this.ReadIntegerOption(PageSizeParameterName); }
+            get { return this.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
             set { this.UpdateIntegerOption(PageSizeParameterName, value); }
         }
 
@@ -445,7 +457,7 @@ namespace logviewer.core
 
         public int KeepLastNFiles
         {
-            get { return this.ReadIntegerOption(KeepLastNFilesParameterName); }
+            get { return this.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
             set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
     }

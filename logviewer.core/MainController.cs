@@ -66,7 +66,7 @@ namespace logviewer.core
             this.keepLastNFiles = keepLastNFiles;
             this.CurrentPage = 1;
             this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
-            this.settings = new Settings(settingsDatabaseFileName, levels, startMessagePattern);
+            this.settings = new Settings(settingsDatabaseFileName, levels, startMessagePattern, pageSize, keepLastNFiles);
 
             var fromSettings = this.settings.PageSize;
             this.pageSize = fromSettings <= 0 ? pageSize : fromSettings;
