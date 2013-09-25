@@ -3,20 +3,18 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using Microsoft.Win32;
 
 namespace logviewer.core
 {
-    public class Settings
+    public sealed class Settings
     {
         private readonly string settingsDatabaseFilePath;
-
-        /// <summary>
-        /// Base name of registry key of application options
-        /// </summary>
-        internal const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
+        private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
@@ -35,17 +33,38 @@ namespace logviewer.core
         private const string FatalParameterName = @"FatalLevel";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
+        private const string ApplicationOptionsFolder = "logviewer";
+        private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
 
         private static RegistryKey RegistryKey
         {
             get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
         }
 
-        public Settings(string settingsDatabaseFileName)
+        public Settings(string settingsDatabaseFileName, IEnumerable<string> defaultLeveles, string defaultStartMessageTemplate)
         {
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.CreateTables();
             this.MigrateFromRegistry();
+            var template = this.ReadParsingTemplate();
+            if (!template.IsEmpty)
+            {
+                return;
+            }
+            var levels = defaultLeveles.ToArray();
+            var defaultTemplate = new ParsingTemplate
+            {
+                Index = DefaultParsingProfileIndex, 
+                StartMessage = defaultStartMessageTemplate,
+                Trace = levels[(int)LogLevel.Trace],
+                Debug = levels[(int)LogLevel.Debug],
+                Info = levels[(int)LogLevel.Info],
+                Warn = levels[(int)LogLevel.Warn],
+                Error = levels[(int)LogLevel.Error],
+                Fatal = levels[(int)LogLevel.Fatal]
+            };
+            this.InsertParsingProfile(defaultTemplate);
         }
 
         private void CreateTables()
@@ -121,13 +140,13 @@ namespace logviewer.core
             var template = new ParsingTemplate
             {
                 Index = DefaultParsingProfileIndex,
-                Debug = DebugLevel,
-                Trace = TraceLevel,
-                Info = InfoLevel,
-                Warn = WarnLevel,
-                Error = ErrorLevel,
-                Fatal = FatalLevel,
-                StartMessage = StartMessageTemplate
+                Debug = GetStringValue(DebugParameterName),
+                Trace = GetStringValue(TraceParameterName),
+                Info = GetStringValue(InfoParameterName),
+                Warn = GetStringValue(WarnParameterName),
+                Error = GetStringValue(ErrorParameterName),
+                Fatal = GetStringValue(FatalParameterName),
+                StartMessage = GetStringValue(StartMessageParameterName)
             };
             this.InsertParsingProfile(template);
 
@@ -370,11 +389,6 @@ namespace logviewer.core
             return GetIntValue(key) == 1;
         }
 
-        private const string ApplicationOptionsFolder = "logviewer";
-        private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-        private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
-
         public static string ApplicationFolder
         {
             get
@@ -433,41 +447,6 @@ namespace logviewer.core
         {
             get { return this.ReadIntegerOption(KeepLastNFilesParameterName); }
             set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
-        }
-
-        private static string StartMessageTemplate
-        {
-            get { return GetStringValue(StartMessageParameterName); }
-        }
-
-        private static string TraceLevel
-        {
-            get { return GetStringValue(TraceParameterName); }
-        }
-
-        private static string DebugLevel
-        {
-            get { return GetStringValue(DebugParameterName); }
-        }
-
-        private static string InfoLevel
-        {
-            get { return GetStringValue(InfoParameterName); }
-        }
-
-        private static string WarnLevel
-        {
-            get { return GetStringValue(WarnParameterName); }
-        }
-
-        private static string ErrorLevel
-        {
-            get { return GetStringValue(ErrorParameterName); }
-        }
-
-        private static string FatalLevel
-        {
-            get { return GetStringValue(FatalParameterName); }
         }
     }
 }

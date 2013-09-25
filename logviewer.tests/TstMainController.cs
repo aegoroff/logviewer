@@ -146,6 +146,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
             this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
@@ -172,6 +173,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
             this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);

@@ -66,15 +66,15 @@ namespace logviewer.core
             this.keepLastNFiles = keepLastNFiles;
             this.CurrentPage = 1;
             this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
-            this.settings = new Settings(settingsDatabaseFileName);
+            this.settings = new Settings(settingsDatabaseFileName, levels, startMessagePattern);
 
             var fromSettings = this.settings.PageSize;
             this.pageSize = fromSettings <= 0 ? pageSize : fromSettings;
             this.markers = new List<Regex>();
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
-            this.CreateMarkers(template.IsEmpty ? levels : template.Levels);
-            this.CreateMessageHead(template.IsEmpty ? startMessagePattern : template.StartMessage);
+            this.CreateMarkers(template.Levels);
+            this.CreateMessageHead(template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
