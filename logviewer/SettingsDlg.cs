@@ -3,75 +3,53 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using logviewer.core;
 
 namespace logviewer
 {
-    public partial class SettingsDlg : Form
+    public partial class SettingsDlg : Form, ISettingsView
     {
-        private readonly FormData formData = new FormData();
-        private readonly ISettingsProvider settings;
-        private bool initialized;
-        private ParsingTemplate template;
+        private readonly SettingsController controller;
 
         public SettingsDlg(ISettingsProvider settings)
         {
-            this.settings = settings;
             this.InitializeComponent();
-            this.LoadSettings();
+            this.controller = new SettingsController(this, settings);
+            this.controller.Load();
         }
 
-        private void LoadSettings()
-        {
-            var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
-
-            Action loader = delegate
-            {
-                this.formData.OpenLastFile = this.settings.OpenLastFile;
-                this.formData.PageSize = this.settings.PageSize.ToString(CultureInfo.CurrentUICulture);
-                this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
-
-                this.template = this.settings.ReadParsingTemplate();
-            };
-            Action<Task> onComplete = delegate
-            {
-                this.openLastFile.Checked = this.formData.OpenLastFile;
-                this.pageSizeBox.Text = this.formData.PageSize;
-                this.keepLastNFilesBox.Text = this.formData.KeepLastNFiles;
-
-                this.messageStartPatternBox.Text = this.template.StartMessage;
-                this.traceBox.Text = this.template.Trace;
-                this.debugBox.Text = this.template.Debug;
-                this.infoBox.Text = this.template.Info;
-                this.warnBox.Text = this.template.Warn;
-                this.errorBox.Text = this.template.Error;
-                this.fatalBox.Text = this.template.Fatal;
-                this.initialized = true;
-                this.EnableSave(false);
-            };
-
-            Task.Factory.StartNew(loader).ContinueWith(onComplete, CancellationToken.None, TaskContinuationOptions.None, uiContext);
-        }
-
-        private void EnableSave(bool enabled)
+        public void EnableSave(bool enabled)
         {
             this.saveButton.Enabled = enabled;
         }
 
+        public void LoadFormData(FormData formData)
+        {
+            this.openLastFile.Checked = formData.OpenLastFile;
+            this.pageSizeBox.Text = formData.PageSize;
+            this.keepLastNFilesBox.Text = formData.KeepLastNFiles;
+        }
+
+        public void LoadParsingTemplate(ParsingTemplate template)
+        {
+            this.messageStartPatternBox.Text = template.StartMessage;
+            this.traceBox.Text = template.Trace;
+            this.debugBox.Text = template.Debug;
+            this.infoBox.Text = template.Info;
+            this.warnBox.Text = template.Warn;
+            this.errorBox.Text = template.Error;
+            this.fatalBox.Text = template.Fatal;
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
-            this.formData.OpenLastFile = this.openLastFile.Checked;
-            this.EnableSave(true);
+            this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
         }
 
         private void OnSetPageSize(object sender, EventArgs e)
         {
-            this.formData.PageSize = this.pageSizeBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdatePageSize(this.pageSizeBox.Text);
         }
 
         private void OnKeyPressInNumberOnlyBox(object sender, KeyPressEventArgs e)
@@ -81,78 +59,47 @@ namespace logviewer
 
         private void OnSetMessageStartPattern(object sender, EventArgs e)
         {
-            this.template.StartMessage = this.messageStartPatternBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateMessageStartPattern(this.messageStartPatternBox.Text);
         }
 
         private void OnSetTraceLevel(object sender, EventArgs e)
         {
-            this.template.Trace = this.traceBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateTraceLevel(this.traceBox.Text);
         }
 
         private void OnSetDebugLevel(object sender, EventArgs e)
         {
-            this.template.Debug = this.debugBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateDebugLevel(this.debugBox.Text);
         }
 
         private void OnSetInfoLevel(object sender, EventArgs e)
         {
-            this.template.Info = this.infoBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateInfoLevel(this.infoBox.Text);
         }
 
         private void OnSetWarnLevel(object sender, EventArgs e)
         {
-            this.template.Warn = this.warnBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateWarnLevel(this.warnBox.Text);
         }
 
         private void OnSetErrorLevel(object sender, EventArgs e)
         {
-            this.template.Error = this.errorBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateErrorLevel(this.errorBox.Text);
         }
 
         private void OnSetFatalLevel(object sender, EventArgs e)
         {
-            this.template.Fatal = this.fatalBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateFatalLevel(this.fatalBox.Text);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)
         {
-            this.formData.KeepLastNFiles = this.keepLastNFilesBox.Text;
-            this.EnableSave(true);
+            this.controller.UpdateKeepLastNFiles(this.keepLastNFilesBox.Text);
         }
 
         private void OnSave(object sender, EventArgs e)
         {
-            if (!this.initialized)
-            {
-                return;
-            }
-            int pageSize;
-            if (int.TryParse(this.formData.PageSize, out pageSize))
-            {
-                this.settings.PageSize = pageSize;
-            }
-            int value;
-            if (int.TryParse(this.formData.KeepLastNFiles, out value))
-            {
-                this.settings.KeepLastNFiles = value;
-            }
-            this.settings.OpenLastFile = this.formData.OpenLastFile;
-            this.settings.UpdateParsingProfile(this.template);
-            this.EnableSave(false);
-        }
-
-        private class FormData
-        {
-            internal string KeepLastNFiles;
-            internal bool OpenLastFile;
-            internal string PageSize;
+            this.controller.Save();
         }
     }
 }
