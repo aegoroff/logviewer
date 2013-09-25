@@ -13,9 +13,6 @@ namespace logviewer.core
 {
     public sealed class Settings
     {
-        private readonly int defaultPageSize;
-        private readonly int defaultKeepLastNFiles;
-        private readonly string settingsDatabaseFilePath;
         private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
         private const string OptionsSectionName = @"Options";
@@ -38,13 +35,15 @@ namespace logviewer.core
         private const string ApplicationOptionsFolder = "logviewer";
         private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
+        private readonly int defaultKeepLastNFiles;
+        private readonly int defaultPageSize;
+        private readonly string settingsDatabaseFilePath;
 
-        private static RegistryKey RegistryKey
-        {
-            get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
-        }
-
-        public Settings(string settingsDatabaseFileName, IEnumerable<string> defaultLeveles, string defaultStartMessageTemplate, int defaultPageSize, int defaultKeepLastNFiles)
+        public Settings(string settingsDatabaseFileName,
+            IEnumerable<string> defaultLeveles,
+            string defaultStartMessageTemplate,
+            int defaultPageSize,
+            int defaultKeepLastNFiles)
         {
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
@@ -59,7 +58,7 @@ namespace logviewer.core
             var levels = defaultLeveles.ToArray();
             var defaultTemplate = new ParsingTemplate
             {
-                Index = DefaultParsingProfileIndex, 
+                Index = DefaultParsingProfileIndex,
                 StartMessage = defaultStartMessageTemplate,
                 Trace = levels[(int)LogLevel.Trace],
                 Debug = levels[(int)LogLevel.Debug],
@@ -69,6 +68,76 @@ namespace logviewer.core
                 Fatal = levels[(int)LogLevel.Fatal]
             };
             this.InsertParsingProfile(defaultTemplate);
+        }
+
+        private static RegistryKey RegistryKey
+        {
+            get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
+        }
+
+        private static bool MigrationNeeded
+        {
+            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
+        }
+
+        public static string ApplicationFolder
+        {
+            get
+            {
+                if (!Directory.Exists(applicationFolder))
+                {
+                    Directory.CreateDirectory(applicationFolder);
+                }
+                return applicationFolder;
+            }
+        }
+
+        public string MessageFilter
+        {
+            get { return this.ReadStringOption(FilterParameterName); }
+            set { this.UpdateStringOption(FilterParameterName, value); }
+        }
+
+        public bool OpenLastFile
+        {
+            get { return this.ReadBooleanOption(OpenLastFileParameterName); }
+            set { this.UpdateBooleanOption(OpenLastFileParameterName, value); }
+        }
+
+        public int MinLevel
+        {
+            get { return this.ReadIntegerOption(MinLevelParameterName); }
+            set { this.UpdateIntegerOption(MinLevelParameterName, value); }
+        }
+
+        public int MaxLevel
+        {
+            get { return this.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal); }
+            set { this.UpdateIntegerOption(MaxLevelParameterName, value); }
+        }
+
+        public int PageSize
+        {
+            get { return this.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
+            set { this.UpdateIntegerOption(PageSizeParameterName, value); }
+        }
+
+        public bool Sorting
+        {
+            get { return this.ReadBooleanOption(SortingParameterName); }
+            set { this.UpdateBooleanOption(SortingParameterName, value); }
+        }
+
+        public bool UseRegexp
+        {
+            get { return this.ReadBooleanOption(UseRegexpParameterName); }
+            set { this.UpdateBooleanOption(UseRegexpParameterName, value); }
+        }
+
+        public int KeepLastNFiles
+        {
+            get { return this.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
+            set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
 
         private void CreateTables()
@@ -193,7 +262,7 @@ namespace logviewer.core
                 exist = (long)command.ExecuteScalar() > 0;
             }, query);
 
-            
+
             this.RunSqlQuery(delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Option", option);
@@ -211,13 +280,13 @@ namespace logviewer.core
         {
             return this.ReadOption("BooleanOptions", option, defaultValue);
         }
-        
+
         private int ReadIntegerOption(string option, int defaultValue = 0)
         {
             return (int)this.ReadOption<long>("IntegerOptions", option, defaultValue);
         }
 
-        
+
         private T ReadOption<T>(string table, string option, T defaultValue = default(T))
         {
             const string Cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
@@ -350,18 +419,13 @@ namespace logviewer.core
         }
 
         /// <summary>
-        /// Open/create regkey for keeping data
+        ///     Open/create regkey for keeping data
         /// </summary>
         /// <param name="key">key name</param>
         /// <returns>Exist or new RegistryKey object</returns>
         private static RegistryKey GetRegKey(string key)
         {
             return Registry.CurrentUser.OpenSubKey(key, true) ?? Registry.CurrentUser.CreateSubKey(key);
-        }
-
-        private static bool MigrationNeeded
-        {
-            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
         }
 
         private static string GetStringValue(RegistryKey rk, string key)
@@ -399,66 +463,6 @@ namespace logviewer.core
         private static bool GetBoolValue(string key)
         {
             return GetIntValue(key) == 1;
-        }
-
-        public static string ApplicationFolder
-        {
-            get
-            {
-                if (!Directory.Exists(applicationFolder))
-                {
-                    Directory.CreateDirectory(applicationFolder);
-                }
-                return applicationFolder;
-            }
-        }
-
-        public string MessageFilter
-        {
-            get { return this.ReadStringOption(FilterParameterName); }
-            set { this.UpdateStringOption(FilterParameterName, value); }
-        }
-
-        public bool OpenLastFile
-        {
-            get { return this.ReadBooleanOption(OpenLastFileParameterName); }
-            set { this.UpdateBooleanOption(OpenLastFileParameterName, value); }
-        }
-
-        public int MinLevel
-        {
-            get { return this.ReadIntegerOption(MinLevelParameterName); }
-            set { this.UpdateIntegerOption(MinLevelParameterName, value); }
-        }
-
-        public int MaxLevel
-        {
-            get { return this.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal); }
-            set { this.UpdateIntegerOption(MaxLevelParameterName, value); }
-        }
-
-        public int PageSize
-        {
-            get { return this.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
-            set { this.UpdateIntegerOption(PageSizeParameterName, value); }
-        }
-
-        public bool Sorting
-        {
-            get { return this.ReadBooleanOption(SortingParameterName); }
-            set { this.UpdateBooleanOption(SortingParameterName, value); }
-        }
-
-        public bool UseRegexp
-        {
-            get { return this.ReadBooleanOption(UseRegexpParameterName); }
-            set { this.UpdateBooleanOption(UseRegexpParameterName, value); }
-        }
-
-        public int KeepLastNFiles
-        {
-            get { return this.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
-            set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
     }
 }
