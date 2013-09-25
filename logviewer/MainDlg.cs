@@ -242,9 +242,6 @@ namespace logviewer
             this.logFilterMax = this.maxLevelBox.SelectedIndex;
             this.logFilterText = this.filterBox.Text;
             this.reverse = this.sortingBox.SelectedIndex == 0;
-            this.Controller.Settings.MinLevel = this.logFilterMin;
-            this.Controller.Settings.MaxLevel = this.logFilterMax;
-            this.Controller.Settings.Sorting = this.reverse;
             this.syntaxRichTextBox1.Clear();
             this.toolStrip1.Focus();
             this.Controller.BeginLogReading(this.logFilterMin, this.logFilterMax, this.logFilterText, this.reverse,

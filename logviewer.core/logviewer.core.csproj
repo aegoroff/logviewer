@@ -61,6 +61,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="ILogView.cs" />
+    <Compile Include="ISettingsProvider.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogReader.cs" />

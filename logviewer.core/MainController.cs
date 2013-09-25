@@ -22,7 +22,6 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
-        private int keepLastNFiles;
         private readonly Settings settings;
 
         #region Constants and Fields
@@ -30,27 +29,26 @@ namespace logviewer.core
         private const int DefaultPageSize = 5000;
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
+        private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private readonly List<Regex> markers;
-        private Regex messageHead;
-        private int pageSize;
+        private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
+        private readonly TaskScheduler uiContext;
 
-        private readonly string settingsDatabaseFilePath;
         private CancellationTokenSource cancellation = new CancellationTokenSource();
 
         private string currentPath;
 
         private LogLevel maxFilter = LogLevel.Fatal;
+        private Regex messageHead;
         private LogLevel minFilter = LogLevel.Trace;
+        private int pageSize;
         private bool reverseChronological;
-        private bool useRegexp = true;
         private LogStore store;
         private string textFilter;
-        private ILogView view;
         private int totalMessages;
-        private readonly TaskScheduler uiContext;
-        readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
-        readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
+        private bool useRegexp = true;
+        private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
 
         #endregion
@@ -63,9 +61,7 @@ namespace logviewer.core
             int keepLastNFiles,
             int pageSize = DefaultPageSize)
         {
-            this.keepLastNFiles = keepLastNFiles;
             this.CurrentPage = 1;
-            this.settingsDatabaseFilePath = Path.Combine(Settings.ApplicationFolder, settingsDatabaseFileName);
             this.settings = new Settings(settingsDatabaseFileName, levels, startMessagePattern, pageSize, keepLastNFiles);
 
             var fromSettings = this.settings.PageSize;
@@ -78,12 +74,12 @@ namespace logviewer.core
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
-        void CreateMessageHead(string startMessagePattern)
+        private void CreateMessageHead(string startMessagePattern)
         {
             this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
         }
 
-        void CreateMarkers(IEnumerable<string> levels)
+        private void CreateMarkers(IEnumerable<string> levels)
         {
             this.markers.Clear();
             this.markers.AddRange(levels.Select(level => level.ToMarker()));
@@ -216,6 +212,9 @@ namespace logviewer.core
 
         public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
         {
+            this.settings.MinLevel = min;
+            this.settings.MaxLevel = max;
+            this.settings.Sorting = reverse;
             this.CancelPreviousTask();
             this.MinFilter(min);
             this.MaxFilter(max);
@@ -269,7 +268,7 @@ namespace logviewer.core
         }
 
         /// <summary>
-        /// Reads log from file
+        ///     Reads log from file
         /// </summary>
         /// <returns>Path to RTF document to be loaded into control</returns>
         public void StartReadLog()
@@ -329,7 +328,7 @@ namespace logviewer.core
             }
         }
 
-        void OnReadCompleted(object sender, EventArgs e)
+        private void OnReadCompleted(object sender, EventArgs e)
         {
             this.store.FinishAddMessages();
             var reader = (LogReader)sender;
@@ -338,7 +337,7 @@ namespace logviewer.core
             this.ReadLogFromInternalStore(false);
         }
 
-        void ReadLogFromInternalStore(bool signalProcess)
+        private void ReadLogFromInternalStore(bool signalProcess)
         {
             var rtf = string.Empty;
             Action action = delegate
@@ -354,8 +353,10 @@ namespace logviewer.core
                 }
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiContext);
-            task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
+            task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion,
+                this.uiContext);
+            task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted,
+                this.uiContext);
             this.runningTasks.Add(task, this.view.LogPath);
         }
 
@@ -406,9 +407,9 @@ namespace logviewer.core
             this.maxFilter = (LogLevel)value;
         }
 
-        void PageSize()
+        private void PageSize()
         {
-            var value = settings.PageSize;
+            var value = this.settings.PageSize;
             if (this.pageSize != value)
             {
                 this.CurrentPage = 1;
@@ -438,17 +439,14 @@ namespace logviewer.core
 
         public void LoadLastOpenedFile()
         {
-            if (!Settings.OpenLastFile)
+            if (!this.Settings.OpenLastFile)
             {
                 return;
             }
-            
+
             var lastOpenedFile = string.Empty;
 
-            Action<RecentFilesStore> method = delegate(RecentFilesStore filesStore)
-            {
-                lastOpenedFile = filesStore.ReadLastOpenedFile();
-            };
+            Action<RecentFilesStore> method = delegate(RecentFilesStore filesStore) { lastOpenedFile = filesStore.ReadLastOpenedFile(); };
             this.UseRecentFilesStore(method);
 
             if (!string.IsNullOrWhiteSpace(lastOpenedFile))
@@ -487,7 +485,7 @@ namespace logviewer.core
 
         private void UseRecentFilesStore(Action<RecentFilesStore> action)
         {
-            using (var filesStore = new RecentFilesStore(this.settingsDatabaseFilePath, this.keepLastNFiles))
+            using (var filesStore = new RecentFilesStore(this.settings))
             {
                 action(filesStore);
             }
@@ -502,12 +500,6 @@ namespace logviewer.core
                 this.CreateMessageHead(template.StartMessage);
             }
             this.PageSize();
-            this.UpdateKeepLastNFiles();
-        }
-
-        void UpdateKeepLastNFiles()
-        {
-            this.keepLastNFiles = this.settings.KeepLastNFiles;
         }
 
         public void AddCurrentFileToRecentFilesList()
@@ -556,8 +548,8 @@ namespace logviewer.core
 
         #region Methods
 
-        private long totalFiltered;
         private long logSize;
+        private long totalFiltered;
 
         private bool CurrentPathCached
         {

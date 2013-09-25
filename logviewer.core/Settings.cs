@@ -11,7 +11,7 @@ using Microsoft.Win32;
 
 namespace logviewer.core
 {
-    public sealed class Settings
+    public sealed class Settings : ISettingsProvider
     {
         private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
@@ -138,6 +138,11 @@ namespace logviewer.core
         {
             get { return this.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
             set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
+        }
+
+        public string FullPathToDatabase
+        {
+            get { return this.settingsDatabaseFilePath; }
         }
 
         private void CreateTables()

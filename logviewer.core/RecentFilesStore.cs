@@ -13,10 +13,10 @@ namespace logviewer.core
         private readonly int maxFiles;
         private readonly DatabaseConnection connection;
 
-        public RecentFilesStore(string settingsDatabase, int maxFiles)
+        public RecentFilesStore(ISettingsProvider settings)
         {
-            this.maxFiles = maxFiles;
-            this.connection = new DatabaseConnection(settingsDatabase);
+            this.maxFiles = settings.KeepLastNFiles;
+            this.connection = new DatabaseConnection(settings.FullPathToDatabase);
             this.CreateTables();
         }
 
