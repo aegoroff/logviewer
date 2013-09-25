@@ -27,7 +27,7 @@ namespace logviewer
             this.Bind<ILogView>().To<MainDlg>();
             this.Bind<MainController>().ToSelf();
             
-            this.Bind<ISettingsProvider>().To<Settings>().InSingletonScope()
+            this.Bind<ISettingsProvider>().To<SqliteSettingsProvider>().InSingletonScope()
                 .WithConstructorArgument("defaultStartMessageTemplate", ConfigurationManager.AppSettings["StartMessagePattern"])
                 .WithConstructorArgument("defaultLeveles", Levels)
                 .WithConstructorArgument("settingsDatabaseFileName",

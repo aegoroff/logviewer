@@ -71,7 +71,7 @@ namespace logviewer.tests
 
         private static string FullPathToTestDb
         {
-            get { return Path.Combine(Settings.ApplicationFolder, SettingsDb); }
+            get { return Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb); }
         }
 
         private static void CleanupTestFiles()
@@ -181,7 +181,7 @@ namespace logviewer.tests
             var template = ParsingTemplate(markers);
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
-            Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
+            Cleanup(Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb));
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
@@ -208,7 +208,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
+            Cleanup(Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb));
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
 

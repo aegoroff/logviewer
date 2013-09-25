@@ -11,7 +11,7 @@ using Microsoft.Win32;
 
 namespace logviewer.core
 {
-    public sealed class Settings : ISettingsProvider
+    public sealed class SqliteSettingsProvider : ISettingsProvider
     {
         private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
@@ -39,7 +39,7 @@ namespace logviewer.core
         private readonly int defaultPageSize;
         private readonly string settingsDatabaseFilePath;
 
-        public Settings(string settingsDatabaseFileName,
+        public SqliteSettingsProvider(string settingsDatabaseFileName,
             IEnumerable<string> defaultLeveles,
             string defaultStartMessageTemplate,
             int defaultPageSize,

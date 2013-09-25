@@ -78,7 +78,7 @@
     </Compile>
     <Compile Include="RecentFilesStore.cs" />
     <Compile Include="SafeRunner.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="SqliteSettingsProvider.cs" />
     <Compile Include="SizeUnit.cs" />
     <Compile Include="SqliteRegEx.cs" />
   </ItemGroup>
