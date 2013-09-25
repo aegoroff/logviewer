@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -25,8 +26,6 @@ namespace logviewer.core
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
-
-        private const int DefaultPageSize = 5000;
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
@@ -55,17 +54,11 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public MainController(string startMessagePattern,
-            IEnumerable<string> levels,
-            string settingsDatabaseFileName,
-            int keepLastNFiles,
-            int pageSize = DefaultPageSize)
+        public MainController(ISettingsProvider settings)
         {
             this.CurrentPage = 1;
-            this.settings = new Settings(settingsDatabaseFileName, levels, startMessagePattern, pageSize, keepLastNFiles);
-
-            var fromSettings = this.settings.PageSize;
-            this.pageSize = fromSettings <= 0 ? pageSize : fromSettings;
+            this.settings = settings;
+            this.pageSize = this.settings.PageSize;
             this.markers = new List<Regex>();
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
@@ -267,6 +260,41 @@ namespace logviewer.core
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
+        public int ReadMinLevel()
+        {
+            return this.settings.MinLevel;
+        }
+
+        public int ReadMaxLevel()
+        {
+            return this.settings.MaxLevel;
+        }
+        
+        public int ReadSorting()
+        {
+            return this.settings.Sorting ? 0 : 1;
+        }
+        
+        public bool ReadUseRegexp()
+        {
+            return this.settings.UseRegexp;
+        }
+        
+        public string ReadMessageFilter()
+        {
+            return this.settings.MessageFilter;
+        }
+        
+        public void UpdateMessageFilter(string value)
+        {
+            this.settings.MessageFilter = value;
+        }
+
+        public void UpdateUseRegexp(bool value)
+        {
+            this.settings.UseRegexp = value;
+        }
+
         /// <summary>
         ///     Reads log from file
         /// </summary>
@@ -439,7 +467,7 @@ namespace logviewer.core
 
         public void LoadLastOpenedFile()
         {
-            if (!this.Settings.OpenLastFile)
+            if (!this.settings.OpenLastFile)
             {
                 return;
             }
@@ -493,7 +521,7 @@ namespace logviewer.core
 
         public void UpdateSettings()
         {
-            var template = this.Settings.ReadParsingTemplate();
+            var template = this.settings.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
                 this.CreateMarkers(template.Levels);
@@ -568,11 +596,6 @@ namespace logviewer.core
         public long TotalFiltered
         {
             get { return this.totalFiltered; }
-        }
-
-        public ISettingsProvider Settings
-        {
-            get { return this.settings; }
         }
 
         private void AddMessageToCache(LogMessage message)

@@ -10,19 +10,18 @@ namespace logviewer
 {
     internal static class Program
     {
+        internal static IKernel Kernel { get; private set; }
+
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
         [STAThread]
         private static void Main()
         {
-            var kernel = new StandardKernel(new MainControllerModule());
-            using (kernel)
-            {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(kernel.Get<MainDlg>());
-            }
+            Kernel = new StandardKernel(new MainControllerModule());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(Kernel.Get<MainDlg>());
         }
     }
 }

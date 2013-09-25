@@ -32,7 +32,8 @@ namespace logviewer.tests
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
-            this.controller = new MainController(MessageStart, this.levels, SettingsDb, KeepLastNFiles, 100);
+            this.settings = this.mockery.CreateMock<ISettingsProvider>();
+            this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
@@ -101,6 +102,7 @@ namespace logviewer.tests
         private const string RecentPath = "r";
         private MockFactory mockery;
         private Mock<ILogView> view;
+        private Mock<ISettingsProvider> settings;
         private MainController controller;
 
         private const string MessageExamples =
@@ -147,7 +149,7 @@ namespace logviewer.tests
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
-            this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
+            this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
@@ -174,7 +176,7 @@ namespace logviewer.tests
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
-            this.controller = new MainController(MessageStart, markers, SettingsDb, KeepLastNFiles);
+            this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);

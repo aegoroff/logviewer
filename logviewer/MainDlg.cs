@@ -64,11 +64,11 @@ namespace logviewer
         {
             Application.ThreadException += OnUnhandledException;
             this.KeepFormatStrings();
-            this.minLevelBox.SelectedIndex = this.Controller.Settings.MinLevel;
-            this.maxLevelBox.SelectedIndex = this.Controller.Settings.MaxLevel;
-            this.sortingBox.SelectedIndex = this.Controller.Settings.Sorting ? 0 : 1;
-            this.useRegexp.Checked = this.Controller.Settings.UseRegexp;
-            this.filterBox.Text = this.Controller.Settings.MessageFilter;
+            this.minLevelBox.SelectedIndex = this.Controller.ReadMinLevel();
+            this.maxLevelBox.SelectedIndex = this.Controller.ReadMaxLevel();
+            this.sortingBox.SelectedIndex = this.Controller.ReadSorting();
+            this.useRegexp.Checked = this.Controller.ReadUseRegexp();
+            this.filterBox.Text = this.Controller.ReadMessageFilter();
             this.EnableControls(false);
             this.Controller.ReadRecentFiles();
             this.Controller.ReadCompleted += this.OnReadCompleted;
@@ -313,7 +313,7 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            this.Controller.Settings.MessageFilter = this.filterBox.Text;
+            this.Controller.UpdateMessageFilter(this.filterBox.Text);
             if (MainController.IsValidFilter(this.filterBox.Text, this.useRegexp.Checked))
             {
                 this.StartReading();
@@ -380,7 +380,7 @@ namespace logviewer
 
         private void OnSettings(object sender, EventArgs e)
         {
-            var dlg = new SettingsDlg(this.Controller.Settings);
+            var dlg = Program.Kernel.Get<SettingsDlg>();
             using (dlg)
             {
                 dlg.ShowDialog();
@@ -404,7 +404,7 @@ namespace logviewer
 
         private void OnChangeRegexpUsage(object sender, EventArgs e)
         {
-            this.Controller.Settings.UseRegexp = this.useRegexp.Checked;
+            this.Controller.UpdateUseRegexp(this.useRegexp.Checked);
         }
     }
 }

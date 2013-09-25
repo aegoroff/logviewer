@@ -25,13 +25,17 @@ namespace logviewer
         public override void Load()
         {
             this.Bind<ILogView>().To<MainDlg>();
-            this.Bind<MainController>().ToSelf()
-                .WithConstructorArgument("startMessagePattern", ConfigurationManager.AppSettings["StartMessagePattern"])
-                .WithConstructorArgument("levels", Levels)
+            this.Bind<MainController>().ToSelf();
+            
+            this.Bind<ISettingsProvider>().To<Settings>().InSingletonScope()
+                .WithConstructorArgument("defaultStartMessageTemplate", ConfigurationManager.AppSettings["StartMessagePattern"])
+                .WithConstructorArgument("defaultLeveles", Levels)
                 .WithConstructorArgument("settingsDatabaseFileName",
                     ConfigurationManager.AppSettings["SettingsDatabase"])
-                .WithConstructorArgument("keepLastNFiles", 10)
-                .WithConstructorArgument("pageSize", 5000);
+                .WithConstructorArgument("defaultKeepLastNFiles", 10)
+                .WithConstructorArgument("defaultPageSize", 5000);
+            
+            
         }
 
         private static IEnumerable<string> Levels
