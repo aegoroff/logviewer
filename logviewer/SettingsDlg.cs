@@ -143,6 +143,7 @@ namespace logviewer
             {
                 this.settings.KeepLastNFiles = value;
             }
+            this.settings.OpenLastFile = this.formData.OpenLastFile;
             this.settings.UpdateParsingProfile(this.template);
             this.EnableSave(false);
         }
