@@ -11,10 +11,10 @@ namespace logviewer
 {
     public partial class SettingsDlg : Form
     {
-        private readonly Settings settings;
+        private readonly ISettingsProvider settings;
         private readonly ParsingTemplate template;
 
-        public SettingsDlg(Settings settings)
+        public SettingsDlg(ISettingsProvider settings)
         {
             this.settings = settings;
             this.InitializeComponent();
@@ -60,43 +60,43 @@ namespace logviewer
         private void OnSetMessageStartPattern(object sender, EventArgs e)
         {
             this.template.StartMessage = this.messageStartPatternBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnSetTraceLevel(object sender, EventArgs e)
         {
             this.template.Trace = this.traceBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnSetDebugLevel(object sender, EventArgs e)
         {
             this.template.Debug = this.debugBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnSetInfoLevel(object sender, EventArgs e)
         {
             this.template.Info = this.infoBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnSetWarnLevel(object sender, EventArgs e)
         {
             this.template.Warn = this.warnBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnSetErrorLevel(object sender, EventArgs e)
         {
             this.template.Error = this.errorBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnSetFatalLevel(object sender, EventArgs e)
         {
             this.template.Fatal = this.fatalBox.Text;
-            this.settings.UpdateDefaultParsingProfile(this.template);
+            this.settings.UpdateParsingProfile(this.template);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)

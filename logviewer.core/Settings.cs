@@ -145,6 +145,103 @@ namespace logviewer.core
             get { return this.settingsDatabaseFilePath; }
         }
 
+        public void UpdateParsingProfile(ParsingTemplate template)
+        {
+            const string Cmd = @"
+                    UPDATE
+                        ParsingTemplates
+                    SET
+                        StartMessage = @StartMessage,
+                        Trace = @Trace,
+                        Debug = @Debug,
+                        Info = @Info,
+                        Warn = @Warn,
+                        Error = @Error,
+                        Fatal = @Fatal
+                    WHERE
+                        Ix = @Ix
+                    ";
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                AddParsingTemplateIntoCommand(command, template);
+                command.ExecuteNonQuery();
+            }, Cmd);
+        }
+
+        public ParsingTemplate ReadParsingTemplate()
+        {
+            return this.ReadParsingTemplate(DefaultParsingProfileIndex);
+        }
+
+        public ParsingTemplate ReadParsingTemplate(int index)
+        {
+            const string Cmd = @"
+                    SELECT
+                        Trace,
+                        Debug,
+                        Info,
+                        Warn,
+                        Error,
+                        Fatal,
+                        StartMessage
+                    FROM
+                        ParsingTemplates
+                    WHERE
+                        Ix = @Ix
+                    ";
+
+            var result = new ParsingTemplate { Index = index };
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Ix", index);
+                var rdr = command.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read())
+                    {
+                        result.Trace = rdr[0] as string;
+                        result.Debug = rdr[1] as string;
+                        result.Info = rdr[2] as string;
+                        result.Warn = rdr[3] as string;
+                        result.Error = rdr[4] as string;
+                        result.Fatal = rdr[5] as string;
+                        result.StartMessage = rdr[6] as string;
+                    }
+                }
+            }, Cmd);
+            return result;
+        }
+
+        public void InsertParsingProfile(ParsingTemplate template)
+        {
+            const string Cmd = @"
+                    INSERT INTO ParsingTemplates (
+                        Ix, 
+                        StartMessage,
+                        Trace,
+                        Debug,
+                        Info,
+                        Warn,
+                        Error,
+                        Fatal
+                    )
+                    VALUES (
+                        @Ix,
+                        @StartMessage,
+                        @Trace,
+                        @Debug,
+                        @Info,
+                        @Warn,
+                        @Error,
+                        @Fatal
+                    )";
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                AddParsingTemplateIntoCommand(command, template);
+                command.ExecuteNonQuery();
+            }, Cmd);
+        }
+
         private void CreateTables()
         {
             const string StringOptions = @"
@@ -316,98 +413,6 @@ namespace logviewer.core
             }
             this.UpdateOption(table, option, defaultValue);
             result = defaultValue;
-            return result;
-        }
-
-        public void InsertParsingProfile(ParsingTemplate template)
-        {
-            const string Cmd = @"
-                    INSERT INTO ParsingTemplates (
-                        Ix, 
-                        StartMessage,
-                        Trace,
-                        Debug,
-                        Info,
-                        Warn,
-                        Error,
-                        Fatal
-                    )
-                    VALUES (
-                        @Ix,
-                        @StartMessage,
-                        @Trace,
-                        @Debug,
-                        @Info,
-                        @Warn,
-                        @Error,
-                        @Fatal
-                    )";
-            this.RunSqlQuery(delegate(IDbCommand command)
-            {
-                AddParsingTemplateIntoCommand(command, template);
-                command.ExecuteNonQuery();
-            }, Cmd);
-        }
-
-        public void UpdateDefaultParsingProfile(ParsingTemplate template)
-        {
-            const string Cmd = @"
-                    UPDATE
-                        ParsingTemplates
-                    SET
-                        StartMessage = @StartMessage,
-                        Trace = @Trace,
-                        Debug = @Debug,
-                        Info = @Info,
-                        Warn = @Warn,
-                        Error = @Error,
-                        Fatal = @Fatal
-                    WHERE
-                        Ix = @Ix
-                    ";
-            this.RunSqlQuery(delegate(IDbCommand command)
-            {
-                AddParsingTemplateIntoCommand(command, template);
-                command.ExecuteNonQuery();
-            }, Cmd);
-        }
-
-        public ParsingTemplate ReadParsingTemplate(int index = DefaultParsingProfileIndex)
-        {
-            const string Cmd = @"
-                    SELECT
-                        Trace,
-                        Debug,
-                        Info,
-                        Warn,
-                        Error,
-                        Fatal,
-                        StartMessage
-                    FROM
-                        ParsingTemplates
-                    WHERE
-                        Ix = @Ix
-                    ";
-
-            var result = new ParsingTemplate { Index = index };
-            this.RunSqlQuery(delegate(IDbCommand command)
-            {
-                DatabaseConnection.AddParameter(command, "@Ix", index);
-                var rdr = command.ExecuteReader();
-                using (rdr)
-                {
-                    while (rdr.Read())
-                    {
-                        result.Trace = rdr[0] as string;
-                        result.Debug = rdr[1] as string;
-                        result.Info = rdr[2] as string;
-                        result.Warn = rdr[3] as string;
-                        result.Error = rdr[4] as string;
-                        result.Fatal = rdr[5] as string;
-                        result.StartMessage = rdr[6] as string;
-                    }
-                }
-            }, Cmd);
             return result;
         }
 

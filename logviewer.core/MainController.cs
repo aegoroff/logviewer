@@ -22,7 +22,7 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
-        private readonly Settings settings;
+        private readonly ISettingsProvider settings;
 
         #region Constants and Fields
 
@@ -570,7 +570,7 @@ namespace logviewer.core
             get { return this.totalFiltered; }
         }
 
-        public Settings Settings
+        public ISettingsProvider Settings
         {
             get { return this.settings; }
         }
