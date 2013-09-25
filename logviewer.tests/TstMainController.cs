@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -33,18 +34,44 @@ namespace logviewer.tests
             this.mockery = new MockFactory();
             this.view = this.mockery.CreateMock<ILogView>();
             this.settings = this.mockery.CreateMock<ISettingsProvider>();
+
+            this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
+
+            var template = ParsingTemplate(levels);
+            this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
             this.controller.SetView(this.view.MockObject);
         }
 
+        private static ParsingTemplate ParsingTemplate(IList<string> levels)
+        {
+            return new ParsingTemplate
+            {
+                Index = 0,
+                StartMessage = MessageStart,
+                Trace = levels[0],
+                Debug = levels[1],
+                Info = levels[2],
+                Warn = levels[3],
+                Error = levels[4],
+                Fatal = levels[5]
+            };
+        }
+
         [TearDown]
         public void Teardown()
         {
-            Cleanup(TestPath, RecentPath, Path.Combine(Settings.ApplicationFolder, SettingsDb));
+            Cleanup(TestPath, RecentPath, FullPathToTestDb);
             CleanupTestFiles();
             this.controller.Dispose();
+        }
+
+        private static string FullPathToTestDb
+        {
+            get { return Path.Combine(Settings.ApplicationFolder, SettingsDb); }
         }
 
         private static void CleanupTestFiles()
@@ -148,6 +175,12 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+
+            this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
+
+            var template = ParsingTemplate(markers);
+            this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+
             Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
@@ -176,6 +209,12 @@ namespace logviewer.tests
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             Cleanup(Path.Combine(Settings.ApplicationFolder, SettingsDb));
+
+            this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
+
+            var template = ParsingTemplate(markers);
+            this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.controller.SetView(this.view.MockObject);
@@ -307,12 +346,16 @@ namespace logviewer.tests
         public void ReadRecentFilesEmpty()
         {
             this.view.Expects.One.Method(v => v.ClearRecentFilesList());
+            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
             this.controller.ReadRecentFiles();
         }
 
         [Test]
         public void SaveAndReadRecentFilesNoFile()
         {
+            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(TestPath);
@@ -327,6 +370,8 @@ namespace logviewer.tests
         public void SaveAndReadRecentFiles()
         {
             CreateEmpty(f1, f2);
+            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
@@ -344,6 +389,8 @@ namespace logviewer.tests
         public void RecentFilesMoreThenLimit()
         {
             CreateEmpty(f1, f2, f3);
+            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
@@ -363,6 +410,8 @@ namespace logviewer.tests
         public void RecentFilesMoreThenLimitNoOneFile()
         {
             CreateEmpty(f1, f2);
+            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
             using (this.mockery.Ordered())
             {
                 this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
