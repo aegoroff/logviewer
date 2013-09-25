@@ -56,6 +56,10 @@
             this.traceBox = new System.Windows.Forms.TextBox();
             this.debugLabel = new System.Windows.Forms.Label();
             this.traceLabel = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
@@ -63,6 +67,8 @@
             this.tabPage2.SuspendLayout();
             this.commonTemplatesBox.SuspendLayout();
             this.logLevelsBox.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -70,10 +76,10 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(555, 309);
+            this.tabControl1.Size = new System.Drawing.Size(554, 312);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -83,7 +89,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(547, 283);
+            this.tabPage1.Size = new System.Drawing.Size(546, 286);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -94,7 +100,7 @@
             this.viewSettingsBox.Controls.Add(this.pageSizeLabel);
             this.viewSettingsBox.Location = new System.Drawing.Point(8, 133);
             this.viewSettingsBox.Name = "viewSettingsBox";
-            this.viewSettingsBox.Size = new System.Drawing.Size(531, 142);
+            this.viewSettingsBox.Size = new System.Drawing.Size(527, 147);
             this.viewSettingsBox.TabIndex = 1;
             this.viewSettingsBox.TabStop = false;
             this.viewSettingsBox.Text = "View settings";
@@ -125,7 +131,7 @@
             this.fileSettingsBox.Controls.Add(this.openLastFile);
             this.fileSettingsBox.Location = new System.Drawing.Point(8, 6);
             this.fileSettingsBox.Name = "fileSettingsBox";
-            this.fileSettingsBox.Size = new System.Drawing.Size(531, 121);
+            this.fileSettingsBox.Size = new System.Drawing.Size(527, 121);
             this.fileSettingsBox.TabIndex = 0;
             this.fileSettingsBox.TabStop = false;
             this.fileSettingsBox.Text = "File settings";
@@ -176,7 +182,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(547, 283);
+            this.tabPage2.Size = new System.Drawing.Size(546, 286);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Templates";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -227,7 +233,7 @@
             this.logLevelsBox.Controls.Add(this.traceLabel);
             this.logLevelsBox.Location = new System.Drawing.Point(8, 77);
             this.logLevelsBox.Name = "logLevelsBox";
-            this.logLevelsBox.Size = new System.Drawing.Size(531, 198);
+            this.logLevelsBox.Size = new System.Drawing.Size(531, 203);
             this.logLevelsBox.TabIndex = 0;
             this.logLevelsBox.TabStop = false;
             this.logLevelsBox.Text = "Log level parsing templates";
@@ -346,12 +352,59 @@
             this.traceLabel.Text = "Trace:";
             this.traceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(560, 353);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.closeButton);
+            this.flowLayoutPanel1.Controls.Add(this.saveButton);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 321);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(554, 29);
+            this.flowLayoutPanel1.TabIndex = 1;
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(395, 3);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 0;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.OnSave);
+            // 
+            // closeButton
+            // 
+            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.closeButton.Location = new System.Drawing.Point(476, 3);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(75, 23);
+            this.closeButton.TabIndex = 1;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = true;
+            // 
             // SettingsDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(555, 309);
-            this.Controls.Add(this.tabControl1);
+            this.CancelButton = this.closeButton;
+            this.ClientSize = new System.Drawing.Size(560, 353);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsDlg";
@@ -367,6 +420,8 @@
             this.commonTemplatesBox.PerformLayout();
             this.logLevelsBox.ResumeLayout(false);
             this.logLevelsBox.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -400,5 +455,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox keepLastNFilesBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button closeButton;
     }
 }
