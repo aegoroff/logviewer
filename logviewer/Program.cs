@@ -18,7 +18,7 @@ namespace logviewer
         [STAThread]
         private static void Main()
         {
-            Kernel = new StandardKernel(new MainControllerModule());
+            Kernel = new StandardKernel(new LogviewerModule());
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(Kernel.Get<MainDlg>());

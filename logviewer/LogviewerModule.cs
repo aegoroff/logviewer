@@ -10,7 +10,7 @@ using Ninject.Modules;
 
 namespace logviewer
 {
-    public class MainControllerModule : NinjectModule
+    public class LogviewerModule : NinjectModule
     {
         private static readonly string[] markers =
         {

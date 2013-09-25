@@ -59,7 +59,7 @@
     <Compile Include="AboutDlg.Designer.cs">
       <DependentUpon>AboutDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainControllerModule.cs" />
+    <Compile Include="LogviewerModule.cs" />
     <Compile Include="MainDlg.cs">
       <SubType>Form</SubType>
     </Compile>
