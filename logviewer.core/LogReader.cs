@@ -83,17 +83,15 @@ namespace logviewer.core
             var fs = new FileStream(this.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
             fs.Seek(offset, SeekOrigin.Begin);
             var stream = new BufferedStream(fs, BufferSize);
-
-            var total = stream.Length;
-            var fraction = total / 20L;
-            var signalCounter = 1;
-
-            var stopWatch = new Stopwatch();
             var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
             using (sr)
             {
                 var message = LogMessage.Create();
+                var total = this.Length;
+                var fraction = total / 20L;
+                var signalCounter = 1;
 
+                var stopWatch = new Stopwatch();
                 stopWatch.Start();
                 var measureStart = 0L;
                 while (!sr.EndOfStream && canContinue())
