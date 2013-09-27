@@ -301,16 +301,25 @@ namespace logviewer.core
             {
                 return;
             }
-            this.UpdateStringOption(FilterParameterName, GetStringValue(FilterParameterName));
+            this.MigrateString(FilterParameterName);
 
-            this.UpdateBooleanOption(UseRegexpParameterName, GetBoolValue(UseRegexpParameterName));
-            this.UpdateBooleanOption(OpenLastFileParameterName, GetBoolValue(OpenLastFileParameterName));
-            this.UpdateBooleanOption(SortingParameterName, GetBoolValue(SortingParameterName));
+            var boolOptions = new[]
+            {
+                UseRegexpParameterName, OpenLastFileParameterName, SortingParameterName
+            };
+            foreach (var opt in boolOptions)
+            {
+                this.MigrateBoolean(opt);
+            }
 
-            this.UpdateIntegerOption(MinLevelParameterName, GetIntValue(MinLevelParameterName));
-            this.UpdateIntegerOption(MaxLevelParameterName, GetIntValue(MaxLevelParameterName));
-            this.UpdateIntegerOption(PageSizeParameterName, GetIntValue(PageSizeParameterName));
-            this.UpdateIntegerOption(KeepLastNFilesParameterName, GetIntValue(KeepLastNFilesParameterName));
+            var intOptions = new[]
+            {
+                MinLevelParameterName, MaxLevelParameterName, PageSizeParameterName, KeepLastNFilesParameterName
+            };
+            foreach (var opt in intOptions)
+            {
+                this.MigrateInteger(opt);
+            }
 
             var template = new ParsingTemplate
             {
@@ -326,6 +335,21 @@ namespace logviewer.core
             this.InsertParsingProfile(template);
 
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
+        }
+
+        void MigrateString(string option)
+        {
+            this.UpdateStringOption(option, GetStringValue(option));
+        }
+        
+        void MigrateBoolean(string option)
+        {
+            this.UpdateBooleanOption(option, GetBoolValue(option));
+        }
+        
+        void MigrateInteger(string option)
+        {
+            this.UpdateIntegerOption(option, GetIntValue(option));
         }
 
         private void UpdateStringOption(string option, string value)
