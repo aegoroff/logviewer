@@ -68,7 +68,7 @@ namespace logviewer
                 var totalItem =
                     new ListViewItem(new[] { Resources.TotalMessages, total.ToString(total.FormatString(), CultureInfo.CurrentCulture) });
 
-                items.AddRange(new[] { totalItem, sizeItem });
+                items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem });
 
                 this.listView1.Items.AddRange(items.ToArray());
             };
