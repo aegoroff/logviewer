@@ -81,9 +81,9 @@
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(396, 17);
-            this.toolStripStatusLabel2.Text = "Total: {1} To display: {8} Displayed: {0}   T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:" +
-    "{7}   ";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(464, 17);
+            this.toolStripStatusLabel2.Text = "Total: {1} To display: {8} Displayed: {0}   On the page T:{2}  D:{3}  I:{4}  W:{5" +
+    "}  E:{6}  F:{7}   ";
             // 
             // toolStripStatusLabel1
             // 
