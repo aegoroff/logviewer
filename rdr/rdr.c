@@ -30,6 +30,12 @@
 #define NUMBER_PARAM_FMT_STRING "%lu"
 #define BIG_NUMBER_PARAM_FMT_STRING "%llu"
 #define START_MSG "^\\s*\\[?\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}([,.]\\d{3,})?.*"
+#define TRACE_LEVEL "TRACE|\\[[Tt]race\\]"
+#define DEBUG_LEVEL "DEBUG|\\[[Dd]ebug\\]"
+#define INFO_LEVEL "INFO|\\[[Ii]nfo\\]"
+#define WARN_LEVEL "WARN|\\[[Ww]arn\\]"
+#define ERROR_LEVEL "ERROR|\\[[Ee]rror\\]"
+#define FATAL_LEVEL "FATAL|\\[[Ff]atal\\]"
 
 #define MAX_LINE_SIZE 32 * BINARY_THOUSAND - 1
 #define MAX_STRING_LEN 2048 * 2
@@ -56,6 +62,14 @@ int main(int argc, const char* const argv[])
     int nerrors;
 
     pcre* re = NULL;
+    pcre* reT = NULL;
+    pcre* reD = NULL;
+    pcre* reI = NULL;
+    pcre* reW = NULL;
+    pcre* reE = NULL;
+    pcre* reF = NULL;
+    
+    
     const char* error = NULL;
     int erroffset = 0;
     int rc = 0;
@@ -63,7 +77,15 @@ int main(int argc, const char* const argv[])
 
     apr_file_t* fileHandle = NULL;
     char* line = NULL;
+    
     long long messages = 0;
+    long long msgT = 0;
+    long long msgD = 0;
+    long long msgI = 0;
+    long long msgW = 0;
+    long long msgE = 0;
+    long long msgF = 0;
+    
     Time time = { 0 };
 
     struct arg_file *file          = arg_file0("f", "file", NULL, "full path to log file");
@@ -118,7 +140,15 @@ int main(int argc, const char* const argv[])
                       &error,          /* for error message */
                       &erroffset,      /* for error offset */
                       0);
-    if (!re) {
+    
+    reT = pcre_compile(TRACE_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
+    reD = pcre_compile(DEBUG_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
+    reI = pcre_compile(INFO_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
+    reW = pcre_compile(WARN_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
+    reE = pcre_compile(ERROR_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
+    reF = pcre_compile(FATAL_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
+    
+    if (!re || !reT || !reD || !reI || !reW || !reE || !reF) {
         CrtPrintf("%s", error); //-V111
         goto cleanup;
     }
@@ -131,18 +161,50 @@ int main(int argc, const char* const argv[])
     line = (char*)apr_pcalloc(pool, MAX_STRING_LEN);
     StartTimer();
     while (status != APR_EOF) {
+        int len = 0;
         status = apr_file_gets(line, MAX_STRING_LEN, fileHandle);
+        len = (int)strlen(line);
         rc = pcre_exec(
             re,                   /* the compiled pattern */
             0,                    /* no extra data - pattern was not studied */
             line,                  /* the string to match */
-            (int)strlen(line),     /* the length of the string */
+            len,     /* the length of the string */
             0,                    /* start at offset 0 in the subject */
             flags,
             NULL,              /* output vector for substring information */
             0);           /* number of elements in the output vector */
         if (rc >= 0) {
             ++messages;
+            rc = pcre_exec(reT, 0, line, len, 0, flags, NULL, 0);
+            if (rc >= 0) {
+                ++msgT;
+                continue;
+            }
+            rc = pcre_exec(reD, 0, line, len, 0, flags, NULL, 0);
+            if (rc >= 0) {
+                ++msgD;
+                continue;
+            }
+            rc = pcre_exec(reI, 0, line, len, 0, flags, NULL, 0);
+            if (rc >= 0) {
+                ++msgI;
+                continue;
+            }
+            rc = pcre_exec(reW, 0, line, len, 0, flags, NULL, 0);
+            if (rc >= 0) {
+                ++msgW;
+                continue;
+            }
+            rc = pcre_exec(reE, 0, line, len, 0, flags, NULL, 0);
+            if (rc >= 0) {
+                ++msgE;
+                continue;
+            }
+            rc = pcre_exec(reF, 0, line, len, 0, flags, NULL, 0);
+            if (rc >= 0) {
+                ++msgF;
+                continue;
+            }
         }
     }
     StopTimer();
@@ -153,6 +215,7 @@ int main(int argc, const char* const argv[])
               time.hours,
               time.minutes,
               time.seconds);
+    CrtPrintf(NEW_LINE "T:%llu D:%llu I:%llu W:%llu E:%llu F:%llu", msgT, msgD, msgI, msgW, msgE, msgF);
 
 cleanup:
     /* deallocate each non-null entry in argtable[] */
