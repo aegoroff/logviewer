@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -251,12 +252,17 @@ namespace logviewer
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
+            var formatTotal = ((ulong)this.Controller.TotalMessages).FormatString();
+            var formatFiltered = ((ulong)this.Controller.TotalFiltered).FormatString();
+            var total = this.Controller.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+            var totalFiltered = this.Controller.TotalFiltered.ToString(formatFiltered, CultureInfo.CurrentCulture);
+
             this.LogInfo = string.Format(this.LogInfoFormatString, this.Controller.DisplayedMessages,
-                this.Controller.TotalMessages, this.Controller.CountMessages(LogLevel.Trace),
+                total, this.Controller.CountMessages(LogLevel.Trace),
                 this.Controller.CountMessages(LogLevel.Debug),
                 this.Controller.CountMessages(LogLevel.Info), this.Controller.CountMessages(LogLevel.Warn),
                 this.Controller.CountMessages(LogLevel.Error),
-                this.Controller.CountMessages(LogLevel.Fatal), this.Controller.TotalFiltered);
+                this.Controller.CountMessages(LogLevel.Fatal), totalFiltered);
 
             this.OnSuccessRead(e.Rtf);
             this.SetCurrentPage(this.Controller.CurrentPage);
