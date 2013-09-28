@@ -107,7 +107,7 @@ namespace logviewer.core
                 return string.Format(CultureInfo.CurrentCulture, BigFileFormatNoBytes, this.Value, sizes[(int)this.Unit]);
             }
             return string.Format(CultureInfo.CurrentCulture, BigFileFormat, this.Value,
-                sizes[(int)this.Unit], this.Bytes.ToString(((long)this.Bytes).FormatString(), CultureInfo.CurrentCulture),
+                sizes[(int)this.Unit], this.Bytes.ToString(this.Bytes.FormatString(), CultureInfo.CurrentCulture),
                 sizes[(int)SizeUnit.Bytes]);
         }
     }

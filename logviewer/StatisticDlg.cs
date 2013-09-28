@@ -40,17 +40,17 @@ namespace logviewer
 
         private void LoadStatistic()
         {
-            var total = 0L;
+            var total = 0UL;
 
-            var byLevel = new long[(int)LogLevel.Fatal + 1];
+            var byLevel = new ulong[(int)LogLevel.Fatal + 1];
 
             Action action = delegate
             {
-                total = this.store.CountMessages();
+                total = (ulong)this.store.CountMessages();
                 for (var i = 0; i < byLevel.Length; i++)
                 {
                     var level = (LogLevel)i;
-                    byLevel[i] = this.store.CountMessages(level, level);
+                    byLevel[i] = (ulong)this.store.CountMessages(level, level);
                 }
             };
             var job = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,

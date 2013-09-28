@@ -10,6 +10,7 @@ namespace logviewer.tests
     [TestFixture]
     public class TFormatString
     {
+        [TestCase(0L, "")]
         [TestCase(1L, "#")]
         [TestCase(11L, "##")]
         [TestCase(111L, "###")]
@@ -28,7 +29,7 @@ namespace logviewer.tests
         [TestCase(1111111111111111L, "# ### ### ### ### ###")]
         [TestCase(11111111111111111L, "## ### ### ### ### ###")]
         [TestCase(111111111111111111L, "### ### ### ### ### ###")]
-        public void Test(long value, string format)
+        public void Test(ulong value, string format)
         {
             Assert.AreEqual(format, value.FormatString());
         }

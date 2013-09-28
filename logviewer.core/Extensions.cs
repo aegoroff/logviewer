@@ -2,7 +2,6 @@
 // Created at: 20.09.2012
 // © 2012-2013 Alexander Egorov
 
-using System;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -30,13 +29,17 @@ namespace logviewer.core
             return dstEncoding.GetString(dstBytes);
         }
 
-        static int CountDigits(long num)
+        static int CountDigits(ulong num)
         {
             return (num /= 10) > 0 ? 1 + CountDigits(num) : 1;
         }
 
-        public static string FormatString(this long value)
+        public static string FormatString(this ulong value)
         {
+            if (value == 0)
+            {
+                return string.Empty;
+            }
             var digits = CountDigits(value);
 
             var sb = new StringBuilder();
