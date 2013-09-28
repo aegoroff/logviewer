@@ -58,8 +58,8 @@
             this.traceLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.saveButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
@@ -378,16 +378,6 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(554, 29);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
-            // saveButton
-            // 
-            this.saveButton.Location = new System.Drawing.Point(395, 3);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 0;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.OnSave);
-            // 
             // closeButton
             // 
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -397,6 +387,16 @@
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(395, 3);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 0;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.OnSave);
             // 
             // SettingsDlg
             // 
