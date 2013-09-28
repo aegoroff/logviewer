@@ -29,6 +29,8 @@ namespace logviewer.tests
         [TestCase(1111111111111111UL, "# ### ### ### ### ###")]
         [TestCase(11111111111111111UL, "## ### ### ### ### ###")]
         [TestCase(111111111111111111UL, "### ### ### ### ### ###")]
+        [TestCase(1111111111111111111UL, "# ### ### ### ### ### ###")]
+        [TestCase(ulong.MaxValue, "## ### ### ### ### ### ###")]
         public void Test(ulong value, string format)
         {
             Assert.AreEqual(format, value.FormatString());
