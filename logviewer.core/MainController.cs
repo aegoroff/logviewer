@@ -597,6 +597,11 @@ namespace logviewer.core
             get { return this.totalFiltered; }
         }
 
+        public LogStore Store
+        {
+            get { return this.store; }
+        }
+
         private void AddMessageToCache(LogMessage message)
         {
             if (message.IsEmpty)
@@ -606,7 +611,7 @@ namespace logviewer.core
             message.Level = this.DetectLevel(message.Header);
             message.Cache();
             this.totalMessages = this.TotalMessages + 1;
-            this.store.AddMessage(message);
+            this.Store.AddMessage(message);
         }
 
         private string CreateRtf(bool signalProgress = false)

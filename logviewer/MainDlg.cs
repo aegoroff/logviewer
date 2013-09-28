@@ -410,7 +410,7 @@ namespace logviewer
 
         private void OnOpenStatistic(object sender, EventArgs e)
         {
-            var dlg = new StatisticDlg();
+            var dlg = new StatisticDlg(this.Controller.Store, HumanReadableLogSize);
             using (dlg)
             {
                 dlg.ShowDialog();

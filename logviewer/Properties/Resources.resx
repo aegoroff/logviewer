@@ -117,4 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>Fatal</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="TotalMessages" xml:space="preserve">
+    <value>Total messages</value>
+  </data>
+  <data name="Trace" xml:space="preserve">
+    <value>Trace</value>
+  </data>
+  <data name="Warn" xml:space="preserve">
+    <value>Warning</value>
+  </data>
 </root>
