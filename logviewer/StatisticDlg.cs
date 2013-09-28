@@ -44,13 +44,16 @@ namespace logviewer
 
             var byLevel = new ulong[(int)LogLevel.Fatal + 1];
 
+            var filter = textBox1.Text;
+            var regexp = this.useRegexp.Checked;
+
             Action action = delegate
             {
-                total = (ulong)this.store.CountMessages();
+                total = (ulong)this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, filter, regexp);
                 for (var i = 0; i < byLevel.Length; i++)
                 {
                     var level = (LogLevel)i;
-                    byLevel[i] = (ulong)this.store.CountMessages(level, level);
+                    byLevel[i] = (ulong)this.store.CountMessages(level, level, filter, regexp);
                 }
             };
             var job = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,
@@ -79,6 +82,12 @@ namespace logviewer
         private void OnOk(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void OnFilter(object sender, EventArgs e)
+        {
+            this.listView1.Items.Clear();
+            this.LoadStatistic();
         }
     }
 }
