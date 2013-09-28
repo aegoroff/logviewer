@@ -42,27 +42,21 @@ namespace logviewer.core
                 result = (long)command.ExecuteScalar();
             }, CountFiles);
 
-            if (result > 0)
-            {
-                const string Update = @"Update RecentFiles SET OpenedAt = @OpenedAt WHERE Path = @Path";
-                this.connection.RunSqlQuery(delegate(IDbCommand command)
-                {
-                    DatabaseConnection.AddParameter(command, "@Path", file);
-                    DatabaseConnection.AddParameter(command, "@OpenedAt", DateTime.Now.Ticks);
-                    command.ExecuteNonQuery();
-                }, Update);
-                
-                return;
-            }
-
-            const string Cmd = @"INSERT INTO RecentFiles(Path, OpenedAt) VALUES (@Path, @OpenedAt)";
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<string> query = commandText => this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Path", file);
                 DatabaseConnection.AddParameter(command, "@OpenedAt", DateTime.Now.Ticks);
                 command.ExecuteNonQuery();
-            }, Cmd);
+            }, commandText);
 
+            if (result > 0)
+            {
+                query(@"Update RecentFiles SET OpenedAt = @OpenedAt WHERE Path = @Path");
+                return;
+            }
+
+            query(@"INSERT INTO RecentFiles(Path, OpenedAt) VALUES (@Path, @OpenedAt)");
+            
             this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
                 result = (long)command.ExecuteScalar();
