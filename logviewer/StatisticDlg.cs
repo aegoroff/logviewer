@@ -75,5 +75,10 @@ namespace logviewer
 
             job.ContinueWith(updateUI, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, this.uiContext);
         }
+
+        private void OnOk(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
