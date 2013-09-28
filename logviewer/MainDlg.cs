@@ -187,6 +187,7 @@ namespace logviewer
             this.maxLevelBox.Enabled = enabled;
             this.sortingBox.Enabled = enabled;
             this.toolStripButton2.Enabled = enabled;
+            this.statButton.Enabled = enabled;
             this.refreshToolStripMenuItem.Enabled = enabled;
             this.exportToolStripMenuItem.Enabled = enabled;
             this.filterBox.Enabled = enabled;
@@ -405,6 +406,15 @@ namespace logviewer
         private void OnChangeRegexpUsage(object sender, EventArgs e)
         {
             this.Controller.UpdateUseRegexp(this.useRegexp.Checked);
+        }
+
+        private void OnOpenStatistic(object sender, EventArgs e)
+        {
+            var dlg = new StatisticDlg();
+            using (dlg)
+            {
+                dlg.ShowDialog();
+            }
         }
     }
 }

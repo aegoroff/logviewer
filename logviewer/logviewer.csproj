@@ -74,6 +74,12 @@
     <Compile Include="SettingsDlg.Designer.cs">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="StatisticDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StatisticDlg.Designer.cs">
+      <DependentUpon>StatisticDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SyntaxRichTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -95,6 +101,9 @@
     </Compile>
     <EmbeddedResource Include="SettingsDlg.resx">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatisticDlg.resx">
+      <DependentUpon>StatisticDlg.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
