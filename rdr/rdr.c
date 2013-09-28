@@ -64,6 +64,7 @@ int main(int argc, const char* const argv[])
     apr_file_t* fileHandle = NULL;
     char* line = NULL;
     long long messages = 0;
+    Time time = { 0 };
 
     struct arg_file *file          = arg_file0("f", "file", NULL, "full path to log file");
     struct arg_lit  *help          = arg_lit0("h", "help", "print this help and exit");
@@ -128,7 +129,7 @@ int main(int argc, const char* const argv[])
         goto cleanup;
     }
     line = (char*)apr_pcalloc(pool, MAX_STRING_LEN);
-
+    StartTimer();
     while (status != APR_EOF) {
         status = apr_file_gets(line, MAX_STRING_LEN, fileHandle);
         rc = pcre_exec(
@@ -144,7 +145,14 @@ int main(int argc, const char* const argv[])
             ++messages;
         }
     }
-    CrtPrintf(BIG_NUMBER_PARAM_FMT_STRING, messages);
+    StopTimer();
+    time = ReadElapsedTime();
+
+    CrtPrintf(NEW_LINE "Messages: %llu Time " FULL_TIME_FMT,
+              messages,
+              time.hours,
+              time.minutes,
+              time.seconds);
 
 cleanup:
     /* deallocate each non-null entry in argtable[] */
