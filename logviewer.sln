@@ -40,6 +40,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "argtable", "argtable\argtable.vcxproj", "{F632DA6F-F8E5-4FC9-830D-6BC217937F2D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rdr", "rdr\rdr.vcxproj", "{90919EED-76CF-49FE-B86F-0635BDC14586}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3D7AF301-A17B-4C71-AE83-C50E189C1540} = {3D7AF301-A17B-4C71-AE83-C50E189C1540}
+		{F632DA6F-F8E5-4FC9-830D-6BC217937F2D} = {F632DA6F-F8E5-4FC9-830D-6BC217937F2D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
