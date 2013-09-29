@@ -37,9 +37,12 @@
 #define WARN_LEVEL "WARN|\\[[Ww]arn\\]"
 #define ERROR_LEVEL "ERROR|\\[[Ee]rror\\]"
 #define FATAL_LEVEL "FATAL|\\[[Ff]atal\\]"
+#define CACHE_SIZE "PRAGMA cache_size = %lu ;"
+#define MMAP_SIZE "PRAGMA mmap_size= %lu ;"
 
 #define MAX_LINE_SIZE 32 * BINARY_THOUSAND - 1
 #define MAX_STRING_LEN 8192
+#define PAGE_SIZE 1024
 
 apr_pool_t* pcrePool = NULL;
 
@@ -63,6 +66,14 @@ static int Callback(void *NotUsed, int argc, char **argv, char **azColName){
    }
    CrtPrintf("\n");
    return 0;
+}
+
+size_t GetTotalSystemMemory()
+{
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return status.ullTotalPhys;
 }
 
 int main(int argc, const char* const argv[])
@@ -98,6 +109,10 @@ int main(int argc, const char* const argv[])
     
     Time time = { 0 };
 
+    apr_finfo_t info = { 0 };
+    size_t systemMemory = 0;
+    size_t avaiablePages = 0;
+
     sqlite3 *db = NULL;
     char *zErrMsg = 0;
     const char* createTable;
@@ -105,7 +120,8 @@ int main(int argc, const char* const argv[])
     const char* journal = "PRAGMA journal_mode = MEMORY;";
     const char* tempStore = "PRAGMA temp_store = 2;";
     const char* encoding = "PRAGMA encoding = 'UTF-8';";
-    const char* encoding = "PRAGMA encoding = 'UTF-8';";
+    char* cacheSize = NULL;
+    char* mmapSize = NULL;
 
     struct arg_file *file          = arg_file0("f", "file", NULL, "full path to log file");
     struct arg_lit  *help          = arg_lit0("h", "help", "print this help and exit");
@@ -173,6 +189,14 @@ int main(int argc, const char* const argv[])
         PrintError(status);
         goto cleanup;
     }
+
+    status = apr_file_info_get(&info, APR_FINFO_MIN | APR_FINFO_NAME, fileHandle);
+
+    if (status != APR_SUCCESS) {
+        PrintError(status);
+        goto cleanup;
+    }
+
     rc = sqlite3_open_v2("log.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
 
     if(rc){
@@ -209,6 +233,25 @@ int main(int argc, const char* const argv[])
         sqlite3_free(zErrMsg);
     }
     rc = sqlite3_exec(db, encoding, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+    mmapSize = (char*)apr_pcalloc(pool, strlen(MMAP_SIZE) + 30);
+    apr_snprintf(mmapSize, strlen(MMAP_SIZE) + 30, MMAP_SIZE, info.size);
+
+    rc = sqlite3_exec(db, mmapSize, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+
+    systemMemory = GetTotalSystemMemory();
+    avaiablePages = (systemMemory / PAGE_SIZE) / 5;
+    cacheSize = (char*)apr_pcalloc(pool, strlen(CACHE_SIZE) + 30);
+    apr_snprintf(cacheSize, strlen(CACHE_SIZE) + 30, CACHE_SIZE, MIN(avaiablePages, (info.size / PAGE_SIZE + 1)));
+
+    rc = sqlite3_exec(db, cacheSize, Callback, 0, &zErrMsg);
     if( rc != SQLITE_OK ){
         CrtPrintf("SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
