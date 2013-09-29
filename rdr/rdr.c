@@ -270,13 +270,14 @@ int main(int argc, const char* const argv[])
         len = (int)strlen(line);
         rc = pcre_exec(re, 0, line, len, 0, flags, NULL, 0);
         if (rc >= 0) { // header
-            head = apr_pstrdup(msgPool, line);
             if (msgPool != NULL) {
                 const char* bodyStr = apr_array_pstrcat(msgPool, body, NULL);
                 
                 apr_pool_destroy(msgPool);
                 msgPool = NULL;
             }
+            apr_pool_create(&msgPool, pool);
+            head = apr_pstrdup(msgPool, line);
             ++messages;
             rc = pcre_exec(reT, 0, line, len, 0, flags, NULL, 0);
             if (rc >= 0) {
@@ -309,10 +310,7 @@ int main(int argc, const char* const argv[])
                 continue;
             }
         } else { // Body
-            if (msgPool == NULL) {
-                apr_pool_create(&msgPool, pool);
-                body = apr_array_make(msgPool, ARRAY_INIT_SZ, sizeof(const char*));
-            }
+            body = apr_array_make(msgPool, ARRAY_INIT_SZ, sizeof(const char*));
             *(const char**)apr_array_push(body) = apr_pstrdup(msgPool, line);
         }
     }
