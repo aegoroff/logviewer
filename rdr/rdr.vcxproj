@@ -233,10 +233,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\srclib\DebugHelplers.c" />
+    <ClCompile Include="..\srclib\sqlite3.c" />
     <ClCompile Include="rdr.c" />
     <ClCompile Include="..\srclib\lib.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\srclib\sqlite3.h" />
     <ClInclude Include="rdr.h" />
     <ClInclude Include="..\srclib\types.h" />
     <ClInclude Include="resource.h" />
