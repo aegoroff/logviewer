@@ -135,11 +135,7 @@ int main(int argc, const char* const argv[])
 
     pcrePool = pool; // needed for pcre_alloc (PcreAlloc) function
 
-    re = pcre_compile(START_MSG,           /* the pattern */
-                      PCRE_UTF8,
-                      &error,          /* for error message */
-                      &erroffset,      /* for error offset */
-                      0);
+    re = pcre_compile(START_MSG, PCRE_UTF8, &error, &erroffset, 0);
     
     reT = pcre_compile(TRACE_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
     reD = pcre_compile(DEBUG_LEVEL, PCRE_UTF8, &error, &erroffset, 0);
@@ -164,15 +160,7 @@ int main(int argc, const char* const argv[])
         int len = 0;
         status = apr_file_gets(line, MAX_STRING_LEN, fileHandle);
         len = (int)strlen(line);
-        rc = pcre_exec(
-            re,                   /* the compiled pattern */
-            0,                    /* no extra data - pattern was not studied */
-            line,                  /* the string to match */
-            len,     /* the length of the string */
-            0,                    /* start at offset 0 in the subject */
-            flags,
-            NULL,              /* output vector for substring information */
-            0);           /* number of elements in the output vector */
+        rc = pcre_exec(re, 0, line, len, 0, flags, NULL, 0);
         if (rc >= 0) {
             ++messages;
             rc = pcre_exec(reT, 0, line, len, 0, flags, NULL, 0);
@@ -210,12 +198,8 @@ int main(int argc, const char* const argv[])
     StopTimer();
     time = ReadElapsedTime();
 
-    CrtPrintf(NEW_LINE "Messages: %llu Time " FULL_TIME_FMT,
-              messages,
-              time.hours,
-              time.minutes,
-              time.seconds);
-    CrtPrintf(NEW_LINE "T:%llu D:%llu I:%llu W:%llu E:%llu F:%llu", msgT, msgD, msgI, msgW, msgE, msgF);
+    CrtPrintf(NEW_LINE "Messages: %llu Time " FULL_TIME_FMT, messages, time.hours, time.minutes, time.seconds);
+    CrtPrintf(NEW_LINE "T:%llu D:%llu I:%llu W:%llu E:%llu F:%llu" NEW_LINE, msgT, msgD, msgI, msgW, msgE, msgF);
 
 cleanup:
     /* deallocate each non-null entry in argtable[] */
