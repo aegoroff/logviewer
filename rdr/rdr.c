@@ -18,6 +18,7 @@
 #include "apr_strings.h"
 #include "apr_file_io.h"
 #include "pcre.h"
+#include "sqlite3.h"
 
 #ifdef WIN32
 #include "..\srclib\DebugHelplers.h"
@@ -55,6 +56,15 @@ void* PcreAlloc(size_t size)
     return apr_palloc(pcrePool, size);
 }
 
+static int Callback(void *NotUsed, int argc, char **argv, char **azColName){
+   int i;
+   for(i=0; i<argc; i++){
+      CrtPrintf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   CrtPrintf("\n");
+   return 0;
+}
+
 int main(int argc, const char* const argv[])
 {
     apr_pool_t* pool = NULL;
@@ -87,6 +97,15 @@ int main(int argc, const char* const argv[])
     long long msgF = 0;
     
     Time time = { 0 };
+
+    sqlite3 *db = NULL;
+    char *zErrMsg = 0;
+    const char* createTable;
+    const char* syncOff = "PRAGMA synchronous = OFF;";
+    const char* journal = "PRAGMA journal_mode = MEMORY;";
+    const char* tempStore = "PRAGMA temp_store = 2;";
+    const char* encoding = "PRAGMA encoding = 'UTF-8';";
+    const char* encoding = "PRAGMA encoding = 'UTF-8';";
 
     struct arg_file *file          = arg_file0("f", "file", NULL, "full path to log file");
     struct arg_lit  *help          = arg_lit0("h", "help", "print this help and exit");
@@ -154,6 +173,47 @@ int main(int argc, const char* const argv[])
         PrintError(status);
         goto cleanup;
     }
+    rc = sqlite3_open_v2("log.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+
+    if(rc){
+      CrtPrintf("Can't open database: %s\n", sqlite3_errmsg(db));
+      goto cleanup;
+    }
+
+    createTable = "CREATE TABLE IF NOT EXISTS Log ( \
+                                 Ix INTEGER PRIMARY KEY AUTOINCREMENT, \
+                                 Header TEXT  NOT NULL, \
+                                 Body  TEXT, \
+                                 Level INTEGER NOT NULL \
+                        ); \
+        ";
+
+    rc = sqlite3_exec(db, createTable, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+    rc = sqlite3_exec(db, syncOff, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+    rc = sqlite3_exec(db, journal, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+    rc = sqlite3_exec(db, tempStore, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+    rc = sqlite3_exec(db, encoding, Callback, 0, &zErrMsg);
+    if( rc != SQLITE_OK ){
+        CrtPrintf("SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+
     line = (char*)apr_pcalloc(pool, MAX_STRING_LEN);
     StartTimer();
     while (status != APR_EOF) {
@@ -200,7 +260,7 @@ int main(int argc, const char* const argv[])
 
     CrtPrintf(NEW_LINE "Messages: %llu Time " FULL_TIME_FMT, messages, time.hours, time.minutes, time.seconds);
     CrtPrintf(NEW_LINE "T:%llu D:%llu I:%llu W:%llu E:%llu F:%llu" NEW_LINE, msgT, msgD, msgI, msgW, msgE, msgF);
-
+    sqlite3_close(db);
 cleanup:
     /* deallocate each non-null entry in argtable[] */
     arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
