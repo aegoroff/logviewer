@@ -2,6 +2,7 @@
 // Created at: 20.09.2012
 // © 2012-2013 Alexander Egorov
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -42,16 +43,17 @@ namespace logviewer.core
             }
             var digits = CountDigits(value);
 
-            var sb = new StringBuilder();
-            for (int i = 0; i < digits; i++)
+            var list = new List<char>();
+            for (var i = 0; i < digits; i++)
             {
-                sb.Append("#");
+                list.Add('#');
                 if ((i + 1) % 3 == 0 && i + 1 < digits)
                 {
-                    sb.Append(" ");
+                    list.Add(' ');
                 }
             }
-            return new string(sb.ToString().Reverse().ToArray());
+            list.Reverse();
+            return new string(list.ToArray());
         }
     }
 }
