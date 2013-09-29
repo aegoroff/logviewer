@@ -38,7 +38,7 @@
 #define FATAL_LEVEL "FATAL|\\[[Ff]atal\\]"
 
 #define MAX_LINE_SIZE 32 * BINARY_THOUSAND - 1
-#define MAX_STRING_LEN 2048 * 2
+#define MAX_STRING_LEN 8192
 
 apr_pool_t* pcrePool = NULL;
 
