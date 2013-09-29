@@ -43,6 +43,7 @@
 #define MAX_LINE_SIZE 32 * BINARY_THOUSAND - 1
 #define MAX_STRING_LEN 8192
 #define PAGE_SIZE 1024
+#define ARRAY_INIT_SZ           32
 
 apr_pool_t* pcrePool = NULL;
 
@@ -81,6 +82,8 @@ int main(int argc, const char* const argv[])
     apr_pool_t* pool = NULL;
     apr_status_t status = APR_SUCCESS;
     int nerrors;
+    apr_array_header_t* body = NULL;
+    apr_pool_t* msgPool = NULL;
 
     pcre* re = NULL;
     pcre* reT = NULL;
@@ -98,6 +101,7 @@ int main(int argc, const char* const argv[])
 
     apr_file_t* fileHandle = NULL;
     char* line = NULL;
+    char* head = NULL;
     
     long long messages = 0;
     long long msgT = 0;
@@ -261,10 +265,18 @@ int main(int argc, const char* const argv[])
     StartTimer();
     while (status != APR_EOF) {
         int len = 0;
+        int i = 0;
         status = apr_file_gets(line, MAX_STRING_LEN, fileHandle);
         len = (int)strlen(line);
         rc = pcre_exec(re, 0, line, len, 0, flags, NULL, 0);
-        if (rc >= 0) {
+        if (rc >= 0) { // header
+            head = apr_pstrdup(msgPool, line);
+            if (msgPool != NULL) {
+                const char* bodyStr = apr_array_pstrcat(msgPool, body, NULL);
+                
+                apr_pool_destroy(msgPool);
+                msgPool = NULL;
+            }
             ++messages;
             rc = pcre_exec(reT, 0, line, len, 0, flags, NULL, 0);
             if (rc >= 0) {
@@ -296,6 +308,12 @@ int main(int argc, const char* const argv[])
                 ++msgF;
                 continue;
             }
+        } else { // Body
+            if (msgPool == NULL) {
+                apr_pool_create(&msgPool, pool);
+                body = apr_array_make(msgPool, ARRAY_INIT_SZ, sizeof(const char*));
+            }
+            *(const char**)apr_array_push(body) = apr_pstrdup(msgPool, line);
         }
     }
     StopTimer();
