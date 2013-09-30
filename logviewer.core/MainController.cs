@@ -323,10 +323,9 @@ namespace logviewer.core
                 return;
             }
 
+            this.currentPath = reader.LogPath;
             this.RunOnGuiThread(this.SetLogSize);
             this.RunOnGuiThread(this.ResetLogStatistic);
-
-            this.currentPath = reader.LogPath;
 
 
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
@@ -402,6 +401,7 @@ namespace logviewer.core
 
         private void SetLogSize()
         {
+            this.view.SetLoadedFileCapltion(this.currentPath);
             this.view.HumanReadableLogSize = new FileSize((ulong)this.logSize).ToString();
         }
 

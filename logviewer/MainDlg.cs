@@ -143,7 +143,7 @@ namespace logviewer
             return this.exportDialog.ShowDialog() == DialogResult.OK;
         }
 
-        private void SetLoadedFileCapltion(string path)
+        public void SetLoadedFileCapltion(string path)
         {
             this.Text = string.Format("{0}: {1}", this.originalCapion, path);
         }
