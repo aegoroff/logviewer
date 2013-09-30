@@ -90,7 +90,12 @@ namespace logviewer
         public void SetProgress(LoadProgress progress)
         {
             this.logLoadProgress.Value = progress.Percent;
-            this.logLoadPercent.Text = progress.ToString();
+            this.SetLogProgressCustomText(progress.ToString());
+        }
+
+        public void SetLogProgressCustomText(string text)
+        {
+            this.logLoadPercent.Text = text;
         }
 
         public void CreateRecentFileItem(string file)

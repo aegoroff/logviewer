@@ -23,6 +23,7 @@ namespace logviewer.core
         void Initialize();
         void FocusOnTextFilterControl();
         void SetProgress(LoadProgress progress);
+        void SetLogProgressCustomText(string text);
         void StartLoadingLog(string path);
         void SetLoadedFileCapltion(string path);
     }

@@ -61,6 +61,15 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Encoding detection in progress ....
+        /// </summary>
+        internal static string EncodingDetectionInProgress {
+            get {
+                return ResourceManager.GetString("EncodingDetectionInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min level must be less or equal then max level.
         /// </summary>
         internal static string MinLevelGreaterThenMax {

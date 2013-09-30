@@ -345,6 +345,8 @@ namespace logviewer.core
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
             reader.ReadCompleted += this.OnReadCompleted;
+            reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
+            reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
             Encoding inputEncoding;
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
@@ -354,12 +356,24 @@ namespace logviewer.core
             }
         }
 
+        private void OnEncodingDetectionFinished(object sender, EventArgs e)
+        {
+            this.view.SetLogProgressCustomText(string.Empty);
+        }
+
+        private void OnEncodingDetectionStarted(object sender, EventArgs e)
+        {
+            this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress);
+        }
+
         private void OnReadCompleted(object sender, EventArgs e)
         {
             this.store.FinishAddMessages();
             var reader = (LogReader)sender;
             reader.ProgressChanged -= this.OnReadLogProgressChanged;
             reader.ReadCompleted -= this.OnReadCompleted;
+            reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
+            reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             this.ReadLogFromInternalStore(false);
         }
 

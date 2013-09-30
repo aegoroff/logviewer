@@ -37,6 +37,8 @@ namespace logviewer.core
 
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler ReadCompleted;
+        public event EventHandler EncodingDetectionStarted;
+        public event EventHandler EncodingDetectionFinished;
 
         public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null,
             long offset = 0)
@@ -68,6 +70,10 @@ namespace logviewer.core
             }
             else
             {
+                if (this.EncodingDetectionStarted != null)
+                {
+                    this.EncodingDetectionStarted(this, new EventArgs());
+                }
                 var mapName = Guid.NewGuid().ToString();
                 using (
                     var mmf = MemoryMappedFile.CreateFromFile(this.LogPath, FileMode.Open, mapName, 0,
@@ -77,6 +83,10 @@ namespace logviewer.core
                     {
                         srcEncoding = SrcEncoding(s);
                     }
+                }
+                if (this.EncodingDetectionFinished != null)
+                {
+                    this.EncodingDetectionFinished(this, new EventArgs());
                 }
             }
             var decode = DecodeNeeded(srcEncoding);
