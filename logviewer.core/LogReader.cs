@@ -36,27 +36,11 @@ namespace logviewer.core
         public string LogPath { get; private set; }
 
         public event ProgressChangedEventHandler ProgressChanged;
-        public event EventHandler ReadCompleted;
         public event EventHandler EncodingDetectionStarted;
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
 
         public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null,
             long offset = 0)
-        {
-            try
-            {
-                return this.ReadInternal(onRead, canContinue, offset, encoding);
-            }
-            finally
-            {
-                if (this.ReadCompleted != null)
-                {
-                    this.ReadCompleted(this, new EventArgs());
-                }
-            }
-        }
-
-        private Encoding ReadInternal(Action<LogMessage> onRead, Func<bool> canContinue, long offset, Encoding encoding)
         {
             if (this.Length == 0)
             {
