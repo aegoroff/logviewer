@@ -7,6 +7,7 @@
         <WixVariable Id="WixStdbaLicenseUrl" Value="" />
 
         <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+            <Payload SourceFile="Lv.bmp" />
         </BootstrapperApplicationRef>
 	    <Chain>
             <PackageGroupRef Id="NetFx40Redist"/>
