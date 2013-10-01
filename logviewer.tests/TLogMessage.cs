@@ -13,7 +13,8 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            this.m = LogMessage.Create();
+            var c = 0L;
+            this.m = LogMessage.Create(ref c);
         }
 
         private LogMessage m;

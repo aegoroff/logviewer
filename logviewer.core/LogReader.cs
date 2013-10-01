@@ -81,8 +81,7 @@ namespace logviewer.core
             var messagesCount = 0L;
             using (sr)
             {
-                var message = LogMessage.Create();
-                message.Ix = ++messagesCount;
+                var message = LogMessage.Create(ref messagesCount);
                 var total = this.Length;
                 var fraction = total / 20L;
                 var signalCounter = 1;
@@ -104,8 +103,7 @@ namespace logviewer.core
                     if (this.messageHead.IsMatch(line))
                     {
                         onRead(message);
-                        message = LogMessage.Create();
-                        message.Ix = ++messagesCount;
+                        message = LogMessage.Create(ref messagesCount);
                     }
 
                     if (stream.Position >= signalCounter * fraction && this.ProgressChanged != null)

@@ -54,7 +54,6 @@ namespace logviewer.core
         public long Ix
         {
             get { return this.ix; }
-            set { this.ix = value; }
         }
 
         public string Header
@@ -144,9 +143,9 @@ namespace logviewer.core
             return sb.ToString();
         }
 
-        public static LogMessage Create()
+        public static LogMessage Create(ref long counter)
         {
-            return new LogMessage { strings = new List<string>(), Level = LogLevel.Trace };
+            return new LogMessage { strings = new List<string>(), Level = LogLevel.Trace, ix = ++counter };
         }
 
         #region Constants and Fields
