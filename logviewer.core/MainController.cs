@@ -393,11 +393,11 @@ namespace logviewer.core
                 }
                 message.Level = this.DetectLevel(message.Header);
                 message.Cache();
-                ++this.totalMessages;
+                Interlocked.Increment(ref this.totalMessages);
                 this.Store.AddMessage(message);
                 Interlocked.Decrement(ref addedMessages);
             };
-            SpinWait.SpinUntil(() => this.queue.Count < 100000);
+            SpinWait.SpinUntil(() => this.queue.Count < 50000);
             this.queue.EnqueueItem(action);
         }
 
