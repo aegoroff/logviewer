@@ -38,7 +38,7 @@ namespace logviewer.core
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler ReadCompleted;
         public event EventHandler EncodingDetectionStarted;
-        public event EventHandler EncodingDetectionFinished;
+        public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
 
         public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null,
             long offset = 0)
@@ -84,10 +84,10 @@ namespace logviewer.core
                         srcEncoding = SrcEncoding(s);
                     }
                 }
-                if (this.EncodingDetectionFinished != null)
-                {
-                    this.EncodingDetectionFinished(this, new EventArgs());
-                }
+            }
+            if (this.EncodingDetectionFinished != null)
+            {
+                this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
             }
             var decode = DecodeNeeded(srcEncoding);
             var fs = new FileStream(this.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);

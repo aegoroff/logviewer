@@ -361,17 +361,19 @@ namespace logviewer.core
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
 
-            this.RunOnGuiThread(() => this.view.SetFileEncoding(encoding == null ? string.Empty : "     " + encoding.EncodingName));
-
             if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
             {
                 this.filesEncodingCache.Add(this.currentPath, encoding);
             }
         }
 
-        private void OnEncodingDetectionFinished(object sender, EventArgs e)
+        private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
-            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Empty));
+            this.RunOnGuiThread(delegate
+            {
+                this.view.SetLogProgressCustomText(string.Empty);
+                this.view.SetFileEncoding(e.ToString());
+            });
         }
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
