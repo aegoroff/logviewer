@@ -361,7 +361,7 @@ namespace logviewer.core
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
 
-            this.RunOnGuiThread(() => this.view.SetFileEncoding(encoding == null ? string.Empty : " |   " + encoding.EncodingName));
+            this.RunOnGuiThread(() => this.view.SetFileEncoding(encoding == null ? string.Empty : "     " + encoding.EncodingName));
 
             if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
             {
