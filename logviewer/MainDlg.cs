@@ -400,9 +400,15 @@ namespace logviewer
             var dlg = Program.Kernel.Get<SettingsDlg>();
             using (dlg)
             {
+                dlg.Closing += this.OnSettingsClosing;
                 dlg.ShowDialog();
-                this.controller.UpdateSettings();
             }
+        }
+
+        void OnSettingsClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ((Form)sender).Closing -= this.OnSettingsClosing;
+            this.controller.UpdateSettings();
         }
 
         /// <summary>
