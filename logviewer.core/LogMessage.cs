@@ -42,12 +42,19 @@ namespace logviewer.core
             this.head = header;
             this.body = body;
             this.Level = level;
+            this.ix = 0;
             this.strings = null;
         }
 
         public bool IsEmpty
         {
             get { return this.head == null && this.body == null && (this.strings == null || this.strings.Count == 0); }
+        }
+
+        public long Ix
+        {
+            get { return this.ix; }
+            set { this.ix = value; }
         }
 
         public string Header
@@ -148,6 +155,7 @@ namespace logviewer.core
         private string body;
         private string head;
         private List<string> strings;
+        private long ix;
 
         #endregion
     }

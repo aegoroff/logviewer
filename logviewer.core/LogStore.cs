@@ -40,7 +40,7 @@ namespace logviewer.core
             }
             const string CreateTable = @"
                         CREATE TABLE IF NOT EXISTS Log (
-                                 Ix INTEGER PRIMARY KEY AUTOINCREMENT,
+                                 Ix INTEGER PRIMARY KEY,
                                  Header TEXT  NOT NULL,
                                  Body  TEXT,
                                  Level INTEGER NOT NULL
@@ -97,9 +97,10 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            const string Cmd = @"INSERT INTO Log(Header, Body, Level) VALUES (@Header, @Body, @Level)";
+            const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
             this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
+                DatabaseConnection.AddParameter(command, "@Ix", message.Ix);
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
                 DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);

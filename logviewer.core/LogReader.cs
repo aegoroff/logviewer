@@ -78,9 +78,11 @@ namespace logviewer.core
             fs.Seek(offset, SeekOrigin.Begin);
             var stream = new BufferedStream(fs, BufferSize);
             var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
+            var messagesCount = 0L;
             using (sr)
             {
                 var message = LogMessage.Create();
+                message.Ix = ++messagesCount;
                 var total = this.Length;
                 var fraction = total / 20L;
                 var signalCounter = 1;
@@ -103,6 +105,7 @@ namespace logviewer.core
                     {
                         onRead(message);
                         message = LogMessage.Create();
+                        message.Ix = ++messagesCount;
                     }
 
                     if (stream.Position >= signalCounter * fraction && this.ProgressChanged != null)

@@ -391,6 +391,7 @@ namespace logviewer.core
                     Interlocked.Decrement(ref addedMessages);
                     return;
                 }
+
                 message.Level = this.DetectLevel(message.Header);
                 message.Cache();
                 Interlocked.Increment(ref this.totalMessages);
