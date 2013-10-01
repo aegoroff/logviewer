@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="ru-ru" xmlns="http://schemas.microsoft.com/wix/2006/localization">
     <String Id="InstallHeader">Добро пожаловать</String>
-    <String Id="InstallMessage">Программа установки поставит [WixBundleName] на ваш компьютер. Для продолжения нажмите Установить, для изменения настроек Настройки, а для отмены Закрыть.</String>
+    <String Id="InstallMessage">Программа установки поставит [WixBundleName] на ваш компьютер. Для продолжения нажмите Установка, для изменения настроек Настройки, а для отмены Закрыть.</String>
     <String Id="InstallVersion">Версия [WixBundleVersion]</String>
     <String Id="Caption">Установка [WixBundleName]</String>
     <String Id="Title">[WixBundleName]</String>
@@ -18,10 +18,10 @@
         /log log.txt - записывать журнал установки в указанный файл. По умолчанию журнал создается в каталоге %TEMP%.
     </String>
     <String Id="HelpCloseButton">&amp;Закрыть</String>
-    <String Id="InstallLicenseLinkText">[WixBundleName] &lt;a href="#"&gt;лицензия&lt;/a&gt;.</String>
-    <String Id="InstallAcceptCheckbox">Я согласен с лицензионным соглашением</String>
+    <String Id="InstallLicenseLinkText">&lt;a href="#"&gt;Лицензия&lt;/a&gt; на [WixBundleName]</String>
+    <String Id="InstallAcceptCheckbox">Я согласен с лицензией</String>
     <String Id="InstallOptionsButton">&amp;Настройки</String>
-    <String Id="InstallInstallButton">&amp;Установить</String>
+    <String Id="InstallInstallButton">&amp;Установка</String>
     <String Id="InstallCloseButton">&amp;Закрыть</String>
     <String Id="OptionsHeader">Настройки установки</String>
     <String Id="OptionsLocationLabel">Путь установки:</String>
