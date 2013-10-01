@@ -7,10 +7,11 @@
         <WixVariable Id="WixStdbaLicenseUrl" Value="" />
 
         <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+            <Payload SourceFile="Lv.bmp" />
             <Payload Id="thm-ru-RU" Compressed="yes" Name="1049\thm.wxl" SourceFile="Theme.ru.wxl"/>
         </BootstrapperApplicationRef>
 
-        <Chain>
+	    <Chain>
             <PackageGroupRef Id="NetFx40Redist"/>
             <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
 		</Chain>
