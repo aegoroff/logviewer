@@ -4,10 +4,11 @@
 	<Bundle Name="Logviewer" Version="$(var.Version)" Manufacturer="Alexander Egorov" UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e">
         <WixVariable Id="WixStdbaThemeXml" Value="Theme.xml" />
         <WixVariable Id="WixStdbaThemeWxl" Value="Theme.wxl" />
-        <WixVariable Id="WixStdbaLicenseUrl" Value="" />
+        <WixVariable Id="WixStdbaLicenseUrl" Value="LICENSE.txt" />
 
         <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
             <Payload SourceFile="Lv.bmp" />
+            <Payload SourceFile="..\LICENSE.txt" Compressed="yes" />
             <Payload Id="thm-ru-RU" Compressed="yes" Name="1049\thm.wxl" SourceFile="Theme.ru.wxl"/>
         </BootstrapperApplicationRef>
 
