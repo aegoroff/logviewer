@@ -378,7 +378,11 @@ namespace logviewer.core
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
         {
-            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress));
+            this.RunOnGuiThread(delegate
+            {
+                this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress);
+                this.view.SetFileEncoding(string.Empty);
+            });
         }
 
         private void OnReadCompleted(object sender, EventArgs e)
