@@ -26,5 +26,6 @@ namespace logviewer.core
         void SetLogProgressCustomText(string text);
         void StartLoadingLog(string path);
         void SetLoadedFileCapltion(string path);
+        void SetFileEncoding(string encoding);
     }
 }

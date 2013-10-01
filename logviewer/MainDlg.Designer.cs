@@ -36,6 +36,7 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.settingsButton = new System.Windows.Forms.ToolStripButton();
+            this.statButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.minLevelBox = new System.Windows.Forms.ToolStripComboBox();
@@ -56,11 +57,11 @@
             this.currentPage = new System.Windows.Forms.TextBox();
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.statButton = new System.Windows.Forms.ToolStripButton();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
+            this.encodingLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -72,7 +73,8 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel2,
-            this.toolStripStatusLabel1});
+            this.toolStripStatusLabel1,
+            this.encodingLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 584);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(965, 22);
@@ -254,6 +256,16 @@
             this.settingsButton.Size = new System.Drawing.Size(23, 22);
             this.settingsButton.Text = "Settings";
             this.settingsButton.Click += new System.EventHandler(this.OnSettings);
+            // 
+            // statButton
+            // 
+            this.statButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.statButton.Image = ((System.Drawing.Image)(resources.GetObject("statButton.Image")));
+            this.statButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.statButton.Name = "statButton";
+            this.statButton.Size = new System.Drawing.Size(23, 22);
+            this.statButton.Text = "Log statistic";
+            this.statButton.Click += new System.EventHandler(this.OnOpenStatistic);
             // 
             // toolStripSeparator3
             // 
@@ -457,20 +469,6 @@
             this.first.UseVisualStyleBackColor = true;
             this.first.Click += new System.EventHandler(this.OnFirst);
             // 
-            // syntaxRichTextBox1
-            // 
-            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.DetectUrls = false;
-            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
-            this.syntaxRichTextBox1.TabIndex = 0;
-            this.syntaxRichTextBox1.Text = "";
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
@@ -486,15 +484,25 @@
             this.exportDialog.DefaultExt = "rtf";
             this.exportDialog.Filter = "RTF files | *.rtf";
             // 
-            // statButton
+            // syntaxRichTextBox1
             // 
-            this.statButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.statButton.Image = ((System.Drawing.Image)(resources.GetObject("statButton.Image")));
-            this.statButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.statButton.Name = "statButton";
-            this.statButton.Size = new System.Drawing.Size(23, 22);
-            this.statButton.Text = "Log statistic";
-            this.statButton.Click += new System.EventHandler(this.OnOpenStatistic);
+            this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.DetectUrls = false;
+            this.syntaxRichTextBox1.Location = new System.Drawing.Point(2, 2);
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
+            this.syntaxRichTextBox1.Size = new System.Drawing.Size(961, 504);
+            this.syntaxRichTextBox1.TabIndex = 0;
+            this.syntaxRichTextBox1.Text = "";
+            // 
+            // encodingLabel
+            // 
+            this.encodingLabel.Name = "encodingLabel";
+            this.encodingLabel.Size = new System.Drawing.Size(16, 17);
+            this.encodingLabel.Text = "   ";
             // 
             // MainDlg
             // 
@@ -574,6 +582,7 @@
         private System.Windows.Forms.ToolStripButton useRegexp;
         private System.Windows.Forms.ToolStripButton settingsButton;
         private System.Windows.Forms.ToolStripButton statButton;
+        private System.Windows.Forms.ToolStripStatusLabel encodingLabel;
     }
 }
 

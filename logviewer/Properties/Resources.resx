@@ -120,6 +120,9 @@
   <data name="Debug" xml:space="preserve">
     <value>Debug</value>
   </data>
+  <data name="Encoding" xml:space="preserve">
+    <value>File encoding</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>

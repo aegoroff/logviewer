@@ -17,6 +17,7 @@ namespace logviewer
     {
         private readonly LogStore store;
         private readonly string size;
+        private readonly string encoding;
         private readonly TaskScheduler uiContext;
 
         private readonly string[] levelDescriptions =
@@ -29,11 +30,12 @@ namespace logviewer
             Resources.Fatal,
         };
 
-        public StatisticDlg(LogStore store, string size)
+        public StatisticDlg(LogStore store, string size, string encoding)
         {
             this.InitializeComponent();
             this.store = store;
             this.size = size;
+            this.encoding = encoding;
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             this.LoadStatistic();
         }
@@ -68,10 +70,11 @@ namespace logviewer
                         .ToList();
 
                 var sizeItem = new ListViewItem(new[] { Resources.Size, this.size });
+                var encodingItem = new ListViewItem(new[] { Resources.Encoding, this.encoding });
                 var totalItem =
                     new ListViewItem(new[] { Resources.TotalMessages, total.ToString(total.FormatString(), CultureInfo.CurrentCulture) });
 
-                items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem });
+                items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem, encodingItem });
 
                 this.listView1.Items.AddRange(items.ToArray());
             };

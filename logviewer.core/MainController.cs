@@ -216,6 +216,16 @@ namespace logviewer.core
             this.BeginLogReading();
         }
 
+        public string CurrentEncoding
+        {
+            get
+            {
+                return this.filesEncodingCache.ContainsKey(this.currentPath)
+                    ? this.filesEncodingCache[this.currentPath].EncodingName
+                    : string.Empty;
+            }
+        }
+
         private void BeginLogReading()
         {
             this.view.SetProgress(LoadProgress.FromPercent(0));
@@ -350,6 +360,9 @@ namespace logviewer.core
             Encoding inputEncoding;
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+
+            this.RunOnGuiThread(() => this.view.SetFileEncoding(encoding == null ? string.Empty : " |   " + encoding.EncodingName));
+
             if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
             {
                 this.filesEncodingCache.Add(this.currentPath, encoding);
@@ -358,12 +371,12 @@ namespace logviewer.core
 
         private void OnEncodingDetectionFinished(object sender, EventArgs e)
         {
-            this.view.SetLogProgressCustomText(string.Empty);
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Empty));
         }
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
         {
-            this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress);
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress));
         }
 
         private void OnReadCompleted(object sender, EventArgs e)

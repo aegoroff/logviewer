@@ -153,6 +153,11 @@ namespace logviewer
             this.Text = string.Format("{0}: {1}", this.originalCapion, path);
         }
 
+        public void SetFileEncoding(string encoding)
+        {
+            this.encodingLabel.Text = encoding;
+        }
+
         public void SaveRtf()
         {
             this.syntaxRichTextBox1.SaveFile(this.exportDialog.FileName, RichTextBoxStreamType.RichText);
@@ -421,7 +426,7 @@ namespace logviewer
 
         private void OnOpenStatistic(object sender, EventArgs e)
         {
-            var dlg = new StatisticDlg(this.Controller.Store, HumanReadableLogSize);
+            var dlg = new StatisticDlg(this.Controller.Store, this.HumanReadableLogSize, this.Controller.CurrentEncoding);
             dlg.Show(this);
         }
     }
