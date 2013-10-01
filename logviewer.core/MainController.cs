@@ -22,6 +22,7 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
+        private const int MaxQueueCount = 100000;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -398,7 +399,7 @@ namespace logviewer.core
                 this.Store.AddMessage(message);
                 Interlocked.Decrement(ref addedMessages);
             };
-            SpinWait.SpinUntil(() => this.queue.Count < 50000);
+            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount);
             this.queue.EnqueueItem(action);
         }
 
