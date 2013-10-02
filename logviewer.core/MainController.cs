@@ -371,6 +371,7 @@ namespace logviewer.core
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
+                // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(() => Interlocked.Read(ref addedMessages) == 0);
             }
             finally
@@ -384,14 +385,19 @@ namespace logviewer.core
             this.ReadLogFromInternalStore(false);
         }
 
+        /// <remarks>
+        /// this method MUST be called only from one thread.
+        /// </remarks>
         private void AddMessageToCache(LogMessage message)
         {
             if (message.IsEmpty)
             {
                 return;
             }
-            Interlocked.Increment(ref this.addedMessages);
+            Interlocked.Increment(ref this.addedMessages); // Interlocked is a must because other threads can change this
             message.Ix = ++this.totalMessages;
+
+            // memory: Freeze queue filling until pending coung less then MaxQueueCount
             SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimoutMilliseconds);
             this.queue.EnqueueItem(delegate
             {
@@ -403,7 +409,7 @@ namespace logviewer.core
                 }
                 finally
                 {
-                    Interlocked.Decrement(ref this.addedMessages);
+                    Interlocked.Decrement(ref this.addedMessages); // Interlocked is a must because other threads can change this
                 }
             });
         }
