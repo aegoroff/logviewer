@@ -230,7 +230,7 @@ namespace logviewer.core
 
         private void BeginLogReading()
         {
-            this.view.SetProgress(LoadProgress.FromPercent(0));
+            this.RunOnGuiThread(() => this.view.SetProgress(LoadProgress.FromPercent(0)));
 
             var errorMessage = string.Empty;
             Action action = delegate
