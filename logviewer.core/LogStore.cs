@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualBasic.Devices;
@@ -97,10 +98,6 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            if (message.IsEmpty)
-            {
-                return;
-            }
             const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
             this.connection.RunSqlQuery(delegate(IDbCommand command)
             {

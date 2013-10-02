@@ -13,8 +13,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            var c = 0L;
-            this.m = LogMessage.Create(ref c);
+            this.m = LogMessage.Create();
         }
 
         private LogMessage m;
@@ -45,6 +44,16 @@ namespace logviewer.tests
         [Test]
         public void IsEmpty()
         {
+            Assert.That(this.m.IsEmpty);
+            Assert.That(this.m.Body, Is.Empty);
+            Assert.That(this.m.Header, Is.Empty);
+        }
+        
+        [Test]
+        public void IsEmptyAllStringsEmpty()
+        {
+            this.m.AddLine(string.Empty);
+            this.m.AddLine(string.Empty);
             Assert.That(this.m.IsEmpty);
             Assert.That(this.m.Body, Is.Empty);
             Assert.That(this.m.Header, Is.Empty);

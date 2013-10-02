@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -48,12 +49,13 @@ namespace logviewer.core
 
         public bool IsEmpty
         {
-            get { return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && (this.strings == null || this.strings.Count == 0); }
+            get { return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && (this.strings == null || this.strings.Count == 0 || this.strings.All(string.IsNullOrWhiteSpace)); }
         }
 
         public long Ix
         {
             get { return this.ix; }
+            set { this.ix = value; }
         }
 
         public string Header
@@ -143,9 +145,9 @@ namespace logviewer.core
             return sb.ToString();
         }
 
-        public static LogMessage Create(ref long counter)
+        public static LogMessage Create()
         {
-            return new LogMessage { strings = new List<string>(), Level = LogLevel.Trace, ix = ++counter };
+            return new LogMessage { strings = new List<string>(), Level = LogLevel.Trace };
         }
 
         #region Constants and Fields

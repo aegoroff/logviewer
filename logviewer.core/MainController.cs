@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -363,7 +364,7 @@ namespace logviewer.core
             try
             {
                 addedMessages = 0;
-                var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset, this.totalMessages);
+                var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
                 {
@@ -384,20 +385,18 @@ namespace logviewer.core
 
         private void AddMessageToCache(LogMessage message)
         {
-            Interlocked.Increment(ref addedMessages);
+            if (message.IsEmpty)
+            {
+                return;
+            }
+            message.Ix = ++this.totalMessages;
+            Interlocked.Increment(ref this.addedMessages);
             Action action = delegate
             {
-                if (message.IsEmpty)
-                {
-                    Interlocked.Decrement(ref addedMessages);
-                    return;
-                }
-
                 message.Level = this.DetectLevel(message.Header);
                 message.Cache();
-                Interlocked.Increment(ref this.totalMessages);
                 this.Store.AddMessage(message);
-                Interlocked.Decrement(ref addedMessages);
+                Interlocked.Decrement(ref this.addedMessages);
             };
             SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount);
             this.queue.EnqueueItem(action);
@@ -647,7 +646,7 @@ namespace logviewer.core
 
         public long TotalMessages
         {
-            get { return this.totalMessages; }
+            get { return this.store != null ? this.store.CountMessages() : 0; }
         }
 
         public long TotalFiltered

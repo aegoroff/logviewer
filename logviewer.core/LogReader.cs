@@ -39,8 +39,7 @@ namespace logviewer.core
         public event EventHandler EncodingDetectionStarted;
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
 
-        public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null,
-            long offset = 0, long start = 0)
+        public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
         {
             if (this.Length == 0)
             {
@@ -78,10 +77,9 @@ namespace logviewer.core
             fs.Seek(offset, SeekOrigin.Begin);
             var stream = new BufferedStream(fs, BufferSize);
             var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
-            var messagesCount = start;
             using (sr)
             {
-                var message = LogMessage.Create(ref messagesCount);
+                var message = LogMessage.Create();
                 var total = this.Length;
                 var fraction = total / 20L;
                 var signalCounter = 1;
@@ -103,7 +101,7 @@ namespace logviewer.core
                     if (this.messageHead.IsMatch(line))
                     {
                         onRead(message);
-                        message = LogMessage.Create(ref messagesCount);
+                        message = LogMessage.Create();
                     }
 
                     if (stream.Position >= signalCounter * fraction && this.ProgressChanged != null)
