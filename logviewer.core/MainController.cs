@@ -24,6 +24,7 @@ namespace logviewer.core
     public sealed class MainController : IDisposable
     {
         private const int MaxQueueCount = 100000;
+        private const int EnqueueTimoutMilliseconds = 180;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -389,9 +390,10 @@ namespace logviewer.core
             {
                 return;
             }
-            message.Ix = ++this.totalMessages;
             Interlocked.Increment(ref this.addedMessages);
-            Action action = delegate
+            message.Ix = ++this.totalMessages;
+            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimoutMilliseconds);
+            this.queue.EnqueueItem(delegate
             {
                 try
                 {
@@ -403,9 +405,7 @@ namespace logviewer.core
                 {
                     Interlocked.Decrement(ref this.addedMessages);
                 }
-            };
-            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount);
-            this.queue.EnqueueItem(action);
+            });
         }
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
