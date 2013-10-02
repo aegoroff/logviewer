@@ -150,9 +150,11 @@ namespace logviewer.core
         {
             if (!this.cancellation.IsCancellationRequested)
             {
+                this.view.SetLogProgressCustomText(Resources.CancelPrevious);
                 SafeRunner.Run(this.cancellation.Cancel);
             }
             this.WaitRunningTasks();
+            SpinWait.SpinUntil(() => this.queue.Count == 0);
             SafeRunner.Run(this.cancellation.Dispose);
             this.DisposeRunningTasks();
             this.runningTasks.Clear();

@@ -61,6 +61,15 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancelling previous log loading in progress ....
+        /// </summary>
+        internal static string CancelPrevious {
+            get {
+                return ResourceManager.GetString("CancelPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding detection in progress ....
         /// </summary>
         internal static string EncodingDetectionInProgress {
