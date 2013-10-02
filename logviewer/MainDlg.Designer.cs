@@ -19,6 +19,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.encodingLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -34,7 +35,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.refreshButton = new System.Windows.Forms.ToolStripButton();
             this.settingsButton = new System.Windows.Forms.ToolStripButton();
             this.statButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -57,11 +58,10 @@
             this.currentPage = new System.Windows.Forms.TextBox();
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
-            this.encodingLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -94,6 +94,12 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(10, 17);
             this.toolStripStatusLabel1.Text = " ";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // encodingLabel
+            // 
+            this.encodingLabel.Name = "encodingLabel";
+            this.encodingLabel.Size = new System.Drawing.Size(16, 17);
+            this.encodingLabel.Text = "   ";
             // 
             // menuStrip1
             // 
@@ -165,7 +171,7 @@
             this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.OnChangeFilter);
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.OnRefresh);
             // 
             // closeToolStripMenuItem
             // 
@@ -209,7 +215,7 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
-            this.toolStripButton2,
+            this.refreshButton,
             this.settingsButton,
             this.statButton,
             this.toolStripSeparator3,
@@ -238,14 +244,14 @@
             this.toolStripButton1.Text = "Open";
             this.toolStripButton1.Click += new System.EventHandler(this.OnOpen);
             // 
-            // toolStripButton2
+            // refreshButton
             // 
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(66, 22);
-            this.toolStripButton2.Text = "Refresh";
-            this.toolStripButton2.Click += new System.EventHandler(this.OnRefresh);
+            this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
+            this.refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(66, 22);
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.Click += new System.EventHandler(this.OnRefresh);
             // 
             // settingsButton
             // 
@@ -469,21 +475,6 @@
             this.first.UseVisualStyleBackColor = true;
             this.first.Click += new System.EventHandler(this.OnFirst);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
-            // 
-            // logWatch
-            // 
-            this.logWatch.EnableRaisingEvents = true;
-            this.logWatch.SynchronizingObject = this;
-            this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
-            // 
-            // exportDialog
-            // 
-            this.exportDialog.DefaultExt = "rtf";
-            this.exportDialog.Filter = "RTF files | *.rtf";
-            // 
             // syntaxRichTextBox1
             // 
             this.syntaxRichTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -498,11 +489,20 @@
             this.syntaxRichTextBox1.TabIndex = 0;
             this.syntaxRichTextBox1.Text = "";
             // 
-            // encodingLabel
+            // openFileDialog1
             // 
-            this.encodingLabel.Name = "encodingLabel";
-            this.encodingLabel.Size = new System.Drawing.Size(16, 17);
-            this.encodingLabel.Text = "   ";
+            this.openFileDialog1.Filter = "Log files|*.log|All files|*.*";
+            // 
+            // logWatch
+            // 
+            this.logWatch.EnableRaisingEvents = true;
+            this.logWatch.SynchronizingObject = this;
+            this.logWatch.Changed += new System.IO.FileSystemEventHandler(this.OnChangeLog);
+            // 
+            // exportDialog
+            // 
+            this.exportDialog.DefaultExt = "rtf";
+            this.exportDialog.Filter = "RTF files | *.rtf";
             // 
             // MainDlg
             // 
@@ -559,7 +559,7 @@
         private System.Windows.Forms.ToolStripComboBox maxLevelBox;
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripComboBox sortingBox;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripButton refreshButton;
         private System.IO.FileSystemWatcher logWatch;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
