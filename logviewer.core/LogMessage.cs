@@ -48,7 +48,7 @@ namespace logviewer.core
 
         public bool IsEmpty
         {
-            get { return this.head == null && this.body == null && (this.strings == null || this.strings.Count == 0); }
+            get { return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && (this.strings == null || this.strings.Count == 0); }
         }
 
         public long Ix
