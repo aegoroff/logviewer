@@ -24,7 +24,7 @@ namespace logviewer.core
     public sealed class MainController : IDisposable
     {
         private const int MaxQueueCount = 100000;
-        private const int EnqueueTimoutMilliseconds = 180;
+        private const int EnqueueTimeoutMilliseconds = 90;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -398,7 +398,7 @@ namespace logviewer.core
             message.Ix = ++this.totalMessages;
 
             // memory: Freeze queue filling until pending coung less then MaxQueueCount
-            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimoutMilliseconds);
+            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimeoutMilliseconds);
             this.queue.EnqueueItem(delegate
             {
                 try
