@@ -40,7 +40,7 @@ namespace logviewer.core
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
 
         public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null,
-            long offset = 0)
+            long offset = 0, long start = 0)
         {
             if (this.Length == 0)
             {
@@ -78,7 +78,7 @@ namespace logviewer.core
             fs.Seek(offset, SeekOrigin.Begin);
             var stream = new BufferedStream(fs, BufferSize);
             var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
-            var messagesCount = 0L;
+            var messagesCount = start;
             using (sr)
             {
                 var message = LogMessage.Create(ref messagesCount);

@@ -45,7 +45,7 @@ namespace logviewer.core
         private bool reverseChronological;
         private LogStore store;
         private string textFilter;
-        private int totalMessages;
+        private long totalMessages;
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
@@ -363,7 +363,7 @@ namespace logviewer.core
             try
             {
                 addedMessages = 0;
-                var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+                var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset, this.totalMessages);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
                 {
@@ -645,7 +645,7 @@ namespace logviewer.core
             }
         }
 
-        public int TotalMessages
+        public long TotalMessages
         {
             get { return this.totalMessages; }
         }
