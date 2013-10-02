@@ -51,7 +51,7 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Environment.ProcessorCount);
+        private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
 
         #endregion
 
