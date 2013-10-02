@@ -393,10 +393,16 @@ namespace logviewer.core
             Interlocked.Increment(ref this.addedMessages);
             Action action = delegate
             {
-                message.Level = this.DetectLevel(message.Header);
-                message.Cache();
-                this.Store.AddMessage(message);
-                Interlocked.Decrement(ref this.addedMessages);
+                try
+                {
+                    message.Level = this.DetectLevel(message.Header);
+                    message.Cache();
+                    this.Store.AddMessage(message);
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref this.addedMessages);
+                }
             };
             SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount);
             this.queue.EnqueueItem(action);
