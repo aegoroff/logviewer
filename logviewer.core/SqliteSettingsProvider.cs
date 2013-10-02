@@ -244,24 +244,16 @@ namespace logviewer.core
 
         private void CreateTables()
         {
-            const string StringOptions = @"
-                        CREATE TABLE IF NOT EXISTS StringOptions (
+            const string OptionsTableTemplate = @"
+                        CREATE TABLE IF NOT EXISTS {0} (
                                  Option TEXT PRIMARY KEY,
-                                 Value TEXT
+                                 Value {1}
                         );
                     ";
-            const string IntegerOptions = @"
-                        CREATE TABLE IF NOT EXISTS IntegerOptions (
-                                 Option TEXT PRIMARY KEY,
-                                 Value INTEGER
-                        );
-                    ";
-            const string BooleanOptions = @"
-                        CREATE TABLE IF NOT EXISTS BooleanOptions (
-                                 Option TEXT PRIMARY KEY,
-                                 Value BOOLEAN
-                        );
-                    ";
+            
+            var stringOptions = string.Format(OptionsTableTemplate, "StringOptions", "TEXT");
+            var integerOptions = string.Format(OptionsTableTemplate, "IntegerOptions", "INTEGER");
+            var booleanOptions = string.Format(OptionsTableTemplate, "BooleanOptions", "BOOLEAN");
             const string ParsingTemplates = @"
                         CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
@@ -274,7 +266,7 @@ namespace logviewer.core
                                  Fatal TEXT NOT NULL
                         );
                     ";
-            this.ExecuteNonQuery(StringOptions, IntegerOptions, BooleanOptions, ParsingTemplates);
+            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, ParsingTemplates);
         }
 
         private void ExecuteNonQuery(params string[] queries)
@@ -442,14 +434,16 @@ namespace logviewer.core
 
         private static void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
         {
-            DatabaseConnection.AddParameter(command, "@Ix", template.Index);
-            DatabaseConnection.AddParameter(command, "@StartMessage", template.StartMessage);
-            DatabaseConnection.AddParameter(command, "@Trace", template.Trace);
-            DatabaseConnection.AddParameter(command, "@Debug", template.Debug);
-            DatabaseConnection.AddParameter(command, "@Info", template.Info);
-            DatabaseConnection.AddParameter(command, "@Warn", template.Warn);
-            DatabaseConnection.AddParameter(command, "@Error", template.Error);
-            DatabaseConnection.AddParameter(command, "@Fatal", template.Fatal);
+            Action<string, object> action = (name, value) => DatabaseConnection.AddParameter(command, name, value);
+
+            action("@Ix", template.Index);
+            action("@StartMessage", template.StartMessage);
+            action("@Trace", template.Trace);
+            action("@Debug", template.Debug);
+            action("@Info", template.Info);
+            action("@Warn", template.Warn);
+            action("@Error", template.Error);
+            action("@Fatal", template.Fatal);
         }
 
         /// <summary>

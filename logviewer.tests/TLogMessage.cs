@@ -48,6 +48,16 @@ namespace logviewer.tests
             Assert.That(this.m.Body, Is.Empty);
             Assert.That(this.m.Header, Is.Empty);
         }
+        
+        [Test]
+        public void IsEmptyAllStringsEmpty()
+        {
+            this.m.AddLine(string.Empty);
+            this.m.AddLine(string.Empty);
+            Assert.That(this.m.IsEmpty);
+            Assert.That(this.m.Body, Is.Empty);
+            Assert.That(this.m.Header, Is.Empty);
+        }
 
         [Test]
         public void OnlyHead()

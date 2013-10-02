@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
+        private const int MaxQueueCount = 100000;
+        private const int EnqueueTimoutMilliseconds = 180;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -44,10 +47,11 @@ namespace logviewer.core
         private bool reverseChronological;
         private LogStore store;
         private string textFilter;
-        private int totalMessages;
+        private long totalMessages;
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
+        private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Environment.ProcessorCount);
 
         #endregion
 
@@ -228,7 +232,7 @@ namespace logviewer.core
 
         private void BeginLogReading()
         {
-            this.view.SetProgress(LoadProgress.FromPercent(0));
+            this.RunOnGuiThread(() => this.view.SetProgress(LoadProgress.FromPercent(0)));
 
             var errorMessage = string.Empty;
             Action action = delegate
@@ -354,40 +358,78 @@ namespace logviewer.core
                 this.totalMessages = 0;
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
-            reader.ReadCompleted += this.OnReadCompleted;
             reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
             Encoding inputEncoding;
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
-            var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
-
-            this.RunOnGuiThread(() => this.view.SetFileEncoding(encoding == null ? string.Empty : "     " + encoding.EncodingName));
-
-            if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
+            try
             {
-                this.filesEncodingCache.Add(this.currentPath, encoding);
+                addedMessages = 0;
+                var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+
+                if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
+                {
+                    this.filesEncodingCache.Add(this.currentPath, encoding);
+                }
+                // Interlocked is a must because other threads can change this
+                SpinWait.SpinUntil(() => Interlocked.Read(ref addedMessages) == 0);
             }
+            finally
+            {
+                this.store.FinishAddMessages();
+                reader.ProgressChanged -= this.OnReadLogProgressChanged;
+                reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
+                reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
+            }
+            
+            this.ReadLogFromInternalStore(false);
         }
 
-        private void OnEncodingDetectionFinished(object sender, EventArgs e)
+        /// <remarks>
+        /// this method MUST be called only from one thread.
+        /// </remarks>
+        private void AddMessageToCache(LogMessage message)
         {
-            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Empty));
+            if (message.IsEmpty)
+            {
+                return;
+            }
+            Interlocked.Increment(ref this.addedMessages); // Interlocked is a must because other threads can change this
+            message.Ix = ++this.totalMessages;
+
+            // memory: Freeze queue filling until pending coung less then MaxQueueCount
+            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimoutMilliseconds);
+            this.queue.EnqueueItem(delegate
+            {
+                try
+                {
+                    message.Level = this.DetectLevel(message.Header);
+                    message.Cache();
+                    this.Store.AddMessage(message);
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref this.addedMessages); // Interlocked is a must because other threads can change this
+                }
+            });
+        }
+
+        private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
+        {
+            this.RunOnGuiThread(delegate
+            {
+                this.view.SetLogProgressCustomText(string.Empty);
+                this.view.SetFileEncoding(e.ToString());
+            });
         }
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
         {
-            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress));
-        }
-
-        private void OnReadCompleted(object sender, EventArgs e)
-        {
-            this.store.FinishAddMessages();
-            var reader = (LogReader)sender;
-            reader.ProgressChanged -= this.OnReadLogProgressChanged;
-            reader.ReadCompleted -= this.OnReadCompleted;
-            reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
-            reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
-            this.ReadLogFromInternalStore(false);
+            this.RunOnGuiThread(delegate
+            {
+                this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress);
+                this.view.SetFileEncoding(string.Empty);
+            });
         }
 
         private void ReadLogFromInternalStore(bool signalProcess)
@@ -614,9 +656,9 @@ namespace logviewer.core
             }
         }
 
-        public int TotalMessages
+        public long TotalMessages
         {
-            get { return this.totalMessages; }
+            get { return this.store != null ? this.store.CountMessages() : 0; }
         }
 
         public long TotalFiltered
@@ -629,17 +671,7 @@ namespace logviewer.core
             get { return this.store; }
         }
 
-        private void AddMessageToCache(LogMessage message)
-        {
-            if (message.IsEmpty)
-            {
-                return;
-            }
-            message.Level = this.DetectLevel(message.Header);
-            message.Cache();
-            this.totalMessages = this.TotalMessages + 1;
-            this.Store.AddMessage(message);
-        }
+        private long addedMessages;
 
         private string CreateRtf(bool signalProgress = false)
         {
@@ -749,6 +781,7 @@ namespace logviewer.core
         {
             if (disposing)
             {
+                this.queue.Shutdown(true);
                 try
                 {
                     SafeRunner.Run(this.CancelPreviousTask);

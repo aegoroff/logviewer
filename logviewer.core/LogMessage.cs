@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -42,12 +43,19 @@ namespace logviewer.core
             this.head = header;
             this.body = body;
             this.Level = level;
+            this.ix = 0;
             this.strings = null;
         }
 
         public bool IsEmpty
         {
-            get { return this.head == null && this.body == null && (this.strings == null || this.strings.Count == 0); }
+            get { return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && (this.strings == null || this.strings.Count == 0 || this.strings.All(string.IsNullOrWhiteSpace)); }
+        }
+
+        public long Ix
+        {
+            get { return this.ix; }
+            set { this.ix = value; }
         }
 
         public string Header
@@ -148,6 +156,7 @@ namespace logviewer.core
         private string body;
         private string head;
         private List<string> strings;
+        private long ix;
 
         #endregion
     }

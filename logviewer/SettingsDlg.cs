@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using logviewer.core;
 
@@ -11,12 +12,18 @@ namespace logviewer
     public partial class SettingsDlg : Form, ISettingsView
     {
         private readonly SettingsController controller;
+        private Action apply;
 
         public SettingsDlg(ISettingsProvider settings)
         {
             this.InitializeComponent();
             this.controller = new SettingsController(this, settings);
             this.controller.Load();
+        }
+
+        public void SetApplyAction(Action action)
+        {
+            this.apply = action;
         }
 
         public void EnableSave(bool enabled)
@@ -100,6 +107,12 @@ namespace logviewer
         private void OnSave(object sender, EventArgs e)
         {
             this.controller.Save();
+        }
+
+        private void OnClosed(object sender, FormClosedEventArgs e)
+        {
+            Debug.Assert(this.apply != null);
+            this.apply();
         }
     }
 }
