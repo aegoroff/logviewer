@@ -126,6 +126,9 @@
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Encoding detection in progress ...</value>
   </data>
+  <data name="FinishLoading" xml:space="preserve">
+    <value>Log reading completed. Finish parsing messages. Log will be displayed in several seconds.</value>
+  </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>
   </data>

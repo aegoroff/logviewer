@@ -373,6 +373,7 @@ namespace logviewer.core
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
+                this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.FinishLoading));
                 // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(() => Interlocked.Read(ref addedMessages) == 0);
             }

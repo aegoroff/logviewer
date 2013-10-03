@@ -88,6 +88,15 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log reading completed. Finish parsing messages. Log will be displayed in several seconds..
+        /// </summary>
+        internal static string FinishLoading {
+            get {
+                return ResourceManager.GetString("FinishLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min level must be less or equal then max level.
         /// </summary>
         internal static string MinLevelGreaterThenMax {
