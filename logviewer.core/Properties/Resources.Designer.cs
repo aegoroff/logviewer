@@ -88,7 +88,7 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log reading completed. Finish parsing messages. Log will be displayed in about {0} seconds..
+        ///   Looks up a localized string similar to Log reading completed. Log will be displayed in about {0} seconds..
         /// </summary>
         internal static string FinishLoading {
             get {
