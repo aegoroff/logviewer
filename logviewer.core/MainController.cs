@@ -52,6 +52,7 @@ namespace logviewer.core
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
         private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
+        readonly Stopwatch stopWatch = new Stopwatch();
 
         #endregion
 
@@ -368,12 +369,23 @@ namespace logviewer.core
             {
                 addedMessages = 0;
                 var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+                stopWatch.Stop();
+                var elapsed = stopWatch.Elapsed;
+                var added = Interlocked.Read(ref addedMessages);
+                var addedRatio = added / elapsed.TotalSeconds;
+                var remain = Math.Abs(addedRatio) < 0.001
+                            ? TimeSpan.FromSeconds(0)
+                            : TimeSpan.FromSeconds((totalMessages - added) / addedRatio);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
-                this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.FinishLoading));
+                var remainSeconds = remain.Seconds / this.queue.WorkersCount;
+                if (remainSeconds > 0)
+                {
+                    this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
+                }
                 // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(() => Interlocked.Read(ref addedMessages) == 0);
             }
@@ -419,6 +431,7 @@ namespace logviewer.core
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
+            this.stopWatch.Restart();
             this.RunOnGuiThread(delegate
             {
                 this.view.SetLogProgressCustomText(string.Empty);

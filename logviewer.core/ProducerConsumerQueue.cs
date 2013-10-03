@@ -44,6 +44,11 @@ namespace logviewer.core
             }
         }
 
+        public int WorkersCount
+        {
+            get { return this.workers.Length; }
+        }
+        
         public int Count
         {
             get
