@@ -70,6 +70,15 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Creating page to display in progress ....
+        /// </summary>
+        internal static string CreateRtfInProgress {
+            get {
+                return ResourceManager.GetString("CreateRtfInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding detection in progress ....
         /// </summary>
         internal static string EncodingDetectionInProgress {

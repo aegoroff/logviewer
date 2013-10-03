@@ -436,6 +436,8 @@ namespace logviewer.core
 
         private void ReadLogFromInternalStore(bool signalProcess)
         {
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.CreateRtfInProgress));
+            
             var rtf = string.Empty;
             Action action = delegate
             {

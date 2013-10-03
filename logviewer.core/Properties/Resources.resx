@@ -120,6 +120,9 @@
   <data name="CancelPrevious" xml:space="preserve">
     <value>Cancelling previous log loading in progress ...</value>
   </data>
+  <data name="CreateRtfInProgress" xml:space="preserve">
+    <value>Creating page to display in progress ...</value>
+  </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Encoding detection in progress ...</value>
   </data>
