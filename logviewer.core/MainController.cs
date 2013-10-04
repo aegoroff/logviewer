@@ -154,6 +154,7 @@ namespace logviewer.core
                 this.view.SetLogProgressCustomText(Resources.CancelPrevious);
                 SafeRunner.Run(this.cancellation.Cancel);
             }
+            this.queue.CleanupPendingTasks();
             this.WaitRunningTasks();
             SpinWait.SpinUntil(() => this.queue.Count == 0);
             SafeRunner.Run(this.cancellation.Dispose);
@@ -387,7 +388,8 @@ namespace logviewer.core
                     this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
                 }
                 // Interlocked is a must because other threads can change this
-                SpinWait.SpinUntil(() => Interlocked.Read(ref addedMessages) == 0);
+                SpinWait.SpinUntil(
+                    () => Interlocked.Read(ref this.addedMessages) == 0 || this.cancellation.IsCancellationRequested);
             }
             finally
             {

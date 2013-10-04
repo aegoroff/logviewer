@@ -44,6 +44,14 @@ namespace logviewer.core
             }
         }
 
+        public void CleanupPendingTasks()
+        {
+            lock (this.locker)
+            {
+                this.itemQ.Clear();
+            }
+        }
+
         public int WorkersCount
         {
             get { return this.workers.Length; }

@@ -98,14 +98,22 @@ namespace logviewer.core
         public void AddMessage(LogMessage message)
         {
             const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Ix", message.Ix);
-                DatabaseConnection.AddParameter(command, "@Header", message.Header);
-                DatabaseConnection.AddParameter(command, "@Body", message.Body);
-                DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);
-                command.ExecuteNonQuery();
-            }, Cmd);
+                try
+                {
+                    DatabaseConnection.AddParameter(command, "@Ix", message.Ix);
+                    DatabaseConnection.AddParameter(command, "@Header", message.Header);
+                    DatabaseConnection.AddParameter(command, "@Body", message.Body);
+                    DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Log.Instance.Debug(e);
+                }
+            };
+            this.connection.RunSqlQuery(action, Cmd);
         }
 
         public void ReadMessages(

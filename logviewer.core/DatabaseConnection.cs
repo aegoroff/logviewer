@@ -47,13 +47,20 @@ namespace logviewer.core
 
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
-            foreach (var command in commands)
+            try
             {
-                using (var sqLiteCommand = this.connection.CreateCommand())
+                foreach (var command in commands)
                 {
-                    sqLiteCommand.CommandText = command;
-                    action(sqLiteCommand);
+                    using (var sqLiteCommand = this.connection.CreateCommand())
+                    {
+                        sqLiteCommand.CommandText = command;
+                        action(sqLiteCommand);
+                    }
                 }
+            }
+            catch (ObjectDisposedException e)
+            {
+                Log.Instance.Debug(e);
             }
         }
 
@@ -98,8 +105,8 @@ namespace logviewer.core
                 }
                 if (this.connection != null)
                 {
-                    this.connection.Close();
-                    this.connection.Dispose();
+                    SafeRunner.Run(this.connection.Close);
+                    SafeRunner.Run(this.connection.Dispose);
                 }
             }
         }
