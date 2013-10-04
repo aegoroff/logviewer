@@ -56,6 +56,16 @@ namespace logviewer.core
                 }
             }
         }
+        
+        internal T RunScalarQuery<T>(string command)
+        {
+            var result = default(T);
+            this.RunSqlQuery(delegate(IDbCommand cmd)
+            {
+                result = (T)cmd.ExecuteScalar();
+            }, command);
+            return result;
+        }
 
         internal static void AddParameter(IDbCommand cmd, string name, object value)
         {

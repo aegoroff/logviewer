@@ -57,10 +57,8 @@ namespace logviewer.core
 
             query(@"INSERT INTO RecentFiles(Path, OpenedAt) VALUES (@Path, @OpenedAt)");
             
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                result = (long)command.ExecuteScalar();
-            }, @"SELECT count(1) FROM RecentFiles");
+            result = this.connection.RunScalarQuery<long>(@"SELECT count(1) FROM RecentFiles");
+
             if (result <= maxFiles)
             {
                 return;
