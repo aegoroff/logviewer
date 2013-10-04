@@ -34,13 +34,7 @@ namespace logviewer.core
 
         public void Add(string file)
         {
-            var result = 0L;
-            const string CountFiles = @"SELECT count(1) FROM RecentFiles WHERE Path = @Path";
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                DatabaseConnection.AddParameter(command, "@Path", file);
-                result = (long)command.ExecuteScalar();
-            }, CountFiles);
+            var result = this.connection.ExecuteScalar<long>(@"SELECT count(1) FROM RecentFiles WHERE Path = @Path", AddPath(file));
 
             Action<string> query = commandText => this.connection.RunSqlQuery(delegate(IDbCommand command)
             {
@@ -57,7 +51,7 @@ namespace logviewer.core
 
             query(@"INSERT INTO RecentFiles(Path, OpenedAt) VALUES (@Path, @OpenedAt)");
             
-            result = this.connection.RunScalarQuery<long>(@"SELECT count(1) FROM RecentFiles");
+            result = this.connection.ExecuteScalar<long>(@"SELECT count(1) FROM RecentFiles");
 
             if (result <= maxFiles)
             {
@@ -72,6 +66,11 @@ namespace logviewer.core
             this.connection.ExecuteNonQuery(cmdDelete);
         }
 
+        private static Action<IDbCommand> AddPath(string file)
+        {
+            return cmd => DatabaseConnection.AddParameter(cmd, "@Path", file);
+        }
+
         public void Remove(params string[] files)
         {
             const string Cmd = @"DELETE FROM RecentFiles WHERE Path = @Path";
@@ -79,13 +78,18 @@ namespace logviewer.core
             this.connection.BeginTran();
             foreach (var file in files)
             {
-                this.connection.RunSqlQuery(delegate(IDbCommand command)
-                {
-                    DatabaseConnection.AddParameter(command, "@Path", file);
-                    command.ExecuteNonQuery();
-                }, Cmd);
+                this.connection.RunSqlQuery(Remove(file), Cmd);
             }
             this.connection.CommitTran();
+        }
+
+        private static Action<IDbCommand> Remove(string file)
+        {
+            return delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Path", file);
+                command.ExecuteNonQuery();
+            };
         }
 
         public IEnumerable<string> ReadFiles()

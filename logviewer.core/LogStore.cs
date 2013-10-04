@@ -146,15 +146,10 @@ namespace logviewer.core
             string filter = null,
             bool useRegexp = true)
         {
-            var result = 0L;
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                AddParameters(command, min, max, filter, useRegexp);
-                result = (long)command.ExecuteScalar();
-            }, query);
-
+            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
+            var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
         }
 
