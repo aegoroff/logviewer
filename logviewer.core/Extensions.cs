@@ -3,7 +3,6 @@
 // © 2012-2013 Alexander Egorov
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -30,7 +29,7 @@ namespace logviewer.core
             return dstEncoding.GetString(dstBytes);
         }
 
-        static int CountDigits(ulong num)
+        private static int CountDigits(ulong num)
         {
             return (num /= 10) > 0 ? 1 + CountDigits(num) : 1;
         }

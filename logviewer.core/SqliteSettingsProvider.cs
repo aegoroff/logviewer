@@ -459,23 +459,13 @@ namespace logviewer.core
         private static string GetStringValue(RegistryKey rk, string key)
         {
             var result = rk.GetValue(key) as string;
-            if (result == null)
-            {
-                RegistryKey.SetValue(key, string.Empty, RegistryValueKind.String);
-                return string.Empty;
-            }
-            return result;
+            return result ?? string.Empty;
         }
 
-        private static int GetIntValue(RegistryKey rk, string key, int defaultValue = default(int))
+        private static int GetIntValue(RegistryKey rk, string key)
         {
             var obj = rk.GetValue(key);
-            if (obj == null)
-            {
-                RegistryKey.SetValue(key, defaultValue, RegistryValueKind.DWord);
-                return defaultValue;
-            }
-            return (int)obj;
+            return obj == null ? 0 : (int)obj;
         }
 
         private static string GetStringValue(string key)
@@ -483,9 +473,9 @@ namespace logviewer.core
             return GetStringValue(RegistryKey, key);
         }
 
-        private static int GetIntValue(string key, int defaultValue = default(int))
+        private static int GetIntValue(string key)
         {
-            return GetIntValue(RegistryKey, key, defaultValue);
+            return GetIntValue(RegistryKey, key);
         }
 
         private static bool GetBoolValue(string key)
