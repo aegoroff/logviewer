@@ -76,14 +76,14 @@ namespace logviewer.core
             cmd.Parameters.Add(parameter);
         }
 
-        internal T ExecuteScalar<T>(string command, Action<IDbCommand> addParameters = null)
+        internal T ExecuteScalar<T>(string command, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);
             this.RunSqlQuery(delegate(IDbCommand cmd)
             {
-                if (addParameters != null)
+                if (actionBeforeExecute != null)
                 {
-                    addParameters(cmd);
+                    actionBeforeExecute(cmd);
                 }
                 result = (T)cmd.ExecuteScalar();
             }, command);
