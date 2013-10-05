@@ -407,7 +407,7 @@ namespace logviewer.core
         /// </remarks>
         private void AddMessageToCache(LogMessage message)
         {
-            if (message.IsEmpty)
+            if (message.IsEmpty || this.cancellation.IsCancellationRequested)
             {
                 return;
             }
