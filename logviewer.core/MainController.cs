@@ -156,7 +156,6 @@ namespace logviewer.core
             }
             this.queue.CleanupPendingTasks();
             this.WaitRunningTasks();
-            SpinWait.SpinUntil(() => this.queue.Count == 0);
             SafeRunner.Run(this.cancellation.Dispose);
             this.DisposeRunningTasks();
             this.runningTasks.Clear();
