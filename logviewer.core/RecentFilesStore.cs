@@ -36,12 +36,11 @@ namespace logviewer.core
         {
             var result = this.connection.ExecuteScalar<long>(@"SELECT count(1) FROM RecentFiles WHERE Path = @Path", AddPath(file));
 
-            Action<string> query = commandText => this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Path", file);
                 DatabaseConnection.AddParameter(command, "@OpenedAt", DateTime.Now.Ticks);
-                command.ExecuteNonQuery();
-            }, commandText);
+            });
 
             if (result > 0)
             {
@@ -78,18 +77,14 @@ namespace logviewer.core
             this.connection.BeginTran();
             foreach (var file in files)
             {
-                this.connection.RunSqlQuery(Remove(file), Cmd);
+                this.connection.ExecuteNonQuery(Cmd, Remove(file));
             }
             this.connection.CommitTran();
         }
 
         private static Action<IDbCommand> Remove(string file)
         {
-            return delegate(IDbCommand command)
-            {
-                DatabaseConnection.AddParameter(command, "@Path", file);
-                command.ExecuteNonQuery();
-            };
+            return command => DatabaseConnection.AddParameter(command, "@Path", file);
         }
 
         public IEnumerable<string> ReadFiles()

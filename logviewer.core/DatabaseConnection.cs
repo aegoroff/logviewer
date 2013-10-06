@@ -76,7 +76,7 @@ namespace logviewer.core
             cmd.Parameters.Add(parameter);
         }
 
-        internal T ExecuteScalar<T>(string command, Action<IDbCommand> actionBeforeExecute = null)
+        internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);
             this.RunSqlQuery(delegate(IDbCommand cmd)
@@ -86,10 +86,29 @@ namespace logviewer.core
                     actionBeforeExecute(cmd);
                 }
                 result = (T)cmd.ExecuteScalar();
-            }, command);
+            }, query);
             return result;
         }
 
+        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
+        {
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                try
+                {
+                    if (actionBeforeExecute != null)
+                    {
+                        actionBeforeExecute(command);
+                    }
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Log.Instance.Debug(e);
+                }
+            }, query);
+        }
+        
         internal void ExecuteNonQuery(params string[] queries)
         {
             this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
