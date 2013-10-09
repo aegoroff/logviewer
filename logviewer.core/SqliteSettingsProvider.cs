@@ -161,11 +161,7 @@ namespace logviewer.core
                     WHERE
                         Ix = @Ix
                     ";
-            this.RunSqlQuery(delegate(IDbCommand command)
-            {
-                AddParsingTemplateIntoCommand(command, template);
-                command.ExecuteNonQuery();
-            }, Cmd);
+            this.ExecuteNonQuery(Cmd, command => AddParsingTemplateIntoCommand(command, template));
         }
 
         public ParsingTemplate ReadParsingTemplate()
@@ -235,11 +231,7 @@ namespace logviewer.core
                         @Error,
                         @Fatal
                     )";
-            this.RunSqlQuery(delegate(IDbCommand command)
-            {
-                AddParsingTemplateIntoCommand(command, template);
-                command.ExecuteNonQuery();
-            }, Cmd);
+            this.ExecuteNonQuery(Cmd, command => AddParsingTemplateIntoCommand(command, template));
         }
 
         private void CreateTables()
@@ -271,19 +263,36 @@ namespace logviewer.core
 
         private void ExecuteNonQuery(params string[] queries)
         {
-            var connection = new DatabaseConnection(this.settingsDatabaseFilePath);
-            using (connection)
-            {
-                connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
-            }
+            ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
         }
 
         private void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
+            ExecuteQuery(connection => connection.RunSqlQuery(action, commands));
+        }
+
+        private T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
+        {
+            var result = default(T);
+            Action<DatabaseConnection> action = delegate(DatabaseConnection connection)
+            {
+                result = connection.ExecuteScalar<T>(query, actionBeforeExecute);
+            };
+            ExecuteQuery(action);
+            return result;
+        }
+
+        private void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
+        {
+            ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
+        }
+        
+        private void ExecuteQuery(Action<DatabaseConnection> action)
+        {
             var connection = new DatabaseConnection(this.settingsDatabaseFilePath);
             using (connection)
             {
-                connection.RunSqlQuery(action, commands);
+                action(connection);
             }
         }
 
@@ -373,20 +382,17 @@ namespace logviewer.core
                     ";
 
             var query = string.Format(@"SELECT count(1) FROM {0} WHERE Option = @Option", table);
-            var exist = false;
-            this.RunSqlQuery(delegate(IDbCommand command)
-            {
-                DatabaseConnection.AddParameter(command, "@Option", option);
-                exist = (long)command.ExecuteScalar() > 0;
-            }, query);
+            var exist = this.ExecuteScalar<long>(query,
+                command => DatabaseConnection.AddParameter(command, "@Option", option)) > 0;
 
 
-            this.RunSqlQuery(delegate(IDbCommand command)
+            Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Option", option);
                 DatabaseConnection.AddParameter(command, "@Value", value);
-                command.ExecuteNonQuery();
-            }, string.Format(exist ? UpdateCmd : InsertCmd, table));
+            };
+
+            ExecuteNonQuery(string.Format(exist ? UpdateCmd : InsertCmd, table), action);
         }
 
         private string ReadStringOption(string option, string defaultValue = null)
