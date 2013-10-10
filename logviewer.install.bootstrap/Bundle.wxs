@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
     <?define Version = "1.0.0.0" ?>
-	<Bundle Name="Logviewer" Version="$(var.Version)" Manufacturer="Alexander Egorov" UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e">
+	<Bundle 
+        Name="Logviewer" 
+        Version="$(var.Version)" 
+        Manufacturer="Alexander Egorov" 
+        UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e"
+        Condition="VersionNT > v5.2 OR VersionNT = v5.1 AND ServicePackLevel >= 3 OR VersionNT = v5.2 AND ServicePackLevel >= 2"
+        IconSourceFile="..\logviewer\Lv.ico">
+
         <WixVariable Id="WixStdbaThemeXml" Value="Theme.xml" />
         <WixVariable Id="WixStdbaThemeWxl" Value="Theme.wxl" />
         <WixVariable Id="WixStdbaLicenseUrl" Value="LICENSE.txt" />
