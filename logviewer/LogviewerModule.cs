@@ -33,7 +33,7 @@ namespace logviewer
                 .WithConstructorArgument("settingsDatabaseFileName",
                     ConfigurationManager.AppSettings["SettingsDatabase"])
                 .WithConstructorArgument("defaultKeepLastNFiles", 10)
-                .WithConstructorArgument("defaultPageSize", 5000);
+                .WithConstructorArgument("defaultPageSize", 2000);
             
             
         }

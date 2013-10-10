@@ -3,8 +3,10 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+using logviewer.core;
 
 namespace logviewer
 {
@@ -16,9 +18,9 @@ namespace logviewer
             this.Text = String.Format("About {0}", this.AssemblyTitle);
             this.labelProductName.Text = this.AssemblyProduct;
             this.labelVersion.Text = String.Format("Version {0}", this.AssemblyVersion);
-            this.labelCopyright.Text = this.AssemblyCopyright;
-            this.labelCompanyName.Text = this.AssemblyCompany;
+            this.labelCopyright.Text = this.AssemblyCopyright + " " + this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription;
+            this.linkLabel1.Links.Add(new LinkLabel.Link(0, this.linkLabel1.Text.Length, "http://www.logviewer.info/"));
         }
 
         #region Assembly Attribute Accessors
@@ -103,5 +105,10 @@ namespace logviewer
         }
 
         #endregion
+
+        private void OnLinkClick(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Executive.SafeRun(() => Process.Start((string)e.Link.LinkData));
+        }
     }
 }

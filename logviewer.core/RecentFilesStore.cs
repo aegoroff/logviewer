@@ -34,20 +34,13 @@ namespace logviewer.core
 
         public void Add(string file)
         {
-            var result = 0L;
-            const string CountFiles = @"SELECT count(1) FROM RecentFiles WHERE Path = @Path";
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                DatabaseConnection.AddParameter(command, "@Path", file);
-                result = (long)command.ExecuteScalar();
-            }, CountFiles);
+            var result = this.connection.ExecuteScalar<long>(@"SELECT count(1) FROM RecentFiles WHERE Path = @Path", AddPath(file));
 
-            Action<string> query = commandText => this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Path", file);
                 DatabaseConnection.AddParameter(command, "@OpenedAt", DateTime.Now.Ticks);
-                command.ExecuteNonQuery();
-            }, commandText);
+            });
 
             if (result > 0)
             {
@@ -57,10 +50,8 @@ namespace logviewer.core
 
             query(@"INSERT INTO RecentFiles(Path, OpenedAt) VALUES (@Path, @OpenedAt)");
             
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                result = (long)command.ExecuteScalar();
-            }, @"SELECT count(1) FROM RecentFiles");
+            result = this.connection.ExecuteScalar<long>(@"SELECT count(1) FROM RecentFiles");
+
             if (result <= maxFiles)
             {
                 return;
@@ -74,6 +65,11 @@ namespace logviewer.core
             this.connection.ExecuteNonQuery(cmdDelete);
         }
 
+        private static Action<IDbCommand> AddPath(string file)
+        {
+            return cmd => DatabaseConnection.AddParameter(cmd, "@Path", file);
+        }
+
         public void Remove(params string[] files)
         {
             const string Cmd = @"DELETE FROM RecentFiles WHERE Path = @Path";
@@ -81,13 +77,14 @@ namespace logviewer.core
             this.connection.BeginTran();
             foreach (var file in files)
             {
-                this.connection.RunSqlQuery(delegate(IDbCommand command)
-                {
-                    DatabaseConnection.AddParameter(command, "@Path", file);
-                    command.ExecuteNonQuery();
-                }, Cmd);
+                this.connection.ExecuteNonQuery(Cmd, Remove(file));
             }
             this.connection.CommitTran();
+        }
+
+        private static Action<IDbCommand> Remove(string file)
+        {
+            return command => DatabaseConnection.AddParameter(command, "@Path", file);
         }
 
         public IEnumerable<string> ReadFiles()

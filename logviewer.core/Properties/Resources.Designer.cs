@@ -61,11 +61,38 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancelling previous log loading in progress ....
+        /// </summary>
+        internal static string CancelPrevious {
+            get {
+                return ResourceManager.GetString("CancelPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating page to display in progress ....
+        /// </summary>
+        internal static string CreateRtfInProgress {
+            get {
+                return ResourceManager.GetString("CreateRtfInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding detection in progress ....
         /// </summary>
         internal static string EncodingDetectionInProgress {
             get {
                 return ResourceManager.GetString("EncodingDetectionInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log reading completed. Log will be displayed in about {0} seconds..
+        /// </summary>
+        internal static string FinishLoading {
+            get {
+                return ResourceManager.GetString("FinishLoading", resourceCulture);
             }
         }
         

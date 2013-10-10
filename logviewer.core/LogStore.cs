@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualBasic.Devices;
@@ -99,14 +98,14 @@ namespace logviewer.core
         public void AddMessage(LogMessage message)
         {
             const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Ix", message.Ix);
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
                 DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);
-                command.ExecuteNonQuery();
-            }, Cmd);
+            };
+            this.connection.ExecuteNonQuery(Cmd, action);
         }
 
         public void ReadMessages(
@@ -147,15 +146,10 @@ namespace logviewer.core
             string filter = null,
             bool useRegexp = true)
         {
-            var result = 0L;
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                AddParameters(command, min, max, filter, useRegexp);
-                result = (long)command.ExecuteScalar();
-            }, query);
-
+            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
+            var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
         }
 

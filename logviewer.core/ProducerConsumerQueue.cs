@@ -28,7 +28,7 @@ namespace logviewer.core
         public void Shutdown(bool waitForWorkers)
         {
             // Enqueue one null item per worker to make each exit.
-            foreach (var worker in this.workers)
+            for (var i = 0; i < this.workers.Length; i++)
             {
                 this.EnqueueItem(null);
             }
@@ -44,6 +44,19 @@ namespace logviewer.core
             }
         }
 
+        public void CleanupPendingTasks()
+        {
+            lock (this.locker)
+            {
+                this.itemQ.Clear();
+            }
+        }
+
+        public int WorkersCount
+        {
+            get { return this.workers.Length; }
+        }
+        
         public int Count
         {
             get

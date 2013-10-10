@@ -24,7 +24,7 @@ namespace logviewer.core
     public sealed class MainController : IDisposable
     {
         private const int MaxQueueCount = 100000;
-        private const int EnqueueTimoutMilliseconds = 180;
+        private const int EnqueueTimeoutMilliseconds = 90;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -51,7 +51,8 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Environment.ProcessorCount);
+        private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
+        readonly Stopwatch stopWatch = new Stopwatch();
 
         #endregion
 
@@ -150,8 +151,10 @@ namespace logviewer.core
         {
             if (!this.cancellation.IsCancellationRequested)
             {
+                this.view.SetLogProgressCustomText(Resources.CancelPrevious);
                 SafeRunner.Run(this.cancellation.Cancel);
             }
+            this.queue.CleanupPendingTasks();
             this.WaitRunningTasks();
             SafeRunner.Run(this.cancellation.Dispose);
             this.DisposeRunningTasks();
@@ -366,13 +369,26 @@ namespace logviewer.core
             {
                 addedMessages = 0;
                 var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+                stopWatch.Stop();
+                var elapsed = stopWatch.Elapsed;
+                var added = Interlocked.Read(ref addedMessages);
+                var addedRatio = added / elapsed.TotalSeconds;
+                var remain = Math.Abs(addedRatio) < 0.001
+                            ? TimeSpan.FromSeconds(0)
+                            : TimeSpan.FromSeconds((totalMessages - added) / addedRatio);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
+                var remainSeconds = remain.Seconds / this.queue.WorkersCount;
+                if (remainSeconds > 0)
+                {
+                    this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
+                }
                 // Interlocked is a must because other threads can change this
-                SpinWait.SpinUntil(() => Interlocked.Read(ref addedMessages) == 0);
+                SpinWait.SpinUntil(
+                    () => Interlocked.Read(ref this.addedMessages) == 0 || this.cancellation.IsCancellationRequested);
             }
             finally
             {
@@ -390,7 +406,7 @@ namespace logviewer.core
         /// </remarks>
         private void AddMessageToCache(LogMessage message)
         {
-            if (message.IsEmpty)
+            if (message.IsEmpty || this.cancellation.IsCancellationRequested)
             {
                 return;
             }
@@ -398,7 +414,7 @@ namespace logviewer.core
             message.Ix = ++this.totalMessages;
 
             // memory: Freeze queue filling until pending coung less then MaxQueueCount
-            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimoutMilliseconds);
+            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimeoutMilliseconds);
             this.queue.EnqueueItem(delegate
             {
                 try
@@ -416,6 +432,7 @@ namespace logviewer.core
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
+            this.stopWatch.Restart();
             this.RunOnGuiThread(delegate
             {
                 this.view.SetLogProgressCustomText(string.Empty);
@@ -434,6 +451,8 @@ namespace logviewer.core
 
         private void ReadLogFromInternalStore(bool signalProcess)
         {
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.CreateRtfInProgress));
+            
             var rtf = string.Empty;
             Action action = delegate
             {

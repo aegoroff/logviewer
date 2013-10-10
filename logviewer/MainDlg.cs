@@ -197,7 +197,7 @@ namespace logviewer
             this.minLevelBox.Enabled = enabled;
             this.maxLevelBox.Enabled = enabled;
             this.sortingBox.Enabled = enabled;
-            this.toolStripButton2.Enabled = enabled;
+            this.refreshButton.Enabled = enabled;
             this.statButton.Enabled = enabled;
             this.refreshToolStripMenuItem.Enabled = enabled;
             this.exportToolStripMenuItem.Enabled = enabled;

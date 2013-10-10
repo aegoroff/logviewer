@@ -47,13 +47,20 @@ namespace logviewer.core
 
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
-            foreach (var command in commands)
+            try
             {
-                using (var sqLiteCommand = this.connection.CreateCommand())
+                foreach (var command in commands)
                 {
-                    sqLiteCommand.CommandText = command;
-                    action(sqLiteCommand);
+                    using (var sqLiteCommand = this.connection.CreateCommand())
+                    {
+                        sqLiteCommand.CommandText = command;
+                        action(sqLiteCommand);
+                    }
                 }
+            }
+            catch (ObjectDisposedException e)
+            {
+                Log.Instance.Debug(e);
             }
         }
 
@@ -69,6 +76,39 @@ namespace logviewer.core
             cmd.Parameters.Add(parameter);
         }
 
+        internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
+        {
+            var result = default(T);
+            this.RunSqlQuery(delegate(IDbCommand cmd)
+            {
+                if (actionBeforeExecute != null)
+                {
+                    actionBeforeExecute(cmd);
+                }
+                result = (T)cmd.ExecuteScalar();
+            }, query);
+            return result;
+        }
+
+        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
+        {
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                try
+                {
+                    if (actionBeforeExecute != null)
+                    {
+                        actionBeforeExecute(command);
+                    }
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Log.Instance.Debug(e);
+                }
+            }, query);
+        }
+        
         internal void ExecuteNonQuery(params string[] queries)
         {
             this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
@@ -84,8 +124,8 @@ namespace logviewer.core
                 }
                 if (this.connection != null)
                 {
-                    this.connection.Close();
-                    this.connection.Dispose();
+                    SafeRunner.Run(this.connection.Close);
+                    SafeRunner.Run(this.connection.Dispose);
                 }
             }
         }

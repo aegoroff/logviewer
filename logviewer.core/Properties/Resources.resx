@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CancelPrevious" xml:space="preserve">
+    <value>Cancelling previous log loading in progress ...</value>
+  </data>
+  <data name="CreateRtfInProgress" xml:space="preserve">
+    <value>Creating page to display in progress ...</value>
+  </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Encoding detection in progress ...</value>
+  </data>
+  <data name="FinishLoading" xml:space="preserve">
+    <value>Log reading completed. Log will be displayed in about {0} seconds.</value>
   </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>
