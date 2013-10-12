@@ -44,6 +44,11 @@
                 <Directory Id="INSTALLFOLDER" Name="logviewer">
                     <Component Id="logviewer.bin" Guid="{48B9BC82-F77A-4981-874A-B523F6021505}">
 							<File
+								Id="LICENSE.txt"
+								Name="LICENSE.txt"
+								Source="..\LICENSE.txt"
+								DiskId="1"/>
+                            <File
 								Id="logviewer.exe"
 								Name="logviewer.exe"
 								Source="$(var.SourcePath)\logviewer.exe"
