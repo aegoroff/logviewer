@@ -134,6 +134,7 @@
 						-->
 						<RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 						<Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.exe]" Id="LogviewerStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
+						<Shortcut Name="License" Target="[!LICENSE.txt]" Id="LogviewerLicenseStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
 						<!--
 							Fix ICE64 by adding a remove folder element 
 							http://windowssdk.msdn.microsoft.com/en-us/library/ms704358.aspx
