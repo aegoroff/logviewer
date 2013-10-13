@@ -122,11 +122,4 @@ namespace logviewer.core
             this.view.EnableSave(true);
         }
     }
-
-    public class FormData
-    {
-        public string KeepLastNFiles { get; set; }
-        public bool OpenLastFile { get; set; }
-        public string PageSize { get; set; }
-    }
 }
