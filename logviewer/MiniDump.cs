@@ -147,11 +147,11 @@ namespace logviewer
         public static void CreateMiniDump()
         {
             string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                string.Format(@"CRASH_DUMP_{0}_{1}.dmp", DateTime.Today.ToShortDateString(), DateTime.Now.Ticks));
+                string.Format(@"LOGVIEWER_CRASH_DUMP_{0}_{1}.dmp", DateTime.Today.ToShortDateString(), DateTime.Now.Ticks));
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Write))
             {
-                Write(fs.SafeFileHandle, Option.WithFullMemory);
+                Write(fs.SafeFileHandle, Option.Normal);
             }
         }
 
