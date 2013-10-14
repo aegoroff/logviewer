@@ -66,6 +66,7 @@
     <Compile Include="MainDlg.Designer.cs">
       <DependentUpon>MainDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniDump.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsDlg.cs">

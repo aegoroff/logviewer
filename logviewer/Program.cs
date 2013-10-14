@@ -18,10 +18,17 @@ namespace logviewer
         [STAThread]
         private static void Main()
         {
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             Kernel = new StandardKernel(new LogviewerModule());
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(Kernel.Get<MainDlg>());
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MiniDump.CreateMiniDump();
         }
     }
 }
