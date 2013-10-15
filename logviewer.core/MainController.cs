@@ -384,7 +384,7 @@ namespace logviewer.core
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
-                var remainSeconds = remain.Seconds - (sleepCount * EnqueueTimeoutMilliseconds) / 1000;
+                var remainSeconds = (remain.Seconds - (sleepCount * EnqueueTimeoutMilliseconds) / 1000) / this.queue.WorkersCount;
                 if (remainSeconds > 0)
                 {
                     this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
