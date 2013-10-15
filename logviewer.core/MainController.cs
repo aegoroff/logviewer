@@ -23,9 +23,10 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
+        private const int StartMaxQueueCount = 50000;
         private const int MaxQueueCount = 100000;
-        private const int QueueCountStep = 20000;
-        private const int EnqueueTimeoutMilliseconds = 1000;
+        private const int QueueCountStep = 5000;
+        private const int EnqueueTimeoutMilliseconds = 500;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -329,7 +330,7 @@ namespace logviewer.core
             var offset = append ? this.logSize : 0L;
 
             this.logSize = reader.Length;
-            this.maxQueueCount = MaxQueueCount;
+            this.maxQueueCount = StartMaxQueueCount;
             sleepCount = 0;
 
             if (this.logSize == 0)
@@ -384,7 +385,7 @@ namespace logviewer.core
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
-                var remainSeconds = (remain.Seconds - (sleepCount * EnqueueTimeoutMilliseconds) / 1000) / this.queue.WorkersCount;
+                var remainSeconds = remain.Seconds / this.queue.WorkersCount;
                 if (remainSeconds > 0)
                 {
                     this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
@@ -421,12 +422,13 @@ namespace logviewer.core
 
             // memory: Freeze queue filling until pending count less then maxQueueCount and then increase queue lenght 
 
+            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount);
             if (this.queue.Count >= this.maxQueueCount)
             {
-                Thread.Sleep(EnqueueTimeoutMilliseconds);
-                this.maxQueueCount += QueueCountStep;
-                Trace.WriteLine(string.Format("Queue increased to: {0}", this.maxQueueCount));
                 ++sleepCount;
+                Thread.Sleep(EnqueueTimeoutMilliseconds);
+                this.maxQueueCount += QueueCountStep * sleepCount;
+                Trace.WriteLine(string.Format("Queue increased to: {0}", this.maxQueueCount));
             }
             
             this.queue.EnqueueItem(delegate
