@@ -24,7 +24,8 @@ namespace logviewer.core
     public sealed class MainController : IDisposable
     {
         private const int MaxQueueCount = 100000;
-        private const int EnqueueTimeoutMilliseconds = 90;
+        private const int QueueCountStep = 20000;
+        private const int EnqueueTimeoutMilliseconds = 1000;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -328,6 +329,8 @@ namespace logviewer.core
             var offset = append ? this.logSize : 0L;
 
             this.logSize = reader.Length;
+            this.maxQueueCount = MaxQueueCount;
+            sleepCount = 0;
 
             if (this.logSize == 0)
             {
@@ -381,7 +384,7 @@ namespace logviewer.core
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
-                var remainSeconds = remain.Seconds / this.queue.WorkersCount;
+                var remainSeconds = remain.Seconds - (sleepCount * EnqueueTimeoutMilliseconds) / 1000;
                 if (remainSeconds > 0)
                 {
                     this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
@@ -401,6 +404,9 @@ namespace logviewer.core
             this.ReadLogFromInternalStore(false);
         }
 
+        private int maxQueueCount;
+        private int sleepCount;
+
         /// <remarks>
         /// this method MUST be called only from one thread.
         /// </remarks>
@@ -413,8 +419,16 @@ namespace logviewer.core
             Interlocked.Increment(ref this.addedMessages); // Interlocked is a must because other threads can change this
             message.Ix = ++this.totalMessages;
 
-            // memory: Freeze queue filling until pending coung less then MaxQueueCount
-            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimeoutMilliseconds);
+            // memory: Freeze queue filling until pending count less then maxQueueCount and then increase queue lenght 
+
+            if (this.queue.Count >= this.maxQueueCount)
+            {
+                Thread.Sleep(EnqueueTimeoutMilliseconds);
+                this.maxQueueCount += QueueCountStep;
+                Trace.WriteLine(string.Format("Queue increased to: {0}", this.maxQueueCount));
+                ++sleepCount;
+            }
+            
             this.queue.EnqueueItem(delegate
             {
                 try
