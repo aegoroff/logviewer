@@ -204,8 +204,8 @@ namespace logviewer.core
             }
             try
             {
-                Debug.Assert(new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline) != null);
-                return true;
+                var r = new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                return r.GetHashCode() > 0;
             }
             catch (Exception e)
             {
