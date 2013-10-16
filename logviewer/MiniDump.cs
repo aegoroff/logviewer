@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace logviewer
 {
@@ -146,13 +147,15 @@ namespace logviewer
 
         public static void CreateMiniDump()
         {
-            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 string.Format(@"LOGVIEWER_CRASH_DUMP_{0}_{1}.dmp", DateTime.Today.ToShortDateString(), DateTime.Now.Ticks));
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Write))
             {
                 Write(fs.SafeFileHandle, Option.Normal);
             }
+
+            MessageBox.Show(string.Format("An unhandled exception ocured. Dump saved to {0}", fileName), "Fatal error", MessageBoxButtons.OK);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)] // Pack=4 is important! So it works also for x64!
