@@ -30,9 +30,18 @@ namespace logviewer.core
         internal bool IsEmpty { get; private set; }
         internal string DatabasePath { get; private set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "connection")]
         public void Dispose()
         {
-            this.Dispose(true);
+            if (this.transaction != null)
+            {
+                this.transaction.Dispose();
+            }
+            if (this.connection != null)
+            {
+                SafeRunner.Run(this.connection.Close);
+                SafeRunner.Run(this.connection.Dispose);
+            }
         }
 
         internal void BeginTran()
@@ -45,6 +54,7 @@ namespace logviewer.core
             this.transaction.Commit();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
             try
@@ -112,22 +122,6 @@ namespace logviewer.core
         internal void ExecuteNonQuery(params string[] queries)
         {
             this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (this.transaction != null)
-                {
-                    this.transaction.Dispose();
-                }
-                if (this.connection != null)
-                {
-                    SafeRunner.Run(this.connection.Close);
-                    SafeRunner.Run(this.connection.Dispose);
-                }
-            }
         }
     }
 }

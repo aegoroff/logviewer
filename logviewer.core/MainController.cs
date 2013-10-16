@@ -204,7 +204,7 @@ namespace logviewer.core
             }
             try
             {
-                new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                Debug.Assert(new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline) != null);
                 return true;
             }
             catch (Exception e)
@@ -817,27 +817,22 @@ namespace logviewer.core
 
         #endregion
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+            MessageId = "cancellation"),
+         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+             MessageId = "store")]
         public void Dispose()
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
+            this.queue.Shutdown(true);
+            try
             {
-                this.queue.Shutdown(true);
-                try
+                SafeRunner.Run(this.CancelPreviousTask);
+            }
+            finally
+            {
+                if (this.store != null)
                 {
-                    SafeRunner.Run(this.CancelPreviousTask);
-                }
-                finally
-                {
-                    if (this.store != null)
-                    {
-                        SafeRunner.Run(this.store.Dispose);
-                    }
+                    SafeRunner.Run(this.store.Dispose);
                 }
             }
         }
