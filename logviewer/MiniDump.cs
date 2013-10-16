@@ -155,7 +155,7 @@ namespace logviewer
                 Write(fs.SafeFileHandle, Option.Normal);
             }
 
-            MessageBox.Show(string.Format("An unhandled exception ocured. Dump saved to {0}", fileName), "Fatal error", MessageBoxButtons.OK);
+            MessageBox.Show(string.Format("An unhandled exception ocured. Dump saved to {0}", fileName), "Fatal error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)] // Pack=4 is important! So it works also for x64!
