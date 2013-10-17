@@ -14,18 +14,14 @@ namespace logviewer.core
         ///     Constructor
         /// </summary>
         /// <param name="rtf"></param>
-        /// <param name="elapsed"></param>
-        public LogReadCompletedEventArgs(string rtf, TimeSpan elapsed)
+        public LogReadCompletedEventArgs(string rtf)
         {
             this.rtf = rtf;
-            this.Elapsed = elapsed;
         }
 
         public string Rtf
         {
             get { return this.rtf; }
         }
-
-        public TimeSpan Elapsed { get; private set; }
     }
 }

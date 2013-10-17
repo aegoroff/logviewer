@@ -106,6 +106,15 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Read completed.  Taken {0}.
+        /// </summary>
+        internal static string ReadCompletedTemplate {
+            get {
+                return ResourceManager.GetString("ReadCompletedTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to less then second.
         /// </summary>
         internal static string RemainingLessThenSecond {

@@ -132,6 +132,9 @@
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>
   </data>
+  <data name="ReadCompletedTemplate" xml:space="preserve">
+    <value>Read completed.  Taken {0}</value>
+  </data>
   <data name="RemainingLessThenSecond" xml:space="preserve">
     <value>less then second</value>
   </data>

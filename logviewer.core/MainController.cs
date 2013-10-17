@@ -94,7 +94,7 @@ namespace logviewer.core
             get
             {
                 var start = (this.CurrentPage - 1) * this.pageSize;
-                return this.TotalFiltered - start;
+                return this.totalFiltered - start;
             }
         }
 
@@ -104,11 +104,11 @@ namespace logviewer.core
         {
             get
             {
-                if (this.TotalFiltered == 0)
+                if (this.totalFiltered == 0)
                 {
                     return 1;
                 }
-                return (int)Math.Ceiling(this.TotalFiltered / (float)this.pageSize);
+                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
             }
         }
 
@@ -117,7 +117,7 @@ namespace logviewer.core
             get
             {
                 var finish = Math.Min(this.MessagesCount, this.pageSize);
-                return Math.Min(finish, this.TotalFiltered);
+                return Math.Min(finish, this.totalFiltered);
             }
         }
 
@@ -491,11 +491,37 @@ namespace logviewer.core
 
         private void OnSuccessRtfCreate(string rtf)
         {
-            this.totalReadTimeWatch.Stop();
             if (this.ReadCompleted != null)
             {
-                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf, this.totalReadTimeWatch.Elapsed));
+                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf));
             }
+        }
+
+        public void ShowElapsedTime()
+        {
+            this.view.SetProgress(LoadProgress.FromPercent(100));
+            this.totalReadTimeWatch.Stop();
+            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.RemainigToString());
+            this.view.SetLogProgressCustomText(text);
+        }
+
+        public void ShowLogPageStatistic()
+        {
+            var formatTotal = ((ulong)this.TotalMessages).FormatString();
+            var formatFiltered = ((ulong)this.totalFiltered).FormatString();
+            var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+
+            this.view.LogInfo = string.Format(this.view.LogInfoFormatString,
+                this.DisplayedMessages,
+                total,
+                this.CountMessages(LogLevel.Trace),
+                this.CountMessages(LogLevel.Debug),
+                this.CountMessages(LogLevel.Info),
+                this.CountMessages(LogLevel.Warn),
+                this.CountMessages(LogLevel.Error),
+                this.CountMessages(LogLevel.Fatal),
+                this.totalFiltered.ToString(formatFiltered, CultureInfo.CurrentCulture)
+                );
         }
 
         private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -692,14 +718,9 @@ namespace logviewer.core
             }
         }
 
-        public long TotalMessages
+        private long TotalMessages
         {
             get { return this.store != null ? this.store.CountMessages() : 0; }
-        }
-
-        public long TotalFiltered
-        {
-            get { return this.totalFiltered; }
         }
 
         public LogStore Store
