@@ -33,6 +33,7 @@ namespace logviewer.core
         private readonly List<Regex> markers;
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
         private readonly TaskScheduler uiContext;
+        private readonly SynchronizationContext winformsOrDefaultContext;
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
 
@@ -66,6 +67,7 @@ namespace logviewer.core
             this.pageSize = this.settings.PageSize;
             this.markers = new List<Regex>();
             this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
+            this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
             this.CreateMarkers(template.Levels);
             this.CreateMessageHead(template.StartMessage);
@@ -756,7 +758,7 @@ namespace logviewer.core
 
         private void RunOnGuiThread(Action action)
         {
-            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+            this.winformsOrDefaultContext.Post(o => action(), null);
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
