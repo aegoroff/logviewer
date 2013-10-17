@@ -425,7 +425,7 @@ namespace logviewer.core
                 {
                     message.Level = this.DetectLevel(message.Header);
                     message.Cache();
-                    this.Store.AddMessage(message);
+                    this.store.AddMessage(message);
                 }
                 finally
                 {

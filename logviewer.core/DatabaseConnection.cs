@@ -6,12 +6,15 @@ using System;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace logviewer.core
 {
     internal sealed class DatabaseConnection : IDisposable
     {
         private readonly SQLiteConnection connection;
+        private readonly TaskScheduler executionContext;
         private SQLiteTransaction transaction;
 
         internal DatabaseConnection(string databaseFilePath)
@@ -23,6 +26,7 @@ namespace logviewer.core
                 this.IsEmpty = true;
             }
             var conString = new SQLiteConnectionStringBuilder { DataSource = this.DatabasePath };
+            this.executionContext = TaskScheduler.Current;
             this.connection = new SQLiteConnection(conString.ToString());
             this.connection.Open();
         }
@@ -30,7 +34,8 @@ namespace logviewer.core
         internal bool IsEmpty { get; private set; }
         internal string DatabasePath { get; private set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "connection")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+            MessageId = "connection")]
         public void Dispose()
         {
             if (this.transaction != null)
@@ -46,32 +51,33 @@ namespace logviewer.core
 
         internal void BeginTran()
         {
-            this.transaction = this.connection.BeginTransaction();
+            this.ExecuteInCreationContext(() => this.transaction = this.connection.BeginTransaction());
         }
 
         internal void CommitTran()
         {
-            this.transaction.Commit();
+            this.ExecuteInCreationContext(() => this.transaction.Commit());
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
-            try
+            this.ExecuteInCreationContext(delegate
             {
-                foreach (var command in commands)
+                foreach (var command1 in commands)
                 {
-                    using (var sqLiteCommand = this.connection.CreateCommand())
+                    using (var sqLiteCommand1 = this.connection.CreateCommand())
                     {
-                        sqLiteCommand.CommandText = command;
-                        action(sqLiteCommand);
+                        sqLiteCommand1.CommandText = command1;
+                        action(sqLiteCommand1);
                     }
                 }
-            }
-            catch (ObjectDisposedException e)
-            {
-                Log.Instance.Debug(e);
-            }
+            });
+        }
+
+        private void ExecuteInCreationContext(Action method)
+        {
+            Task.Factory.StartNew(method, CancellationToken.None, TaskCreationOptions.None, this.executionContext).Wait();
         }
 
         internal static void AddParameter(IDbCommand cmd, string name, object value)
@@ -118,7 +124,7 @@ namespace logviewer.core
                 }
             }, query);
         }
-        
+
         internal void ExecuteNonQuery(params string[] queries)
         {
             this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
