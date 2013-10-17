@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -752,7 +753,9 @@ namespace logviewer.core
             this.RunOnGuiThread(delegate
             {
                 this.view.SetProgress((LoadProgress)progress);
-                this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, this.totalMessages, 0, 0, 0, 0, 0, 0, 0);
+                var formatTotal = ((ulong)this.totalMessages).FormatString();
+                var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+                this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
             });
         }
 
