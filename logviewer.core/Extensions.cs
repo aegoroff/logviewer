@@ -57,7 +57,7 @@ namespace logviewer.core
             return new string(list.ToArray());
         }
 
-        public static string RemainigToString(this TimeSpan timeSpan)
+        internal static string TimespanToHumanString(this TimeSpan timeSpan)
         {
             if (timeSpan.Days > 0)
             {

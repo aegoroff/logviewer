@@ -501,7 +501,7 @@ namespace logviewer.core
         {
             this.view.SetProgress(LoadProgress.FromPercent(100));
             this.totalReadTimeWatch.Stop();
-            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.RemainigToString());
+            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
             this.view.SetLogProgressCustomText(text);
         }
 

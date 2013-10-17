@@ -21,7 +21,7 @@ namespace logviewer.core
         {
             return this.Speed.Bytes == 0
                 ? string.Format("{0} %", this.Percent)
-                : string.Format("{0} %  ({1}/second) remain {2}", this.Percent, this.Speed, this.Remainig.RemainigToString());
+                : string.Format("{0} %  ({1}/second) remain {2}", this.Percent, this.Speed, this.Remainig.TimespanToHumanString());
         }
     }
 }
