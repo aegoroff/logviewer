@@ -50,7 +50,7 @@ namespace logviewer.core
             const string SyncOff = @"PRAGMA synchronous = OFF;";
             const string Journal = @"PRAGMA journal_mode = OFF;";
             const string Cache = @"PRAGMA cache_size = {0};";
-            const string Temp = @"PRAGMA temp_store = 2;";
+            const string Temp = @"PRAGMA temp_store = MEMORY;";
             const string Encode = @"PRAGMA encoding = 'UTF-8';";
             const string Mmap = @"PRAGMA mmap_size={0};";
 
