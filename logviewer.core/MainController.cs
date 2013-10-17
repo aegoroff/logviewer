@@ -23,10 +23,6 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
-        private const int StartMaxQueueCount = 50000;
-        private const int MaxQueueCount = 100000;
-        private const int QueueCountStep = 5000;
-        private const int EnqueueTimeoutMilliseconds = 500;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -334,8 +330,6 @@ namespace logviewer.core
             var offset = append ? this.logSize : 0L;
 
             this.logSize = reader.Length;
-            this.maxQueueCount = StartMaxQueueCount;
-            this.sleepCount = 0;
 
             if (this.logSize == 0)
             {
@@ -379,18 +373,19 @@ namespace logviewer.core
                 var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
                 this.stopWatch.Stop();
                 var elapsed = this.stopWatch.Elapsed;
-                var added = Interlocked.Read(ref this.addedMessages);
-                var addedRatio = added / elapsed.TotalSeconds;
-                var remain = Math.Abs(addedRatio) < 0.001
+                var pending = Interlocked.Read(ref this.addedMessages);
+                var inserted = this.totalMessages - pending;
+                var insertRatio = inserted / elapsed.TotalSeconds;
+                var remain = Math.Abs(insertRatio) < 0.001
                     ? TimeSpan.FromSeconds(0)
-                    : TimeSpan.FromSeconds((this.totalMessages - added) / addedRatio);
+                    : TimeSpan.FromSeconds(pending / insertRatio);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) &&
                     encoding != null)
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
-                var remainSeconds = remain.Seconds / this.queue.WorkersCount;
+                var remainSeconds = remain.Seconds;
                 if (remainSeconds > 0)
                 {
                     this.RunOnGuiThread(
@@ -411,9 +406,6 @@ namespace logviewer.core
             this.ReadLogFromInternalStore(false);
         }
 
-        private int maxQueueCount;
-        private int sleepCount;
-
         /// <remarks>
         /// this method MUST be called only from one thread.
         /// </remarks>
@@ -426,17 +418,6 @@ namespace logviewer.core
             // Interlocked is a must because other threads can change this
             Interlocked.Increment(ref this.addedMessages);
             message.Ix = ++this.totalMessages;
-
-            // memory: Freeze queue filling until pending count less then maxQueueCount and then increase queue lenght 
-
-            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount);
-            if (this.queue.Count >= this.maxQueueCount)
-            {
-                ++this.sleepCount;
-                Thread.Sleep(EnqueueTimeoutMilliseconds);
-                this.maxQueueCount += QueueCountStep * this.sleepCount;
-                Trace.WriteLine(string.Format("Queue increased to: {0}", this.maxQueueCount));
-            }
 
             this.queue.EnqueueItem(delegate
             {

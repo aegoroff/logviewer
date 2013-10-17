@@ -14,6 +14,9 @@ namespace logviewer.core
         private readonly Thread[] workers;
         private readonly Queue<Action> itemQ = new Queue<Action>();
 
+        private const int MaxQueueCount = 20000;
+        private const int EnqueueTimeoutMilliseconds = 90;
+
         public ProducerConsumerQueue(int workerCount)
         {
             this.workers = new Thread[workerCount];
@@ -57,19 +60,13 @@ namespace logviewer.core
             get { return this.workers.Length; }
         }
         
-        public int Count
-        {
-            get
-            {
-                lock (this.locker)
-                {
-                    return this.itemQ.Count;
-                }
-            }
-        }
-
         public void EnqueueItem(Action item)
         {
+            // memory: Freeze queue filling until pending count less then MaxQueueCount and then increase queue length
+            if (this.itemQ.Count >= MaxQueueCount)
+            {
+                Thread.Sleep(EnqueueTimeoutMilliseconds);
+            }
             lock (this.locker)
             {
                 this.itemQ.Enqueue(item); // We must pulse because we're
