@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using logviewer.core.Properties;
@@ -57,24 +58,38 @@ namespace logviewer.core
             return new string(list.ToArray());
         }
 
+        private static string WithDays(TimeSpan input)
+        {
+            return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds) : null;
+        }
+
+        private static string WithHours(TimeSpan input)
+        {
+            return input.Hours > 0 ? string.Format(Resources.RemainingWithHours, input.Hours, input.Minutes, input.Seconds) : null;
+        }
+
+        private static string WithMinutes(TimeSpan input)
+        {
+            return input.Minutes > 0 ? string.Format(Resources.RemainingWithMinutes, input.Minutes, input.Seconds) : null;
+        }
+
+        private static string WithSeconds(TimeSpan input)
+        {
+            return input.Seconds > 0 ? string.Format(Resources.RemainingOnlySeconds, input.Seconds) : null;
+        }
+
         internal static string TimespanToHumanString(this TimeSpan timeSpan)
         {
-            if (timeSpan.Days > 0)
+            Func<TimeSpan, string>[] funcs =
             {
-                return string.Format(Resources.RemainingWithDays, timeSpan.Days, timeSpan.Hours,
-                    timeSpan.Minutes, timeSpan.Seconds);
-            }
-            if (timeSpan.Hours > 0)
+                WithDays,
+                WithHours,
+                WithMinutes,
+                WithSeconds
+            };
+            foreach (var result in funcs.Select(format => format(timeSpan)).Where(result => result != null))
             {
-                return string.Format(Resources.RemainingWithHours, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
-            }
-            if (timeSpan.Minutes > 0)
-            {
-                return string.Format(Resources.RemainingWithMinutes, timeSpan.Minutes, timeSpan.Seconds);
-            }
-            if (timeSpan.Seconds > 0)
-            {
-                return string.Format(Resources.RemainingOnlySeconds, timeSpan.Seconds);
+                return result;
             }
             return Resources.RemainingLessThenSecond;
         }
