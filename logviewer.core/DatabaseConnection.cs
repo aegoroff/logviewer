@@ -63,13 +63,20 @@ namespace logviewer.core
         {
             this.ExecuteInCreationContext(delegate
             {
-                foreach (var command1 in commands)
+                try
                 {
-                    using (var sqLiteCommand1 = this.connection.CreateCommand())
+                    foreach (var command in commands)
                     {
-                        sqLiteCommand1.CommandText = command1;
-                        action(sqLiteCommand1);
+                        using (var sqLiteCommand = this.connection.CreateCommand())
+                        {
+                            sqLiteCommand.CommandText = command;
+                            action(sqLiteCommand);
+                        }
                     }
+                }
+                catch (ObjectDisposedException e)
+                {
+                    Log.Instance.Debug(e);
                 }
             });
         }
