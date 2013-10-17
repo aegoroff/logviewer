@@ -33,7 +33,6 @@ namespace logviewer.core
 
         private readonly List<Regex> markers;
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
-        private readonly TaskScheduler uiContext;
         private readonly SynchronizationContext winformsOrDefaultContext;
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
@@ -67,7 +66,6 @@ namespace logviewer.core
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
             this.markers = new List<Regex>();
-            this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
             this.CreateMarkers(template.Levels);
@@ -257,8 +255,8 @@ namespace logviewer.core
             this.cancellation = new CancellationTokenSource();
             var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
-            task.ContinueWith(t => this.view.OnFailureRead(errorMessage), CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
+            task.ContinueWith(t => this.RunOnGuiThread(() => this.view.OnFailureRead(errorMessage)), CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
             this.runningTasks.Add(task, this.view.LogPath);
         }
 
@@ -475,12 +473,17 @@ namespace logviewer.core
                 }
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None,
+
+            Action success = () => this.OnSuccessRtfCreate(rtf);
+            Action failure = () => this.view.OnFailureRead(rtf);
+
+            task.ContinueWith(t => this.RunOnGuiThread(success), CancellationToken.None,
                 TaskContinuationOptions.OnlyOnRanToCompletion,
-                this.uiContext);
-            task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None,
+                TaskScheduler.Default);
+
+            task.ContinueWith(t => this.RunOnGuiThread(failure), CancellationToken.None,
                 TaskContinuationOptions.OnlyOnFaulted,
-                this.uiContext);
+                TaskScheduler.Default);
             this.runningTasks.Add(task, this.view.LogPath);
         }
 
