@@ -369,14 +369,14 @@ namespace logviewer.core
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             try
             {
-                this.addedMessages = 0;
+                this.queuedMessages = 0;
                 var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
                 this.stopWatch.Stop();
                 var elapsed = this.stopWatch.Elapsed;
-                var pending = Interlocked.Read(ref this.addedMessages);
+                var pending = Interlocked.Read(ref this.queuedMessages);
                 var inserted = this.totalMessages - pending;
                 var insertRatio = inserted / elapsed.TotalSeconds;
-                var remain = Math.Abs(insertRatio) < 0.001
+                var remain = Math.Abs(insertRatio) < 0.00001
                     ? TimeSpan.FromSeconds(0)
                     : TimeSpan.FromSeconds(pending / insertRatio);
 
@@ -393,7 +393,7 @@ namespace logviewer.core
                 }
                 // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(
-                    () => Interlocked.Read(ref this.addedMessages) == 0 || this.cancellation.IsCancellationRequested);
+                    () => Interlocked.Read(ref this.queuedMessages) == 0 || this.cancellation.IsCancellationRequested);
             }
             finally
             {
@@ -416,7 +416,7 @@ namespace logviewer.core
                 return;
             }
             // Interlocked is a must because other threads can change this
-            Interlocked.Increment(ref this.addedMessages);
+            Interlocked.Increment(ref this.queuedMessages);
             message.Ix = ++this.totalMessages;
 
             this.queue.EnqueueItem(delegate
@@ -430,7 +430,7 @@ namespace logviewer.core
                 finally
                 {
                     // Interlocked is a must because other threads can change this
-                    Interlocked.Decrement(ref this.addedMessages);
+                    Interlocked.Decrement(ref this.queuedMessages);
                 }
             });
         }
@@ -698,7 +698,7 @@ namespace logviewer.core
             get { return this.store; }
         }
 
-        private long addedMessages;
+        private long queuedMessages;
 
         private string CreateRtf(bool signalProgress = false)
         {
