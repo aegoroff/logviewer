@@ -747,7 +747,11 @@ namespace logviewer.core
 
         private void OnLogReadProgress(object progress)
         {
-            this.RunOnGuiThread(() => this.view.SetProgress((LoadProgress)progress));
+            this.RunOnGuiThread(delegate
+            {
+                this.view.SetProgress((LoadProgress)progress);
+                this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, this.totalMessages, 0, 0, 0, 0, 0, 0, 0);
+            });
         }
 
         private void RunOnGuiThread(Action action)
