@@ -14,8 +14,8 @@ namespace logviewer.core
         private readonly Thread[] workers;
         private readonly Queue<Action> itemQ = new Queue<Action>();
 
-        private const int MaxQueueCount = 20000;
-        private const int EnqueueTimeoutMilliseconds = 90;
+        private const int MaxQueueCountBeforeEnqueueDelay = 20000;
+        private const int EnqueueTimeoutMilliseconds = 30;
 
         public ProducerConsumerQueue(int workerCount)
         {
@@ -62,8 +62,8 @@ namespace logviewer.core
         
         public void EnqueueItem(Action item)
         {
-            // memory: Freeze queue filling until pending count less then MaxQueueCount and then increase queue length
-            if (this.itemQ.Count >= MaxQueueCount)
+            // memory: Freeze queue filling until pending count less then MaxQueueCountBeforeEnqueueDelay and then increase queue length
+            if (this.itemQ.Count >= MaxQueueCountBeforeEnqueueDelay)
             {
                 Thread.Sleep(EnqueueTimeoutMilliseconds);
             }
