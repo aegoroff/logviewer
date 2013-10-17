@@ -7,15 +7,14 @@ using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace logviewer.core
 {
     internal sealed class DatabaseConnection : IDisposable
     {
         private readonly SQLiteConnection connection;
-        private readonly TaskScheduler executionContext;
         private SQLiteTransaction transaction;
+        private readonly SynchronizationContext creationContext;
 
         internal DatabaseConnection(string databaseFilePath)
         {
@@ -26,7 +25,7 @@ namespace logviewer.core
                 this.IsEmpty = true;
             }
             var conString = new SQLiteConnectionStringBuilder { DataSource = this.DatabasePath };
-            this.executionContext = TaskScheduler.Current;
+            this.creationContext = new SynchronizationContext();
             this.connection = new SQLiteConnection(conString.ToString());
             this.connection.Open();
         }
@@ -77,7 +76,7 @@ namespace logviewer.core
 
         private void ExecuteInCreationContext(Action method)
         {
-            Task.Factory.StartNew(method, CancellationToken.None, TaskCreationOptions.None, this.executionContext).Wait();
+            this.creationContext.Send(o => method(), null);
         }
 
         internal static void AddParameter(IDbCommand cmd, string name, object value)
