@@ -54,7 +54,8 @@ namespace logviewer.core
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
 
-        private readonly Stopwatch stopWatch = new Stopwatch();
+        private readonly Stopwatch probeWatch = new Stopwatch();
+        private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
 
         #endregion
 
@@ -320,6 +321,7 @@ namespace logviewer.core
         /// <returns>Path to RTF document to be loaded into control</returns>
         public void StartReadLog()
         {
+            totalReadTimeWatch.Restart();
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
@@ -372,8 +374,8 @@ namespace logviewer.core
             {
                 this.queuedMessages = 0;
                 var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
-                this.stopWatch.Stop();
-                var elapsed = this.stopWatch.Elapsed;
+                this.probeWatch.Stop();
+                var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
                 var inserted = this.totalMessages - pending;
                 var insertRatio = inserted / elapsed.TotalSeconds;
@@ -438,7 +440,7 @@ namespace logviewer.core
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
-            this.stopWatch.Restart();
+            this.probeWatch.Restart();
             this.RunOnGuiThread(delegate
             {
                 this.view.SetLogProgressCustomText(string.Empty);
@@ -489,9 +491,10 @@ namespace logviewer.core
 
         private void OnSuccessRtfCreate(string rtf)
         {
+            this.totalReadTimeWatch.Stop();
             if (this.ReadCompleted != null)
             {
-                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf));
+                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf, this.totalReadTimeWatch.Elapsed));
             }
         }
 

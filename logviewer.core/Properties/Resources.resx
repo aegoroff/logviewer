@@ -132,6 +132,21 @@
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>
   </data>
+  <data name="RemainingLessThenSecond" xml:space="preserve">
+    <value>less then second</value>
+  </data>
+  <data name="RemainingOnlySeconds" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="RemainingWithDays" xml:space="preserve">
+    <value>{0} days {1} hours {2} minutes {3} seconds</value>
+  </data>
+  <data name="RemainingWithHours" xml:space="preserve">
+    <value>{0} hours {1} minutes {2} seconds</value>
+  </data>
+  <data name="RemainingWithMinutes" xml:space="preserve">
+    <value>{0} minutes {1} seconds</value>
+  </data>
   <data name="SizeBytes" xml:space="preserve">
     <value>Bytes</value>
   </data>

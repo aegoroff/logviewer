@@ -2,9 +2,11 @@
 // Created at: 20.09.2012
 // © 2012-2013 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -53,6 +55,28 @@ namespace logviewer.core
             }
             list.Reverse();
             return new string(list.ToArray());
+        }
+
+        public static string RemainigToString(this TimeSpan timeSpan)
+        {
+            if (timeSpan.Days > 0)
+            {
+                return string.Format(Resources.RemainingWithDays, timeSpan.Days, timeSpan.Hours,
+                    timeSpan.Minutes, timeSpan.Seconds);
+            }
+            if (timeSpan.Hours > 0)
+            {
+                return string.Format(Resources.RemainingWithHours, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+            }
+            if (timeSpan.Minutes > 0)
+            {
+                return string.Format(Resources.RemainingWithMinutes, timeSpan.Minutes, timeSpan.Seconds);
+            }
+            if (timeSpan.Seconds > 0)
+            {
+                return string.Format(Resources.RemainingOnlySeconds, timeSpan.Seconds);
+            }
+            return Resources.RemainingLessThenSecond;
         }
     }
 }

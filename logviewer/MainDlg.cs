@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using logviewer.core;
+using logviewer.Properties;
 using Ninject;
 
 namespace logviewer
@@ -282,7 +283,8 @@ namespace logviewer
             this.SetLoadedFileCapltion(this.LogPath);
             this.Controller.ReadRecentFiles();
             this.FocusOnTextFilterControl();
-            this.SetProgress(LoadProgress.FromPercent(100));
+            var text = string.Format(Resources.ReadCompletedTemplate, e.Elapsed.RemainigToString());
+            this.SetLogProgressCustomText(text);
         }
 
         private void OnClose(object sender, EventArgs e)

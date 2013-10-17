@@ -106,6 +106,51 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to less then second.
+        /// </summary>
+        internal static string RemainingLessThenSecond {
+            get {
+                return ResourceManager.GetString("RemainingLessThenSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds.
+        /// </summary>
+        internal static string RemainingOnlySeconds {
+            get {
+                return ResourceManager.GetString("RemainingOnlySeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} days {1} hours {2} minutes {3} seconds.
+        /// </summary>
+        internal static string RemainingWithDays {
+            get {
+                return ResourceManager.GetString("RemainingWithDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hours {1} minutes {2} seconds.
+        /// </summary>
+        internal static string RemainingWithHours {
+            get {
+                return ResourceManager.GetString("RemainingWithHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} minutes {1} seconds.
+        /// </summary>
+        internal static string RemainingWithMinutes {
+            get {
+                return ResourceManager.GetString("RemainingWithMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bytes.
         /// </summary>
         internal static string SizeBytes {

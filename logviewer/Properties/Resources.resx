@@ -132,6 +132,9 @@
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="ReadCompletedTemplate" xml:space="preserve">
+    <value>Read completed.  Taken {0}</value>
+  </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>
   </data>
