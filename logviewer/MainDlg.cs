@@ -109,8 +109,6 @@ namespace logviewer
             return this.openFileDialog1.ShowDialog() == DialogResult.OK;
         }
 
-        public string LogInfoFormatString { get; private set; }
-
         public void ClearRecentFilesList()
         {
             foreach (ToolStripMenuItem item in this.recentFilesToolStripMenuItem.DropDownItems)
@@ -225,7 +223,6 @@ namespace logviewer
         private void KeepFormatStrings()
         {
             this.originalCapion = this.Text;
-            this.LogInfoFormatString = this.toolStripStatusLabel2.Text;
             this.originalPageSizeFormat = this.pageSizeLabel.Text;
         }
 

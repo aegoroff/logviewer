@@ -511,7 +511,7 @@ namespace logviewer.core
             var formatFiltered = ((ulong)this.totalFiltered).FormatString();
             var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
 
-            this.view.LogInfo = string.Format(this.view.LogInfoFormatString,
+            this.view.LogInfo = string.Format(Resources.LogInfoFormatString,
                 this.DisplayedMessages,
                 total,
                 this.CountMessages(LogLevel.Trace),
@@ -537,7 +537,7 @@ namespace logviewer.core
 
         public void ResetLogStatistic()
         {
-            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public void CancelReading()
@@ -782,7 +782,7 @@ namespace logviewer.core
                 this.view.SetProgress((LoadProgress)progress);
                 var formatTotal = ((ulong)this.totalMessages).FormatString();
                 var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
-                this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
+                this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
             });
         }
 
