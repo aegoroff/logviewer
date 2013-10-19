@@ -319,6 +319,7 @@ namespace logviewer.core
         ///     Reads log from file
         /// </summary>
         /// <returns>Path to RTF document to be loaded into control</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
         public void StartReadLog()
         {
             totalReadTimeWatch.Restart();
