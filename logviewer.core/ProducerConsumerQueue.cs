@@ -43,7 +43,7 @@ namespace logviewer.core
             }
             foreach (var worker in this.workers)
             {
-                worker.Join();
+                worker.Join(TimeSpan.FromSeconds(EnqueueTimeoutMilliseconds * 1000));
             }
         }
 
