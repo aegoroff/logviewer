@@ -15,7 +15,7 @@ namespace logviewer
             Present
         }
 
-        [Flags]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue"), Flags]
         public enum Option : uint
         {
             // From dbghelp.h:
@@ -76,36 +76,6 @@ namespace logviewer
         //    );
 
 
-        // Overload requiring MiniDumpExceptionInformation
-
-        [DllImport("dbghelp.dll", EntryPoint = "MiniDumpWriteDump", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode,
-            ExactSpelling = true, SetLastError = true)]
-        private static extern bool MiniDumpWriteDump(IntPtr hProcess,
-            uint processId,
-            SafeHandle hFile,
-            uint dumpType,
-            ref MiniDumpExceptionInformation expParam,
-            IntPtr userStreamParam,
-            IntPtr callbackParam);
-
-
-        // Overload supporting MiniDumpExceptionInformation == NULL
-
-        [DllImport("dbghelp.dll", EntryPoint = "MiniDumpWriteDump", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode,
-            ExactSpelling = true, SetLastError = true)]
-        private static extern bool MiniDumpWriteDump(IntPtr hProcess,
-            uint processId,
-            SafeHandle hFile,
-            uint dumpType,
-            IntPtr expParam,
-            IntPtr userStreamParam,
-            IntPtr callbackParam);
-
-
-        [DllImport("kernel32.dll", EntryPoint = "GetCurrentThreadId", ExactSpelling = true)]
-        private static extern uint GetCurrentThreadId();
-
-
         public static bool Write(SafeHandle fileHandle, Option options, ExceptionInfo exceptionInfo)
         {
             var currentProcess = Process.GetCurrentProcess();
@@ -113,7 +83,7 @@ namespace logviewer
             var currentProcessId = (uint)currentProcess.Id;
             MiniDumpExceptionInformation exp;
 
-            exp.ThreadId = GetCurrentThreadId();
+            exp.ThreadId = NativeMethods.GetCurrentThreadId();
             exp.ClientPointers = false;
             exp.ExceptionPointers = IntPtr.Zero;
 
@@ -126,13 +96,15 @@ namespace logviewer
 
             if (exp.ExceptionPointers == IntPtr.Zero)
             {
-                bRet = MiniDumpWriteDump(currentProcessHandle, currentProcessId, fileHandle, (uint)options, IntPtr.Zero, IntPtr.Zero,
+                bRet = NativeMethods.MiniDumpWriteDump(currentProcessHandle, currentProcessId, fileHandle, (uint)options, IntPtr.Zero,
+                    IntPtr.Zero,
                     IntPtr.Zero);
             }
 
             else
             {
-                bRet = MiniDumpWriteDump(currentProcessHandle, currentProcessId, fileHandle, (uint)options, ref exp, IntPtr.Zero,
+                bRet = NativeMethods.MiniDumpWriteDump(currentProcessHandle, currentProcessId, fileHandle, (uint)options, ref exp,
+                    IntPtr.Zero,
                     IntPtr.Zero);
             }
 
@@ -155,7 +127,8 @@ namespace logviewer
                 Write(fs.SafeFileHandle, Option.Normal);
             }
 
-            MessageBox.Show(string.Format("An unhandled exception ocured. Dump saved to {0}", fileName), "Fatal error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format("An unhandled exception ocured. Dump saved to {0}", fileName), "Fatal error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)] // Pack=4 is important! So it works also for x64!
@@ -166,6 +139,42 @@ namespace logviewer
             public IntPtr ExceptionPointers;
 
             [MarshalAs(UnmanagedType.Bool)] public bool ClientPointers;
+        }
+
+        private static class NativeMethods
+        {
+            // Overload requiring MiniDumpExceptionInformation
+
+            [DllImport("dbghelp.dll", EntryPoint = "MiniDumpWriteDump", CallingConvention = CallingConvention.StdCall,
+                CharSet = CharSet.Unicode,
+                ExactSpelling = true, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool MiniDumpWriteDump(IntPtr hProcess,
+                uint processId,
+                SafeHandle hFile,
+                uint dumpType,
+                ref MiniDumpExceptionInformation expParam,
+                IntPtr userStreamParam,
+                IntPtr callbackParam);
+
+
+            // Overload supporting MiniDumpExceptionInformation == NULL
+
+            [DllImport("dbghelp.dll", EntryPoint = "MiniDumpWriteDump", CallingConvention = CallingConvention.StdCall,
+                CharSet = CharSet.Unicode,
+                ExactSpelling = true, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool MiniDumpWriteDump(IntPtr hProcess,
+                uint processId,
+                SafeHandle hFile,
+                uint dumpType,
+                IntPtr expParam,
+                IntPtr userStreamParam,
+                IntPtr callbackParam);
+
+
+            [DllImport("kernel32.dll", EntryPoint = "GetCurrentThreadId", ExactSpelling = true)]
+            public static extern uint GetCurrentThreadId();
         }
     }
 }
