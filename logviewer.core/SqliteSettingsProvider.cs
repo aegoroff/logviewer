@@ -424,6 +424,7 @@ namespace logviewer.core
                 {
                     while (rdr.Read())
                     {
+                        if (rdr[0] is DBNull) continue;
                         result = (T)rdr[0];
                         read = true;
                     }
