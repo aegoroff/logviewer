@@ -232,6 +232,24 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} %.
+        /// </summary>
+        internal static string SpeedPercent {
+            get {
+                return ResourceManager.GetString("SpeedPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} %  ({1}/second) remain {2}.
+        /// </summary>
+        internal static string SpeedPercentWithRemain {
+            get {
+                return ResourceManager.GetString("SpeedPercentWithRemain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empty file detected. File must be not empty to be displayed..
         /// </summary>
         internal static string ZeroFileDetected {

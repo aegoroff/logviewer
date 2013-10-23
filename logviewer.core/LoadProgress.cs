@@ -3,6 +3,7 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -20,8 +21,8 @@ namespace logviewer.core
         public override string ToString()
         {
             return this.Speed.Bytes == 0
-                ? string.Format("{0} %", this.Percent)
-                : string.Format("{0} %  ({1}/second) remain {2}", this.Percent, this.Speed, this.Remainig.TimespanToHumanString());
+                ? string.Format(Resources.SpeedPercent, this.Percent)
+                : string.Format(Resources.SpeedPercentWithRemain, this.Percent, this.Speed, this.Remainig.TimespanToHumanString());
         }
     }
 }
