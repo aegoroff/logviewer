@@ -97,11 +97,74 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total: {1} To display: {8} Displayed: {0}   On the page T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   .
+        /// </summary>
+        internal static string LogInfoFormatString {
+            get {
+                return ResourceManager.GetString("LogInfoFormatString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min level must be less or equal then max level.
         /// </summary>
         internal static string MinLevelGreaterThenMax {
             get {
                 return ResourceManager.GetString("MinLevelGreaterThenMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Read completed.  Taken {0}.
+        /// </summary>
+        internal static string ReadCompletedTemplate {
+            get {
+                return ResourceManager.GetString("ReadCompletedTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to less then second.
+        /// </summary>
+        internal static string RemainingLessThenSecond {
+            get {
+                return ResourceManager.GetString("RemainingLessThenSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds.
+        /// </summary>
+        internal static string RemainingOnlySeconds {
+            get {
+                return ResourceManager.GetString("RemainingOnlySeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} days {1} hours {2} minutes {3} seconds.
+        /// </summary>
+        internal static string RemainingWithDays {
+            get {
+                return ResourceManager.GetString("RemainingWithDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hours {1} minutes {2} seconds.
+        /// </summary>
+        internal static string RemainingWithHours {
+            get {
+                return ResourceManager.GetString("RemainingWithHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} minutes {1} seconds.
+        /// </summary>
+        internal static string RemainingWithMinutes {
+            get {
+                return ResourceManager.GetString("RemainingWithMinutes", resourceCulture);
             }
         }
         
@@ -165,6 +228,24 @@ namespace logviewer.core.Properties {
         internal static string SizeTBytes {
             get {
                 return ResourceManager.GetString("SizeTBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} %.
+        /// </summary>
+        internal static string SpeedPercent {
+            get {
+                return ResourceManager.GetString("SpeedPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} %  ({1}/second) remain {2}.
+        /// </summary>
+        internal static string SpeedPercentWithRemain {
+            get {
+                return ResourceManager.GetString("SpeedPercentWithRemain", resourceCulture);
             }
         }
         

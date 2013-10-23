@@ -11,7 +11,7 @@ namespace logviewer.core
         private readonly string rtf;
 
         /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         /// <param name="rtf"></param>
         public LogReadCompletedEventArgs(string rtf)

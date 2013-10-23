@@ -10,7 +10,6 @@ namespace logviewer.core
         string LogFileName { get; }
         string HumanReadableLogSize { get; set; }
         string LogInfo { get; set; }
-        string LogInfoFormatString { get; }
         void ClearRecentFilesList();
         void CreateRecentFileItem(string file);
         bool OpenLogFile();

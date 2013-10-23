@@ -2,11 +2,11 @@
 // Created at: 18.09.2012
 // © 2012-2013 Alexander Egorov
 
-using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using logviewer.core;
+using logviewer.Properties;
 
 namespace logviewer
 {
@@ -15,9 +15,9 @@ namespace logviewer
         public AboutDlg()
         {
             this.InitializeComponent();
-            this.Text = String.Format("About {0}", this.AssemblyTitle);
+            this.Text = string.Format(Resources.AboutTemplate, this.AssemblyTitle);
             this.labelProductName.Text = this.AssemblyProduct;
-            this.labelVersion.Text = String.Format("Version {0}", this.AssemblyVersion);
+            this.labelVersion.Text = string.Format(Resources.VersionTemplate, this.AssemblyVersion);
             this.labelCopyright.Text = this.AssemblyCopyright + " " + this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription;
             this.linkLabel1.Links.Add(new LinkLabel.Link(0, this.linkLabel1.Text.Length, "http://www.logviewer.info/"));

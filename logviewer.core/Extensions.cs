@@ -2,9 +2,12 @@
 // Created at: 20.09.2012
 // © 2012-2013 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -53,6 +56,42 @@ namespace logviewer.core
             }
             list.Reverse();
             return new string(list.ToArray());
+        }
+
+        private static string WithDays(TimeSpan input)
+        {
+            return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds) : null;
+        }
+
+        private static string WithHours(TimeSpan input)
+        {
+            return input.Hours > 0 ? string.Format(Resources.RemainingWithHours, input.Hours, input.Minutes, input.Seconds) : null;
+        }
+
+        private static string WithMinutes(TimeSpan input)
+        {
+            return input.Minutes > 0 ? string.Format(Resources.RemainingWithMinutes, input.Minutes, input.Seconds) : null;
+        }
+
+        private static string WithSeconds(TimeSpan input)
+        {
+            return input.Seconds > 0 ? string.Format(Resources.RemainingOnlySeconds, input.Seconds) : null;
+        }
+
+        internal static string TimespanToHumanString(this TimeSpan timeSpan)
+        {
+            Func<TimeSpan, string>[] funcs =
+            {
+                WithDays,
+                WithHours,
+                WithMinutes,
+                WithSeconds
+            };
+            foreach (var result in funcs.Select(format => format(timeSpan)).Where(result => result != null))
+            {
+                return result;
+            }
+            return Resources.RemainingLessThenSecond;
         }
     }
 }

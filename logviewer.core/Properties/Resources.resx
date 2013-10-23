@@ -129,8 +129,29 @@
   <data name="FinishLoading" xml:space="preserve">
     <value>Log reading completed. Log will be displayed in about {0} seconds.</value>
   </data>
+  <data name="LogInfoFormatString" xml:space="preserve">
+    <value>Total: {1} To display: {8} Displayed: {0}   On the page T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
+  </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>
+  </data>
+  <data name="ReadCompletedTemplate" xml:space="preserve">
+    <value>Read completed.  Taken {0}</value>
+  </data>
+  <data name="RemainingLessThenSecond" xml:space="preserve">
+    <value>less then second</value>
+  </data>
+  <data name="RemainingOnlySeconds" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="RemainingWithDays" xml:space="preserve">
+    <value>{0} days {1} hours {2} minutes {3} seconds</value>
+  </data>
+  <data name="RemainingWithHours" xml:space="preserve">
+    <value>{0} hours {1} minutes {2} seconds</value>
+  </data>
+  <data name="RemainingWithMinutes" xml:space="preserve">
+    <value>{0} minutes {1} seconds</value>
   </data>
   <data name="SizeBytes" xml:space="preserve">
     <value>Bytes</value>
@@ -152,6 +173,12 @@
   </data>
   <data name="SizeTBytes" xml:space="preserve">
     <value>Tb</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>{0} %</value>
+  </data>
+  <data name="SpeedPercentWithRemain" xml:space="preserve">
+    <value>{0} %  ({1}/second) remain {2}</value>
   </data>
   <data name="ZeroFileDetected" xml:space="preserve">
     <value>Empty file detected. File must be not empty to be displayed.</value>

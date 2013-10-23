@@ -61,6 +61,24 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About {0}.
+        /// </summary>
+        internal static string AboutTemplate {
+            get {
+                return ResourceManager.GetString("AboutTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} / {1}.
+        /// </summary>
+        internal static string CurrentPageTemplate {
+            get {
+                return ResourceManager.GetString("CurrentPageTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debug.
         /// </summary>
         internal static string Debug {
@@ -97,6 +115,24 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fatal error.
+        /// </summary>
+        internal static string FatalErrorCaption {
+            get {
+                return ResourceManager.GetString("FatalErrorCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unhandled exception ocured. Dump saved to {0}.
+        /// </summary>
+        internal static string FatalErrorMessageTemplate {
+            get {
+                return ResourceManager.GetString("FatalErrorMessageTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Info.
         /// </summary>
         internal static string Info {
@@ -129,6 +165,15 @@ namespace logviewer.Properties {
         internal static string Trace {
             get {
                 return ResourceManager.GetString("Trace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version {0}.
+        /// </summary>
+        internal static string VersionTemplate {
+            get {
+                return ResourceManager.GetString("VersionTemplate", resourceCulture);
             }
         }
         

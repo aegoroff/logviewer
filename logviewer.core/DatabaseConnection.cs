@@ -6,6 +6,7 @@ using System;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading;
 
 namespace logviewer.core
 {
@@ -13,6 +14,7 @@ namespace logviewer.core
     {
         private readonly SQLiteConnection connection;
         private SQLiteTransaction transaction;
+        private readonly SynchronizationContext creationContext;
 
         internal DatabaseConnection(string databaseFilePath)
         {
@@ -23,6 +25,7 @@ namespace logviewer.core
                 this.IsEmpty = true;
             }
             var conString = new SQLiteConnectionStringBuilder { DataSource = this.DatabasePath };
+            this.creationContext = new SynchronizationContext();
             this.connection = new SQLiteConnection(conString.ToString());
             this.connection.Open();
         }
@@ -30,38 +33,57 @@ namespace logviewer.core
         internal bool IsEmpty { get; private set; }
         internal string DatabasePath { get; private set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+            MessageId = "connection")]
         public void Dispose()
         {
-            this.Dispose(true);
+            if (this.transaction != null)
+            {
+                this.transaction.Dispose();
+            }
+            if (this.connection != null)
+            {
+                SafeRunner.Run(this.connection.Close);
+                SafeRunner.Run(this.connection.Dispose);
+            }
         }
 
         internal void BeginTran()
         {
-            this.transaction = this.connection.BeginTransaction();
+            this.ExecuteInCreationContext(() => this.transaction = this.connection.BeginTransaction());
         }
 
         internal void CommitTran()
         {
-            this.transaction.Commit();
+            this.ExecuteInCreationContext(() => this.transaction.Commit());
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
-            try
+            this.ExecuteInCreationContext(delegate
             {
-                foreach (var command in commands)
+                try
                 {
-                    using (var sqLiteCommand = this.connection.CreateCommand())
+                    foreach (var command in commands)
                     {
-                        sqLiteCommand.CommandText = command;
-                        action(sqLiteCommand);
+                        using (var sqLiteCommand = this.connection.CreateCommand())
+                        {
+                            sqLiteCommand.CommandText = command;
+                            action(sqLiteCommand);
+                        }
                     }
                 }
-            }
-            catch (ObjectDisposedException e)
-            {
-                Log.Instance.Debug(e);
-            }
+                catch (ObjectDisposedException e)
+                {
+                    Log.Instance.Debug(e);
+                }
+            });
+        }
+
+        private void ExecuteInCreationContext(Action method)
+        {
+            this.creationContext.Send(o => method(), null);
         }
 
         internal static void AddParameter(IDbCommand cmd, string name, object value)
@@ -108,26 +130,10 @@ namespace logviewer.core
                 }
             }, query);
         }
-        
+
         internal void ExecuteNonQuery(params string[] queries)
         {
             this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (this.transaction != null)
-                {
-                    this.transaction.Dispose();
-                }
-                if (this.connection != null)
-                {
-                    SafeRunner.Run(this.connection.Close);
-                    SafeRunner.Run(this.connection.Dispose);
-                }
-            }
         }
     }
 }

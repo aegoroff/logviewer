@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -23,8 +24,6 @@ namespace logviewer.core
 {
     public sealed class MainController : IDisposable
     {
-        private const int MaxQueueCount = 100000;
-        private const int EnqueueTimeoutMilliseconds = 90;
         private readonly ISettingsProvider settings;
 
         #region Constants and Fields
@@ -34,7 +33,7 @@ namespace logviewer.core
 
         private readonly List<Regex> markers;
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
-        private readonly TaskScheduler uiContext;
+        private readonly SynchronizationContext winformsOrDefaultContext;
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
 
@@ -51,8 +50,12 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        private readonly ProducerConsumerQueue queue = new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
-        readonly Stopwatch stopWatch = new Stopwatch();
+
+        private readonly ProducerConsumerQueue queue =
+            new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
+
+        private readonly Stopwatch probeWatch = new Stopwatch();
+        private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
 
         #endregion
 
@@ -64,7 +67,7 @@ namespace logviewer.core
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
             this.markers = new List<Regex>();
-            this.uiContext = TaskScheduler.FromCurrentSynchronizationContext();
+            this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
             this.CreateMarkers(template.Levels);
             this.CreateMessageHead(template.StartMessage);
@@ -91,7 +94,7 @@ namespace logviewer.core
             get
             {
                 var start = (this.CurrentPage - 1) * this.pageSize;
-                return this.TotalFiltered - start;
+                return this.totalFiltered - start;
             }
         }
 
@@ -101,11 +104,11 @@ namespace logviewer.core
         {
             get
             {
-                if (this.TotalFiltered == 0)
+                if (this.totalFiltered == 0)
                 {
                     return 1;
                 }
-                return (int)Math.Ceiling(this.TotalFiltered / (float)this.pageSize);
+                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
             }
         }
 
@@ -114,7 +117,7 @@ namespace logviewer.core
             get
             {
                 var finish = Math.Min(this.MessagesCount, this.pageSize);
-                return Math.Min(finish, this.TotalFiltered);
+                return Math.Min(finish, this.totalFiltered);
             }
         }
 
@@ -199,8 +202,8 @@ namespace logviewer.core
             }
             try
             {
-                new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                return true;
+                var r = new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                return r.GetHashCode() > 0;
             }
             catch (Exception e)
             {
@@ -253,14 +256,15 @@ namespace logviewer.core
             this.cancellation = new CancellationTokenSource();
             var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
-            task.ContinueWith(t => this.view.OnFailureRead(errorMessage), CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted, this.uiContext);
+            task.ContinueWith(t => this.RunOnGuiThread(() => this.view.OnFailureRead(errorMessage)), CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
             this.runningTasks.Add(task, this.view.LogPath);
         }
 
         public void UpdateLog(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) || !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase))
+            if (string.IsNullOrWhiteSpace(path) ||
+                !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase))
             {
                 return;
             }
@@ -285,22 +289,22 @@ namespace logviewer.core
         {
             return this.settings.MaxLevel;
         }
-        
+
         public int ReadSorting()
         {
             return this.settings.Sorting ? 0 : 1;
         }
-        
+
         public bool ReadUseRegexp()
         {
             return this.settings.UseRegexp;
         }
-        
+
         public string ReadMessageFilter()
         {
             return this.settings.MessageFilter;
         }
-        
+
         public void UpdateMessageFilter(string value)
         {
             this.settings.MessageFilter = value;
@@ -315,8 +319,10 @@ namespace logviewer.core
         ///     Reads log from file
         /// </summary>
         /// <returns>Path to RTF document to be loaded into control</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
         public void StartReadLog()
         {
+            totalReadTimeWatch.Restart();
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
@@ -367,28 +373,31 @@ namespace logviewer.core
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             try
             {
-                addedMessages = 0;
+                this.queuedMessages = 0;
                 var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
-                stopWatch.Stop();
-                var elapsed = stopWatch.Elapsed;
-                var added = Interlocked.Read(ref addedMessages);
-                var addedRatio = added / elapsed.TotalSeconds;
-                var remain = Math.Abs(addedRatio) < 0.001
-                            ? TimeSpan.FromSeconds(0)
-                            : TimeSpan.FromSeconds((totalMessages - added) / addedRatio);
+                this.probeWatch.Stop();
+                var elapsed = this.probeWatch.Elapsed;
+                var pending = Interlocked.Read(ref this.queuedMessages);
+                var inserted = this.totalMessages - pending;
+                var insertRatio = inserted / elapsed.TotalSeconds;
+                var remain = Math.Abs(insertRatio) < 0.00001
+                    ? TimeSpan.FromSeconds(0)
+                    : TimeSpan.FromSeconds(pending / insertRatio);
 
-                if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && encoding != null)
+                if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) &&
+                    encoding != null)
                 {
                     this.filesEncodingCache.Add(this.currentPath, encoding);
                 }
-                var remainSeconds = remain.Seconds / this.queue.WorkersCount;
+                var remainSeconds = remain.Seconds;
                 if (remainSeconds > 0)
                 {
-                    this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
+                    this.RunOnGuiThread(
+                        () => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
                 }
                 // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(
-                    () => Interlocked.Read(ref this.addedMessages) == 0 || this.cancellation.IsCancellationRequested);
+                    () => Interlocked.Read(ref this.queuedMessages) == 0 || this.cancellation.IsCancellationRequested);
             }
             finally
             {
@@ -397,7 +406,7 @@ namespace logviewer.core
                 reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             }
-            
+
             this.ReadLogFromInternalStore(false);
         }
 
@@ -410,29 +419,29 @@ namespace logviewer.core
             {
                 return;
             }
-            Interlocked.Increment(ref this.addedMessages); // Interlocked is a must because other threads can change this
+            // Interlocked is a must because other threads can change this
+            Interlocked.Increment(ref this.queuedMessages);
             message.Ix = ++this.totalMessages;
 
-            // memory: Freeze queue filling until pending coung less then MaxQueueCount
-            SpinWait.SpinUntil(() => this.queue.Count < MaxQueueCount, EnqueueTimeoutMilliseconds);
             this.queue.EnqueueItem(delegate
             {
                 try
                 {
                     message.Level = this.DetectLevel(message.Header);
                     message.Cache();
-                    this.Store.AddMessage(message);
+                    this.store.AddMessage(message);
                 }
                 finally
                 {
-                    Interlocked.Decrement(ref this.addedMessages); // Interlocked is a must because other threads can change this
+                    // Interlocked is a must because other threads can change this
+                    Interlocked.Decrement(ref this.queuedMessages);
                 }
             });
         }
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
-            this.stopWatch.Restart();
+            this.probeWatch.Restart();
             this.RunOnGuiThread(delegate
             {
                 this.view.SetLogProgressCustomText(string.Empty);
@@ -452,7 +461,7 @@ namespace logviewer.core
         private void ReadLogFromInternalStore(bool signalProcess)
         {
             this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.CreateRtfInProgress));
-            
+
             var rtf = string.Empty;
             Action action = delegate
             {
@@ -467,10 +476,17 @@ namespace logviewer.core
                 }
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
-            task.ContinueWith(t => this.OnSuccessRtfCreate(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion,
-                this.uiContext);
-            task.ContinueWith(t => this.view.OnFailureRead(rtf), CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted,
-                this.uiContext);
+
+            Action success = () => this.OnSuccessRtfCreate(rtf);
+            Action failure = () => this.view.OnFailureRead(rtf);
+
+            task.ContinueWith(t => this.RunOnGuiThread(success), CancellationToken.None,
+                TaskContinuationOptions.OnlyOnRanToCompletion,
+                TaskScheduler.Default);
+
+            task.ContinueWith(t => this.RunOnGuiThread(failure), CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
             this.runningTasks.Add(task, this.view.LogPath);
         }
 
@@ -480,6 +496,33 @@ namespace logviewer.core
             {
                 this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf));
             }
+        }
+
+        public void ShowElapsedTime()
+        {
+            this.view.SetProgress(LoadProgress.FromPercent(100));
+            this.totalReadTimeWatch.Stop();
+            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
+            this.view.SetLogProgressCustomText(text);
+        }
+
+        public void ShowLogPageStatistic()
+        {
+            var formatTotal = ((ulong)this.TotalMessages).FormatString();
+            var formatFiltered = ((ulong)this.totalFiltered).FormatString();
+            var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+
+            this.view.LogInfo = string.Format(Resources.LogInfoFormatString,
+                this.DisplayedMessages,
+                total,
+                this.CountMessages(LogLevel.Trace),
+                this.CountMessages(LogLevel.Debug),
+                this.CountMessages(LogLevel.Info),
+                this.CountMessages(LogLevel.Warn),
+                this.CountMessages(LogLevel.Error),
+                this.CountMessages(LogLevel.Fatal),
+                this.totalFiltered.ToString(formatFiltered, CultureInfo.CurrentCulture)
+                );
         }
 
         private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -495,7 +538,7 @@ namespace logviewer.core
 
         public void ResetLogStatistic()
         {
-            this.view.LogInfo = string.Format(this.view.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public void CancelReading()
@@ -561,7 +604,8 @@ namespace logviewer.core
 
             var lastOpenedFile = string.Empty;
 
-            Action<RecentFilesStore> method = delegate(RecentFilesStore filesStore) { lastOpenedFile = filesStore.ReadLastOpenedFile(); };
+            Action<RecentFilesStore> method =
+                delegate(RecentFilesStore filesStore) { lastOpenedFile = filesStore.ReadLastOpenedFile(); };
             this.UseRecentFilesStore(method);
 
             if (!string.IsNullOrWhiteSpace(lastOpenedFile))
@@ -675,14 +719,9 @@ namespace logviewer.core
             }
         }
 
-        public long TotalMessages
+        private long TotalMessages
         {
             get { return this.store != null ? this.store.CountMessages() : 0; }
-        }
-
-        public long TotalFiltered
-        {
-            get { return this.totalFiltered; }
         }
 
         public LogStore Store
@@ -690,7 +729,7 @@ namespace logviewer.core
             get { return this.store; }
         }
 
-        private long addedMessages;
+        private long queuedMessages;
 
         private string CreateRtf(bool signalProgress = false)
         {
@@ -739,12 +778,18 @@ namespace logviewer.core
 
         private void OnLogReadProgress(object progress)
         {
-            this.RunOnGuiThread(() => this.view.SetProgress((LoadProgress)progress));
+            this.RunOnGuiThread(delegate
+            {
+                this.view.SetProgress((LoadProgress)progress);
+                var formatTotal = ((ulong)this.totalMessages).FormatString();
+                var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+                this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
+            });
         }
 
         private void RunOnGuiThread(Action action)
         {
-            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, this.uiContext);
+            this.winformsOrDefaultContext.Post(o => action(), null);
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
@@ -790,27 +835,22 @@ namespace logviewer.core
 
         #endregion
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+            MessageId = "cancellation"),
+         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+             MessageId = "store")]
         public void Dispose()
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
+            this.queue.Shutdown(true);
+            try
             {
-                this.queue.Shutdown(true);
-                try
+                SafeRunner.Run(this.CancelPreviousTask);
+            }
+            finally
+            {
+                if (this.store != null)
                 {
-                    SafeRunner.Run(this.CancelPreviousTask);
-                }
-                finally
-                {
-                    if (this.store != null)
-                    {
-                        SafeRunner.Run(this.store.Dispose);
-                    }
+                    SafeRunner.Run(this.store.Dispose);
                 }
             }
         }

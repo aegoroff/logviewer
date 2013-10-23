@@ -44,6 +44,11 @@
                 <Directory Id="INSTALLFOLDER" Name="logviewer">
                     <Component Id="logviewer.bin" Guid="{48B9BC82-F77A-4981-874A-B523F6021505}">
 							<File
+								Id="LICENSE.txt"
+								Name="LICENSE.txt"
+								Source="..\LICENSE.txt"
+								DiskId="1"/>
+                            <File
 								Id="logviewer.exe"
 								Name="logviewer.exe"
 								Source="$(var.SourcePath)\logviewer.exe"
@@ -129,6 +134,7 @@
 						-->
 						<RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
 						<Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.exe]" Id="LogviewerStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
+						<Shortcut Name="License" Target="[!LICENSE.txt]" Id="LogviewerLicenseStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
 						<!--
 							Fix ICE64 by adding a remove folder element 
 							http://windowssdk.msdn.microsoft.com/en-us/library/ms704358.aspx
