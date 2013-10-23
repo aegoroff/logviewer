@@ -61,6 +61,15 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About {0}.
+        /// </summary>
+        internal static string AboutTemplate {
+            get {
+                return ResourceManager.GetString("AboutTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} / {1}.
         /// </summary>
         internal static string CurrentPageTemplate {
@@ -156,6 +165,15 @@ namespace logviewer.Properties {
         internal static string Trace {
             get {
                 return ResourceManager.GetString("Trace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version {0}.
+        /// </summary>
+        internal static string VersionTemplate {
+            get {
+                return ResourceManager.GetString("VersionTemplate", resourceCulture);
             }
         }
         
