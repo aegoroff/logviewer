@@ -61,6 +61,15 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} / {1}.
+        /// </summary>
+        internal static string CurrentPageTemplate {
+            get {
+                return ResourceManager.GetString("CurrentPageTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debug.
         /// </summary>
         internal static string Debug {
@@ -93,6 +102,24 @@ namespace logviewer.Properties {
         internal static string Fatal {
             get {
                 return ResourceManager.GetString("Fatal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fatal error.
+        /// </summary>
+        internal static string FatalErrorCaption {
+            get {
+                return ResourceManager.GetString("FatalErrorCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unhandled exception ocured. Dump saved to {0}.
+        /// </summary>
+        internal static string FatalErrorMessageTemplate {
+            get {
+                return ResourceManager.GetString("FatalErrorMessageTemplate", resourceCulture);
             }
         }
         

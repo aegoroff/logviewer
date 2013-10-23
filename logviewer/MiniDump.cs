@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using logviewer.Properties;
 
 namespace logviewer
 {
@@ -127,7 +128,7 @@ namespace logviewer
                 Write(fs.SafeFileHandle, Option.Normal);
             }
 
-            MessageBox.Show(string.Format("An unhandled exception ocured. Dump saved to {0}", fileName), "Fatal error", MessageBoxButtons.OK,
+            MessageBox.Show(string.Format(Resources.FatalErrorMessageTemplate, fileName), Resources.FatalErrorCaption, MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
 

@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using logviewer.core;
+using logviewer.Properties;
 using Ninject;
 
 namespace logviewer
@@ -162,7 +163,7 @@ namespace logviewer
 
         public void SetCurrentPage(int page)
         {
-            this.currentPage.Text = string.Format("{0} / {1}", page, this.Controller.TotalPages);
+            this.currentPage.Text = string.Format(Resources.CurrentPageTemplate, page, this.Controller.TotalPages);
         }
 
         private void DisableForward(bool disabled)
