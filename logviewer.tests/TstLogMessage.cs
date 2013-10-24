@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace logviewer.tests
 {
     [TestFixture]
-    public class TLogMessage
+    public class TstLogMessage
     {
         [SetUp]
         public void Setup()
