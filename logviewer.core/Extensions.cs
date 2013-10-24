@@ -58,6 +58,15 @@ namespace logviewer.core
             return new string(list.ToArray());
         }
 
+        public static int ToSafePercent(this int value, int min, int max)
+        {
+            if (value > max)
+            {
+                return max;
+            }
+            return value < min ? min : value;
+        }
+
         private static string WithDays(TimeSpan input)
         {
             return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds) : null;

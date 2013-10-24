@@ -1,5 +1,5 @@
 ﻿// Created by: egr
-// Created at: 28.09.2013
+// Created at: 24.10.2012
 // © 2012-2013 Alexander Egorov
 
 using logviewer.core;
@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace logviewer.tests
 {
     [TestFixture]
-    public class TFormatString
+    public class TUtils
     {
         [TestCase(0UL, "")]
         [TestCase(1UL, "#")]
@@ -31,9 +31,19 @@ namespace logviewer.tests
         [TestCase(111111111111111111UL, "### ### ### ### ### ###")]
         [TestCase(1111111111111111111UL, "# ### ### ### ### ### ###")]
         [TestCase(ulong.MaxValue, "## ### ### ### ### ### ###")]
-        public void Test(ulong value, string format)
+        public void TestFormatString(ulong value, string format)
         {
             Assert.AreEqual(format, value.FormatString());
+        }
+
+        [TestCase(1, 0, 100, 1)]
+        [TestCase(0, 0, 100, 0)]
+        [TestCase(-1, 0, 100, 0)]
+        [TestCase(100, 0, 100, 100)]
+        [TestCase(101, 0, 100, 100)]
+        public void TestSafePercent(int value, int min, int max, int result)
+        {
+            Assert.AreEqual(result, value.ToSafePercent(min, max));
         }
     }
 }

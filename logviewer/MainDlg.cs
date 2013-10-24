@@ -89,7 +89,7 @@ namespace logviewer
 
         public void SetProgress(LoadProgress progress)
         {
-            this.logLoadProgress.Value = progress.Percent;
+            this.logLoadProgress.Value = progress.Percent.ToSafePercent(this.logLoadProgress.Minimum, this.logLoadProgress.Maximum);
             this.SetLogProgressCustomText(progress.ToString());
         }
 
