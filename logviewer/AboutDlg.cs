@@ -4,8 +4,8 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using logviewer.core;
 using logviewer.Properties;
 
 namespace logviewer
@@ -108,7 +108,7 @@ namespace logviewer
 
         private void OnLinkClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Executive.SafeRun(() => Process.Start((string)e.Link.LinkData));
+            Task.Factory.StartNew(() => Process.Start((string)e.Link.LinkData));
         }
     }
 }

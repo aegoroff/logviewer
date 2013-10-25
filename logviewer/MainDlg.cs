@@ -121,7 +121,14 @@ namespace logviewer
 
         public void ReadLog()
         {
-            Executive.SafeRun(this.WatchLogFile);
+            try
+            {
+                this.WatchLogFile();
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+            }
             this.StartReading();
             this.Controller.AddCurrentFileToRecentFilesList();
         }
