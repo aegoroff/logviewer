@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-ru" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="InstallHeader">Добро пожаловать</String>
+    <String Id="InstallMessage">Программа установки поставит [WixBundleName] на ваш компьютер. Для продолжения нажмите Установка, для изменения настроек Настройки, а для отмены Закрыть.</String>
+    <String Id="InstallVersion">Версия [WixBundleVersion]</String>
+    <String Id="Caption">Установка [WixBundleName]</String>
+    <String Id="Title">[WixBundleName]</String>
+    <String Id="ConfirmCancelMessage">Уверены что хотите отмены?</String>
+    <String Id="HelpHeader">Помощь по установке</String>
+    <String Id="HelpText">
+        /install | /repair | /uninstall | /layout [directory] - устанавливает, восстанавливает, удаляет или
+        создает полную локальную копию пакета в указанном каталоге. По умолчанию используется установка.
+
+        /passive | /quiet -  минимальный пользовательский интерфейс без диалогов или вообзе без интерфейса.
+        По умолчанию установка с пользовательским интерфейсом.
+
+        /norestart   - подавление попыток перезагрузки. По умолчанию будет показано окно с предложением перезагрузки.
+        /log log.txt - записывать журнал установки в указанный файл. По умолчанию журнал создается в каталоге %TEMP%.
+    </String>
+    <String Id="HelpCloseButton">&amp;Закрыть</String>
+    <String Id="InstallLicenseLinkText">&lt;a href="#"&gt;Лицензия&lt;/a&gt; на [WixBundleName]</String>
+    <String Id="InstallAcceptCheckbox">Я согласен с лицензией</String>
+    <String Id="InstallOptionsButton">&amp;Настройки</String>
+    <String Id="InstallInstallButton">&amp;Установка</String>
+    <String Id="InstallCloseButton">&amp;Закрыть</String>
+    <String Id="OptionsHeader">Настройки установки</String>
+    <String Id="OptionsLocationLabel">Путь установки:</String>
+    <String Id="OptionsBrowseButton">&amp;Обзор</String>
+    <String Id="OptionsOkButton">&amp;OK</String>
+    <String Id="OptionsCancelButton">&amp;Отмена</String>
+    <String Id="ProgressHeader">Ход установки</String>
+    <String Id="ProgressLabel">Работаем с :</String>
+    <String Id="OverallProgressPackageText">Подготовка...</String>
+    <String Id="ProgressCancelButton">&amp;Отмена</String>
+    <String Id="ModifyHeader">Изменить установку</String>
+    <String Id="ModifyRepairButton">&amp;Восстановление</String>
+    <String Id="ModifyUninstallButton">&amp;Удаление</String>
+    <String Id="ModifyCloseButton">&amp;Закрыть</String>
+    <String Id="SuccessHeader">Успешно установлено</String>
+    <String Id="SuccessLaunchButton">&amp;Запуск</String>
+    <String Id="SuccessRestartText">Перед использованием приложения надо перезагрузить компьютер.</String>
+    <String Id="SuccessRestartButton">&amp;Перезагрузка</String>
+    <String Id="SuccessCloseButton">&amp;Закрыть</String>
+    <String Id="FailureHeader">Установка не удалась</String>
+    <String Id="FailureHyperlinkLogText">One or more issues caused the setup to fail. Please fix the issues and then retry setup. For more information see the &lt;a href="#"&gt;log file&lt;/a&gt;.</String>
+    <String Id="FailureRestartText">Надо перезагрузить компьютер для завершения отката.</String>
+    <String Id="FailureRestartButton">&amp;Перезагрузка</String>
+    <String Id="FailureCloseButton">&amp;Закрыть</String>
+</WixLocalization>

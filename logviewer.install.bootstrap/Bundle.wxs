@@ -16,7 +16,9 @@
         <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
             <Payload SourceFile="Lv.bmp" />
             <Payload SourceFile="..\LICENSE.txt" Compressed="yes" />
+            <Payload Id="thm-ru-RU" Compressed="yes" Name="1049\thm.wxl" SourceFile="Theme.ru.wxl"/>
         </BootstrapperApplicationRef>
+
 	    <Chain>
             <PackageGroupRef Id="NetFx40Redist"/>
             <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />

@@ -38,7 +38,8 @@
     <None Include="Theme.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Theme.wxl" />
+    <None Include="Theme.ru.wxl" />
+    <None Include="Theme.wxl" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--
