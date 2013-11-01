@@ -74,6 +74,17 @@ namespace logviewer.core
                         }
                     }
                 }
+                catch (SQLiteException e)
+                {
+                    switch (e.ResultCode)
+                    {
+                        case SQLiteErrorCode.Abort:
+                            Log.Instance.Debug(e);
+                            break;
+                        default:
+                            throw;
+                    }
+                }
                 catch (ObjectDisposedException e)
                 {
                     Log.Instance.Debug(e);
