@@ -112,6 +112,11 @@
 								    Name="logviewer.core.resources.dll"
 								    Source="$(var.SourcePath)\ru\logviewer.core.resources.dll"
 								    DiskId="1"/>
+                                <File
+								    Id="ru.logviewer.resources.dll"
+								    Name="logviewer.resources.dll"
+								    Source="$(var.SourcePath)\ru\logviewer.resources.dll"
+								    DiskId="1"/>
                             </Component>
                         </Directory>
                         <Directory Id="X86" Name="x86">
