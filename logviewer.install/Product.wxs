@@ -29,6 +29,7 @@
 			<ComponentRef Id="logviewer.bin.x86" />
 			<ComponentRef Id="logviewer.bin.x64" />
 			<ComponentRef Id="logviewer.shortcut" />
+			<ComponentRef Id="logviewer.resources.ru" />
 		</Feature>
     
         <UIRef Id="WixUI_Minimal"/>
@@ -104,6 +105,15 @@
 								Source="$(var.SourcePath)\System.Data.SQLite.dll"
 								DiskId="1"/>
 						</Component>
+                        <Directory Id="ru" Name="ru">
+                            <Component Id="logviewer.resources.ru" Guid="{12C3AFFE-0000-4965-B0E2-293AF3AA4A78}">
+                                <File
+								    Id="ru.logviewer.core.resources.dll"
+								    Name="logviewer.core.resources.dll"
+								    Source="$(var.SourcePath)\ru\logviewer.core.resources.dll"
+								    DiskId="1"/>
+                            </Component>
+                        </Directory>
                         <Directory Id="X86" Name="x86">
                             <Component Id="logviewer.bin.x86" Guid="{68BA3E47-2BB8-4D0E-8A46-B861390A4548}">
                                 <File
