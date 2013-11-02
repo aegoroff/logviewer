@@ -136,7 +136,7 @@
     <value>Fatal</value>
   </data>
   <data name="FatalErrorCaption" xml:space="preserve">
-    <value>Fatal error</value>
+    <value>Фатальная ошибка</value>
   </data>
   <data name="FatalErrorMessageTemplate" xml:space="preserve">
     <value>Произошло необработанное исключение. Дамп записан в {0}</value>
