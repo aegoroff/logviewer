@@ -325,28 +325,27 @@ namespace logviewer.tests
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2000));
         }
 
-        [Test]
-        public void ReadNormalLog()
+        void ReadNormalLog(Encoding encoding)
         {
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
-            File.WriteAllText(TestPath, MessageExamples);
+            File.WriteAllText(TestPath, MessageExamples, encoding);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
         }
 
         [Test]
+        public void ReadNormalLog()
+        {
+            ReadNormalLog(Encoding.UTF8);
+        }
+
+        [Test]
         public void ReadNormalLogWin1251()
         {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
-            File.WriteAllText(TestPath, MessageExamples, Encoding.GetEncoding("windows-1251"));
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
+            ReadNormalLog(Encoding.GetEncoding("windows-1251"));
         }
 
         [Test]
