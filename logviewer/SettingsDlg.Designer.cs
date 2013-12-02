@@ -75,53 +75,37 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(3, 3);
+            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(554, 312);
-            this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.viewSettingsBox);
             this.tabPage1.Controls.Add(this.fileSettingsBox);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(546, 286);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // viewSettingsBox
             // 
             this.viewSettingsBox.Controls.Add(this.pageSizeBox);
             this.viewSettingsBox.Controls.Add(this.pageSizeLabel);
-            this.viewSettingsBox.Location = new System.Drawing.Point(8, 133);
+            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Name = "viewSettingsBox";
-            this.viewSettingsBox.Size = new System.Drawing.Size(527, 147);
-            this.viewSettingsBox.TabIndex = 1;
             this.viewSettingsBox.TabStop = false;
-            this.viewSettingsBox.Text = "View settings";
             // 
             // pageSizeBox
             // 
-            this.pageSizeBox.Location = new System.Drawing.Point(68, 31);
+            resources.ApplyResources(this.pageSizeBox, "pageSizeBox");
             this.pageSizeBox.Name = "pageSizeBox";
-            this.pageSizeBox.Size = new System.Drawing.Size(57, 20);
-            this.pageSizeBox.TabIndex = 3;
             this.pageSizeBox.TextChanged += new System.EventHandler(this.OnSetPageSize);
             this.pageSizeBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPressInNumberOnlyBox);
             // 
             // pageSizeLabel
             // 
-            this.pageSizeLabel.AutoSize = true;
-            this.pageSizeLabel.Location = new System.Drawing.Point(6, 34);
+            resources.ApplyResources(this.pageSizeLabel, "pageSizeLabel");
             this.pageSizeLabel.Name = "pageSizeLabel";
-            this.pageSizeLabel.Size = new System.Drawing.Size(56, 13);
-            this.pageSizeLabel.TabIndex = 1;
-            this.pageSizeLabel.Text = "Page size:";
             // 
             // fileSettingsBox
             // 
@@ -129,49 +113,31 @@
             this.fileSettingsBox.Controls.Add(this.keepLastNFilesBox);
             this.fileSettingsBox.Controls.Add(this.label1);
             this.fileSettingsBox.Controls.Add(this.openLastFile);
-            this.fileSettingsBox.Location = new System.Drawing.Point(8, 6);
+            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Name = "fileSettingsBox";
-            this.fileSettingsBox.Size = new System.Drawing.Size(527, 121);
-            this.fileSettingsBox.TabIndex = 0;
             this.fileSettingsBox.TabStop = false;
-            this.fileSettingsBox.Text = "File settings";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(99, 48);
+            resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "opened files";
             // 
             // keepLastNFilesBox
             // 
-            this.keepLastNFilesBox.Location = new System.Drawing.Point(63, 45);
+            resources.ApplyResources(this.keepLastNFilesBox, "keepLastNFilesBox");
             this.keepLastNFilesBox.Name = "keepLastNFilesBox";
-            this.keepLastNFilesBox.Size = new System.Drawing.Size(30, 20);
-            this.keepLastNFilesBox.TabIndex = 2;
-            this.keepLastNFilesBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.keepLastNFilesBox.TextChanged += new System.EventHandler(this.OnKeepLastNFilesChange);
             this.keepLastNFilesBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPressInNumberOnlyBox);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 48);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Keep last";
             // 
             // openLastFile
             // 
-            this.openLastFile.AutoSize = true;
-            this.openLastFile.Location = new System.Drawing.Point(6, 19);
+            resources.ApplyResources(this.openLastFile, "openLastFile");
             this.openLastFile.Name = "openLastFile";
-            this.openLastFile.Size = new System.Drawing.Size(87, 17);
-            this.openLastFile.TabIndex = 0;
-            this.openLastFile.Text = "Open last file";
             this.openLastFile.UseVisualStyleBackColor = true;
             this.openLastFile.CheckedChanged += new System.EventHandler(this.OnCheckLastOpenedFileOption);
             // 
@@ -179,43 +145,28 @@
             // 
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
             this.tabPage2.Controls.Add(this.logLevelsBox);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(546, 286);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Templates";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // commonTemplatesBox
             // 
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
-            this.commonTemplatesBox.Location = new System.Drawing.Point(8, 6);
+            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Name = "commonTemplatesBox";
-            this.commonTemplatesBox.Size = new System.Drawing.Size(531, 65);
-            this.commonTemplatesBox.TabIndex = 1;
             this.commonTemplatesBox.TabStop = false;
-            this.commonTemplatesBox.Text = "Common";
             // 
             // messageStartPatternBox
             // 
-            this.messageStartPatternBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.messageStartPatternBox.Location = new System.Drawing.Point(124, 25);
+            resources.ApplyResources(this.messageStartPatternBox, "messageStartPatternBox");
             this.messageStartPatternBox.Name = "messageStartPatternBox";
-            this.messageStartPatternBox.Size = new System.Drawing.Size(393, 20);
-            this.messageStartPatternBox.TabIndex = 1;
             this.messageStartPatternBox.TextChanged += new System.EventHandler(this.OnSetMessageStartPattern);
             // 
             // messageStartPatternLabel
             // 
-            this.messageStartPatternLabel.AutoSize = true;
-            this.messageStartPatternLabel.Location = new System.Drawing.Point(6, 28);
+            resources.ApplyResources(this.messageStartPatternLabel, "messageStartPatternLabel");
             this.messageStartPatternLabel.Name = "messageStartPatternLabel";
-            this.messageStartPatternLabel.Size = new System.Drawing.Size(112, 13);
-            this.messageStartPatternLabel.TabIndex = 0;
-            this.messageStartPatternLabel.Text = "Message start pattern:";
-            this.messageStartPatternLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // logLevelsBox
             // 
@@ -231,184 +182,112 @@
             this.logLevelsBox.Controls.Add(this.traceBox);
             this.logLevelsBox.Controls.Add(this.debugLabel);
             this.logLevelsBox.Controls.Add(this.traceLabel);
-            this.logLevelsBox.Location = new System.Drawing.Point(8, 77);
+            resources.ApplyResources(this.logLevelsBox, "logLevelsBox");
             this.logLevelsBox.Name = "logLevelsBox";
-            this.logLevelsBox.Size = new System.Drawing.Size(531, 203);
-            this.logLevelsBox.TabIndex = 0;
             this.logLevelsBox.TabStop = false;
-            this.logLevelsBox.Text = "Log level parsing templates";
             // 
             // fatalLabel
             // 
-            this.fatalLabel.AutoSize = true;
-            this.fatalLabel.Location = new System.Drawing.Point(85, 162);
+            resources.ApplyResources(this.fatalLabel, "fatalLabel");
             this.fatalLabel.Name = "fatalLabel";
-            this.fatalLabel.Size = new System.Drawing.Size(33, 13);
-            this.fatalLabel.TabIndex = 11;
-            this.fatalLabel.Text = "Fatal:";
-            this.fatalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // fatalBox
             // 
-            this.fatalBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.fatalBox.Location = new System.Drawing.Point(124, 159);
+            resources.ApplyResources(this.fatalBox, "fatalBox");
             this.fatalBox.Name = "fatalBox";
-            this.fatalBox.Size = new System.Drawing.Size(393, 20);
-            this.fatalBox.TabIndex = 10;
             this.fatalBox.TextChanged += new System.EventHandler(this.OnSetFatalLevel);
             // 
             // errorLabel
             // 
-            this.errorLabel.AutoSize = true;
-            this.errorLabel.Location = new System.Drawing.Point(86, 136);
+            resources.ApplyResources(this.errorLabel, "errorLabel");
             this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(32, 13);
-            this.errorLabel.TabIndex = 9;
-            this.errorLabel.Text = "Error:";
-            this.errorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // errorBox
             // 
-            this.errorBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.errorBox.Location = new System.Drawing.Point(124, 133);
+            resources.ApplyResources(this.errorBox, "errorBox");
             this.errorBox.Name = "errorBox";
-            this.errorBox.Size = new System.Drawing.Size(393, 20);
-            this.errorBox.TabIndex = 8;
             this.errorBox.TextChanged += new System.EventHandler(this.OnSetErrorLevel);
             // 
             // warnLabel
             // 
-            this.warnLabel.AutoSize = true;
-            this.warnLabel.Location = new System.Drawing.Point(68, 110);
+            resources.ApplyResources(this.warnLabel, "warnLabel");
             this.warnLabel.Name = "warnLabel";
-            this.warnLabel.Size = new System.Drawing.Size(50, 13);
-            this.warnLabel.TabIndex = 7;
-            this.warnLabel.Text = "Warning:";
-            this.warnLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // warnBox
             // 
-            this.warnBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.warnBox.Location = new System.Drawing.Point(124, 107);
+            resources.ApplyResources(this.warnBox, "warnBox");
             this.warnBox.Name = "warnBox";
-            this.warnBox.Size = new System.Drawing.Size(393, 20);
-            this.warnBox.TabIndex = 6;
             this.warnBox.TextChanged += new System.EventHandler(this.OnSetWarnLevel);
             // 
             // infoLabel
             // 
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(56, 84);
+            resources.ApplyResources(this.infoLabel, "infoLabel");
             this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(62, 13);
-            this.infoLabel.TabIndex = 5;
-            this.infoLabel.Text = "Information:";
-            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // infoBox
             // 
-            this.infoBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.infoBox.Location = new System.Drawing.Point(124, 81);
+            resources.ApplyResources(this.infoBox, "infoBox");
             this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(393, 20);
-            this.infoBox.TabIndex = 4;
             this.infoBox.TextChanged += new System.EventHandler(this.OnSetInfoLevel);
             // 
             // debugBox
             // 
-            this.debugBox.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.debugBox.Location = new System.Drawing.Point(124, 55);
+            resources.ApplyResources(this.debugBox, "debugBox");
             this.debugBox.Name = "debugBox";
-            this.debugBox.Size = new System.Drawing.Size(393, 20);
-            this.debugBox.TabIndex = 3;
             this.debugBox.TextChanged += new System.EventHandler(this.OnSetDebugLevel);
             // 
             // traceBox
             // 
-            this.traceBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.traceBox.Location = new System.Drawing.Point(124, 28);
+            resources.ApplyResources(this.traceBox, "traceBox");
             this.traceBox.Name = "traceBox";
-            this.traceBox.Size = new System.Drawing.Size(393, 20);
-            this.traceBox.TabIndex = 2;
             this.traceBox.TextChanged += new System.EventHandler(this.OnSetTraceLevel);
             // 
             // debugLabel
             // 
-            this.debugLabel.AutoSize = true;
-            this.debugLabel.Location = new System.Drawing.Point(76, 58);
+            resources.ApplyResources(this.debugLabel, "debugLabel");
             this.debugLabel.Name = "debugLabel";
-            this.debugLabel.Size = new System.Drawing.Size(42, 13);
-            this.debugLabel.TabIndex = 1;
-            this.debugLabel.Text = "Debug:";
-            this.debugLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // traceLabel
             // 
-            this.traceLabel.AutoSize = true;
-            this.traceLabel.Location = new System.Drawing.Point(80, 31);
+            resources.ApplyResources(this.traceLabel, "traceLabel");
             this.traceLabel.Name = "traceLabel";
-            this.traceLabel.Size = new System.Drawing.Size(38, 13);
-            this.traceLabel.TabIndex = 0;
-            this.traceLabel.Text = "Trace:";
-            this.traceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(560, 353);
-            this.tableLayoutPanel1.TabIndex = 1;
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.closeButton);
             this.flowLayoutPanel1.Controls.Add(this.saveButton);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 321);
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(554, 29);
-            this.flowLayoutPanel1.TabIndex = 1;
             // 
             // closeButton
             // 
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(476, 3);
+            resources.ApplyResources(this.closeButton, "closeButton");
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
-            this.closeButton.TabIndex = 1;
-            this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(395, 3);
+            resources.ApplyResources(this.saveButton, "saveButton");
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 0;
-            this.saveButton.Text = "Save";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.OnSave);
             // 
             // SettingsDlg
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(560, 353);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsDlg";
-            this.Text = "Settings";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnClosed);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
