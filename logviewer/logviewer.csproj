@@ -88,6 +88,9 @@
     <EmbeddedResource Include="AboutDlg.resx">
       <DependentUpon>AboutDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AboutDlg.ru.resx">
+      <DependentUpon>AboutDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainDlg.resx">
       <DependentUpon>MainDlg.cs</DependentUpon>
     </EmbeddedResource>
