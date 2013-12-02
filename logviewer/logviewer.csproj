@@ -105,6 +105,9 @@
     <EmbeddedResource Include="StatisticDlg.resx">
       <DependentUpon>StatisticDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="StatisticDlg.ru.resx">
+      <DependentUpon>StatisticDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
