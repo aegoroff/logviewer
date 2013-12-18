@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 14.10.2013
+// © 2012-2013 Alexander Egorov
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
