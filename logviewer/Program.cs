@@ -3,6 +3,8 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
+using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
 using Ninject;
 
@@ -18,6 +20,7 @@ namespace logviewer
         [STAThread]
         private static void Main()
         {
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             Kernel = new StandardKernel(new LogviewerModule());
