@@ -11,7 +11,7 @@
 		<Configuration>Release</Configuration>
 
         <!-- NUnit working path  -->
-        <NUnitPath>C:\Program Files (x86)\NUnit 2.6.1\bin</NUnitPath>
+        <NUnitPath>C:\Program Files (x86)\NUnit 2.6.3\bin</NUnitPath>
 
         <!-- Managed unit tests report  -->
         <ManagedTestsReport>ManagedTests.xml</ManagedTestsReport>
