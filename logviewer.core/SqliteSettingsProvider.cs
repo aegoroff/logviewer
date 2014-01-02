@@ -187,24 +187,23 @@ namespace logviewer.core
                     ";
 
             var result = new ParsingTemplate { Index = index };
-            this.RunSqlQuery(delegate(IDbCommand command)
+
+            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Ix", index);
+            
+            Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
-                DatabaseConnection.AddParameter(command, "@Ix", index);
-                var rdr = command.ExecuteReader();
-                using (rdr)
-                {
-                    while (rdr.Read())
-                    {
-                        result.Trace = rdr[0] as string;
-                        result.Debug = rdr[1] as string;
-                        result.Info = rdr[2] as string;
-                        result.Warn = rdr[3] as string;
-                        result.Error = rdr[4] as string;
-                        result.Fatal = rdr[5] as string;
-                        result.StartMessage = rdr[6] as string;
-                    }
-                }
-            }, Cmd);
+                result.Trace = rdr[0] as string;
+                result.Debug = rdr[1] as string;
+                result.Info = rdr[2] as string;
+                result.Warn = rdr[3] as string;
+                result.Error = rdr[4] as string;
+                result.Fatal = rdr[5] as string;
+                result.StartMessage = rdr[6] as string;
+            };
+
+            Action<DatabaseConnection> action = connection => connection.RunSqlQuery(onRead, Cmd, beforeRead);
+            ExecuteQuery(action);
+
             return result;
         }
 
@@ -264,11 +263,6 @@ namespace logviewer.core
         private void ExecuteNonQuery(params string[] queries)
         {
             ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
-        }
-
-        private void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
-        {
-            ExecuteQuery(connection => connection.RunSqlQuery(action, commands));
         }
 
         private T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
@@ -416,20 +410,22 @@ namespace logviewer.core
             const string Cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
             var result = default(T);
             var read = false;
-            this.RunSqlQuery(delegate(IDbCommand command)
+
+            Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
-                DatabaseConnection.AddParameter(command, "@Option", option);
-                var rdr = command.ExecuteReader();
-                using (rdr)
+                if (rdr[0] is DBNull)
                 {
-                    while (rdr.Read())
-                    {
-                        if (rdr[0] is DBNull) continue;
-                        result = (T)rdr[0];
-                        read = true;
-                    }
+                    return;
                 }
-            }, string.Format(Cmd, table));
+                result = (T)rdr[0];
+                read = true;
+            };
+
+            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Option", option);
+            Action<DatabaseConnection> action = connection => connection.RunSqlQuery(onRead, string.Format(Cmd, table), beforeRead);
+            ExecuteQuery(action);
+
+
             if (read)
             {
                 return result;

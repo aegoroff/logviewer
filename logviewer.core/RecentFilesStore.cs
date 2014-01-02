@@ -90,34 +90,18 @@ namespace logviewer.core
         public IEnumerable<string> ReadFiles()
         {
             var result = new List<string>(maxFiles);
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
-            {
-                var rdr = command.ExecuteReader();
-                using (rdr)
-                {
-                    while (rdr.Read())
-                    {
-                        result.Add(rdr[0] as string);
-                    }
-                }
-            }, @"SELECT Path FROM RecentFiles ORDER BY OpenedAt DESC");
+            this.connection.RunSqlQuery(reader => result.Add(reader[0] as string), @"SELECT Path FROM RecentFiles ORDER BY OpenedAt DESC");
             return result;
         }
         
         public string ReadLastOpenedFile()
         {
             var result = string.Empty;
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<IDataReader> onRead = delegate(IDataReader reader)
             {
-                var rdr = command.ExecuteReader();
-                using (rdr)
-                {
-                    while (rdr.Read())
-                    {
-                        result = rdr[0] as string;
-                    }
-                }
-            }, @"SELECT Path FROM RecentFiles ORDER BY OpenedAt DESC LIMIT 1");
+                result = reader[0] as string;
+            };
+            this.connection.RunSqlQuery(onRead, @"SELECT Path FROM RecentFiles ORDER BY OpenedAt DESC LIMIT 1");
             return result;
         }
 

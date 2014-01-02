@@ -92,6 +92,25 @@ namespace logviewer.core
             });
         }
 
+        internal void RunSqlQuery(Action<IDataReader> onRead, string query, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
+        {
+            this.RunSqlQuery(delegate(IDbCommand command)
+            {
+                if (beforeRead != null)
+                {
+                    beforeRead(command);
+                }
+                var rdr = command.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read() && (notCancelled == null || notCancelled()))
+                    {
+                        onRead(rdr);
+                    }
+                }
+            }, query);
+        }
+
         private void ExecuteInCreationContext(Action method)
         {
             this.creationContext.Send(o => method(), null);

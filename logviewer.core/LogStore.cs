@@ -125,19 +125,13 @@ namespace logviewer.core
             var query = string.Format("SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,
                 where);
-            this.connection.RunSqlQuery(delegate(IDbCommand command)
+            Action<IDbCommand> beforeRead = command => AddParameters(command, min, max, filter, useRegexp);
+            Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
-                AddParameters(command, min, max, filter, useRegexp);
-                var rdr = command.ExecuteReader();
-                using (rdr)
-                {
-                    while (rdr.Read() && notCancelled())
-                    {
-                        var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel)((long)rdr[2]));
-                        onReadMessage(msg);
-                    }
-                }
-            }, query);
+                var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel) ((long) rdr[2]));
+                onReadMessage(msg);
+            };
+            this.connection.RunSqlQuery(onRead, query, beforeRead, notCancelled);
         }
 
         public long CountMessages(
