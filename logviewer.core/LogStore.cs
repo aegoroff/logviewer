@@ -131,7 +131,7 @@ namespace logviewer.core
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel) ((long) rdr[2]));
                 onReadMessage(msg);
             };
-            this.connection.RunSqlQuery(onRead, query, beforeRead, notCancelled);
+            this.connection.ExecuteReader(onRead, query, beforeRead, notCancelled);
         }
 
         public long CountMessages(

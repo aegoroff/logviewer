@@ -201,7 +201,7 @@ namespace logviewer.core
                 result.StartMessage = rdr[6] as string;
             };
 
-            Action<DatabaseConnection> action = connection => connection.RunSqlQuery(onRead, Cmd, beforeRead);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, Cmd, beforeRead);
             ExecuteQuery(action);
 
             return result;
@@ -422,7 +422,7 @@ namespace logviewer.core
             };
 
             Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Option", option);
-            Action<DatabaseConnection> action = connection => connection.RunSqlQuery(onRead, string.Format(Cmd, table), beforeRead);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(Cmd, table), beforeRead);
             ExecuteQuery(action);
 
 
