@@ -112,13 +112,11 @@ namespace logviewer.core
                         var speed = read / elapsed.TotalSeconds;
                         stopWatch.Restart();
                         ++signalCounter;
-                        var remain = Math.Abs(speed) < 0.001
-                            ? TimeSpan.FromSeconds(0)
-                            : TimeSpan.FromSeconds((total - stream.Position) / speed);
+                        var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position) / speed;
                         var progress = new LoadProgress
                         {
                             Speed = new FileSize((ulong)speed, true),
-                            Remainig = remain,
+                            Remainig = TimeSpan.FromSeconds(remain),
                             Percent = (int)((stream.Position / (double)total) * 100)
                         };
                         this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
