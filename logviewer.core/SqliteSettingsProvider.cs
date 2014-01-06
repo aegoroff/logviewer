@@ -404,7 +404,6 @@ namespace logviewer.core
             return (int)this.ReadOption<long>("IntegerOptions", option, defaultValue);
         }
 
-
         private T ReadOption<T>(string table, string option, T defaultValue = default(T))
         {
             const string Cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
