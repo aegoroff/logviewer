@@ -347,6 +347,10 @@ namespace logviewer.core
             }
 
             this.currentPath = reader.LogPath;
+            if (this.currentPath == null)
+            {
+                return;
+            }
             this.RunOnGuiThread(this.SetLogSize);
             this.RunOnGuiThread(this.ResetLogStatistic);
 
