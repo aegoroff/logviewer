@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Win32;
 
 namespace logviewer.core
@@ -39,6 +38,7 @@ namespace logviewer.core
         private readonly int defaultKeepLastNFiles;
         private readonly int defaultPageSize;
         private readonly string settingsDatabaseFilePath;
+        private readonly IEnumerable<string> levels;
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
             IEnumerable<string> defaultLeveles,
@@ -49,6 +49,8 @@ namespace logviewer.core
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
+            this.levels = ReadLevels();
+
             this.CreateTables();
             this.MigrateFromRegistry();
             var template = this.ReadParsingTemplate();
@@ -56,17 +58,17 @@ namespace logviewer.core
             {
                 return;
             }
-            var levels = defaultLeveles.ToArray();
+            var defLevels = defaultLeveles.ToArray();
             var defaultTemplate = new ParsingTemplate
             {
                 Index = DefaultParsingProfileIndex,
                 StartMessage = defaultStartMessageTemplate,
-                Trace = levels[(int)LogLevel.Trace],
-                Debug = levels[(int)LogLevel.Debug],
-                Info = levels[(int)LogLevel.Info],
-                Warn = levels[(int)LogLevel.Warn],
-                Error = levels[(int)LogLevel.Error],
-                Fatal = levels[(int)LogLevel.Fatal]
+                Trace = defLevels[(int)LogLevel.Trace],
+                Debug = defLevels[(int)LogLevel.Debug],
+                Info = defLevels[(int)LogLevel.Info],
+                Warn = defLevels[(int)LogLevel.Warn],
+                Error = defLevels[(int)LogLevel.Error],
+                Fatal = defLevels[(int)LogLevel.Fatal]
             };
             this.InsertParsingProfile(defaultTemplate);
         }
@@ -148,7 +150,6 @@ namespace logviewer.core
 
         public void UpdateParsingProfile(ParsingTemplate template)
         {
-            var levels = ReadLevels();
             var levelsSet = string.Join(",", from string member in levels select string.Format("{0} = @{0}", member));
 
             const string Cmd = @"
@@ -178,7 +179,6 @@ namespace logviewer.core
 
         public ParsingTemplate ReadParsingTemplate(int index)
         {
-            var levels = ReadLevels();
             var levelsGet = string.Join(",", from level in levels select level);
             
             const string Cmd = @"
@@ -250,19 +250,16 @@ namespace logviewer.core
             var stringOptions = string.Format(OptionsTableTemplate, "StringOptions", "TEXT");
             var integerOptions = string.Format(OptionsTableTemplate, "IntegerOptions", "INTEGER");
             var booleanOptions = string.Format(OptionsTableTemplate, "BooleanOptions", "BOOLEAN");
+
+            var levelsCreate = string.Join(",", from string member in levels select string.Format("{0} TEXT NOT NULL", member));
             const string ParsingTemplates = @"
                         CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
                                  StartMessage TEXT NOT NULL,
-                                 Trace TEXT NOT NULL,
-                                 Debug TEXT NOT NULL,
-                                 Info TEXT NOT NULL,
-                                 Warn TEXT NOT NULL,
-                                 Error TEXT NOT NULL,
-                                 Fatal TEXT NOT NULL
+                                 {0}
                         );
                     ";
-            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, ParsingTemplates);
+            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(ParsingTemplates, levelsCreate));
         }
 
         private void ExecuteNonQuery(params string[] queries)
