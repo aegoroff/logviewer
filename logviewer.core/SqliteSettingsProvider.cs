@@ -458,16 +458,20 @@ namespace logviewer.core
             return Registry.CurrentUser.OpenSubKey(key, true) ?? Registry.CurrentUser.CreateSubKey(key);
         }
 
+        private static T GetValue<T>(RegistryKey rk, string key, T defaultValue = default(T))
+        {
+            var obj = rk.GetValue(key);
+            return obj is T ? (T)obj : defaultValue;
+        }
+
         private static string GetStringValue(RegistryKey rk, string key)
         {
-            var result = rk.GetValue(key) as string;
-            return result ?? string.Empty;
+            return GetValue(rk, key, string.Empty);
         }
 
         private static int GetIntValue(RegistryKey rk, string key)
         {
-            var obj = rk.GetValue(key);
-            return obj == null ? 0 : (int)obj;
+            return GetValue(rk, key, 0);
         }
 
         private static string GetStringValue(string key)
