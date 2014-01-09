@@ -11,11 +11,23 @@ namespace logviewer.core
     {
         public int Index { get; set; }
         public string StartMessage { get; set; }
+        
+        [Column("Trace")]
         public string Trace { get; set; }
+        
+        [Column("Debug")]
         public string Debug { get; set; }
+        
+        [Column("Info")]
         public string Info { get; set; }
+
+        [Column("Warn")]
         public string Warn { get; set; }
+
+        [Column("Error")]
         public string Error { get; set; }
+
+        [Column("Fatal")]
         public string Fatal { get; set; }
 
         public IEnumerable<string> Levels

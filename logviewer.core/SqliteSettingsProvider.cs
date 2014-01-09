@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace logviewer.core
@@ -147,21 +148,27 @@ namespace logviewer.core
 
         public void UpdateParsingProfile(ParsingTemplate template)
         {
+            var levels = ReadLevels();
+            var levelsSet = string.Join(",", from string member in levels select string.Format("{0} = @{0}", member));
+
             const string Cmd = @"
                     UPDATE
                         ParsingTemplates
                     SET
-                        StartMessage = @StartMessage,
-                        Trace = @Trace,
-                        Debug = @Debug,
-                        Info = @Info,
-                        Warn = @Warn,
-                        Error = @Error,
-                        Fatal = @Fatal
+                        StartMessage = @StartMessage, {0}
                     WHERE
                         Ix = @Ix
                     ";
-            this.ExecuteNonQuery(Cmd, command => AddParsingTemplateIntoCommand(command, template));
+            this.ExecuteNonQuery(string.Format(Cmd, levelsSet), command => AddParsingTemplateIntoCommand(command, template));
+        }
+
+        private static IEnumerable<string> ReadLevels()
+        {
+            var levels =
+                from m in typeof (ParsingTemplate).GetProperties()
+                where m.IsDefined(typeof (ColumnAttribute), false)
+                select m.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
+            return from ColumnAttribute column in levels select column.Name;
         }
 
         public ParsingTemplate ReadParsingTemplate()
@@ -171,14 +178,12 @@ namespace logviewer.core
 
         public ParsingTemplate ReadParsingTemplate(int index)
         {
+            var levels = ReadLevels();
+            var levelsGet = string.Join(",", from level in levels select level);
+            
             const string Cmd = @"
                     SELECT
-                        Trace,
-                        Debug,
-                        Info,
-                        Warn,
-                        Error,
-                        Fatal,
+                        {0},
                         StartMessage
                     FROM
                         ParsingTemplates
@@ -201,7 +206,7 @@ namespace logviewer.core
                 result.StartMessage = rdr[6] as string;
             };
 
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, Cmd, beforeRead);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(Cmd, levelsGet), beforeRead);
             ExecuteQuery(action);
 
             return result;
