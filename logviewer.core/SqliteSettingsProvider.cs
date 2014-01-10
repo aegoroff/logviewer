@@ -39,7 +39,7 @@ namespace logviewer.core
         private readonly int defaultKeepLastNFiles;
         private readonly int defaultPageSize;
         private readonly string settingsDatabaseFilePath;
-        private readonly IEnumerable<string> levels;
+        private readonly IEnumerable<string> parsingTemplatePropertiesNames;
         private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
@@ -52,7 +52,7 @@ namespace logviewer.core
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
-            this.levels = this.parsingTemplateProperties.Select(propertyInfo => GetColumnAttribute(propertyInfo).Name).ToArray();
+            this.parsingTemplatePropertiesNames = this.parsingTemplateProperties.Select(info => GetColumnAttribute(info).Name).ToArray();
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -153,7 +153,7 @@ namespace logviewer.core
 
         public void UpdateParsingProfile(ParsingTemplate template)
         {
-            var levelsSet = string.Join(",", from string member in levels select string.Format("{0} = @{0}", member));
+            var propertiesSet = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
 
             const string Cmd = @"
                     UPDATE
@@ -163,7 +163,7 @@ namespace logviewer.core
                     WHERE
                         Ix = @Ix
                     ";
-            this.ExecuteNonQuery(string.Format(Cmd, levelsSet), command => AddParsingTemplateIntoCommand(command, template));
+            this.ExecuteNonQuery(string.Format(Cmd, propertiesSet), command => AddParsingTemplateIntoCommand(command, template));
         }
 
         private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
@@ -181,7 +181,7 @@ namespace logviewer.core
 
         public ParsingTemplate ReadParsingTemplate(int index)
         {
-            var levelsGet = string.Join(",", from level in levels select level);
+            var propertiesGet = string.Join(",", from level in parsingTemplatePropertiesNames select level);
             
             const string Cmd = @"
                     SELECT
@@ -205,7 +205,8 @@ namespace logviewer.core
                 }
             };
 
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(Cmd, levelsGet), beforeRead);
+            var query = string.Format(Cmd, propertiesGet);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, query, beforeRead);
             ExecuteQuery(action);
 
             return result;
@@ -218,8 +219,8 @@ namespace logviewer.core
 
         public void InsertParsingProfile(ParsingTemplate template)
         {
-            var levelColumns = string.Join(",", from level in levels select level);
-            var levelParams = string.Join(",", from level in levels select "@" + level);
+            var propertiesColumns = string.Join(",", from level in parsingTemplatePropertiesNames select level);
+            var propertiesParams = string.Join(",", from level in parsingTemplatePropertiesNames select "@" + level);
             
             const string Cmd = @"
                     INSERT INTO ParsingTemplates (
@@ -230,7 +231,7 @@ namespace logviewer.core
                         @Ix,
                         {1}
                     )";
-            var query = string.Format(Cmd, levelColumns, levelParams);
+            var query = string.Format(Cmd, propertiesColumns, propertiesParams);
             this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
         }
 
@@ -247,14 +248,14 @@ namespace logviewer.core
             var integerOptions = string.Format(OptionsTableTemplate, "IntegerOptions", "INTEGER");
             var booleanOptions = string.Format(OptionsTableTemplate, "BooleanOptions", "BOOLEAN");
 
-            var levelsCreate = string.Join(",", from string member in levels select string.Format("{0} TEXT NOT NULL", member));
+            var propertiesCreate = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} TEXT NOT NULL", member));
             const string ParsingTemplates = @"
                         CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
                                  {0}
                         );
                     ";
-            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(ParsingTemplates, levelsCreate));
+            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(ParsingTemplates, propertiesCreate));
         }
 
         private void ExecuteNonQuery(params string[] queries)
