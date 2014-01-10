@@ -11,22 +11,22 @@ namespace logviewer.core
     {
         public int Index { get; set; }
         
-        [Column("Trace")]
+        [Column("Trace", (int)LogLevel.Trace)]
         public string Trace { get; set; }
-        
-        [Column("Debug")]
+
+        [Column("Debug", (int)LogLevel.Debug)]
         public string Debug { get; set; }
-        
-        [Column("Info")]
+
+        [Column("Info", (int)LogLevel.Info)]
         public string Info { get; set; }
 
-        [Column("Warn")]
+        [Column("Warn", (int)LogLevel.Warn)]
         public string Warn { get; set; }
 
-        [Column("Error")]
+        [Column("Error", (int)LogLevel.Error)]
         public string Error { get; set; }
 
-        [Column("Fatal")]
+        [Column("Fatal", (int)LogLevel.Fatal)]
         public string Fatal { get; set; }
 
         [Column("StartMessage")]
