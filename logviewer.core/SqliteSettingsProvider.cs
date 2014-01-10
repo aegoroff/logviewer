@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace logviewer.core
@@ -39,6 +40,7 @@ namespace logviewer.core
         private readonly int defaultPageSize;
         private readonly string settingsDatabaseFilePath;
         private readonly IEnumerable<string> levels;
+        private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
             IEnumerable<string> defaultLeveles,
@@ -49,7 +51,8 @@ namespace logviewer.core
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
-            this.levels = ReadLevels();
+            this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
+            this.levels = this.parsingTemplateProperties.Select(propertyInfo => GetColumnAttribute(propertyInfo).Name).ToArray();
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -156,20 +159,19 @@ namespace logviewer.core
                     UPDATE
                         ParsingTemplates
                     SET
-                        StartMessage = @StartMessage, {0}
+                        {0}
                     WHERE
                         Ix = @Ix
                     ";
             this.ExecuteNonQuery(string.Format(Cmd, levelsSet), command => AddParsingTemplateIntoCommand(command, template));
         }
 
-        private static IEnumerable<string> ReadLevels()
+        private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
         {
-            var levels =
-                from m in typeof (ParsingTemplate).GetProperties()
-                where m.IsDefined(typeof (ColumnAttribute), false)
-                select m.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
-            return from ColumnAttribute column in levels select column.Name;
+            return 
+                from info in typeof(ParsingTemplate).GetProperties()
+                where info.IsDefined(typeof(ColumnAttribute), false)
+                select info;
         }
 
         public ParsingTemplate ReadParsingTemplate()
@@ -183,8 +185,7 @@ namespace logviewer.core
             
             const string Cmd = @"
                     SELECT
-                        {0},
-                        StartMessage
+                        {0}
                     FROM
                         ParsingTemplates
                     WHERE
@@ -194,16 +195,14 @@ namespace logviewer.core
             var result = new ParsingTemplate { Index = index };
 
             Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Ix", index);
-            
+           
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
-                result.Trace = rdr[0] as string;
-                result.Debug = rdr[1] as string;
-                result.Info = rdr[2] as string;
-                result.Warn = rdr[3] as string;
-                result.Error = rdr[4] as string;
-                result.Fatal = rdr[5] as string;
-                result.StartMessage = rdr[6] as string;
+                foreach (var column in parsingTemplateProperties)
+                {
+                    var attr = GetColumnAttribute(column);
+                    column.SetValue(result, rdr[attr.Name], null);
+                }
             };
 
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(Cmd, levelsGet), beforeRead);
@@ -212,30 +211,27 @@ namespace logviewer.core
             return result;
         }
 
+        private static ColumnAttribute GetColumnAttribute(PropertyInfo column)
+        {
+            return (ColumnAttribute) column.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
+        }
+
         public void InsertParsingProfile(ParsingTemplate template)
         {
+            var levelColumns = string.Join(",", from level in levels select level);
+            var levelParams = string.Join(",", from level in levels select "@" + level);
+            
             const string Cmd = @"
                     INSERT INTO ParsingTemplates (
                         Ix, 
-                        StartMessage,
-                        Trace,
-                        Debug,
-                        Info,
-                        Warn,
-                        Error,
-                        Fatal
+                        {0}
                     )
                     VALUES (
                         @Ix,
-                        @StartMessage,
-                        @Trace,
-                        @Debug,
-                        @Info,
-                        @Warn,
-                        @Error,
-                        @Fatal
+                        {1}
                     )";
-            this.ExecuteNonQuery(Cmd, command => AddParsingTemplateIntoCommand(command, template));
+            var query = string.Format(Cmd, levelColumns, levelParams);
+            this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
         }
 
         private void CreateTables()
@@ -255,7 +251,6 @@ namespace logviewer.core
             const string ParsingTemplates = @"
                         CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
-                                 StartMessage TEXT NOT NULL,
                                  {0}
                         );
                     ";
@@ -436,18 +431,18 @@ namespace logviewer.core
             return result;
         }
 
-        private static void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
+        private void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
         {
             Action<string, object> action = (name, value) => DatabaseConnection.AddParameter(command, name, value);
 
             action("@Ix", template.Index);
-            action("@StartMessage", template.StartMessage);
-            action("@Trace", template.Trace);
-            action("@Debug", template.Debug);
-            action("@Info", template.Info);
-            action("@Warn", template.Warn);
-            action("@Error", template.Error);
-            action("@Fatal", template.Fatal);
+
+            foreach (var column in parsingTemplateProperties)
+            {
+                var value = column.GetValue(template, null);
+                var attr = GetColumnAttribute(column);
+                action("@" + attr.Name, value);
+            }
         }
 
         /// <summary>

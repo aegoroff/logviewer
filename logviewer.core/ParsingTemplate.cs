@@ -10,7 +10,6 @@ namespace logviewer.core
     public class ParsingTemplate
     {
         public int Index { get; set; }
-        public string StartMessage { get; set; }
         
         [Column("Trace")]
         public string Trace { get; set; }
@@ -29,6 +28,9 @@ namespace logviewer.core
 
         [Column("Fatal")]
         public string Fatal { get; set; }
+
+        [Column("StartMessage")]
+        public string StartMessage { get; set; }
 
         public IEnumerable<string> Levels
         {
