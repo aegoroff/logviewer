@@ -70,6 +70,7 @@
     <Compile Include="ISettingsView.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
+    <Compile Include="LogLevelAttribute.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />

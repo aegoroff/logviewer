@@ -10,23 +10,29 @@ namespace logviewer.core
     public class ParsingTemplate
     {
         public int Index { get; set; }
-        
-        [Column("Trace", (int)LogLevel.Trace)]
+
+        [Column("Trace")]
+        [LogLevel(LogLevel.Trace)]
         public string Trace { get; set; }
 
-        [Column("Debug", (int)LogLevel.Debug)]
+        [Column("Debug")]
+        [LogLevel(LogLevel.Debug)]
         public string Debug { get; set; }
 
-        [Column("Info", (int)LogLevel.Info)]
+        [Column("Info")]
+        [LogLevel(LogLevel.Info)]
         public string Info { get; set; }
 
-        [Column("Warn", (int)LogLevel.Warn)]
+        [Column("Warn")]
+        [LogLevel(LogLevel.Warn)]
         public string Warn { get; set; }
 
-        [Column("Error", (int)LogLevel.Error)]
+        [Column("Error")]
+        [LogLevel(LogLevel.Error)]
         public string Error { get; set; }
 
-        [Column("Fatal", (int)LogLevel.Fatal)]
+        [Column("Fatal")]
+        [LogLevel(LogLevel.Fatal)]
         public string Fatal { get; set; }
 
         [Column("StartMessage")]
@@ -36,12 +42,12 @@ namespace logviewer.core
         {
             get
             {
-                yield return Trace;
-                yield return Debug;
-                yield return Info;
-                yield return Warn;
-                yield return Error;
-                yield return Fatal;
+                yield return this.Trace;
+                yield return this.Debug;
+                yield return this.Info;
+                yield return this.Warn;
+                yield return this.Error;
+                yield return this.Fatal;
             }
         }
 

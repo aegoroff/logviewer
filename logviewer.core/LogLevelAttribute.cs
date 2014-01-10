@@ -2,18 +2,18 @@
 // Created at: 10.01.2014
 // © 2012-2014 Alexander Egorov
 
+
 using System;
 
 namespace logviewer.core
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class ColumnAttribute : Attribute
+    public class LogLevelAttribute : Attribute
     {
-        public ColumnAttribute(string name)
+        public LogLevelAttribute(LogLevel level)
         {
-            this.Name = name;
+            this.Level = level;
         }
-
-        public string Name { get; private set; }
+        public LogLevel Level { get; private set; }
     }
 }

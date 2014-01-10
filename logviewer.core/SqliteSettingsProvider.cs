@@ -67,14 +67,12 @@ namespace logviewer.core
                 Index = DefaultParsingProfileIndex,
                 StartMessage = defaultStartMessageTemplate
             };
-            foreach (var info in this.parsingTemplateProperties)
+            foreach (var info in from info in typeof(ParsingTemplate).GetProperties()
+                                 where info.IsDefined(typeof(LogLevelAttribute), false)
+                                 select info)
             {
-                var ix = GetColumnAttribute(info).LogLevel;
-                if (ix < 0)
-                {
-                    continue;
-                }
-                info.SetValue(defaultTemplate, defLevels[ix], null);
+                var attr = (LogLevelAttribute)info.GetCustomAttributes(typeof(LogLevelAttribute), false)[0];
+                info.SetValue(defaultTemplate, defLevels[(int)attr.Level], null);
             }
 
             this.InsertParsingProfile(defaultTemplate);
