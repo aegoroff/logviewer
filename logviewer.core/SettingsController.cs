@@ -5,7 +5,6 @@
 
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -89,13 +88,7 @@ namespace logviewer.core
 
         public void UpdateLevel(string value, LogLevel level)
         {
-            foreach (var property in from attribute in (from property in typeof(ParsingTemplate).GetProperties()
-                where property.IsDefined(typeof(LogLevelAttribute), false)
-                select property) let attr = (LogLevelAttribute)attribute.GetCustomAttributes(typeof(LogLevelAttribute), false)[0] where attr.Level == level select attribute)
-            {
-                property.SetValue(this.template, value, null);
-            }
-            
+            this.template.UpdateLevelProperty(value, level);
             this.view.EnableSave(true);
         }
     }

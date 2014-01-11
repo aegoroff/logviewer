@@ -51,6 +51,20 @@ namespace logviewer.core
             }
         }
 
+        public void UpdateLevelProperty(string value, LogLevel level)
+        {
+            foreach (var property in from attribute in
+                                         (from property in typeof(ParsingTemplate).GetProperties()
+                                          where property.IsDefined(typeof(LogLevelAttribute), false)
+                                          select property)
+                                     let attr = (LogLevelAttribute)attribute.GetCustomAttributes(typeof(LogLevelAttribute), false)[0]
+                                     where attr.Level == level
+                                     select attribute)
+            {
+                property.SetValue(this, value, null);
+            }
+        }
+
         public bool IsEmpty
         {
             get { return this.StartMessage == null || this.Levels.Any(l => l == null); }
