@@ -5,6 +5,7 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -86,39 +87,15 @@ namespace logviewer.core
             this.view.EnableSave(true);
         }
 
-        public void UpdateTraceLevel(string value)
+        public void UpdateLevel(string value, LogLevel level)
         {
-            this.template.Trace = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateDebugLevel(string value)
-        {
-            this.template.Debug = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateInfoLevel(string value)
-        {
-            this.template.Info = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateWarnLevel(string value)
-        {
-            this.template.Warn = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateErrorLevel(string value)
-        {
-            this.template.Error = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateFatalLevel(string value)
-        {
-            this.template.Fatal = value;
+            foreach (var info in from info in (from info in typeof(ParsingTemplate).GetProperties()
+                where info.IsDefined(typeof(LogLevelAttribute), false)
+                select info) let attr = (LogLevelAttribute)info.GetCustomAttributes(typeof(LogLevelAttribute), false)[0] where attr.Level == level select info)
+            {
+                info.SetValue(this.template, value, null);
+            }
+            
             this.view.EnableSave(true);
         }
     }

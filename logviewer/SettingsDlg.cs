@@ -71,32 +71,32 @@ namespace logviewer
 
         private void OnSetTraceLevel(object sender, EventArgs e)
         {
-            this.controller.UpdateTraceLevel(this.traceBox.Text);
+            this.controller.UpdateLevel(this.traceBox.Text, LogLevel.Trace);
         }
 
         private void OnSetDebugLevel(object sender, EventArgs e)
         {
-            this.controller.UpdateDebugLevel(this.debugBox.Text);
+            this.controller.UpdateLevel(this.debugBox.Text, LogLevel.Debug);
         }
 
         private void OnSetInfoLevel(object sender, EventArgs e)
         {
-            this.controller.UpdateInfoLevel(this.infoBox.Text);
+            this.controller.UpdateLevel(this.infoBox.Text, LogLevel.Info);
         }
 
         private void OnSetWarnLevel(object sender, EventArgs e)
         {
-            this.controller.UpdateWarnLevel(this.warnBox.Text);
+            this.controller.UpdateLevel(this.warnBox.Text, LogLevel.Warn);
         }
 
         private void OnSetErrorLevel(object sender, EventArgs e)
         {
-            this.controller.UpdateErrorLevel(this.errorBox.Text);
+            this.controller.UpdateLevel(this.errorBox.Text, LogLevel.Error);
         }
 
         private void OnSetFatalLevel(object sender, EventArgs e)
         {
-            this.controller.UpdateFatalLevel(this.fatalBox.Text);
+            this.controller.UpdateLevel(this.fatalBox.Text, LogLevel.Fatal);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)
