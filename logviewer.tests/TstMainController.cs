@@ -37,7 +37,7 @@ namespace logviewer.tests
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
 
-            var template = ParsingTemplate(levels);
+            var template = ParsingTemplate(Levels);
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
             this.controller = new MainController(this.settings.MockObject);
@@ -114,7 +114,7 @@ namespace logviewer.tests
 
         #endregion
 
-        private readonly string[] levels =
+        internal static readonly string[] Levels =
         {
             "TRACE",
             "DEBUG",
@@ -134,7 +134,7 @@ namespace logviewer.tests
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        private const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
+        internal const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
 
         [Test]
         public void AllFilters()
