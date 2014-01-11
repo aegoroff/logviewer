@@ -48,17 +48,16 @@ namespace logviewer.tests
 
         private static ParsingTemplate ParsingTemplate(IList<string> levels)
         {
-            return new ParsingTemplate
+            var result = new ParsingTemplate
             {
                 Index = 0,
-                StartMessage = MessageStart,
-                Trace = levels[0],
-                Debug = levels[1],
-                Info = levels[2],
-                Warn = levels[3],
-                Error = levels[4],
-                Fatal = levels[5]
+                StartMessage = MessageStart
             };
+            for (var i = 0; i < levels.Count; i++)
+            {
+                result.UpdateLevelProperty(levels[i], (LogLevel)i);
+            }
+            return result;
         }
 
         [TearDown]

@@ -24,13 +24,6 @@ namespace logviewer.core
         private const string SortingParameterName = @"Sorting";
         private const string PageSizeParameterName = @"PageSize";
         private const string UseRegexpParameterName = @"UseRegexp";
-        private const string StartMessageParameterName = @"StartMessageTemplate";
-        private const string TraceParameterName = @"TraceLevel";
-        private const string DebugParameterName = @"DebugLevel";
-        private const string InfoParameterName = @"InfoLevel";
-        private const string WarnParameterName = @"WarnLevel";
-        private const string ErrorParameterName = @"ErrorLevel";
-        private const string FatalParameterName = @"FatalLevel";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
         private const string ApplicationOptionsFolder = "logviewer";
@@ -316,14 +309,22 @@ namespace logviewer.core
             var template = new ParsingTemplate
             {
                 Index = DefaultParsingProfileIndex,
-                Debug = GetStringValue(DebugParameterName),
-                Trace = GetStringValue(TraceParameterName),
-                Info = GetStringValue(InfoParameterName),
-                Warn = GetStringValue(WarnParameterName),
-                Error = GetStringValue(ErrorParameterName),
-                Fatal = GetStringValue(FatalParameterName),
-                StartMessage = GetStringValue(StartMessageParameterName)
+                StartMessage = GetStringValue("StartMessageTemplate")
             };
+            var parameters = new[]
+            {
+                "TraceLevel",
+                "DebugLevel",
+                "InfoLevel",
+                "WarnLevel",
+                "ErrorLevel",
+                "FatalLevel"
+            };
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                template.UpdateLevelProperty(parameters[i], (LogLevel)i);
+            }
+
             this.InsertParsingProfile(template);
 
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
