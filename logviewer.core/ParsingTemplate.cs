@@ -67,7 +67,7 @@ namespace logviewer.core
 
         public bool IsEmpty
         {
-            get { return this.StartMessage == null || this.Levels.Any(l => l == null); }
+            get { return this.StartMessage == null || this.Levels.Any(value => value == null); }
         }
     }
 }
