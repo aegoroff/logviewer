@@ -89,11 +89,11 @@ namespace logviewer.core
 
         public void UpdateLevel(string value, LogLevel level)
         {
-            foreach (var info in from info in (from info in typeof(ParsingTemplate).GetProperties()
-                where info.IsDefined(typeof(LogLevelAttribute), false)
-                select info) let attr = (LogLevelAttribute)info.GetCustomAttributes(typeof(LogLevelAttribute), false)[0] where attr.Level == level select info)
+            foreach (var property in from attribute in (from property in typeof(ParsingTemplate).GetProperties()
+                where property.IsDefined(typeof(LogLevelAttribute), false)
+                select property) let attr = (LogLevelAttribute)attribute.GetCustomAttributes(typeof(LogLevelAttribute), false)[0] where attr.Level == level select attribute)
             {
-                info.SetValue(this.template, value, null);
+                property.SetValue(this.template, value, null);
             }
             
             this.view.EnableSave(true);
