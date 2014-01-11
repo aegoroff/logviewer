@@ -11,7 +11,12 @@ namespace logviewer.tests
     [TestFixture]
     public class TstSqliteSettingsProvider
     {
-        private static readonly string dbPath = Path.GetTempFileName();
+        [SetUp]
+        public void Setup()
+        {
+            this.provider = new SqliteSettingsProvider(dbPath, TstMainController.Levels, TstMainController.MessageStart,
+                100, 5);
+        }
 
         [TearDown]
         public void Teardown()
@@ -21,12 +26,26 @@ namespace logviewer.tests
                 File.Delete(dbPath);
             }
         }
-        
+
+        private static readonly string dbPath = Path.GetTempFileName();
+        private SqliteSettingsProvider provider;
+
+        [Test]
+        public void KeepLastNFiles()
+        {
+            Assert.That(this.provider.KeepLastNFiles, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void PageSize()
+        {
+            Assert.That(this.provider.PageSize, Is.EqualTo(100));
+        }
+
         [Test]
         public void ReadParsingTemplate()
         {
-            var provider = new SqliteSettingsProvider(dbPath, TstMainController.Levels, TstMainController.MessageStart, 100, 10);
-            var template = provider.ReadParsingTemplate();
+            ParsingTemplate template = this.provider.ReadParsingTemplate();
             Assert.That(template.Index, Is.EqualTo(0));
             Assert.That(template.Trace, Is.EqualTo(TstMainController.Levels[0]));
             Assert.That(template.Debug, Is.EqualTo(TstMainController.Levels[1]));
@@ -36,12 +55,11 @@ namespace logviewer.tests
             Assert.That(template.Fatal, Is.EqualTo(TstMainController.Levels[5]));
             Assert.That(template.StartMessage, Is.EqualTo(TstMainController.MessageStart));
         }
-        
+
         [Test]
         public void UpdateParsingTemplate()
         {
-            var provider = new SqliteSettingsProvider(dbPath, TstMainController.Levels, TstMainController.MessageStart, 100, 10);
-            var template = provider.ReadParsingTemplate();
+            ParsingTemplate template = this.provider.ReadParsingTemplate();
             template.Trace += "1";
             template.Debug += "1";
             template.Info += "1";
@@ -50,9 +68,9 @@ namespace logviewer.tests
             template.Fatal += "1";
             template.StartMessage += "1";
 
-            provider.UpdateParsingProfile(template);
+            this.provider.UpdateParsingProfile(template);
 
-            var template1 = provider.ReadParsingTemplate();
+            ParsingTemplate template1 = this.provider.ReadParsingTemplate();
 
             Assert.That(template1.Trace, Is.EqualTo(TstMainController.Levels[0] + "1"));
             Assert.That(template1.Debug, Is.EqualTo(TstMainController.Levels[1] + "1"));
