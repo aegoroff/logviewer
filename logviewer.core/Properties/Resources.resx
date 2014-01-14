@@ -123,6 +123,9 @@
   <data name="CreateRtfInProgress" xml:space="preserve">
     <value>Creating page to display in progress ...</value>
   </data>
+  <data name="DefaultParsingTemplateName" xml:space="preserve">
+    <value>Default template</value>
+  </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Encoding detection in progress ...</value>
   </data>

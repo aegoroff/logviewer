@@ -123,6 +123,9 @@
   <data name="CreateRtfInProgress" xml:space="preserve">
     <value>Создание страницы для показа ...</value>
   </data>
+  <data name="DefaultParsingTemplateName" xml:space="preserve">
+    <value>Шаблон по умолчанию</value>
+  </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Определение кодировки файла ...</value>
   </data>
