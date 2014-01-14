@@ -27,7 +27,7 @@ namespace logviewer
             Resources.Info,
             Resources.Warn,
             Resources.Error,
-            Resources.Fatal,
+            Resources.Fatal
         };
 
         public StatisticDlg(LogStore store, string size, string encoding)
@@ -61,7 +61,7 @@ namespace logviewer
             var job = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
 
-            Action<Task> updateUI = delegate
+            Action<Task> updateUi = delegate
             {
                 var items =
                     byLevel.Select(
@@ -79,7 +79,7 @@ namespace logviewer
                 this.listView1.Items.AddRange(items.ToArray());
             };
 
-            job.ContinueWith(updateUI, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, this.uiContext);
+            job.ContinueWith(updateUi, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, this.uiContext);
         }
 
         private void OnOk(object sender, EventArgs e)
