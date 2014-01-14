@@ -3,7 +3,6 @@
 // © 2012-2013 Alexander Egorov
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,17 +42,16 @@ namespace logviewer.core
 
             var digits = count(value);
 
-            var list = new List<char>();
-            for (var i = 0; i < digits; i++)
+            var builder = new StringBuilder();
+            for (var i = digits; i > 0; i--)
             {
-                list.Add('#');
-                if ((i + 1) % 3 == 0 && i + 1 < digits)
+                if (i % 3 == 0 && i < digits)
                 {
-                    list.Add(' ');
+                    builder.Append(' ');
                 }
+                builder.Append('#');
             }
-            list.Reverse();
-            return new string(list.ToArray());
+            return builder.ToString();
         }
 
         public static int ToSafePercent(this int value, int min, int max)
