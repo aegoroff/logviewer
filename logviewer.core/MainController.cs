@@ -537,7 +537,7 @@ namespace logviewer.core
         private void SetLogSize()
         {
             this.view.SetLoadedFileCapltion(this.currentPath);
-            this.view.HumanReadableLogSize = new FileSize((ulong)this.logSize).ToString();
+            this.view.HumanReadableLogSize = new FileSize((ulong)this.logSize, true).ToString();
         }
 
         public void ResetLogStatistic()
@@ -552,6 +552,11 @@ namespace logviewer.core
                 return;
             }
             this.cancellation.Cancel();
+        }
+
+        public string GetLogSize(bool showBytes)
+        {
+            return new FileSize((ulong)this.logSize, !showBytes).ToString();
         }
 
         public void ClearCache()
