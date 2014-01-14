@@ -32,18 +32,16 @@ namespace logviewer.core
             return dstEncoding.GetString(dstBytes);
         }
 
-        private static int CountDigits(ulong num)
-        {
-            return (num /= 10) > 0 ? 1 + CountDigits(num) : 1;
-        }
-
         public static string FormatString(this ulong value)
         {
             if (value == 0)
             {
                 return string.Empty;
             }
-            var digits = CountDigits(value);
+            Func<ulong, int> count = null;
+            count = num => (num /= 10) > 0 ? 1 + count(num) : 1;
+
+            var digits = count(value);
 
             var list = new List<char>();
             for (var i = 0; i < digits; i++)
