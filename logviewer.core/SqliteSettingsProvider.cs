@@ -34,6 +34,7 @@ namespace logviewer.core
         private readonly string settingsDatabaseFilePath;
         private readonly IEnumerable<string> parsingTemplatePropertiesNames;
         private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
+        private readonly List<Action> upgrades = new List<Action>();
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
             IEnumerable<string> defaultLeveles,
@@ -46,9 +47,11 @@ namespace logviewer.core
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
             this.parsingTemplatePropertiesNames = this.parsingTemplateProperties.Select(info => GetColumnAttribute(info).Name).ToArray();
+            this.upgrades.Add(this.Upgrade1);
 
             this.CreateTables();
             this.MigrateFromRegistry();
+            this.RunUpgrade();
             var template = this.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
@@ -256,6 +259,48 @@ namespace logviewer.core
                     ";
 
             this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(ParsingTemplates, propertiesCreate), DatabaseConfigurationTable);
+        }
+
+        private void RunUpgrade()
+        {
+            var since = (int)this.SchemaVersion;
+            for (var i = since; i < this.upgrades.Count; i++)
+            {
+                this.upgrades[i]();
+                this.InsertSchemaVersion(i);
+            }
+        }
+
+        private long SchemaVersion
+        {
+            get
+            {
+                try
+                {
+                    return this.ExecuteScalar<long>(@"SELECT max(Version) FROM DatabaseConfiguration");
+                }
+                catch (Exception e)
+                {
+                    Log.Instance.Debug(e.Message, e);
+                }
+                return 0;
+            }
+        }
+
+        private void InsertSchemaVersion(long version)
+        {
+            Action<IDbCommand> action = delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Version", version);
+                DatabaseConnection.AddParameter(command, "@OccurredAt", DateTime.Now.Ticks);
+            };
+
+            ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", action);
+        }
+
+        void Upgrade1()
+        {
+            this.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Name TEXT");
         }
 
         private void ExecuteNonQuery(params string[] queries)
