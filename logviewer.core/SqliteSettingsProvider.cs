@@ -247,7 +247,15 @@ namespace logviewer.core
                                  {0}
                         );
                     ";
-            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(ParsingTemplates, propertiesCreate));
+
+            const string DatabaseConfigurationTable = @"
+                        CREATE TABLE IF NOT EXISTS DatabaseConfiguration (
+                                 Version INTEGER PRIMARY KEY,
+                                 OccurredAt INTEGER  NOT NULL
+                        );
+                    ";
+
+            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(ParsingTemplates, propertiesCreate), DatabaseConfigurationTable);
         }
 
         private void ExecuteNonQuery(params string[] queries)
