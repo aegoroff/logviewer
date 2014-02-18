@@ -271,7 +271,7 @@ namespace logviewer.core
                 for (var i = since; i < this.upgrades.Count; i++)
                 {
                     this.upgrades[i](connection);
-                    InsertSchemaVersion(i, connection);
+                    InsertSchemaVersion(i + 1, connection);
                 }
                 connection.CommitTran();
             });
