@@ -80,5 +80,13 @@ namespace logviewer.tests
             Assert.That(template1.Fatal, Is.EqualTo(TstMainController.Levels[5] + "1"));
             Assert.That(template.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
         }
+
+        [Test]
+        public void SecondSettingsObjectOnTheSameFile()
+        {
+            var secondProvider = new SqliteSettingsProvider(dbPath, TstMainController.Levels, TstMainController.MessageStart,
+                100, 5);
+            Assert.That(secondProvider.PageSize, Is.EqualTo(100));
+        }
     }
 }
