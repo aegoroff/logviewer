@@ -87,6 +87,8 @@ namespace logviewer.tests
             var secondProvider = new SqliteSettingsProvider(dbPath, TstMainController.Levels, TstMainController.MessageStart,
                 100, 5);
             Assert.That(secondProvider.PageSize, Is.EqualTo(100));
+            ParsingTemplate template = secondProvider.ReadParsingTemplate();
+            Assert.That(template.Name, Is.EqualTo("default"));
         }
     }
 }
