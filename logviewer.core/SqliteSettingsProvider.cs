@@ -26,6 +26,7 @@ namespace logviewer.core
         private const string UseRegexpParameterName = @"UseRegexp";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
+        private const string DefaultParsingProfileName = "default";
         private const string ApplicationOptionsFolder = "logviewer";
         private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
@@ -61,7 +62,8 @@ namespace logviewer.core
             var defaultTemplate = new ParsingTemplate
             {
                 Index = DefaultParsingProfileIndex,
-                StartMessage = defaultStartMessageTemplate
+                StartMessage = defaultStartMessageTemplate,
+                Name = DefaultParsingProfileName
             };
             for (var i = 0; i < defLevels.Length; i++)
             {
@@ -306,7 +308,11 @@ namespace logviewer.core
 
         static void Upgrade1(DatabaseConnection connection)
         {
-            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Name TEXT");
+            var result = connection.ExecuteScalar<long>(@"SELECT count(1) FROM ParsingTemplates");
+            if (result > 0)
+            {
+                connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Name TEXT");
+            }
         }
 
         private void ExecuteNonQuery(params string[] queries)

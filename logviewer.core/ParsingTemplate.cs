@@ -38,6 +38,9 @@ namespace logviewer.core
         [Column("StartMessage")]
         public string StartMessage { get; set; }
 
+        [Column("Name")]
+        public string Name { get; set; }
+
         public IEnumerable<string> Levels
         {
             get
