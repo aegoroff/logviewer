@@ -309,10 +309,27 @@ namespace logviewer.core
         static void Upgrade1(DatabaseConnection connection)
         {
             var result = connection.ExecuteScalar<long>(@"SELECT count(1) FROM ParsingTemplates");
-            if (result > 0)
+            if (result <= 0)
             {
-                connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Name TEXT");
+                return;
             }
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Name TEXT");
+            const string Cmd = @"
+                    UPDATE
+                        ParsingTemplates
+                    SET
+                        Name = @Name
+                    WHERE
+                        Ix = @Ix
+                    ";
+
+            Action<IDbCommand> action = delegate(IDbCommand command)
+            {
+                DatabaseConnection.AddParameter(command, "@Ix", DefaultParsingProfileIndex);
+                DatabaseConnection.AddParameter(command, "@Name", DefaultParsingProfileName);
+            };
+
+            connection.ExecuteNonQuery(Cmd, action);
         }
 
         private void ExecuteNonQuery(params string[] queries)
