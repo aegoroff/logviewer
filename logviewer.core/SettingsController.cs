@@ -4,6 +4,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,11 +17,14 @@ namespace logviewer.core
         private readonly ISettingsProvider settings;
         private readonly ISettingsView view;
         private ParsingTemplate template;
+        private IList<string> templateList;
+        private readonly int parsingTemplateIndex;
 
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
             this.view = view;
             this.settings = settings;
+            parsingTemplateIndex = 0;
         }
 
         public void Load()
@@ -33,13 +37,19 @@ namespace logviewer.core
                 this.formData.PageSize = this.settings.PageSize.ToString(CultureInfo.CurrentUICulture);
                 this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
 
-                this.template = this.settings.ReadParsingTemplate();
+                this.templateList = this.settings.ReadParsingTemplateList();
+                this.template = this.settings.ReadParsingTemplate(parsingTemplateIndex);
             };
             Action<Task> onComplete = delegate
             {
                 this.view.LoadFormData(this.formData);
                 this.view.LoadParsingTemplate(this.template);
                 this.view.EnableSave(false);
+                foreach (var name in this.templateList)
+                {
+                    this.view.AddTemplateName(name);
+                }
+                this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
             };
 
             Task.Factory.StartNew(loader).ContinueWith(onComplete, CancellationToken.None, TaskContinuationOptions.None, uiContext);

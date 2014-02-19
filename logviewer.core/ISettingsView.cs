@@ -7,7 +7,13 @@ namespace logviewer.core
     public interface ISettingsView
     {
         void EnableSave(bool enabled);
+        
         void LoadFormData(FormData formData);
+        
         void LoadParsingTemplate(ParsingTemplate template);
+        
+        void AddTemplateName(string name);
+        
+        void SelectParsingTemplateByName(string name);
     }
 }

@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System.IO;
+using System.Linq;
 using logviewer.core;
 using NUnit.Framework;
 
@@ -89,6 +90,13 @@ namespace logviewer.tests
             Assert.That(secondProvider.PageSize, Is.EqualTo(100));
             ParsingTemplate template = secondProvider.ReadParsingTemplate();
             Assert.That(template.Name, Is.EqualTo("default"));
+        }
+
+        [Test]
+        public void ReadParsingTemplateList()
+        {
+            var list = this.provider.ReadParsingTemplateList();
+            Assert.That(list.Count(), Is.EqualTo(1));
         }
     }
 }

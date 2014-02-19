@@ -60,6 +60,8 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
+            this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
@@ -143,6 +145,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.parsingTemplateSelector);
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
             this.tabPage2.Controls.Add(this.logLevelsBox);
             resources.ApplyResources(this.tabPage2, "tabPage2");
@@ -280,6 +284,18 @@
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.OnSave);
             // 
+            // parsingTemplateSelector
+            // 
+            this.parsingTemplateSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.parsingTemplateSelector.FormattingEnabled = true;
+            resources.ApplyResources(this.parsingTemplateSelector, "parsingTemplateSelector");
+            this.parsingTemplateSelector.Name = "parsingTemplateSelector";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
             // SettingsDlg
             // 
             resources.ApplyResources(this, "$this");
@@ -296,6 +312,7 @@
             this.fileSettingsBox.ResumeLayout(false);
             this.fileSettingsBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.commonTemplatesBox.ResumeLayout(false);
             this.commonTemplatesBox.PerformLayout();
             this.logLevelsBox.ResumeLayout(false);
@@ -339,5 +356,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button closeButton;
+        private System.Windows.Forms.ComboBox parsingTemplateSelector;
+        private System.Windows.Forms.Label label3;
     }
 }

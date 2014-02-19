@@ -176,6 +176,26 @@ namespace logviewer.core
             return this.ReadParsingTemplate(DefaultParsingProfileIndex);
         }
 
+        public IList<string> ReadParsingTemplateList()
+        {
+            const string Cmd = @"
+                    SELECT
+                        Name
+                    FROM
+                        ParsingTemplates
+                    ORDER BY Ix
+                    ";
+
+            var result = new List<string>();
+
+            Action<IDataReader> onRead = rdr => result.Add(rdr[0] as string);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, Cmd);
+
+            ExecuteQuery(action);
+
+            return result;
+        }
+
         public ParsingTemplate ReadParsingTemplate(int index)
         {
             var propertiesGet = string.Join(",", from level in parsingTemplatePropertiesNames select level);

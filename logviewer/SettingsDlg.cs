@@ -49,6 +49,16 @@ namespace logviewer
             this.fatalBox.Text = template.Fatal;
         }
 
+        public void AddTemplateName(string name)
+        {
+            this.parsingTemplateSelector.Items.Add(name);
+        }
+
+        public void SelectParsingTemplateByName(string name)
+        {
+            this.parsingTemplateSelector.SelectedItem = name;
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
