@@ -89,6 +89,12 @@ namespace logviewer.core
             this.template.StartMessage = value;
             this.view.EnableSave(true);
         }
+        
+        public void UpdateParsingTemplateName(string value)
+        {
+            this.template.Name = value;
+            this.view.EnableSave(true);
+        }
 
         public void UpdateKeepLastNFiles(string value)
         {

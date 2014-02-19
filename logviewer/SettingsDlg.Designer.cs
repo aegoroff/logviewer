@@ -286,10 +286,10 @@
             // 
             // parsingTemplateSelector
             // 
-            this.parsingTemplateSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.parsingTemplateSelector.FormattingEnabled = true;
             resources.ApplyResources(this.parsingTemplateSelector, "parsingTemplateSelector");
+            this.parsingTemplateSelector.FormattingEnabled = true;
             this.parsingTemplateSelector.Name = "parsingTemplateSelector";
+            this.parsingTemplateSelector.TextUpdate += new System.EventHandler(this.OnSetParsingTemplateName);
             // 
             // label3
             // 

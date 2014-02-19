@@ -124,5 +124,10 @@ namespace logviewer
             Debug.Assert(this.apply != null);
             this.apply();
         }
+
+        private void OnSetParsingTemplateName(object sender, EventArgs e)
+        {
+            this.controller.UpdateParsingTemplateName(this.parsingTemplateSelector.Text);
+        }
     }
 }
