@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 24.10.2012
-// © 2012-2013 Alexander Egorov
+// © 2012-2014 Alexander Egorov
 
 using logviewer.core;
 using NUnit.Framework;
