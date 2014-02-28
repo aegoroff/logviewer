@@ -224,7 +224,7 @@ namespace logviewer.core
 
                     if (!this.delayedFilteringReadings[id].IsCancellationRequested)
                     {
-                        this.RunOnGuiThread(() => this.view.StartReading());
+                        this.RunOnGuiThread(this.view.StartReading);
                     }
                 }
                 finally
