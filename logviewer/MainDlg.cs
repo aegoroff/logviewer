@@ -323,7 +323,15 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
+
+            if (this.applicationInitialized)
+            {
+                this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
+            }
+            else
+            {
+                this.Controller.UpdateMessageFilter(this.filterBox.Text);
+            }
         }
 
         private void OnRefresh(object sender, EventArgs e)

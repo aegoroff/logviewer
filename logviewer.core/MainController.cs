@@ -322,8 +322,11 @@ namespace logviewer.core
             }
             finally
             {
-                this.runningTasks.Remove(task);
-                task.Dispose();
+                if (this.runningTasks.ContainsKey(task))
+                {
+                    this.runningTasks.Remove(task);
+                    task.Dispose();
+                }
             }
         }
 
@@ -371,7 +374,7 @@ namespace logviewer.core
             return this.settings.MessageFilter;
         }
 
-        private void UpdateMessageFilter(string value)
+        public void UpdateMessageFilter(string value)
         {
             this.settings.MessageFilter = value;
         }
