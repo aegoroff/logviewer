@@ -192,11 +192,9 @@ namespace logviewer.core
             }
         }
 
-        public bool PendingUpdate { get; private set; }
-
-        private CancellationTokenSource cancelFilterDelayTask;
-
         private DateTime prevInput;
+
+        private readonly IDictionary<Guid, CancellationTokenSource> delayedFilteringReadings = new ConcurrentDictionary<Guid, CancellationTokenSource>();
 
         public void StartReading(string filter, bool regexp)
         {
@@ -205,39 +203,36 @@ namespace logviewer.core
             {
                 return;
             }
-            if (this.cancelFilterDelayTask != null && !this.cancelFilterDelayTask.IsCancellationRequested)
+
+            foreach (var cancel in this.delayedFilteringReadings.Values.Where(cancel => !cancel.IsCancellationRequested))
             {
-                this.cancelFilterDelayTask.Cancel();
-                this.cancelFilterDelayTask.Dispose();
-                this.cancelFilterDelayTask = null;
+                cancel.Cancel();
             }
-            this.cancelFilterDelayTask = new CancellationTokenSource();
+
+            var id = Guid.NewGuid();
+            this.delayedFilteringReadings.Add(id, new CancellationTokenSource());
             Task.Factory.StartNew(delegate
             {
                 this.prevInput = DateTime.Now;
-                this.PendingUpdate = true;
                 try
                 {
-                    Thread.Sleep(this.filterUpdateDelay);
-
                     SpinWait.SpinUntil(() =>
                     {
                         var diff = DateTime.Now - this.prevInput;
-                        return diff > this.filterUpdateDelay ||
-                               this.cancelFilterDelayTask != null &&
-                               this.cancelFilterDelayTask.IsCancellationRequested;
+                        return diff > this.filterUpdateDelay || this.delayedFilteringReadings[id].IsCancellationRequested;
                     });
 
-                    if (this.cancelFilterDelayTask != null && !this.cancelFilterDelayTask.IsCancellationRequested)
+                    if (!this.delayedFilteringReadings[id].IsCancellationRequested)
                     {
                         this.RunOnGuiThread(() => this.view.StartReading());
                     }
                 }
                 finally
                 {
-                    this.PendingUpdate = false;
+                    this.delayedFilteringReadings[id].Dispose();
+                    this.delayedFilteringReadings.Remove(id);
                 }
-            }, this.cancelFilterDelayTask.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            }, this.delayedFilteringReadings[id].Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         public static bool IsValidFilter(string filter, bool regexp)
@@ -304,11 +299,32 @@ namespace logviewer.core
                 }
             };
             this.cancellation = new CancellationTokenSource();
-            var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
-            task.ContinueWith(t => this.RunOnGuiThread(() => this.view.OnFailureRead(errorMessage)), CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+            Action<Task> onSuccess = obj => this.OnComplete(task, delegate { });
+            Action<Task> onFailure = delegate
+            {
+                this.OnComplete(task, () => this.RunOnGuiThread(() => this.view.OnFailureRead(errorMessage)));
+            };
+
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            
             this.runningTasks.Add(task, this.view.LogPath);
+        }
+
+        private void OnComplete(Task task, Action action)
+        {
+            try
+            {
+                action();
+            }
+            finally
+            {
+                this.runningTasks.Remove(task);
+                task.Dispose();
+            }
         }
 
         public void UpdateLog(string path)
@@ -531,16 +547,17 @@ namespace logviewer.core
             };
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
 
-            Action success = () => this.OnSuccessRtfCreate(rtf);
-            Action failure = () => this.view.OnFailureRead(rtf);
+            Action successAction = () => this.RunOnGuiThread(() => this.OnSuccessRtfCreate(rtf));
+            Action failAction = () => this.RunOnGuiThread(() => this.view.OnFailureRead(rtf));
 
-            task.ContinueWith(t => this.RunOnGuiThread(success), CancellationToken.None,
-                TaskContinuationOptions.OnlyOnRanToCompletion,
-                TaskScheduler.Default);
-
-            task.ContinueWith(t => this.RunOnGuiThread(failure), CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted,
-                TaskScheduler.Default);
+            Action<Task> onSuccess = t => this.OnComplete(t, successAction);
+            Action<Task> onFailure = t => this.OnComplete(t, failAction);
+            Action<Task> onCancel = t => this.OnComplete(t, () => {});
+            
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            task.ContinueWith(onCancel, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
+            
             this.runningTasks.Add(task, this.view.LogPath);
         }
 
@@ -901,11 +918,6 @@ namespace logviewer.core
         public void Dispose()
         {
             this.queue.Shutdown(true);
-            if (this.cancelFilterDelayTask != null)
-            {
-                this.cancelFilterDelayTask.Dispose();
-                this.cancelFilterDelayTask = null;
-            }
             try
             {
                 SafeRunner.Run(this.CancelPreviousTask);
