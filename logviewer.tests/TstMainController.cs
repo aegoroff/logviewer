@@ -487,7 +487,7 @@ namespace logviewer.tests
             this.view.Expects.No.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
             this.controller.StartReading("f", false);
-            Assert.That(this.controller.PendingUpdate);
+            Assert.That(this.controller.PendingUpdate, NUnit.Framework.Is.True);
         }
         
         [Test]
@@ -497,7 +497,7 @@ namespace logviewer.tests
             this.view.Expects.One.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
             Thread.Sleep(TimeSpan.FromMilliseconds(600));
-            Assert.That(!this.controller.PendingUpdate);
+            Assert.That(this.controller.PendingUpdate, NUnit.Framework.Is.False);
         }
     }
 }
