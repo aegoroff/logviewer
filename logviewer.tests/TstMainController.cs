@@ -484,6 +484,7 @@ namespace logviewer.tests
         public void StartReadingWithinDelay()
         {
             this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
+            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.No.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
             this.controller.StartReading("f", false);
@@ -494,6 +495,7 @@ namespace logviewer.tests
         public void StartReadingOutsideDelay()
         {
             this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
+            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
             Thread.Sleep(TimeSpan.FromMilliseconds(600));

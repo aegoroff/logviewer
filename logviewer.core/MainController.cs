@@ -193,25 +193,38 @@ namespace logviewer.core
 
         public bool PendingUpdate { get; private set; }
 
+        private CancellationTokenSource cancelFilterDelayTask;
+
         public void StartReading(string filter, bool regexp)
         {
             this.UpdateMessageFilter(filter);
-            if (IsValidFilter(filter, regexp))
+            if (!IsValidFilter(filter, regexp))
             {
-                Task.Factory.StartNew(delegate
+                return;
+            }
+            if (this.cancelFilterDelayTask != null && !this.cancelFilterDelayTask.IsCancellationRequested)
+            {
+                this.cancelFilterDelayTask.Cancel();
+                this.cancelFilterDelayTask.Dispose();
+                this.cancelFilterDelayTask = null;
+            }
+            this.cancelFilterDelayTask = new CancellationTokenSource();
+            Task.Factory.StartNew(delegate
+            {
+                this.PendingUpdate = true;
+                try
                 {
-                    PendingUpdate = true;
-                    try
+                    Thread.Sleep(this.filterUpdateDelay);
+                    if (this.cancelFilterDelayTask != null && !this.cancelFilterDelayTask.IsCancellationRequested)
                     {
-                        Thread.Sleep(this.filterUpdateDelay);
                         this.RunOnGuiThread(() => this.view.StartReading());
                     }
-                    finally
-                    {
-                        PendingUpdate = false;
-                    }
-                }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-            }
+                }
+                finally
+                {
+                    this.PendingUpdate = false;
+                }
+            }, this.cancelFilterDelayTask.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         public static bool IsValidFilter(string filter, bool regexp)
@@ -875,6 +888,11 @@ namespace logviewer.core
         public void Dispose()
         {
             this.queue.Shutdown(true);
+            if (this.cancelFilterDelayTask != null)
+            {
+                this.cancelFilterDelayTask.Dispose();
+                this.cancelFilterDelayTask = null;
+            }
             try
             {
                 SafeRunner.Run(this.CancelPreviousTask);
