@@ -245,7 +245,7 @@ namespace logviewer
             this.logWatch.Filter = Path.GetFileName(this.LogPath);
         }
 
-        private void StartReading()
+        public void StartReading()
         {
             if (!this.applicationInitialized)
             {
@@ -323,11 +323,7 @@ namespace logviewer
         private void OnChangeTextFilter(object sender, EventArgs e)
         {
             this.textFilterChanging = true;
-            this.Controller.UpdateMessageFilter(this.filterBox.Text);
-            if (MainController.IsValidFilter(this.filterBox.Text, this.useRegexp.Checked))
-            {
-                this.StartReading();
-            }
+            this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
         }
 
         private void OnRefresh(object sender, EventArgs e)

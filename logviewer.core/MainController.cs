@@ -190,6 +190,15 @@ namespace logviewer.core
             }
         }
 
+        public void StartReading(string filter, bool regexp)
+        {
+            this.UpdateMessageFilter(filter);
+            if (IsValidFilter(filter, regexp))
+            {
+                this.view.StartReading();
+            }
+        }
+
         public static bool IsValidFilter(string filter, bool regexp)
         {
             if (string.IsNullOrEmpty(filter))
@@ -305,7 +314,10 @@ namespace logviewer.core
             return this.settings.MessageFilter;
         }
 
-        public void UpdateMessageFilter(string value)
+        private DateTime lastTextFilterUpdateTime;
+        private TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(300);
+
+        private void UpdateMessageFilter(string value)
         {
             this.settings.MessageFilter = value;
         }
