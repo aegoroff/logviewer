@@ -247,7 +247,7 @@ namespace logviewer
 
         public void StartReading()
         {
-            if (!this.applicationInitialized)
+            if (!this.applicationInitialized || this.Controller.PendingUpdate)
             {
                 return;
             }

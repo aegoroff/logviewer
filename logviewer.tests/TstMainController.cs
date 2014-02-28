@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using logviewer.core;
 using NMock;
+using NMock.Matchers;
 using NUnit.Framework;
 
 namespace logviewer.tests
@@ -477,6 +478,26 @@ namespace logviewer.tests
         public void FilterValidation(string filter, bool useRegex, bool result)
         {
             Assert.That(MainController.IsValidFilter(filter, useRegex), NUnit.Framework.Is.EqualTo(result));
+        }
+
+        [Test]
+        public void StartReadingWithinDelay()
+        {
+            this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
+            this.view.Expects.No.Method(v => v.StartReading());
+            this.controller.StartReading("f", false);
+            this.controller.StartReading("f", false);
+            Assert.That(this.controller.PendingUpdate);
+        }
+        
+        [Test]
+        public void StartReadingOutsideDelay()
+        {
+            this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
+            this.view.Expects.One.Method(v => v.StartReading());
+            this.controller.StartReading("f", false);
+            Thread.Sleep(TimeSpan.FromMilliseconds(600));
+            Assert.That(!this.controller.PendingUpdate);
         }
     }
 }

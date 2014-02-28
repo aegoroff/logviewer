@@ -56,6 +56,7 @@ namespace logviewer.core
 
         private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
+        private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(500);
 
         #endregion
 
@@ -190,12 +191,26 @@ namespace logviewer.core
             }
         }
 
+        public bool PendingUpdate { get; private set; }
+
         public void StartReading(string filter, bool regexp)
         {
             this.UpdateMessageFilter(filter);
             if (IsValidFilter(filter, regexp))
             {
-                this.view.StartReading();
+                Task.Factory.StartNew(delegate
+                {
+                    PendingUpdate = true;
+                    try
+                    {
+                        Thread.Sleep(this.filterUpdateDelay);
+                        this.RunOnGuiThread(() => this.view.StartReading());
+                    }
+                    finally
+                    {
+                        PendingUpdate = false;
+                    }
+                }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
         }
 
@@ -313,9 +328,6 @@ namespace logviewer.core
         {
             return this.settings.MessageFilter;
         }
-
-        private DateTime lastTextFilterUpdateTime;
-        private TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(300);
 
         private void UpdateMessageFilter(string value)
         {
