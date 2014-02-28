@@ -68,6 +68,7 @@ namespace logviewer.core
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
             this.markers = new List<Regex>();
+            this.prevInput = DateTime.Now;
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
             this.CreateMarkers(template.Levels);
@@ -195,6 +196,8 @@ namespace logviewer.core
 
         private CancellationTokenSource cancelFilterDelayTask;
 
+        private DateTime prevInput;
+
         public void StartReading(string filter, bool regexp)
         {
             this.UpdateMessageFilter(filter);
@@ -211,10 +214,20 @@ namespace logviewer.core
             this.cancelFilterDelayTask = new CancellationTokenSource();
             Task.Factory.StartNew(delegate
             {
+                this.prevInput = DateTime.Now;
                 this.PendingUpdate = true;
                 try
                 {
                     Thread.Sleep(this.filterUpdateDelay);
+
+                    SpinWait.SpinUntil(() =>
+                    {
+                        var diff = DateTime.Now - this.prevInput;
+                        return diff > this.filterUpdateDelay ||
+                               this.cancelFilterDelayTask != null &&
+                               this.cancelFilterDelayTask.IsCancellationRequested;
+                    });
+
                     if (this.cancelFilterDelayTask != null && !this.cancelFilterDelayTask.IsCancellationRequested)
                     {
                         this.RunOnGuiThread(() => this.view.StartReading());
