@@ -56,7 +56,7 @@ namespace logviewer.core
 
         private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
-        private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(500);
+        private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(600);
 
         #endregion
 
@@ -194,45 +194,41 @@ namespace logviewer.core
 
         private DateTime prevInput;
 
-        private readonly IDictionary<Guid, CancellationTokenSource> delayedFilteringReadings = new ConcurrentDictionary<Guid, CancellationTokenSource>();
+        public bool PendingStart { get; private set; }
 
         public void StartReading(string filter, bool regexp)
         {
-            this.UpdateMessageFilter(filter);
             if (!IsValidFilter(filter, regexp))
             {
                 return;
             }
 
-            foreach (var cancel in this.delayedFilteringReadings.Values.Where(cancel => !cancel.IsCancellationRequested))
+            this.UpdateMessageFilter(filter);
+
+            this.prevInput = DateTime.Now;
+
+            if (this.PendingStart)
             {
-                cancel.Cancel();
+                return;
             }
 
-            var id = Guid.NewGuid();
-            this.delayedFilteringReadings.Add(id, new CancellationTokenSource());
             Task.Factory.StartNew(delegate
             {
-                this.prevInput = DateTime.Now;
+                this.PendingStart = true;
                 try
                 {
                     SpinWait.SpinUntil(() =>
                     {
                         var diff = DateTime.Now - this.prevInput;
-                        return diff > this.filterUpdateDelay || this.delayedFilteringReadings[id].IsCancellationRequested;
+                        return diff > this.filterUpdateDelay;
                     });
-
-                    if (!this.delayedFilteringReadings[id].IsCancellationRequested)
-                    {
-                        this.RunOnGuiThread(this.view.StartReading);
-                    }
+                    this.RunOnGuiThread(this.view.StartReading);
                 }
                 finally
                 {
-                    this.delayedFilteringReadings[id].Dispose();
-                    this.delayedFilteringReadings.Remove(id);
+                    this.PendingStart = false;
                 }
-            }, this.delayedFilteringReadings[id].Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
         }
 
         public static bool IsValidFilter(string filter, bool regexp)
