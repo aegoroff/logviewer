@@ -98,5 +98,13 @@ namespace logviewer.tests
             var list = this.provider.ReadParsingTemplateList();
             Assert.That(list.Count(), Is.EqualTo(1));
         }
+
+        [Test]
+        public void AutoRefreshTest()
+        {
+            Assert.That(this.provider.AutoRefreshOnFileChange, Is.False);
+            this.provider.AutoRefreshOnFileChange = true;
+            Assert.That(this.provider.AutoRefreshOnFileChange, Is.True);
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace logviewer.core
         string FullPathToDatabase { get; }
         string MessageFilter { get; set; }
         bool OpenLastFile { get; set; }
+        bool AutoRefreshOnFileChange { get; set; }
         int MinLevel { get; set; }
         int MaxLevel { get; set; }
         int PageSize { get; set; }

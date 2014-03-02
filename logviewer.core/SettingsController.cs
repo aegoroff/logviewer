@@ -34,6 +34,7 @@ namespace logviewer.core
             Action loader = delegate
             {
                 this.formData.OpenLastFile = this.settings.OpenLastFile;
+                this.formData.AutoRefreshOnFileChange = this.settings.AutoRefreshOnFileChange;
                 this.formData.PageSize = this.settings.PageSize.ToString(CultureInfo.CurrentUICulture);
                 this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
 
@@ -68,6 +69,7 @@ namespace logviewer.core
                 this.settings.KeepLastNFiles = value;
             }
             this.settings.OpenLastFile = this.formData.OpenLastFile;
+            this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
             this.settings.UpdateParsingProfile(this.template);
             this.view.EnableSave(false);
         }
@@ -75,6 +77,12 @@ namespace logviewer.core
         public void UpdateOpenLastFile(bool value)
         {
             this.formData.OpenLastFile = value;
+            this.view.EnableSave(true);
+        }
+
+        public void UpdateAutoRefreshOnFileChange(bool value)
+        {
+            this.formData.AutoRefreshOnFileChange = value;
             this.view.EnableSave(true);
         }
 

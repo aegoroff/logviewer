@@ -329,7 +329,7 @@ namespace logviewer.core
         public void UpdateLog(string path)
         {
             if (string.IsNullOrWhiteSpace(path) ||
-                !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase))
+                !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase) || !this.settings.AutoRefreshOnFileChange)
             {
                 return;
             }

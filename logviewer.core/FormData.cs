@@ -8,6 +8,7 @@ namespace logviewer.core
     {
         public string KeepLastNFiles { get; set; }
         public bool OpenLastFile { get; set; }
+        public bool AutoRefreshOnFileChange { get; set; }
         public string PageSize { get; set; }
     }
 }

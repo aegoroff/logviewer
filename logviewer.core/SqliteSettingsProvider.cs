@@ -19,6 +19,7 @@ namespace logviewer.core
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
         private const string OpenLastFileParameterName = @"OpenLastFile";
+        private const string AutoRefreshOnFileChangeName = @"AutoRefreshOnFileChange";
         private const string MinLevelParameterName = @"MinLevel";
         private const string MaxLevelParameterName = @"MaxLevel";
         private const string SortingParameterName = @"Sorting";
@@ -105,6 +106,12 @@ namespace logviewer.core
         {
             get { return this.ReadBooleanOption(OpenLastFileParameterName); }
             set { this.UpdateBooleanOption(OpenLastFileParameterName, value); }
+        }
+
+        public bool AutoRefreshOnFileChange
+        {
+            get { return this.ReadBooleanOption(AutoRefreshOnFileChangeName); }
+            set { this.UpdateBooleanOption(AutoRefreshOnFileChangeName, value); }
         }
 
         public int MinLevel

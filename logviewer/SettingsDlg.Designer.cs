@@ -40,6 +40,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.openLastFile = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
             this.messageStartPatternLabel = new System.Windows.Forms.Label();
@@ -60,8 +62,7 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
-            this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.autoRefreshCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
@@ -111,6 +112,7 @@
             // 
             // fileSettingsBox
             // 
+            this.fileSettingsBox.Controls.Add(this.autoRefreshCheckBox);
             this.fileSettingsBox.Controls.Add(this.label2);
             this.fileSettingsBox.Controls.Add(this.keepLastNFilesBox);
             this.fileSettingsBox.Controls.Add(this.label1);
@@ -152,6 +154,18 @@
             resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // parsingTemplateSelector
+            // 
+            resources.ApplyResources(this.parsingTemplateSelector, "parsingTemplateSelector");
+            this.parsingTemplateSelector.FormattingEnabled = true;
+            this.parsingTemplateSelector.Name = "parsingTemplateSelector";
+            this.parsingTemplateSelector.TextUpdate += new System.EventHandler(this.OnSetParsingTemplateName);
             // 
             // commonTemplatesBox
             // 
@@ -284,17 +298,12 @@
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.OnSave);
             // 
-            // parsingTemplateSelector
+            // autoRefreshCheckBox
             // 
-            resources.ApplyResources(this.parsingTemplateSelector, "parsingTemplateSelector");
-            this.parsingTemplateSelector.FormattingEnabled = true;
-            this.parsingTemplateSelector.Name = "parsingTemplateSelector";
-            this.parsingTemplateSelector.TextUpdate += new System.EventHandler(this.OnSetParsingTemplateName);
-            // 
-            // label3
-            // 
-            resources.ApplyResources(this.label3, "label3");
-            this.label3.Name = "label3";
+            resources.ApplyResources(this.autoRefreshCheckBox, "autoRefreshCheckBox");
+            this.autoRefreshCheckBox.Name = "autoRefreshCheckBox";
+            this.autoRefreshCheckBox.UseVisualStyleBackColor = true;
+            this.autoRefreshCheckBox.CheckedChanged += new System.EventHandler(this.OnChangeAutorefresh);
             // 
             // SettingsDlg
             // 
@@ -358,5 +367,6 @@
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ComboBox parsingTemplateSelector;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox autoRefreshCheckBox;
     }
 }

@@ -36,6 +36,7 @@ namespace logviewer
             this.openLastFile.Checked = formData.OpenLastFile;
             this.pageSizeBox.Text = formData.PageSize;
             this.keepLastNFilesBox.Text = formData.KeepLastNFiles;
+            this.autoRefreshCheckBox.Checked = formData.AutoRefreshOnFileChange;
         }
 
         public void LoadParsingTemplate(ParsingTemplate template)
@@ -128,6 +129,11 @@ namespace logviewer
         private void OnSetParsingTemplateName(object sender, EventArgs e)
         {
             this.controller.UpdateParsingTemplateName(this.parsingTemplateSelector.Text);
+        }
+
+        private void OnChangeAutorefresh(object sender, EventArgs e)
+        {
+            this.controller.UpdateAutoRefreshOnFileChange(this.autoRefreshCheckBox.Checked);
         }
     }
 }
