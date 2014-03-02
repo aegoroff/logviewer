@@ -337,10 +337,20 @@ namespace logviewer.core
             {
                 this.WaitRunningTasks();
                 var f = new FileInfo(path);
-                if (f.Length > this.logSize)
+                if (f.Length < this.logSize)
                 {
-                    this.BeginLogReading();
+                    this.logSize = 0;
+                    if (this.store != null)
+                    {
+                        this.store.Dispose();
+                        this.store = null;
+                    }
                 }
+                if (f.Length == this.logSize)
+                {
+                    return;
+                }
+                this.BeginLogReading();
             };
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
