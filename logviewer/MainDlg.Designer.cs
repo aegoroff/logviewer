@@ -71,39 +71,38 @@
             // 
             // statusStrip1
             // 
-            resources.ApplyResources(this.statusStrip1, "statusStrip1");
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel1,
             this.encodingLabel});
+            resources.ApplyResources(this.statusStrip1, "statusStrip1");
             this.statusStrip1.Name = "statusStrip1";
             // 
             // toolStripStatusLabel2
             // 
-            resources.ApplyResources(this.toolStripStatusLabel2, "toolStripStatusLabel2");
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            resources.ApplyResources(this.toolStripStatusLabel2, "toolStripStatusLabel2");
             // 
             // toolStripStatusLabel1
             // 
-            resources.ApplyResources(this.toolStripStatusLabel1, "toolStripStatusLabel1");
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            resources.ApplyResources(this.toolStripStatusLabel1, "toolStripStatusLabel1");
             // 
             // encodingLabel
             // 
-            resources.ApplyResources(this.encodingLabel, "encodingLabel");
             this.encodingLabel.Name = "encodingLabel";
+            resources.ApplyResources(this.encodingLabel, "encodingLabel");
             // 
             // menuStrip1
             // 
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.helpToolStripMenuItem});
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
-            resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.exportToolStripMenuItem,
@@ -115,6 +114,7 @@
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             // 
             // openToolStripMenuItem
             // 
@@ -130,13 +130,13 @@
             // 
             // recentFilesToolStripMenuItem
             // 
-            resources.ApplyResources(this.recentFilesToolStripMenuItem, "recentFilesToolStripMenuItem");
             this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
+            resources.ApplyResources(this.recentFilesToolStripMenuItem, "recentFilesToolStripMenuItem");
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // settingsToolStripMenuItem
             // 
@@ -152,27 +152,27 @@
             // 
             // closeToolStripMenuItem
             // 
-            resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.OnClose);
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // exitToolStripMenuItem
             // 
-            resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnExit);
             // 
             // helpToolStripMenuItem
             // 
-            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
             // 
             // aboutToolStripMenuItem
             // 
@@ -182,7 +182,6 @@
             // 
             // toolStrip1
             // 
-            resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.refreshButton,
@@ -199,6 +198,7 @@
             this.toolStripLabel4,
             this.filterBox,
             this.useRegexp});
+            resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
             // toolStripButton1
@@ -215,32 +215,32 @@
             // 
             // settingsButton
             // 
-            resources.ApplyResources(this.settingsButton, "settingsButton");
             this.settingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            resources.ApplyResources(this.settingsButton, "settingsButton");
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.Click += new System.EventHandler(this.OnSettings);
             // 
             // statButton
             // 
-            resources.ApplyResources(this.statButton, "statButton");
             this.statButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            resources.ApplyResources(this.statButton, "statButton");
             this.statButton.Name = "statButton";
             this.statButton.Click += new System.EventHandler(this.OnOpenStatistic);
             // 
             // toolStripSeparator3
             // 
-            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
             this.toolStripSeparator3.Name = "toolStripSeparator3";
+            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
             // 
             // toolStripLabel1
             // 
-            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             // 
             // minLevelBox
             // 
-            resources.ApplyResources(this.minLevelBox, "minLevelBox");
             this.minLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            resources.ApplyResources(this.minLevelBox, "minLevelBox");
             this.minLevelBox.Items.AddRange(new object[] {
             resources.GetString("minLevelBox.Items"),
             resources.GetString("minLevelBox.Items1"),
@@ -253,13 +253,13 @@
             // 
             // toolStripLabel2
             // 
-            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Name = "toolStripLabel2";
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             // 
             // maxLevelBox
             // 
-            resources.ApplyResources(this.maxLevelBox, "maxLevelBox");
             this.maxLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            resources.ApplyResources(this.maxLevelBox, "maxLevelBox");
             this.maxLevelBox.Items.AddRange(new object[] {
             resources.GetString("maxLevelBox.Items"),
             resources.GetString("maxLevelBox.Items1"),
@@ -272,42 +272,44 @@
             // 
             // toolStripLabel3
             // 
-            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             this.toolStripLabel3.Name = "toolStripLabel3";
+            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             // 
             // sortingBox
             // 
-            resources.ApplyResources(this.sortingBox, "sortingBox");
             this.sortingBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.sortingBox.Items.AddRange(new object[] {
             resources.GetString("sortingBox.Items"),
             resources.GetString("sortingBox.Items1")});
             this.sortingBox.Name = "sortingBox";
+            resources.ApplyResources(this.sortingBox, "sortingBox");
             this.sortingBox.SelectedIndexChanged += new System.EventHandler(this.OnChangeFilter);
             // 
             // toolStripSeparator4
             // 
-            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             this.toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
             // toolStripLabel4
             // 
-            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             this.toolStripLabel4.Name = "toolStripLabel4";
+            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             // 
             // filterBox
             // 
-            resources.ApplyResources(this.filterBox, "filterBox");
+            this.filterBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.filterBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.filterBox.Name = "filterBox";
+            resources.ApplyResources(this.filterBox, "filterBox");
             this.filterBox.TextChanged += new System.EventHandler(this.OnChangeTextFilter);
             // 
             // useRegexp
             // 
-            resources.ApplyResources(this.useRegexp, "useRegexp");
             this.useRegexp.Checked = true;
             this.useRegexp.CheckOnClick = true;
             this.useRegexp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.useRegexp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            resources.ApplyResources(this.useRegexp, "useRegexp");
             this.useRegexp.Name = "useRegexp";
             this.useRegexp.CheckedChanged += new System.EventHandler(this.OnChangeRegexpUsage);
             // 
@@ -400,8 +402,8 @@
             // 
             // MainDlg
             // 
-            resources.ApplyResources(this, "$this");
             this.AllowDrop = true;
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
