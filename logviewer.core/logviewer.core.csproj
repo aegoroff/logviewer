@@ -85,7 +85,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RecentFilesStore.cs" />
+    <Compile Include="RecentItemsStore.cs" />
     <Compile Include="SafeRunner.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SqliteSettingsProvider.cs" />

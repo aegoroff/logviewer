@@ -689,8 +689,8 @@ namespace logviewer.core
 
             var lastOpenedFile = string.Empty;
 
-            Action<RecentFilesStore> method =
-                delegate(RecentFilesStore filesStore) { lastOpenedFile = filesStore.ReadLastOpenedFile(); };
+            Action<RecentItemsStore> method =
+                delegate(RecentItemsStore filesStore) { lastOpenedFile = filesStore.ReadLastUsedItem(); };
             this.UseRecentFilesStore(method);
 
             if (!string.IsNullOrWhiteSpace(lastOpenedFile))
@@ -703,7 +703,7 @@ namespace logviewer.core
         {
             IEnumerable<string> files = null;
 
-            this.UseRecentFilesStore(delegate(RecentFilesStore filesStore) { files = filesStore.ReadFiles(); });
+            this.UseRecentFilesStore(delegate(RecentItemsStore filesStore) { files = filesStore.ReadItems(); });
 
             this.view.ClearRecentFilesList();
 
@@ -727,9 +727,9 @@ namespace logviewer.core
             this.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
         }
 
-        private void UseRecentFilesStore(Action<RecentFilesStore> action)
+        private void UseRecentFilesStore(Action<RecentItemsStore> action)
         {
-            using (var filesStore = new RecentFilesStore(this.settings))
+            using (var filesStore = new RecentItemsStore(this.settings, "RecentFiles"))
             {
                 action(filesStore);
             }
