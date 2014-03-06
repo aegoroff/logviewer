@@ -264,6 +264,12 @@ namespace logviewer
                 this.useRegexp.Checked);
         }
 
+        public void AddFilterItems(string[] items)
+        {
+            this.filterBox.AutoCompleteCustomSource.Clear();
+            this.filterBox.AutoCompleteCustomSource.AddRange(items);
+        }
+
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
             this.Controller.ShowLogPageStatistic();

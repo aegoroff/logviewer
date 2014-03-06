@@ -14,10 +14,10 @@ namespace logviewer.core
         private readonly int maxItems;
         private readonly DatabaseConnection connection;
 
-        public RecentItemsStore(ISettingsProvider settings, string tableName)
+        public RecentItemsStore(ISettingsProvider settings, string tableName, int maxItems = 0)
         {
             this.tableName = tableName;
-            this.maxItems = settings.KeepLastNFiles;
+            this.maxItems = maxItems == 0 ? settings.KeepLastNFiles : maxItems;
             this.connection = new DatabaseConnection(settings.FullPathToDatabase);
             this.CreateTables();
         }

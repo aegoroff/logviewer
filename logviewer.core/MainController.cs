@@ -50,6 +50,7 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
+        private const int keepLastFilters = 20;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -222,7 +223,11 @@ namespace logviewer.core
                         var diff = DateTime.Now - this.prevInput;
                         return diff > this.filterUpdateDelay;
                     });
-                    this.RunOnGuiThread(this.view.StartReading);
+                    this.RunOnGuiThread(() =>
+                    {
+                        this.UpdateRecentFilters(filter);
+                        this.view.StartReading();
+                    });
                 }
                 finally
                 {
@@ -383,6 +388,24 @@ namespace logviewer.core
         public void UpdateMessageFilter(string value)
         {
             this.settings.MessageFilter = value;
+        }
+
+        private void UpdateRecentFilters(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+
+            string[] items = null;
+
+            this.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
+            {
+                itemsStore.Add(value);
+                items = itemsStore.ReadItems().ToArray();
+            });
+
+            this.view.AddFilterItems(items);
         }
 
         public void UpdateUseRegexp(bool value)
@@ -730,6 +753,14 @@ namespace logviewer.core
         private void UseRecentFilesStore(Action<RecentItemsStore> action)
         {
             using (var filesStore = new RecentItemsStore(this.settings, "RecentFiles"))
+            {
+                action(filesStore);
+            }
+        }
+        
+        private void UseRecentFiltersStore(Action<RecentItemsStore> action)
+        {
+            using (var filesStore = new RecentItemsStore(this.settings, "RecentFilters", keepLastFilters))
             {
                 action(filesStore);
             }
