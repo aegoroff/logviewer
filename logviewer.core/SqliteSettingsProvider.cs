@@ -50,6 +50,7 @@ namespace logviewer.core
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
             this.parsingTemplatePropertiesNames = this.parsingTemplateProperties.Select(info => GetColumnAttribute(info).Name).ToArray();
             this.upgrades.Add(Upgrade1);
+            this.upgrades.Add(Upgrade2);
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -357,6 +358,11 @@ namespace logviewer.core
             };
 
             connection.ExecuteNonQuery(Cmd, action);
+        }
+        
+        static void Upgrade2(DatabaseConnection connection)
+        {
+            connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
         }
 
         private void ExecuteNonQuery(params string[] queries)

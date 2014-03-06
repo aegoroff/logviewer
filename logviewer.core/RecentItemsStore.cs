@@ -26,31 +26,31 @@ namespace logviewer.core
         {
             const string CreateTable = @"
                         CREATE TABLE IF NOT EXISTS {0} (
-                                 Path TEXT PRIMARY KEY,
-                                 OpenedAt INTEGER  NOT NULL
+                                 Item TEXT PRIMARY KEY,
+                                 UsedAt INTEGER  NOT NULL
                         );
                     ";
-            string createPathIndex = string.Format("CREATE INDEX IF NOT EXISTS IX_Path ON {0} (Path)", tableName);
-            this.connection.ExecuteNonQuery(string.Format(CreateTable, tableName), createPathIndex);
+            string createItemIndex = string.Format("CREATE INDEX IF NOT EXISTS IX_Item ON {0} (Item)", tableName);
+            this.connection.ExecuteNonQuery(string.Format(CreateTable, tableName), createItemIndex);
         }
 
         public void Add(string item)
         {
-            var result = this.connection.ExecuteScalar<long>(string.Format(@"SELECT count(1) FROM {0} WHERE Path = @Path", tableName), AddItem(item));
+            var result = this.connection.ExecuteScalar<long>(string.Format(@"SELECT count(1) FROM {0} WHERE Item = @Item", tableName), AddItem(item));
 
             Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Path", item);
-                DatabaseConnection.AddParameter(command, "@OpenedAt", DateTime.Now.Ticks);
+                DatabaseConnection.AddParameter(command, "@Item", item);
+                DatabaseConnection.AddParameter(command, "@UsedAt", DateTime.Now.Ticks);
             });
 
             if (result > 0)
             {
-                query(string.Format("Update {0} SET OpenedAt = @OpenedAt WHERE Path = @Path", tableName));
+                query(string.Format("Update {0} SET UsedAt = @UsedAt WHERE Item = @Item", tableName));
                 return;
             }
 
-            query(string.Format(@"INSERT INTO {0}(Path, OpenedAt) VALUES (@Path, @OpenedAt)", tableName));
+            query(string.Format(@"INSERT INTO {0}(Item, UsedAt) VALUES (@Item, @UsedAt)", tableName));
             
             result = this.connection.ExecuteScalar<long>(string.Format("SELECT count(1) FROM {0}", tableName));
 
@@ -60,8 +60,8 @@ namespace logviewer.core
             }
             const string DeleteTemplate =
                 @"DELETE FROM {1} 
-                    WHERE OpenedAt IN (
-                        SELECT OpenedAt FROM {1} ORDER BY OpenedAt ASC LIMIT {0}
+                    WHERE UsedAt IN (
+                        SELECT UsedAt FROM {1} ORDER BY UsedAt ASC LIMIT {0}
                 )";
             var cmdDelete = string.Format(DeleteTemplate, result - this.maxItems, tableName);
             this.connection.ExecuteNonQuery(cmdDelete);
@@ -69,12 +69,12 @@ namespace logviewer.core
 
         private static Action<IDbCommand> AddItem(string file)
         {
-            return cmd => DatabaseConnection.AddParameter(cmd, "@Path", file);
+            return cmd => DatabaseConnection.AddParameter(cmd, "@Item", file);
         }
 
         public void Remove(params string[] items)
         {
-            string cmd = string.Format(@"DELETE FROM {0} WHERE Path = @Path", tableName);
+            string cmd = string.Format(@"DELETE FROM {0} WHERE Item = @Item", tableName);
 
             this.connection.BeginTran();
             foreach (var file in items)
@@ -86,13 +86,13 @@ namespace logviewer.core
 
         private static Action<IDbCommand> Remove(string item)
         {
-            return command => DatabaseConnection.AddParameter(command, "@Path", item);
+            return command => DatabaseConnection.AddParameter(command, "@Item", item);
         }
 
         public IEnumerable<string> ReadItems()
         {
             var result = new List<string>(this.maxItems);
-            this.connection.ExecuteReader(reader => result.Add(reader[0] as string), string.Format("SELECT Path FROM {0} ORDER BY OpenedAt DESC", tableName));
+            this.connection.ExecuteReader(reader => result.Add(reader[0] as string), string.Format("SELECT Item FROM {0} ORDER BY UsedAt DESC", tableName));
             return result;
         }
         
@@ -103,7 +103,7 @@ namespace logviewer.core
             {
                 result = reader[0] as string;
             };
-            this.connection.ExecuteReader(onRead, string.Format("SELECT Path FROM {0} ORDER BY OpenedAt DESC LIMIT 1", tableName));
+            this.connection.ExecuteReader(onRead, string.Format("SELECT Item FROM {0} ORDER BY UsedAt DESC LIMIT 1", tableName));
             return result;
         }
 
