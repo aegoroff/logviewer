@@ -308,19 +308,19 @@
   <data name="refreshButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKySURBVDhPjZP9S1NRGMfXq9gP9WMUlJLYH6AhBo65F5cu
-        YVRWBJJJphKJZC8ikmubzsq3MKQ2fKtQbBtBm3N3m6tZOhmoq9RqSlmWCyVJI0Pzh2/PvbtOK4g+8HC4
-        5/uc73nOc84V/A+yCifSrrkgVjMueaUjnp9eRa67uywrd0CsYSBSM9yYQot4WSDROtA1OoMG9zgybnog
-        0TBGXgoTl2PwzZv9QViGp9FJyWItEzZgzTMaB6GyjcFGWo7BC4mWaeDlEMoaN/LbX2B/VS+u2gJcFbxE
-        FTqRUvMUsls+HGt+DuPQZyir3LRJZxSXIC53qHXWV8huH4G03oem/k+Q0q6cSEQLjyiTilrb5JXdUNwZ
-        RIH5DWodASSr7aGjJKjsi/U9H6Aw+JFa3UPOtrG1PSAiKHYlFbW0Hazvh7J5GA3PPq5WSeeB1jWJwy2j
-        SK16gm07YuISVM5FTlxDxPao6LRqD463BVDpmaJm2kMGUjK4YJ3AyY5xSEOT6zdGbt3HiTxHjcYNNKyT
-        aLpw2jyBYoaOuWIgI4Ms0wQu2ieRpfciXj+wiU3mRB6RzrmQWPMgMuu2FyWuIM5apyDTrhiUM8g2vUXe
-        o0kUm0bY5tRywhrYpqarLD81ltfItQRx5uF7iDT2JU4UlXQ4TrS+RL41CMPALA7VeZCssdeJte4YLoEQ
-        U7nmwAJa/HM4x8wg894IEgv1ek6MlZwSsnddwEzjimcWjUNfcd48CrY3XAIhVnehrPcbNL1zKCSDA9e7
-        WW1nSBUINgsv3Tem0xUWdX+Bum8eTcOLq10mpHTeMt8SSr0/UD2wQK/RP89LYXYLL7e7FDceI9f8DqV9
-        33+rIKXCQd92SKgS1ph93nJd6zIvh9mzV5GbKSo1+djGsov4eRb2L/wz4ij+YgtFLMVK0j8QCH4Bwj2X
-        wZiRgqwAAAAASUVORK5CYII=
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKxSURBVDhPjZP9S1NRGMfXq9gP9WMUlJLYH6AhBo65F5cu
+        YVRWBJJJZhKJZC8ikmubzsq3MKQ21Emh2DaCNufuNlezdDJQV6nVlLIsF0qSRobmD9+ee3edVhB94OFw
+        z/c53/Oc55wr+B9klS5kXHdDrGbc8ipnIj+9ilzXuiyrcEKsYSBSM9yYRot4WSDROtE1OoNGzziybnkh
+        0TAmXoqQkGfwz1sCIViHp9FJyWItEzFgzbOaBqGyj8FOWp7BB4mWaeTlMMpaDwraX2B/dS+u2YNcFbxE
+        FbqQVvsUstt+HGt5DtPQZyirPbRJZwyXIK5wqnW2V8htH4G0wY/m/k+Q0q6cSMQKjyhTilvb5FXdUNwd
+        RKHlDeqcQaSqHeGjJKkciw09H6AwBJBe00PO9rG1PSCiKHalFBvbDjb0Q9kyjMZnH1erpPNA657EYeMo
+        0qufYNuOuIQklWuRE9cQtT0mNqPGi+NtQVR5p6iZjrCBlAwu2iZwsmMc0vDk+o3RW/dxIs9Rk2kDDesk
+        mi6ctkyghKFjrhjIyCDHPIFLjknk6H1I1A9sYpM5kUekcy0k1z6IzrnjQ6k7hHO2Kci0KwYVDHLNb3H2
+        0SRKzCNsc+o4YQ1sUzNV1p8a62vkW0M48/A9RBrHEieKSjucJ1pfosAWgmFgFofqvUjVOOrFWk8cl0CI
+        qVxLcAHGwBzOMzPIvjeC5CK9nhPjJaeE7F0XMtO46p1F09BXXLCMgu0Nl0CI1V0o7/0GTe8cisjgwI1u
+        VtsZVgWCzcLL902ZdIXF3V+g7ptH8/DiapcJKZ233L+EMt8P1Aws0GsMzPNShN3CK+1uxc3HyLe8Q1nf
+        998qSKt00rcDEqqENWaft1xnXOblCHv2KvKzRWVmP9tYdhE/z8L+hX9GAsVfbKGIp1hJ+gcCwS+98Ze/
+        3iwVugAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="refreshButton.Size" type="System.Drawing.Size, System.Drawing">
@@ -355,18 +355,18 @@
     <value>
         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
-        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
+        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
 </value>
   </data>
   <data name="statButton.Text" xml:space="preserve">
@@ -402,17 +402,20 @@
   <data name="toolStripLabel4.Text" xml:space="preserve">
     <value> Фильтр: </value>
   </data>
+  <data name="filterBox.ToolTipText" xml:space="preserve">
+    <value>Введите текст фильтра и нажмите Enter для запуска фильтрации</value>
+  </data>
   <data name="useRegexp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGfSURBVDhPrZK/SwJhGMfPM66Dfkw1VKBDQ9FWS0SCUwhB
-        OIVDhIOIP8AQLkQTcXMLV92CGlr8G/wrHG5wED0HRVQQkfPOt+f7+hYE1Tn0wIfH530+34cblP6lCoXC
+        OIVDhIOIP8AQLkQTcXMLV92CGlr8G/wnXG5wED0HRVQQkfPOt+f7+hYE1Tn0wIfH530+34cblP6lCoXC
         DXGVz+cPc7ncrqZpG8VicY1WLnTMeMceHvxlUhQtYv1+X6/X6+9Uz5VK5alUKj2QGEfHjHfs4cEX0WVl
         MpnYYrFgtm07Ag++iC4rnU7HLcti8/ncEXjwRVSSUqnUejKZTJimyWazmSPw4CPHD0Sj0fNarfYynU7Z
         ZDJxBB585PiBcDh81+12O+PxmK0KfOT4gVAolDAMwxwMBmxV4CPHDwSDwftms9np9XpsVeAjxw8EAoGL
         arX62mg0bPo0fN6fwIOPHD/g9/tVn893Wy6X33RdNyDQn4W12+0vMOMde3jwkeMHUF6vV/V4PJdEhH5r
         1B9HoxFrtVoMHbN4j8CDL6I/l6IoJ6qqZofDIUPHLFa/lkxsEvvEEXHqdruvZVnOotN8RhwTB8QWAf9b
-        uQiFwHKH2CNw7BPMeN8m8A+ETyVJH6GWAQlmikJSAAAAAElFTkSuQmCC
+        uQiFwHKH2CNw7BPMeN8m8A+ETyVJH5I8AP2Z0ZYNAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="useRegexp.Text" xml:space="preserve">
@@ -1030,9 +1033,5 @@
         x5Iuf8iSLn/Iki5/yJIuf8iSLn/Iki5/xI8sf8CMK3+/iyp/vYssbLSIOQEAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 </value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Inherit</value>
   </data>
 </root>
