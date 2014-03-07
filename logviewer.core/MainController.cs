@@ -57,7 +57,7 @@ namespace logviewer.core
 
         private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
-        private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(600);
+        private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
 
         #endregion
 
