@@ -58,10 +58,10 @@
             this.currentPage = new System.Windows.Forms.TextBox();
             this.prev = new System.Windows.Forms.Button();
             this.first = new System.Windows.Forms.Button();
-            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
+            this.syntaxRichTextBox1 = new logviewer.SyntaxRichTextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -301,7 +301,7 @@
             this.filterBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.filterBox.Name = "filterBox";
             resources.ApplyResources(this.filterBox, "filterBox");
-            this.filterBox.TextChanged += new System.EventHandler(this.OnChangeTextFilter);
+            this.filterBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDownInFilterBox);
             // 
             // useRegexp
             // 
@@ -377,14 +377,6 @@
             this.first.UseVisualStyleBackColor = true;
             this.first.Click += new System.EventHandler(this.OnFirst);
             // 
-            // syntaxRichTextBox1
-            // 
-            resources.ApplyResources(this.syntaxRichTextBox1, "syntaxRichTextBox1");
-            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.syntaxRichTextBox1.DetectUrls = false;
-            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
-            this.syntaxRichTextBox1.ReadOnly = true;
-            // 
             // openFileDialog1
             // 
             resources.ApplyResources(this.openFileDialog1, "openFileDialog1");
@@ -399,6 +391,14 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             resources.ApplyResources(this.exportDialog, "exportDialog");
+            // 
+            // syntaxRichTextBox1
+            // 
+            resources.ApplyResources(this.syntaxRichTextBox1, "syntaxRichTextBox1");
+            this.syntaxRichTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.syntaxRichTextBox1.DetectUrls = false;
+            this.syntaxRichTextBox1.Name = "syntaxRichTextBox1";
+            this.syntaxRichTextBox1.ReadOnly = true;
             // 
             // MainDlg
             // 

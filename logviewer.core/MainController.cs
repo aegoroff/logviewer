@@ -390,18 +390,17 @@ namespace logviewer.core
             this.settings.MessageFilter = value;
         }
 
-        private void UpdateRecentFilters(string value)
+        public void UpdateRecentFilters(string value = null)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return;
-            }
-
             string[] items = null;
 
             this.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {
-                itemsStore.Add(value);
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    itemsStore.Add(value);
+                }
+
                 items = itemsStore.ReadItems().ToArray();
             });
 

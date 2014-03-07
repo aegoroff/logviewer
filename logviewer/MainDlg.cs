@@ -77,6 +77,7 @@ namespace logviewer
             this.Controller.ResetLogStatistic();
             this.applicationInitialized = true;
             this.Controller.LoadLastOpenedFile();
+            this.Controller.UpdateRecentFilters();
         }
 
         public void FocusOnTextFilterControl()
@@ -326,20 +327,6 @@ namespace logviewer
             this.Controller.ExportToRtf();
         }
 
-        private void OnChangeTextFilter(object sender, EventArgs e)
-        {
-            this.textFilterChanging = true;
-
-            if (this.applicationInitialized)
-            {
-                this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
-            }
-            else
-            {
-                this.Controller.UpdateMessageFilter(this.filterBox.Text);
-            }
-        }
-
         private void OnRefresh(object sender, EventArgs e)
         {
             this.Controller.ClearCache();
@@ -431,6 +418,16 @@ namespace logviewer
         {
             var dlg = new StatisticDlg(this.Controller.Store, this.Controller.GetLogSize(true), this.Controller.CurrentEncoding);
             dlg.Show(this);
+        }
+
+        private void OnKeyDownInFilterBox(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+            {
+                return;
+            }
+            this.textFilterChanging = true;
+            this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
         }
     }
 }
