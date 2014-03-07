@@ -498,7 +498,7 @@ namespace logviewer.tests
             this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
-            Thread.Sleep(TimeSpan.FromMilliseconds(700));
+            Thread.Sleep(TimeSpan.FromMilliseconds(300));
             Assert.That(this.controller.PendingStart, NUnit.Framework.Is.False);
         }
     }
