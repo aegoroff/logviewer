@@ -426,6 +426,20 @@ namespace logviewer
             {
                 return;
             }
+            this.StartReadingOnChangeTextFilter();
+        }
+
+        private void OnChangeTextFilter(object sender, EventArgs e)
+        {
+            if (!this.applicationInitialized || !string.IsNullOrEmpty(this.filterBox.Text))
+            {
+                return;
+            }
+            this.StartReadingOnChangeTextFilter();
+        }
+
+        private void StartReadingOnChangeTextFilter()
+        {
             this.textFilterChanging = true;
             this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
         }
