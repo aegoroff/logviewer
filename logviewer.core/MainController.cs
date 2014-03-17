@@ -344,6 +344,7 @@ namespace logviewer.core
                 var f = new FileInfo(path);
                 if (f.Length < this.logSize)
                 {
+                    this.currentPath = string.Empty;
                     this.logSize = 0;
                     if (this.store != null)
                     {
@@ -850,6 +851,11 @@ namespace logviewer.core
         {
             this.byLevel.Clear();
             var doc = new RtfDocument(Encoding.UTF8);
+
+            if (this.store == null)
+            {
+                return doc.Rtf;
+            }
 
             this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
                 this.useRegexp);

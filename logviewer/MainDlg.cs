@@ -287,13 +287,14 @@ namespace logviewer
 
         private void OnClose(object sender, EventArgs e)
         {
+            this.logWatch.Filter = string.Empty;
+            this.logWatch.Path = string.Empty;
             this.Controller.CancelReading();
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
             this.syntaxRichTextBox1.Clear();
             this.EnableControls(false);
             this.Controller.CurrentPage = 1;
-            this.logWatch.Filter = string.Empty;
         }
 
         private void OnExit(object sender, EventArgs e)
