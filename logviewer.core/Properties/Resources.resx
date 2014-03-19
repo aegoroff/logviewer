@@ -132,11 +132,29 @@
   <data name="FinishLoading" xml:space="preserve">
     <value>Log reading completed. Log will be displayed in about {0} seconds.</value>
   </data>
+  <data name="HoursGenitivePlural" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="HoursGenitiveSingular" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="HoursNominative" xml:space="preserve">
+    <value>hour</value>
+  </data>
   <data name="LogInfoFormatString" xml:space="preserve">
     <value>Total: {1} To display: {8} Displayed: {0}   On the page T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
   </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>
+  </data>
+  <data name="MinutesGenitivePlural" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="MinutesGenitiveSingular" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="MinutesNominative" xml:space="preserve">
+    <value>munute</value>
   </data>
   <data name="ReadCompletedTemplate" xml:space="preserve">
     <value>Read completed.  Taken {0}</value>
@@ -145,16 +163,25 @@
     <value>less then second</value>
   </data>
   <data name="RemainingOnlySeconds" xml:space="preserve">
-    <value>{0} seconds</value>
+    <value>{0} {1}</value>
   </data>
   <data name="RemainingWithDays" xml:space="preserve">
     <value>{0} days {1} hours {2} minutes {3} seconds</value>
   </data>
   <data name="RemainingWithHours" xml:space="preserve">
-    <value>{0} hours {1} minutes {2} seconds</value>
+    <value>{0} {3} {1} {4} {2} {5}</value>
   </data>
   <data name="RemainingWithMinutes" xml:space="preserve">
-    <value>{0} minutes {1} seconds</value>
+    <value>{0} {2} {1} {3}</value>
+  </data>
+  <data name="SecondsGenitivePlural" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="SecondsGenitiveSingular" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="SecondsNominative" xml:space="preserve">
+    <value>second</value>
   </data>
   <data name="SizeBytes" xml:space="preserve">
     <value>Bytes</value>

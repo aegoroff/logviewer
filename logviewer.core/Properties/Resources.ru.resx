@@ -132,11 +132,29 @@
   <data name="FinishLoading" xml:space="preserve">
     <value>Чтение журнала завершено. Журнал будет показан через примерно {0} секунд.</value>
   </data>
+  <data name="HoursGenitivePlural" xml:space="preserve">
+    <value>часов</value>
+  </data>
+  <data name="HoursGenitiveSingular" xml:space="preserve">
+    <value>часа</value>
+  </data>
+  <data name="HoursNominative" xml:space="preserve">
+    <value>час</value>
+  </data>
   <data name="LogInfoFormatString" xml:space="preserve">
     <value>Всего: {1} Для показа: {8} Показано: {0}   На странице T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
   </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Минимальный уровень должен быть меньше или равен максимальному</value>
+  </data>
+  <data name="MinutesGenitivePlural" xml:space="preserve">
+    <value>минут</value>
+  </data>
+  <data name="MinutesGenitiveSingular" xml:space="preserve">
+    <value>минуты</value>
+  </data>
+  <data name="MinutesNominative" xml:space="preserve">
+    <value>минута</value>
   </data>
   <data name="ReadCompletedTemplate" xml:space="preserve">
     <value>Чтение завершено.  за {0}</value>
@@ -144,17 +162,17 @@
   <data name="RemainingLessThenSecond" xml:space="preserve">
     <value>меньше секунды</value>
   </data>
-  <data name="RemainingOnlySeconds" xml:space="preserve">
-    <value>{0} секунд</value>
-  </data>
   <data name="RemainingWithDays" xml:space="preserve">
     <value>{0} дней {1} часов {2} минут {3} секунд</value>
   </data>
-  <data name="RemainingWithHours" xml:space="preserve">
-    <value>{0} часов {1} минут {2} секунд</value>
+  <data name="SecondsGenitivePlural" xml:space="preserve">
+    <value>секунд</value>
   </data>
-  <data name="RemainingWithMinutes" xml:space="preserve">
-    <value>{0} минут {1} секунд</value>
+  <data name="SecondsGenitiveSingular" xml:space="preserve">
+    <value>секунды</value>
+  </data>
+  <data name="SecondsNominative" xml:space="preserve">
+    <value>секунда</value>
   </data>
   <data name="SizeBytes" xml:space="preserve">
     <value>байт</value>
