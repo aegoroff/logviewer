@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using logviewer.core.Properties;
 
 namespace logviewer.core
@@ -125,8 +125,8 @@ namespace logviewer.core
         private static string Declension(this int number, string nominative, string genitiveSingular,
             string genitivePlural)
         {
-            return declensions.ContainsKey(CultureInfo.CurrentCulture.LCID)
-                ? declensions[CultureInfo.CurrentCulture.LCID](number, nominative, genitiveSingular, genitivePlural)
+            return declensions.ContainsKey(Thread.CurrentThread.CurrentUICulture.LCID)
+                ? declensions[Thread.CurrentThread.CurrentUICulture.LCID](number, nominative, genitiveSingular, genitivePlural)
                 : DeclensionEn(number, nominative, genitiveSingular, genitivePlural);
         }
 
