@@ -79,6 +79,33 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to days.
+        /// </summary>
+        internal static string DaysGenitivePlural {
+            get {
+                return ResourceManager.GetString("DaysGenitivePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to days.
+        /// </summary>
+        internal static string DaysGenitiveSingular {
+            get {
+                return ResourceManager.GetString("DaysGenitiveSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to day.
+        /// </summary>
+        internal static string DaysNominative {
+            get {
+                return ResourceManager.GetString("DaysNominative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default template.
         /// </summary>
         internal static string DefaultParsingTemplateName {
@@ -205,7 +232,7 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} days {1} hours {2} minutes {3} seconds.
+        ///   Looks up a localized string similar to {0} {4} {1} {5} {2} {6} {3} {7}.
         /// </summary>
         internal static string RemainingWithDays {
             get {

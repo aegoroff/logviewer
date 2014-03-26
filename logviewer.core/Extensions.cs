@@ -67,7 +67,7 @@ namespace logviewer.core
 
         private static string WithDays(TimeSpan input)
         {
-            return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds) : null;
+            return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds, input.DaysToString(), input.HoursToString(), input.MinutesToString(), input.SecondsToString()) : null;
         }
 
         private static string WithHours(TimeSpan input)
@@ -98,6 +98,11 @@ namespace logviewer.core
         private static string HoursToString(this TimeSpan input)
         {
             return input.Hours.Declension(Resources.HoursNominative, Resources.HoursGenitiveSingular, Resources.HoursGenitivePlural);
+        }
+        
+        private static string DaysToString(this TimeSpan input)
+        {
+            return input.Days.Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
         }
 
         internal static string TimespanToHumanString(this TimeSpan timeSpan)

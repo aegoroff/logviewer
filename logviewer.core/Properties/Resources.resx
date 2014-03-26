@@ -123,6 +123,15 @@
   <data name="CreateRtfInProgress" xml:space="preserve">
     <value>Creating page to display in progress ...</value>
   </data>
+  <data name="DaysGenitivePlural" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="DaysGenitiveSingular" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="DaysNominative" xml:space="preserve">
+    <value>day</value>
+  </data>
   <data name="DefaultParsingTemplateName" xml:space="preserve">
     <value>Default template</value>
   </data>
@@ -166,7 +175,7 @@
     <value>{0} {1}</value>
   </data>
   <data name="RemainingWithDays" xml:space="preserve">
-    <value>{0} days {1} hours {2} minutes {3} seconds</value>
+    <value>{0} {4} {1} {5} {2} {6} {3} {7}</value>
   </data>
   <data name="RemainingWithHours" xml:space="preserve">
     <value>{0} {3} {1} {4} {2} {5}</value>

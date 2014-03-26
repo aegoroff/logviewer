@@ -123,6 +123,15 @@
   <data name="CreateRtfInProgress" xml:space="preserve">
     <value>Создание страницы для показа ...</value>
   </data>
+  <data name="DaysGenitivePlural" xml:space="preserve">
+    <value>дней</value>
+  </data>
+  <data name="DaysGenitiveSingular" xml:space="preserve">
+    <value>дня</value>
+  </data>
+  <data name="DaysNominative" xml:space="preserve">
+    <value>день</value>
+  </data>
   <data name="DefaultParsingTemplateName" xml:space="preserve">
     <value>Шаблон по умолчанию</value>
   </data>
@@ -161,9 +170,6 @@
   </data>
   <data name="RemainingLessThenSecond" xml:space="preserve">
     <value>меньше секунды</value>
-  </data>
-  <data name="RemainingWithDays" xml:space="preserve">
-    <value>{0} дней {1} часов {2} минут {3} секунд</value>
   </data>
   <data name="SecondsGenitivePlural" xml:space="preserve">
     <value>секунд</value>
