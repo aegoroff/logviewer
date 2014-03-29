@@ -15,7 +15,7 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
         
         <!--
-			Check for .NET 4.0 Full
+			Check for .NET 4.5
 		-->
 		<PropertyRef Id="NETFRAMEWORK45"/>
 		<Condition Message="This setup requires the .NET Framework 4.5 or higher.">
