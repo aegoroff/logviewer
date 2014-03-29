@@ -17,6 +17,8 @@ namespace logviewer.core
         const string Project = "logviewer";
         readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        private const string DownloadUrlTemplate = "http://github.com/{0}/{1}/releases/download/{2}/{3}";
+
         public event EventHandler ReadCompleted;
         public event EventHandler<VersionEventArgs> VersionRead;
 
@@ -51,8 +53,9 @@ namespace logviewer.core
                             where match.Success
                             select match)
                         {
+                            var url = string.Format(DownloadUrlTemplate, this.account, this.project, release.Name, m.Value);
                             var version = new Version(m.Groups[1].Captures[0].Value);
-                            this.VersionRead(this, new VersionEventArgs(version, m.Value));
+                            this.VersionRead(this, new VersionEventArgs(version, url));
                         }
                     }
                     catch (Exception e)

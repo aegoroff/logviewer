@@ -12,6 +12,10 @@ namespace logviewer.core
     {
         private readonly IVersionsReader reader;
 
+        public UpdatesChecker() : this(new VersionsReader())
+        {
+        }
+        
         public UpdatesChecker(IVersionsReader reader)
         {
             this.reader = reader;
@@ -19,6 +23,7 @@ namespace logviewer.core
         }
 
         public Version LatestVersion { get; private set; }
+        public string LatestVersionUrl { get; private set; }
         
         public Version CurrentVersion { get; private set; }
 
@@ -29,8 +34,8 @@ namespace logviewer.core
 
         public bool IsUpdatesAvaliable(Version current)
         {
-            bool completed = false;
-            bool result = false;
+            var completed = false;
+            var result = false;
             this.reader.VersionRead += (sender, eventArgs) =>
             {
                 if (result)
@@ -38,10 +43,12 @@ namespace logviewer.core
                     return;
                 }
                 result = eventArgs.Version > current;
-                if (result)
+                if (!result)
                 {
-                    this.LatestVersion = eventArgs.Version;
+                    return;
                 }
+                this.LatestVersion = eventArgs.Version;
+                this.LatestVersionUrl = eventArgs.Url;
             };
             this.reader.ReadCompleted += delegate { completed = true; };
 

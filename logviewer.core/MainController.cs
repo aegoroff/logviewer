@@ -415,15 +415,23 @@ namespace logviewer.core
 
         public void CheckUpdates()
         {
-            var reader = new VersionsReader();
-            var checker = new UpdatesChecker(reader);
+            var checker = new UpdatesChecker();
             Task.Factory.StartNew(delegate
             {
                 if (!checker.IsUpdatesAvaliable())
                 {
                     return;
                 }
-                this.RunOnGuiThread(() => this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion));
+                this.RunOnGuiThread(
+                    delegate
+                    {
+                        var download = this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion,
+                            checker.LatestVersion);
+                        if (download)
+                        {
+                            Process.Start(checker.LatestVersionUrl);
+                        }
+                    });
             });
         }
 

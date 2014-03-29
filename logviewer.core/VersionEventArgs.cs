@@ -9,12 +9,12 @@ namespace logviewer.core
     public sealed class VersionEventArgs : EventArgs
     {
         public Version Version { get; private set; }
-        public string Name { get; set; }
+        public string Url { get; set; }
 
-        public VersionEventArgs(Version version, string name)
+        public VersionEventArgs(Version version, string url)
         {
             this.Version = version;
-            this.Name = name;
+            this.Url = url;
         }
     }
 }
