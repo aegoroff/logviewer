@@ -15,28 +15,42 @@ namespace logviewer.core
         public UpdatesChecker(IVersionsReader reader)
         {
             this.reader = reader;
+            this.CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
         }
+
+        public Version LatestVersion { get; private set; }
+        
+        public Version CurrentVersion { get; private set; }
 
         public bool IsUpdatesAvaliable()
         {
-            return this.IsUpdatesAvaliable(Assembly.GetExecutingAssembly().GetName().Version);
+            return this.IsUpdatesAvaliable(this.CurrentVersion);
         }
 
         public bool IsUpdatesAvaliable(Version current)
         {
-            var completed = false;
-            var result = false;
+            bool completed = false;
+            bool result = false;
             this.reader.VersionRead += (sender, eventArgs) =>
             {
-                if (!result)
+                if (result)
                 {
-                    result = eventArgs.Version > current;
+                    return;
+                }
+                result = eventArgs.Version > current;
+                if (result)
+                {
+                    this.LatestVersion = eventArgs.Version;
                 }
             };
             this.reader.ReadCompleted += delegate { completed = true; };
 
             this.reader.ReadReleases();
             SpinWait.SpinUntil(() => completed);
+            if (!result)
+            {
+                this.LatestVersion = current;
+            }
             return result;
         }
     }

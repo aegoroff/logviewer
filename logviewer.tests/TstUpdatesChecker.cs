@@ -48,6 +48,7 @@ namespace logviewer.tests
         {
             this.Invoke(this.v1);
             Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
+            Assert.That(this.checker.LatestVersion, Is.EqualTo(this.v1));
         }
         
         [Test]
@@ -55,6 +56,7 @@ namespace logviewer.tests
         {
             this.Invoke(this.v2, this.v1);
             Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
+            Assert.That(this.checker.LatestVersion, Is.EqualTo(this.v1));
         }
         
         [Test]
@@ -62,13 +64,16 @@ namespace logviewer.tests
         {
             this.Invoke(this.v1, this.v2);
             Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
+            Assert.That(this.checker.LatestVersion, Is.EqualTo(this.v1));
         }
 
         [Test]
         public void Greater()
         {
+            var v = new Version(2, 0);
             this.Invoke(this.v1);
-            Assert.That(this.checker.IsUpdatesAvaliable(new Version(2, 0)), Is.False);
+            Assert.That(this.checker.IsUpdatesAvaliable(v), Is.False);
+            Assert.That(this.checker.LatestVersion, Is.EqualTo(v));
         }
 
         [Test]
