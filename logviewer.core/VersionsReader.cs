@@ -9,7 +9,7 @@ using Octokit;
 
 namespace logviewer.core
 {
-    public class VersionsReader
+    public class VersionsReader : IVersionsReader
     {
         private readonly string account;
         private readonly string project;
@@ -68,18 +68,6 @@ namespace logviewer.core
                     this.ReadCompleted(this, new EventArgs());
                 }
             }
-        }
-    }
-
-    public sealed class VersionEventArgs : EventArgs
-    {
-        public Version Version { get; private set; }
-        public string Name { get; set; }
-
-        public VersionEventArgs(Version version, string name)
-        {
-            this.Version = version;
-            this.Name = name;
         }
     }
 }
