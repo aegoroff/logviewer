@@ -48,6 +48,7 @@
     <Compile Include="TstSqliteSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />
     <Compile Include="TstMainController.cs" />
+    <Compile Include="TstUpdatesChecker.cs" />
     <Compile Include="TstUtils.cs" />
   </ItemGroup>
   <ItemGroup>
