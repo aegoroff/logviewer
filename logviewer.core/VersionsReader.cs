@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Octokit;
 
@@ -33,6 +34,10 @@ namespace logviewer.core
         {
             try
             {
+                if (this.VersionRead == null)
+                {
+                    return;
+                }
                 var github = new GitHubClient(new ProductHeaderValue(this.project));
                 var releases = await github.Release.GetAll(this.account, this.project);
                 foreach (var release in releases)
@@ -40,15 +45,12 @@ namespace logviewer.core
                     try
                     {
                         var assets = await github.Release.GetAssets(this.account, this.project, release.Id);
-                        foreach (var releaseAsset in assets)
+                        foreach (var v in from releaseAsset in assets
+                            select this.versionRegexp.Match(releaseAsset.Name)
+                            into match
+                            where match.Success
+                            select new Version(match.Groups[1].Captures[0].Value))
                         {
-                            Console.WriteLine(releaseAsset.Name);
-                            var match = versionRegexp.Match(releaseAsset.Name);
-                            if (this.VersionRead == null || !match.Success)
-                            {
-                                continue;
-                            }
-                            var v = new Version(match.Groups[1].Captures[0].Value);
                             this.VersionRead(this, new VersionEventArgs(v));
                         }
                     }
