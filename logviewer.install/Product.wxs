@@ -95,11 +95,6 @@
 								Source="$(var.SourcePath)\Ninject.dll"
 								DiskId="1"/>
                             <File
-								Id="Ninject.pdb"
-								Name="Ninject.pdb"
-								Source="$(var.SourcePath)\Ninject.pdb"
-								DiskId="1"/>
-                            <File
 								Id="System.Data.SQLite.dll"
 								Name="System.Data.SQLite.dll"
 								Source="$(var.SourcePath)\System.Data.SQLite.dll"
