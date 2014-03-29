@@ -15,7 +15,7 @@ namespace logviewer.core
         private readonly string project;
         const string Account = "aegoroff";
         const string Project = "logviewer";
-        readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.exe$", RegexOptions.Compiled);
+        readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled);
 
         public event EventHandler ReadCompleted;
         public event EventHandler<VersionEventArgs> VersionRead;
