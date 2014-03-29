@@ -20,10 +20,17 @@ namespace logviewer.tests
             this.invokeRead = this.reader.Expects.One.EventBinding<VersionEventArgs>(_ => _.VersionRead += null);
             this.invokeComplete = this.reader.Expects.One.EventBinding(_ => _.ReadCompleted += null);
             this.reader.Expects.One.Method(_ => _.ReadReleases());
+        }
+
+        private void Invoke(params Version[] versions)
+        {
             Task.Factory.StartNew(delegate
             {
                 Thread.Sleep(100);
-                this.invokeRead.Invoke(new VersionEventArgs(this.v1, string.Empty));
+                foreach (var version in versions)
+                {
+                    this.invokeRead.Invoke(new VersionEventArgs(version, string.Empty));
+                }
                 this.invokeComplete.Invoke();
             });
         }
@@ -34,23 +41,55 @@ namespace logviewer.tests
         private EventInvoker<VersionEventArgs> invokeRead;
         private EventInvoker invokeComplete;
         private readonly Version v1 = new Version(1, 2, 104, 0);
+        private readonly Version v2 = new Version(1, 0);
 
         [Test]
-        public void Equal()
+        public void EqualSingle()
         {
+            this.Invoke(this.v1);
+            Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
+        }
+        
+        [Test]
+        public void EqualFirstLess()
+        {
+            this.Invoke(this.v2, this.v1);
+            Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
+        }
+        
+        [Test]
+        public void EqualLastLess()
+        {
+            this.Invoke(this.v1, this.v2);
             Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
         }
 
         [Test]
         public void Greater()
         {
+            this.Invoke(this.v1);
             Assert.That(this.checker.IsUpdatesAvaliable(new Version(2, 0)), Is.False);
         }
 
         [Test]
         public void Less()
         {
-            Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 0)), Is.True);
+            this.Invoke(this.v1);
+            Assert.That(this.checker.IsUpdatesAvaliable(this.v2), Is.True);
+        }
+        
+        [Test]
+        public void LessFirstLess()
+        {
+            this.Invoke(this.v2, this.v1);
+            Assert.That(this.checker.IsUpdatesAvaliable(this.v2), Is.True);
+        }
+        
+        [Test]
+        public void LessLastLess()
+        {
+            this.Invoke(this.v1, this.v2);
+            Assert.That(this.checker.IsUpdatesAvaliable(this.v2), Is.True);
         }
     }
 }

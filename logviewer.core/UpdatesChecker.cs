@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Reflection;
 using System.Threading;
 
 namespace logviewer.core
@@ -14,6 +15,11 @@ namespace logviewer.core
         public UpdatesChecker(IVersionsReader reader)
         {
             this.reader = reader;
+        }
+
+        public bool IsUpdatesAvaliable()
+        {
+            return this.IsUpdatesAvaliable(Assembly.GetExecutingAssembly().GetName().Version);
         }
 
         public bool IsUpdatesAvaliable(Version current)
