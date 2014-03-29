@@ -90,6 +90,11 @@
 								Source="$(var.SourcePath)\NLog.dll"
 								DiskId="1"/>
                             <File
+								Id="Octokit.dll"
+								Name="Octokit.dll"
+								Source="$(var.SourcePath)\Octokit.dll"
+								DiskId="1"/>
+                            <File
 								Id="Ninject.dll"
 								Name="Ninject.dll"
 								Source="$(var.SourcePath)\Ninject.dll"

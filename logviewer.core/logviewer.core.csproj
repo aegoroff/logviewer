@@ -99,6 +99,7 @@
     <Compile Include="SqliteSettingsProvider.cs" />
     <Compile Include="SizeUnit.cs" />
     <Compile Include="SqliteRegEx.cs" />
+    <Compile Include="VersionsReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
