@@ -413,6 +413,20 @@ namespace logviewer.core
             this.settings.UseRegexp = value;
         }
 
+        public void CheckUpdates()
+        {
+            var reader = new VersionsReader();
+            var checker = new UpdatesChecker(reader);
+            Task.Factory.StartNew(delegate
+            {
+                if (!checker.IsUpdatesAvaliable())
+                {
+                    return;
+                }
+                this.RunOnGuiThread(() => this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion));
+            });
+        }
+
         /// <summary>
         ///     Reads log from file
         /// </summary>

@@ -78,6 +78,7 @@ namespace logviewer
             this.applicationInitialized = true;
             this.Controller.LoadLastOpenedFile();
             this.Controller.UpdateRecentFilters();
+            this.Controller.CheckUpdates();
         }
 
         public void FocusOnTextFilterControl()
@@ -269,6 +270,13 @@ namespace logviewer
         {
             this.filterBox.AutoCompleteCustomSource.Clear();
             this.filterBox.AutoCompleteCustomSource.AddRange(items);
+        }
+
+        public bool ShowDialogAboutNewVersionAvaliable(Version current, Version latest)
+        {
+            var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
+            var result = MessageBox.Show(m, Resources.NewVersion, MessageBoxButtons.OKCancel);
+            return result == DialogResult.OK;
         }
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)

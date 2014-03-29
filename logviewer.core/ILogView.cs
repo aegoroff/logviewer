@@ -2,6 +2,8 @@
 // Created at: 19.09.2012
 // © 2012-2014 Alexander Egorov
 
+using System;
+
 namespace logviewer.core
 {
     public interface ILogView
@@ -28,5 +30,6 @@ namespace logviewer.core
         void SetFileEncoding(string encoding);
         void StartReading();
         void AddFilterItems(string[] items);
+        bool ShowDialogAboutNewVersionAvaliable(Version current, Version latest);
     }
 }

@@ -144,6 +144,12 @@
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="NewVersion" xml:space="preserve">
+    <value>Доступна новая версия</value>
+  </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>Доступна новая версия logviewer. Текущая версия {0} а новая {1}. Загрузить её сейчас?</value>
+  </data>
   <data name="Size" xml:space="preserve">
     <value>Размер</value>
   </data>
