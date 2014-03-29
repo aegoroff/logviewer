@@ -45,13 +45,14 @@ namespace logviewer.core
                     try
                     {
                         var assets = await github.Release.GetAssets(this.account, this.project, release.Id);
-                        foreach (var v in from releaseAsset in assets
+                        foreach (var m in from releaseAsset in assets
                             select this.versionRegexp.Match(releaseAsset.Name)
                             into match
                             where match.Success
-                            select new Version(match.Groups[1].Captures[0].Value))
+                            select match)
                         {
-                            this.VersionRead(this, new VersionEventArgs(v));
+                            var version = new Version(m.Groups[1].Captures[0].Value);
+                            this.VersionRead(this, new VersionEventArgs(version, m.Value));
                         }
                     }
                     catch (Exception e)
@@ -73,10 +74,12 @@ namespace logviewer.core
     public sealed class VersionEventArgs : EventArgs
     {
         public Version Version { get; private set; }
+        public string Name { get; set; }
 
-        public VersionEventArgs(Version version)
+        public VersionEventArgs(Version version, string name)
         {
             this.Version = version;
+            this.Name = name;
         }
     }
 }
