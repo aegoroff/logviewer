@@ -46,25 +46,25 @@ namespace logviewer.tests
             Assert.AreEqual(result, value.ToSafePercent(min, max));
         }
 
-        [TestCase(0UL, SizeUnit.Bytes, 0.0, "0 Bytes", false)]
-        [TestCase(1023UL, SizeUnit.Bytes, 0.0, "1023 Bytes", false)]
-        [TestCase(1024UL, SizeUnit.KBytes, 1.0, "1,00 Kb (1 024 Bytes)", false)]
-        [TestCase(2UL * 1024UL, SizeUnit.KBytes, 2.0, "2,00 Kb (2 048 Bytes)", false)]
-        [TestCase(2UL * 1024UL * 1024UL, SizeUnit.MBytes, 2.0, "2,00 Mb (2 097 152 Bytes)", false)]
-        [TestCase(2UL * 1024UL * 1024UL * 1024UL, SizeUnit.GBytes, 2.0, "2,00 Gb (2 147 483 648 Bytes)", false)]
-        [TestCase(2UL * 1024UL * 1024UL * 1024UL * 1024UL, SizeUnit.TBytes, 2.0, "2,00 Tb (2 199 023 255 552 Bytes)", false)]
+        [TestCase(0UL, SizeUnit.Bytes, 0.0, "0 \\w+", false)]
+        [TestCase(1023UL, SizeUnit.Bytes, 0.0, "1023 \\w+", false)]
+        [TestCase(1024UL, SizeUnit.KBytes, 1.0, "1,00 \\w{2} \\(1 024 \\w+\\)", false)]
+        [TestCase(2UL * 1024UL, SizeUnit.KBytes, 2.0, "2,00 \\w{2} \\(2 048 \\w+\\)", false)]
+        [TestCase(2UL * 1024UL * 1024UL, SizeUnit.MBytes, 2.0, "2,00 \\w{2} \\(2 097 152 \\w+\\)", false)]
+        [TestCase(2UL * 1024UL * 1024UL * 1024UL, SizeUnit.GBytes, 2.0, "2,00 \\w{2} \\(2 147 483 648 \\w+\\)", false)]
+        [TestCase(2UL * 1024UL * 1024UL * 1024UL * 1024UL, SizeUnit.TBytes, 2.0, "2,00 \\w{2} \\(2 199 023 255 552 \\w+\\)", false)]
         [TestCase(2UL * 1024UL * 1024UL * 1024UL * 1024UL * 1024UL, SizeUnit.PBytes, 2.0,
-            "2,00 Pb (2 251 799 813 685 248 Bytes)", false)]
+            "2,00 \\w{2} \\(2 251 799 813 685 248 \\w+\\)", false)]
         [TestCase(2UL * 1024UL * 1024UL * 1024UL * 1024UL * 1024UL * 1024UL, SizeUnit.EBytes, 2.0,
-            "2,00 Eb (2 305 843 009 213 693 952 Bytes)", false)]
-        [TestCase(2UL * 1024UL, SizeUnit.KBytes, 2.0, "2,00 Kb", true)]
+            "2,00 \\w{2} \\(2 305 843 009 213 693 952 \\w+\\)", false)]
+        [TestCase(2UL * 1024UL, SizeUnit.KBytes, 2.0, "2,00 \\w{2}", true)]
         public void TestFileSizeNormalize(ulong size, SizeUnit unit, double value, string str, bool bigWithoutBytes)
         {
             var sz = new FileSize(size, bigWithoutBytes);
             Assert.That(sz.Bytes, Is.EqualTo(size));
             Assert.That(sz.Unit, Is.EqualTo(unit));
             Assert.That(sz.Value, Is.EqualTo(value));
-            Assert.That(sz.ToString(), Is.EqualTo(str));
+            Assert.That(sz.ToString(), Is.StringMatching(str));
         }
     }
 }
