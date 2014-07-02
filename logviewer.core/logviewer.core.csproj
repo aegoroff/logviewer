@@ -134,7 +134,7 @@
   </Target>
   -->
   <Target Name="BeforeBuild">
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.1.0.93.0\content\net40\x64\SQLite.Interop.dll" DestinationFiles="$(MSBuildProjectDirectory)\x64\SQLite.Interop.dll" Condition="!Exists('$(MSBuildProjectDirectory)\x64\SQLite.Interop.dll')" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.1.0.93.0\content\net40\x86\SQLite.Interop.dll" DestinationFiles="$(MSBuildProjectDirectory)\x86\SQLite.Interop.dll" Condition="!Exists('$(MSBuildProjectDirectory)\x86\SQLite.Interop.dll')" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.1.0.93.0\content\net45\x64\SQLite.Interop.dll" DestinationFiles="$(MSBuildProjectDirectory)\x64\SQLite.Interop.dll" Condition="!Exists('$(MSBuildProjectDirectory)\x64\SQLite.Interop.dll')" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\packages\System.Data.SQLite.1.0.93.0\content\net45\x86\SQLite.Interop.dll" DestinationFiles="$(MSBuildProjectDirectory)\x86\SQLite.Interop.dll" Condition="!Exists('$(MSBuildProjectDirectory)\x86\SQLite.Interop.dll')" />
   </Target>
 </Project>
