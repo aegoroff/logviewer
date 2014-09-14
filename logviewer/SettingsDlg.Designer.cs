@@ -35,6 +35,7 @@
             this.pageSizeBox = new System.Windows.Forms.TextBox();
             this.pageSizeLabel = new System.Windows.Forms.Label();
             this.fileSettingsBox = new System.Windows.Forms.GroupBox();
+            this.autoRefreshCheckBox = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.keepLastNFilesBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -62,7 +63,6 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
-            this.autoRefreshCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
@@ -76,25 +76,25 @@
             // 
             // tabControl1
             // 
+            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             // 
             // tabPage1
             // 
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Controls.Add(this.viewSettingsBox);
             this.tabPage1.Controls.Add(this.fileSettingsBox);
-            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // viewSettingsBox
             // 
+            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Controls.Add(this.pageSizeBox);
             this.viewSettingsBox.Controls.Add(this.pageSizeLabel);
-            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Name = "viewSettingsBox";
             this.viewSettingsBox.TabStop = false;
             // 
@@ -112,14 +112,21 @@
             // 
             // fileSettingsBox
             // 
+            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Controls.Add(this.autoRefreshCheckBox);
             this.fileSettingsBox.Controls.Add(this.label2);
             this.fileSettingsBox.Controls.Add(this.keepLastNFilesBox);
             this.fileSettingsBox.Controls.Add(this.label1);
             this.fileSettingsBox.Controls.Add(this.openLastFile);
-            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Name = "fileSettingsBox";
             this.fileSettingsBox.TabStop = false;
+            // 
+            // autoRefreshCheckBox
+            // 
+            resources.ApplyResources(this.autoRefreshCheckBox, "autoRefreshCheckBox");
+            this.autoRefreshCheckBox.Name = "autoRefreshCheckBox";
+            this.autoRefreshCheckBox.UseVisualStyleBackColor = true;
+            this.autoRefreshCheckBox.CheckedChanged += new System.EventHandler(this.OnChangeAutorefresh);
             // 
             // label2
             // 
@@ -147,11 +154,11 @@
             // 
             // tabPage2
             // 
+            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.parsingTemplateSelector);
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
             this.tabPage2.Controls.Add(this.logLevelsBox);
-            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -169,9 +176,9 @@
             // 
             // commonTemplatesBox
             // 
+            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
-            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
             // 
@@ -188,6 +195,7 @@
             // 
             // logLevelsBox
             // 
+            resources.ApplyResources(this.logLevelsBox, "logLevelsBox");
             this.logLevelsBox.Controls.Add(this.fatalLabel);
             this.logLevelsBox.Controls.Add(this.fatalBox);
             this.logLevelsBox.Controls.Add(this.errorLabel);
@@ -200,7 +208,6 @@
             this.logLevelsBox.Controls.Add(this.traceBox);
             this.logLevelsBox.Controls.Add(this.debugLabel);
             this.logLevelsBox.Controls.Add(this.traceLabel);
-            resources.ApplyResources(this.logLevelsBox, "logLevelsBox");
             this.logLevelsBox.Name = "logLevelsBox";
             this.logLevelsBox.TabStop = false;
             // 
@@ -279,15 +286,15 @@
             // 
             // flowLayoutPanel1
             // 
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Controls.Add(this.closeButton);
             this.flowLayoutPanel1.Controls.Add(this.saveButton);
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // closeButton
             // 
-            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             resources.ApplyResources(this.closeButton, "closeButton");
+            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.closeButton.Name = "closeButton";
             this.closeButton.UseVisualStyleBackColor = true;
             // 
@@ -297,13 +304,6 @@
             this.saveButton.Name = "saveButton";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.OnSave);
-            // 
-            // autoRefreshCheckBox
-            // 
-            resources.ApplyResources(this.autoRefreshCheckBox, "autoRefreshCheckBox");
-            this.autoRefreshCheckBox.Name = "autoRefreshCheckBox";
-            this.autoRefreshCheckBox.UseVisualStyleBackColor = true;
-            this.autoRefreshCheckBox.CheckedChanged += new System.EventHandler(this.OnChangeAutorefresh);
             // 
             // SettingsDlg
             // 

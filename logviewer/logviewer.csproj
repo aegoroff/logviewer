@@ -106,6 +106,9 @@
     <EmbeddedResource Include="SettingsDlg.resx">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SettingsDlg.ru.resx">
+      <DependentUpon>SettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StatisticDlg.resx">
       <DependentUpon>StatisticDlg.cs</DependentUpon>
     </EmbeddedResource>
