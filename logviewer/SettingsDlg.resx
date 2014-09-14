@@ -134,8 +134,11 @@
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="fileSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 6</value>
+  <data name="&gt;&gt;keepLastNFilesBox.Name" xml:space="preserve">
+    <value>keepLastNFilesBox</value>
+  </data>
+  <data name="errorLabel.Text" xml:space="preserve">
+    <value>Error:</value>
   </data>
   <data name="&gt;&gt;keepLastNFilesBox.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -161,14 +164,11 @@
   <data name="traceBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>393, 20</value>
   </data>
-  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="keepLastNFilesBox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>50, 10</value>
   </data>
   <data name="debugBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>124, 55</value>
@@ -186,8 +186,8 @@
   <data name="fileSettingsBox.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
+  <data name="parsingTemplateSelector.Location" type="System.Drawing.Point, System.Drawing">
+    <value>132, 7</value>
   </data>
   <data name="&gt;&gt;label1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -213,11 +213,17 @@
   <data name="&gt;&gt;label3.Parent" xml:space="preserve">
     <value>tabPage2</value>
   </data>
+  <data name="commonTemplatesBox.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="warnLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 13</value>
+  </data>
   <data name="errorBox.Font" type="System.Drawing.Font, System.Drawing">
     <value>Courier New, 8.25pt</value>
   </data>
-  <data name="closeButton.Text" xml:space="preserve">
-    <value>Close</value>
+  <data name="&gt;&gt;parsingTemplateSelector.Name" xml:space="preserve">
+    <value>parsingTemplateSelector</value>
   </data>
   <data name="infoLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
@@ -227,12 +233,6 @@
   </data>
   <data name="&gt;&gt;fatalBox.Name" xml:space="preserve">
     <value>fatalBox</value>
-  </data>
-  <data name="debugLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>560, 385</value>
   </data>
   <data name="infoBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>393, 20</value>
@@ -249,20 +249,17 @@
   <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="infoLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
-  <data name="&gt;&gt;debugBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;debugBox.Name" xml:space="preserve">
+    <value>debugBox</value>
   </data>
   <data name="traceLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Settings</value>
-  </data>
-  <data name="traceBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 28</value>
   </data>
   <data name="traceLabel.Text" xml:space="preserve">
     <value>Trace:</value>
@@ -279,8 +276,8 @@
   <data name="debugLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>76, 58</value>
   </data>
-  <data name="&gt;&gt;traceBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;traceLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;infoLabel.ZOrder" xml:space="preserve">
     <value>6</value>
@@ -297,6 +294,9 @@
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
+  <data name="infoLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="&gt;&gt;debugLabel.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
@@ -305,6 +305,9 @@
   </data>
   <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
     <value>546, 318</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;openLastFile.Parent" xml:space="preserve">
     <value>fileSettingsBox</value>
@@ -883,9 +886,6 @@
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 </value>
   </data>
-  <data name="&gt;&gt;warnLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="traceLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>80, 31</value>
   </data>
@@ -913,8 +913,11 @@
   <data name="viewSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 133</value>
   </data>
-  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
+  <data name="&gt;&gt;messageStartPatternBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pageSizeBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>68, 31</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -931,9 +934,6 @@
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;saveButton.Name" xml:space="preserve">
-    <value>saveButton</value>
-  </data>
   <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
@@ -945,6 +945,9 @@
   </data>
   <data name="messageStartPatternLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="warnBox.Font" type="System.Drawing.Font, System.Drawing">
     <value>Courier New, 8.25pt</value>
@@ -985,11 +988,8 @@
   <data name="&gt;&gt;viewSettingsBox.Parent" xml:space="preserve">
     <value>tabPage1</value>
   </data>
-  <data name="warnLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>554, 344</value>
+  <data name="&gt;&gt;commonTemplatesBox.Parent" xml:space="preserve">
+    <value>tabPage2</value>
   </data>
   <data name="fatalBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>393, 20</value>
@@ -997,11 +997,14 @@
   <data name="tabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
+  <data name="messageStartPatternBox.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Courier New, 8.25pt</value>
   </data>
-  <data name="pageSizeBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>68, 31</value>
+  <data name="autoRefreshCheckBox.Text" xml:space="preserve">
+    <value>Autorefresh on file change</value>
+  </data>
+  <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
   <data name="fatalLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>85, 162</value>
@@ -1015,6 +1018,9 @@
   <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>393, 20</value>
   </data>
+  <data name="debugLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 13</value>
+  </data>
   <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -1024,11 +1030,20 @@
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 48</value>
   </data>
+  <data name="fileSettingsBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>527, 121</value>
+  </data>
+  <data name="&gt;&gt;autoRefreshCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="debugLabel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
+  </data>
+  <data name="&gt;&gt;parsingTemplateSelector.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="infoLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>56, 84</value>
@@ -1045,11 +1060,8 @@
   <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
     <value>546, 318</value>
   </data>
-  <data name="&gt;&gt;keepLastNFilesBox.Parent" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;errorBox.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="errorBox.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
   </data>
   <data name="fatalLabel.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -1062,9 +1074,6 @@
   </data>
   <data name="&gt;&gt;messageStartPatternLabel.Parent" xml:space="preserve">
     <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.Parent" xml:space="preserve">
-    <value>tabPage1</value>
   </data>
   <data name="&gt;&gt;viewSettingsBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1126,11 +1135,8 @@
   <data name="logLevelsBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>531, 203</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="fileSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 6</value>
   </data>
   <data name="autoRefreshCheckBox.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1141,11 +1147,8 @@
   <data name="&gt;&gt;label2.Parent" xml:space="preserve">
     <value>fileSettingsBox</value>
   </data>
-  <data name="debugLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 13</value>
-  </data>
-  <data name="errorLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 13</value>
+  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;openLastFile.ZOrder" xml:space="preserve">
     <value>4</value>
@@ -1162,8 +1165,8 @@
   <data name="pageSizeBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 20</value>
   </data>
-  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>560, 385</value>
+  <data name="&gt;&gt;errorLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="&gt;&gt;logLevelsBox.ZOrder" xml:space="preserve">
     <value>3</value>
@@ -1189,8 +1192,8 @@
   <data name="&gt;&gt;errorBox.Name" xml:space="preserve">
     <value>errorBox</value>
   </data>
-  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Templates</value>
   </data>
   <data name="&gt;&gt;autoRefreshCheckBox.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -1213,8 +1216,8 @@
   <data name="&gt;&gt;warnBox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="autoRefreshCheckBox.Text" xml:space="preserve">
-    <value>Autorefresh on file change</value>
+  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
   </data>
   <data name="&gt;&gt;commonTemplatesBox.Name" xml:space="preserve">
     <value>commonTemplatesBox</value>
@@ -1225,23 +1228,23 @@
   <data name="&gt;&gt;flowLayoutPanel1.Name" xml:space="preserve">
     <value>flowLayoutPanel1</value>
   </data>
-  <data name="&gt;&gt;parsingTemplateSelector.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="&gt;&gt;pageSizeLabel.Name" xml:space="preserve">
     <value>pageSizeLabel</value>
   </data>
-  <data name="&gt;&gt;autoRefreshCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="&gt;&gt;debugBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="autoRefreshCheckBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>150, 17</value>
   </data>
-  <data name="warnLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 13</value>
+  <data name="&gt;&gt;fileSettingsBox.Parent" xml:space="preserve">
+    <value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="viewSettingsBox.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1249,20 +1252,14 @@
   <data name="&gt;&gt;debugBox.Parent" xml:space="preserve">
     <value>logLevelsBox</value>
   </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>50, 10</value>
-  </data>
-  <data name="&gt;&gt;keepLastNFilesBox.Name" xml:space="preserve">
-    <value>keepLastNFilesBox</value>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;fatalBox.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;infoLabel.Parent" xml:space="preserve">
-    <value>logLevelsBox</value>
-  </data>
-  <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+  <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="&gt;&gt;debugLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1297,14 +1294,11 @@
   <data name="&gt;&gt;errorLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
   </data>
-  <data name="&gt;&gt;debugLabel.Name" xml:space="preserve">
-    <value>debugLabel</value>
-  </data>
-  <data name="infoLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+  <data name="&gt;&gt;saveButton.Name" xml:space="preserve">
+    <value>saveButton</value>
   </data>
   <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
     <value>RightToLeft</value>
@@ -1315,14 +1309,11 @@
   <data name="fatalLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
   </data>
-  <data name="openLastFile.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
   </data>
   <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
-  </data>
-  <data name="saveButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
   </data>
   <data name="&gt;&gt;saveButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1336,8 +1327,8 @@
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
+  <data name="traceBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>124, 28</value>
   </data>
   <data name="traceBox.Font" type="System.Drawing.Font, System.Drawing">
     <value>Courier New, 8.25pt</value>
@@ -1351,20 +1342,23 @@
   <data name="tabPage2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="&gt;&gt;closeButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>560, 385</value>
   </data>
   <data name="warnBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>124, 107</value>
   </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>Templates</value>
+  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1372,8 +1366,11 @@
   <data name="warnBox.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="&gt;&gt;commonTemplatesBox.Parent" xml:space="preserve">
-    <value>tabPage2</value>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>99, 48</value>
+  </data>
+  <data name="&gt;&gt;warnLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 13</value>
@@ -1417,8 +1414,11 @@
   <data name="&gt;&gt;warnBox.Parent" xml:space="preserve">
     <value>logLevelsBox</value>
   </data>
-  <data name="&gt;&gt;debugBox.Name" xml:space="preserve">
-    <value>debugBox</value>
+  <data name="&gt;&gt;openLastFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;infoBox.Name" xml:space="preserve">
     <value>infoBox</value>
@@ -1444,11 +1444,8 @@
   <data name="&gt;&gt;closeButton.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
   </data>
-  <data name="&gt;&gt;warnLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="logLevelsBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 108</value>
+  <data name="&gt;&gt;errorBox.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;infoBox.Parent" xml:space="preserve">
     <value>logLevelsBox</value>
@@ -1456,14 +1453,14 @@
   <data name="&gt;&gt;messageStartPatternBox.Name" xml:space="preserve">
     <value>messageStartPatternBox</value>
   </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
+  <data name="&gt;&gt;infoLabel.Parent" xml:space="preserve">
+    <value>logLevelsBox</value>
   </data>
   <data name="warnBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>393, 20</value>
   </data>
-  <data name="&gt;&gt;parsingTemplateSelector.Name" xml:space="preserve">
-    <value>parsingTemplateSelector</value>
+  <data name="logLevelsBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 108</value>
   </data>
   <data name="openLastFile.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1474,35 +1471,35 @@
   <data name="&gt;&gt;parsingTemplateSelector.Parent" xml:space="preserve">
     <value>tabPage2</value>
   </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>99, 48</value>
+  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
   </data>
-  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 28</value>
+  <data name="errorLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 13</value>
   </data>
-  <data name="&gt;&gt;traceLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>560, 385</value>
+  </data>
+  <data name="fatalBox.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
   </data>
   <data name="pageSizeLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;openLastFile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="pageSizeLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 34</value>
+  <data name="&gt;&gt;keepLastNFilesBox.Parent" xml:space="preserve">
+    <value>fileSettingsBox</value>
   </data>
   <data name="&gt;&gt;fatalLabel.Name" xml:space="preserve">
     <value>fatalLabel</value>
   </data>
-  <data name="parsingTemplateSelector.Location" type="System.Drawing.Point, System.Drawing">
-    <value>132, 7</value>
+  <data name="pageSizeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 34</value>
   </data>
   <data name="infoBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>124, 81</value>
   </data>
-  <data name="commonTemplatesBox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="debugLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
     <value>tabControl1</value>
@@ -1510,29 +1507,35 @@
   <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="errorBox.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
   </data>
   <data name="infoBox.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="fileSettingsBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>527, 121</value>
+  <data name="&gt;&gt;debugLabel.Name" xml:space="preserve">
+    <value>debugLabel</value>
   </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="openLastFile.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="errorLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
   </data>
-  <data name="&gt;&gt;errorLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="saveButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
   <data name="traceLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
   </data>
+  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 28</value>
+  </data>
   <data name="&gt;&gt;pageSizeBox.Parent" xml:space="preserve">
     <value>viewSettingsBox</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1546,8 +1549,8 @@
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>476, 3</value>
   </data>
-  <data name="&gt;&gt;messageStartPatternBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>554, 344</value>
   </data>
   <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
@@ -1564,8 +1567,8 @@
   <data name="tabPage1.Text" xml:space="preserve">
     <value>General</value>
   </data>
-  <data name="fatalBox.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
+  <data name="warnLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
   </data>
   <data name="&gt;&gt;messageStartPatternLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1573,17 +1576,14 @@
   <data name="saveButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>395, 3</value>
   </data>
-  <data name="messageStartPatternLabel.Text" xml:space="preserve">
-    <value>Message start pattern:</value>
-  </data>
-  <data name="infoLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="&gt;&gt;warnLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="pageSizeLabel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="messageStartPatternBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
+  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="closeButton.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1591,19 +1591,16 @@
   <data name="pageSizeLabel.Text" xml:space="preserve">
     <value>Page size:</value>
   </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="messageStartPatternLabel.Text" xml:space="preserve">
+    <value>Message start pattern:</value>
   </data>
-  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;traceBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="errorLabel.Text" xml:space="preserve">
-    <value>Error:</value>
+  <data name="closeButton.Text" xml:space="preserve">
+    <value>Close</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>ru</value>
   </metadata>
 </root>
