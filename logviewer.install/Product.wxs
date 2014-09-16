@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <?define SourcePath = "$(var.SolutionDir)logviewer\bin\$(var.CONFIGURATION)" ?>
+    <?define InteropPath = "$(var.SolutionDir)logviewer.core\bin\$(var.CONFIGURATION)" ?>
 	<?define Version = "1.0.0.0" ?>
 	<Product 
         Id="*" 
@@ -124,7 +125,7 @@
                                 <File
 								    Id="x86.SQLite.Interop.dll"
 								    Name="SQLite.Interop.dll"
-								    Source="$(var.SourcePath)\x86\SQLite.Interop.dll"
+								    Source="$(var.InteropPath)\x86\SQLite.Interop.dll"
 								    DiskId="1"/>
                             </Component>
                         </Directory>
@@ -133,7 +134,7 @@
                                 <File
 								    Id="x64.SQLite.Interop.dll"
 								    Name="SQLite.Interop.dll"
-								    Source="$(var.SourcePath)\x64\SQLite.Interop.dll"
+								    Source="$(var.InteropPath)\x64\SQLite.Interop.dll"
 								    DiskId="1"/>
                             </Component>
                         </Directory>
