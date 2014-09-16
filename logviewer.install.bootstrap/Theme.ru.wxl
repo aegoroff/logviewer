@@ -42,7 +42,7 @@
     <String Id="SuccessRestartButton">&amp;Перезагрузка</String>
     <String Id="SuccessCloseButton">&amp;Закрыть</String>
     <String Id="FailureHeader">Установка не удалась</String>
-    <String Id="FailureHyperlinkLogText">One or more issues caused the setup to fail. Please fix the issues and then retry setup. For more information see the &lt;a href="#"&gt;log file&lt;/a&gt;.</String>
+    <String Id="FailureHyperlinkLogText">Одна или несколько проблем привели к неудаче установки. Пожалуйста исправьте эти проблемы и повторите установку. Более подробно смотрите в &lt;a href="#"&gt;журнале&lt;/a&gt;.</String>
     <String Id="FailureRestartText">Надо перезагрузить компьютер для завершения отката.</String>
     <String Id="FailureRestartButton">&amp;Перезагрузка</String>
     <String Id="FailureCloseButton">&amp;Закрыть</String>
