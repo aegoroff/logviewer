@@ -4,7 +4,8 @@
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<!-- Importing MSBuild TeamCity Tasks -->
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildTeamCityTasks\MSBuild.TeamCity.Tasks.Targets"/>
-	<!-- Global properties definitions -->
+
+    <!-- Global properties definitions -->
 	<PropertyGroup>
 
 		<!-- Code configuration to build (Release or Debug) -->
@@ -24,6 +25,8 @@
 		<Minor>0</Minor>
 		<Build>0</Build>
 		<Revision>0</Revision>
+
+        <RestorePackages>true</RestorePackages>
 	</PropertyGroup>
 	<!-- AssemblyInfo.cs file definitions where to set version -->
 	<ItemGroup>
@@ -88,4 +91,6 @@
 		<PublishArtifacts Artifacts="@(SetupFile)"/>
 		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
 	</Target>
+
+    <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
