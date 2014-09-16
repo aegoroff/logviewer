@@ -25,9 +25,6 @@
 		<Minor>0</Minor>
 		<Build>0</Build>
 		<Revision>0</Revision>
-
-        <SolutionDir>$(MSBuildProjectDirectory)</SolutionDir>
-        <RestorePackages>true</RestorePackages>
 	</PropertyGroup>
 	<!-- AssemblyInfo.cs file definitions where to set version -->
 	<ItemGroup>
@@ -92,6 +89,4 @@
 		<PublishArtifacts Artifacts="@(SetupFile)"/>
 		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
 	</Target>
-
-    <Import Project="$(MSBuildProjectDirectory)\.nuget\nuget.targets" />
 </Project>
