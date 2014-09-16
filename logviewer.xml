@@ -26,6 +26,7 @@
 		<Build>0</Build>
 		<Revision>0</Revision>
 
+        <SolutionDir>$(MSBuildProjectDirectory)</SolutionDir>
         <RestorePackages>true</RestorePackages>
 	</PropertyGroup>
 	<!-- AssemblyInfo.cs file definitions where to set version -->
