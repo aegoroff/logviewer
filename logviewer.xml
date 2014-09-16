@@ -92,5 +92,5 @@
 		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
 	</Target>
 
-    <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+    <Import Project="$(MSBuildProjectDirectory)\.nuget\nuget.targets" />
 </Project>
