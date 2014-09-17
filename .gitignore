@@ -20,3 +20,4 @@ packages/
 logviewer.core/x86/
 logviewer.core/x64/
 *.user
+.sonar
