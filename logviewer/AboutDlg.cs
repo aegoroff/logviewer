@@ -20,7 +20,7 @@ namespace logviewer
             this.labelVersion.Text = string.Format(Resources.VersionTemplate, this.AssemblyVersion);
             this.labelCopyright.Text = this.AssemblyCopyright + " " + this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription;
-            this.linkLabel1.Links.Add(new LinkLabel.Link(0, this.linkLabel1.Text.Length, "http://www.logviewer.info/"));
+            this.linkLabel1.Links.Add(new LinkLabel.Link(0, this.linkLabel1.Text.Length, "https://github.com/aegoroff/logviewer"));
         }
 
         #region Assembly Attribute Accessors
