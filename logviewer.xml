@@ -3,7 +3,7 @@
 	<!-- Importing MSBuild Community Tasks -->
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<!-- Importing MSBuild TeamCity Tasks -->
-	<Import Project="$(MSBuildExtensionsPath)\MSBuildTeamCityTasks\MSBuild.TeamCity.Tasks.Targets"/>
+	<Import Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.260.0\tools\MSBuild.TeamCity.Tasks.Targets"/>
 
     <!-- Global properties definitions -->
 	<PropertyGroup>
