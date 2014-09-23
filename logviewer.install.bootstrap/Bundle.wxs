@@ -21,7 +21,7 @@
 
 	    <Chain>
             <PackageGroupRef Id="NetFx45Redist"/>
-            <<RollbackBoundary /> />
+            <RollbackBoundary />
             <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
 		</Chain>
 	</Bundle>
