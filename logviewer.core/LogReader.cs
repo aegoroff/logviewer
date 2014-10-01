@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Text;
 using System.Text.RegularExpressions;
+using Antlr4.Runtime;
 using Ude;
 
 namespace logviewer.core
@@ -130,6 +131,12 @@ namespace logviewer.core
             }
 
             return srcEncoding;
+        }
+
+        private void Parse(string s)
+        {
+            ICharStream stream = new UnbufferedCharStream(new StringReader(s));
+            GrokLexer gl = new GrokLexer(stream);
         }
 
         private static Encoding SrcEncoding(Stream stream)
