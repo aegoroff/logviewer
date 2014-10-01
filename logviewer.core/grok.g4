@@ -1,7 +1,11 @@
-﻿grammar Grok;
+grammar Grok;
 
-parse: grok+ ;
+parse: grok+ # Build
+;       
 
-grok: '%{' ID '}' ;
+grok: OPEN ID CLOSE # Find
+;  
 
 ID : [A-Z]+ ;
+OPEN : '%{' ;
+CLOSE : '}' ;
