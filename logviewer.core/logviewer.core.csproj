@@ -113,7 +113,7 @@
     <EmbeddedResource Include="Properties\Resources.ru.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Antlr4 Include="grok.g4">
+    <Antlr4 Include="Grok.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>logviewer.core</CustomToolNamespace>
       <Listener>True</Listener>
