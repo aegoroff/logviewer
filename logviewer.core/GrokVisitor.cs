@@ -12,6 +12,8 @@ namespace logviewer.core
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
         private const int MaxDepth = 20;
+        private const string PatternStart = "%{";
+        private const string PatternStop = "}";
 
         static readonly Dictionary<string, string> templates = new Dictionary<string, string>
         {
@@ -69,22 +71,22 @@ namespace logviewer.core
                 {
                     foreach (var k in templates.Keys)
                     {
-                        var link = "%{" + k + "}";
+                        var link = PatternStart + k + PatternStop;
                         if (regex.Contains(link))
                         {
                             regex = regex.Replace(link, templates[k]);
                         }
                     }
                     ++depth;
-                } while (regex.Contains("%{") || depth > MaxDepth);
+                } while (regex.Contains(PatternStart) || depth > MaxDepth);
 
                 this.stringBuilder.Append(regex);
             }
             else
             {
-                this.stringBuilder.Append("%{");
+                this.stringBuilder.Append(PatternStart);
                 this.stringBuilder.Append(node);
-                this.stringBuilder.Append("}");
+                this.stringBuilder.Append(PatternStop);
             }
             return this.VisitChildren(ctx);
         }
