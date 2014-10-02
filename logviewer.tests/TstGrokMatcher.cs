@@ -67,6 +67,22 @@ namespace logviewer.tests
         }
         
         [Test]
+        public void MatchesExistWithSemantic()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{LOGLEVEL:level}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)"));
+        }
+
+        [Test]
+        public void MatchesExistWithSemanticAndCasting()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{POSINT:num:int}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b(?:[1-9][0-9]*)\b"));
+        }
+        
+        [Test]
         public void MatchesExistAndUnexist()
         {
             GrokMatcher matcher = new GrokMatcher();

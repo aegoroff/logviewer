@@ -62,6 +62,10 @@ namespace logviewer.core
 
             Log.Instance.TraceFormatted(node);
             Console.WriteLine("id: " + node);
+            if (ctx.SEMANTIC() != null)
+            {
+                Console.WriteLine("semantic: " + ctx.SEMANTIC().Symbol.Text);
+            }
             if (templates.ContainsKey(node))
             {
                 var regex = templates[node];
