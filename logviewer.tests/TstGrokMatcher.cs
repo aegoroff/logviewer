@@ -65,5 +65,29 @@ namespace logviewer.tests
             Assert.That(matcher.Match("%{WORD}%{ID}"));
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b%{ID}"));
         }
+
+        [Test]
+        public void MatchesSeveralExistWithoutLiteral()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD}%{INT}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b(?:[+-]?(?:[0-9]+))"));
+        }
+        
+        [Test]
+        public void MatchesSeveralExist()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD} %{INT}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))"));
+        }
+        
+        [Test]
+        public void MatchesSeveralExistNotEmptyLiteral()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD}, %{INT}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b, (?:[+-]?(?:[0-9]+))"));
+        }
     }
 }
