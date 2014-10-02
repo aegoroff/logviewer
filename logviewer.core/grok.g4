@@ -32,7 +32,7 @@ CLOSE : '}' ;
 STR : ~[}{%]+? ;
 
 fragment SEPARATOR : ':' ;
-fragment UPPER_LETTER : 'A' .. 'Z'+ ;
-fragment LOWER_LETTER : 'a' .. 'z'+ ;
-fragment DIGIT : '0' .. '9'+ ;
+fragment UPPER_LETTER : 'A' .. 'Z' ;
+fragment LOWER_LETTER : 'a' .. 'z' ;
+fragment DIGIT : '0' .. '9' ;
 
