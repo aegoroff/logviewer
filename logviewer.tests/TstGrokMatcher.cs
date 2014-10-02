@@ -56,7 +56,7 @@ namespace logviewer.tests
         public void NotMatches()
         {
             var matcher = new GrokMatcher("%{id}");
-            Assert.That(matcher.Template, Is.Null);
+            Assert.That(matcher.Template, Is.EqualTo("%{id}"));
         }
 
         [Test]

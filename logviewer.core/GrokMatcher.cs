@@ -21,19 +21,22 @@ namespace logviewer.core
 
             if (parser.NumberOfSyntaxErrors > 0)
             {
-                return;
+                this.Template = grok;
             }
-            var grokVisitor = new GrokVisitor();
-            grokVisitor.Visit(tree);
-            this.Template = grokVisitor.Template;
-            this.regex = new Regex(grokVisitor.Template, options);
+            else
+            {
+                var grokVisitor = new GrokVisitor();
+                grokVisitor.Visit(tree);
+                this.Template = grokVisitor.Template;
+            }
+            this.regex = new Regex(this.Template, options);
         }
         
         public string Template { get; private set; }
 
         public bool Match(string s)
         {
-            return this.regex != null && this.regex.IsMatch(s);
+            return this.regex.IsMatch(s);
         }
     }
 }
