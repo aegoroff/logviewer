@@ -5,32 +5,34 @@ parse
 	;
 
 grok
-	: OPEN syntax (semantic casting?)? CLOSE # Replace
+	: OPEN SYNTAX CLOSE                   # Replace
+	| OPEN SYNTAX SEMANTIC CASTING? CLOSE # Replace
 	;
 
 literal
 	: STR+ # Paste
 	;
 
-syntax 
+SYNTAX 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
 	;
 
-semantic
+SEMANTIC
 	: SEPARATOR (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* 
 	;
 
-casting 
+CASTING 
 	: SEPARATOR (LOWER_LETTER | UPPER_LETTER)+ 
 	;
 
 OPEN : '%{' ;
 CLOSE : '}' ;
-SEPARATOR : ':' ;
+
 // string MUST be non greedy!
 STR : ~[}{%]+? ;
 
-UPPER_LETTER : 'A' .. 'Z'+ ;
-LOWER_LETTER : 'a' .. 'z'+ ;
-DIGIT : '0' .. '9'+ ;
+fragment SEPARATOR : ':' ;
+fragment UPPER_LETTER : 'A' .. 'Z'+ ;
+fragment LOWER_LETTER : 'a' .. 'z'+ ;
+fragment DIGIT : '0' .. '9'+ ;
 

@@ -121,6 +121,14 @@ namespace logviewer.tests
             Assert.That(matcher.Match("%{WORD}str%{INT}"));
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\bstr(?:[+-]?(?:[0-9]+))"));
         }
+        
+        [Test]
+        public void MatchesSeveralExistNotEmptyLiteralWithoutSpaceWithTrail()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD}str%{INT}trs"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\bstr(?:[+-]?(?:[0-9]+))trs"));
+        }
 
         [Test]
         public void MatchesExistComplex()
