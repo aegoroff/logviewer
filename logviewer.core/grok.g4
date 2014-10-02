@@ -13,6 +13,6 @@ literal
 // string MUST be non greedy
 STRING : ~[%}{]+? ;
 
-ID : [A-Z]+ ;
+ID : [0-9A-Z_]+ ;
 OPEN : '%{' ;
 CLOSE : '}' ;

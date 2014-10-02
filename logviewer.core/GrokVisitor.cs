@@ -13,6 +13,8 @@ namespace logviewer.core
     {
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
+        private const int MaxDepth = 20;
+
         static readonly Dictionary<string, string> templates = new Dictionary<string, string>
         {
             { "USERNAME", "[a-zA-Z0-9._-]+" },
@@ -28,6 +30,19 @@ namespace logviewer.core
             { "NONNEGINT", @"\b(?:[0-9]+)\b" },
             { "NOTSPACE", @"\S+" },
             { "QUOTEDSTRING", "(?>(?<!\\\\)(?>\"(?>\\\\.|[^\\\\\"]+)+\"|\"\"|(?>'(?>\\\\.|[^\\\\']+)+')|''|(?>`(?>\\\\.|[^\\\\`]+)+`)|``))" },
+            { "YEAR", @"(?>\d\d){1,2}" },
+            { "HOUR", @"(?:2[0123]|[01]?[0-9])" },
+            { "MINUTE", @"(?:[0-5][0-9])" },
+            { "SECOND", @"(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?)" },
+            { "MONTH", @"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b" },
+            { "MONTHNUM", @"(?:0?[1-9]|1[0-2])" },
+            { "MONTHDAY", @"(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])" },
+            { "TIME", @"(?!<[0-9])%{HOUR}:%{MINUTE}(?::%{SECOND})(?![0-9])" },
+            { "DATE_US", @"%{MONTHNUM}[/-]%{MONTHDAY}[/-]%{YEAR}" },
+            { "DATE_EU", @"%{MONTHDAY}[./-]%{MONTHNUM}[./-]%{YEAR}" },
+            { "ISO8601_TIMEZONE", @"(?:Z|[+-]%{HOUR}(?::?%{MINUTE}))" },
+            { "ISO8601_SECOND", @"(?:%{SECOND}|60)" },
+            { "TIMESTAMP_ISO8601", @"%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?%{ISO8601_TIMEZONE}?" },
         }; 
 
         public string Template
@@ -48,7 +63,24 @@ namespace logviewer.core
             Console.WriteLine("id: " + node.Symbol.Text);
             if (templates.ContainsKey(node.Symbol.Text))
             {
-                this.stringBuilder.Append(templates[node.Symbol.Text]);
+                var regex = templates[node.Symbol.Text];
+
+                var depth = 0;
+
+                do
+                {
+                    foreach (var k in templates.Keys)
+                    {
+                        var link = "%{" + k + "}";
+                        if (regex.Contains(link))
+                        {
+                            regex = regex.Replace(link, templates[k]);
+                        }
+                    }
+                    ++depth;
+                } while (regex.Contains("%{") || depth > MaxDepth);
+
+                this.stringBuilder.Append(regex);
             }
             else
             {
