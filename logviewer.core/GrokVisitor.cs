@@ -45,11 +45,18 @@ namespace logviewer.core
             { "ISO8601_SECOND", @"(?:%{SECOND}|60)" },
             { "TIMESTAMP_ISO8601", @"%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?%{ISO8601_TIMEZONE}?" },
             { "LOGLEVEL", @"([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)" },
-        }; 
+        };
+
+        readonly List<string> semantics = new List<string>();
 
         public string Template
         {
             get { return this.stringBuilder.ToString(); }
+        }
+
+        public IEnumerable<string> Semantics
+        {
+            get { return this.semantics; }
         }
 
         public override string VisitReplace(GrokParser.ReplaceContext ctx)
@@ -88,6 +95,7 @@ namespace logviewer.core
                     {
                         name = name.Split(':')[0];
                     }
+                    this.semantics.Add(name);
                     regex = string.Format(NamedPattern, name, regex);
                 }
                 this.stringBuilder.Append(regex);

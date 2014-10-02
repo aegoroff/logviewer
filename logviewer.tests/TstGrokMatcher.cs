@@ -163,5 +163,16 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}");
             Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"));
         }
+
+        [Test]
+        public void ParseRealMessage()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
+            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(result.ContainsKey("datetime"));
+            Assert.That(result.ContainsKey("meta"));
+            Assert.That(result.ContainsKey("level"));
+            Assert.That(result.ContainsKey("head"));
+        }
     }
 }
