@@ -3,7 +3,7 @@ grammar Grok;
 parse: grok (literal? grok)* literal? ;       
 
 grok
-	: OPEN ID CLOSE # Find
+	: OPEN SYNTAX (SEPARATOR SEMANTIC)? CLOSE # Find
 	; 
 
 literal
@@ -13,6 +13,8 @@ literal
 // string MUST be non greedy
 STRING : ~[%}{]+? ;
 
-ID : [0-9A-Z_]+ ;
+SYNTAX : [0-9A-Z_]+ ;
+SEMANTIC : [a-zA-Z] [0-9a-zA-Z_]* ;
 OPEN : '%{' ;
 CLOSE : '}' ;
+SEPARATOR : ':' ;

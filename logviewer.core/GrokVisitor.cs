@@ -52,7 +52,7 @@ namespace logviewer.core
 
         public override string VisitFind(GrokParser.FindContext ctx)
         {
-            ITerminalNode node = ctx.ID();
+            ITerminalNode node = ctx.SYNTAX();
 
             if (node == null)
             {
