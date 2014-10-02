@@ -3,7 +3,8 @@ grammar Grok;
 parse: grok (literal? grok)* literal? ;       
 
 grok
-	: OPEN SYNTAX (SEPARATOR SEMANTIC (SEPARATOR CASTING)?)? CLOSE # Find
+	//: OPEN SYNTAX (SEPARATOR SEMANTIC (SEPARATOR CASTING)?)? CLOSE # Find
+	: OPEN SYNTAX CLOSE # Find
 	; 
 
 literal
@@ -14,8 +15,8 @@ literal
 STRING : ~[%}{]+? ;
 
 SYNTAX : [0-9A-Z_]+ ;
-SEMANTIC : [a-zA-Z] [0-9a-zA-Z_]* ;
-CASTING : [a-zA-Z]+ ;
+//SEMANTIC : [a-zA-Z] [0-9a-zA-Z_]* ;
+//CASTING : [a-zA-Z]+ ;
 OPEN : '%{' ;
 CLOSE : '}' ;
 SEPARATOR : ':' ;
