@@ -51,20 +51,20 @@ namespace logviewer.core
             get { return this.stringBuilder.ToString(); }
         }
 
-        public override string VisitFind(GrokParser.FindContext ctx)
+        public override string VisitReplace(GrokParser.ReplaceContext ctx)
         {
-            ITerminalNode node = ctx.SYNTAX();
+            var node = ctx.syntax().GetText();
 
             if (node == null)
             {
                 return this.VisitChildren(ctx);
             }
 
-            Log.Instance.TraceFormatted(node.Symbol.Text);
-            Console.WriteLine("id: " + node.Symbol.Text);
-            if (templates.ContainsKey(node.Symbol.Text))
+            Log.Instance.TraceFormatted(node);
+            Console.WriteLine("id: " + node);
+            if (templates.ContainsKey(node))
             {
-                var regex = templates[node.Symbol.Text];
+                var regex = templates[node];
 
                 var depth = 0;
 
@@ -86,7 +86,7 @@ namespace logviewer.core
             else
             {
                 this.stringBuilder.Append("%{");
-                this.stringBuilder.Append(node.Symbol.Text);
+                this.stringBuilder.Append(node);
                 this.stringBuilder.Append("}");
             }
             return this.VisitChildren(ctx);
@@ -94,11 +94,8 @@ namespace logviewer.core
 
         public override string VisitPaste(GrokParser.PasteContext context)
         {
-            foreach (var node in context.STRING())
-            {
-                Console.WriteLine("str: " + node.Symbol.Text);
-                this.stringBuilder.Append(node.Symbol.Text);
-            }
+            Console.WriteLine("str: " + context.GetText());
+            this.stringBuilder.Append(context.GetText());
             return this.VisitChildren(context);
         }
     }

@@ -1,22 +1,36 @@
 grammar Grok;
 
-parse: grok (literal? grok)* literal? ;       
-
-grok
-	//: OPEN SYNTAX (SEPARATOR SEMANTIC (SEPARATOR CASTING)?)? CLOSE # Find
-	: OPEN SYNTAX CLOSE # Find
-	; 
-
-literal
-	: STRING+ # Paste
+parse
+	: grok (literal? grok)* literal? 
 	;
 
-// string MUST be non greedy
-STRING : ~[%}{]+? ;
+grok
+	: OPEN syntax (semantic casting?)? CLOSE # Replace
+	;
 
-SYNTAX : [0-9A-Z_]+ ;
-//SEMANTIC : [a-zA-Z] [0-9a-zA-Z_]* ;
-//CASTING : [a-zA-Z]+ ;
+literal
+	: STR+ # Paste
+	;
+
+syntax 
+	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
+	;
+
+semantic
+	: SEPARATOR (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* 
+	;
+
+casting 
+	: SEPARATOR (LOWER_LETTER | UPPER_LETTER)+ 
+	;
+
 OPEN : '%{' ;
 CLOSE : '}' ;
 SEPARATOR : ':' ;
+// string MUST be non greedy!
+STR : ~[}{%]+? ;
+
+UPPER_LETTER : 'A' .. 'Z'+ ;
+LOWER_LETTER : 'a' .. 'z'+ ;
+DIGIT : '0' .. '9'+ ;
+

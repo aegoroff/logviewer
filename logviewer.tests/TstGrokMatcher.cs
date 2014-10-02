@@ -91,6 +91,22 @@ namespace logviewer.tests
         }
         
         [Test]
+        public void MatchesSeveralExistLiteralEnd()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD} %{INT} "));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+)) "));
+        }
+        
+        [Test]
+        public void MatchesSeveralExistLiteralEndManyChars()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD} %{INT}str"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))str"));
+        }
+        
+        [Test]
         public void MatchesSeveralExistNotEmptyLiteral()
         {
             GrokMatcher matcher = new GrokMatcher();
