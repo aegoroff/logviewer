@@ -133,12 +133,6 @@ namespace logviewer.core
             return srcEncoding;
         }
 
-        private void Parse(string s)
-        {
-            ICharStream stream = new UnbufferedCharStream(new StringReader(s));
-            GrokLexer gl = new GrokLexer(stream);
-        }
-
         private static Encoding SrcEncoding(Stream stream)
         {
             Encoding srcEncoding = null;

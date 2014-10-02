@@ -88,6 +88,7 @@
     <Compile Include="MainController.cs" />
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
+    <Compile Include="GrokMatcher.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -117,7 +118,7 @@
     <Antlr4 Include="Grok.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>logviewer.core</CustomToolNamespace>
-      <Listener>True</Listener>
+      <Listener>False</Listener>
       <Visitor>False</Visitor>
     </Antlr4>
     <None Include="packages.config">
