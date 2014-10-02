@@ -5,8 +5,7 @@ parse
 	;
 
 grok
-	: OPEN SYNTAX CLOSE                   # Replace
-	| OPEN SYNTAX SEMANTIC CASTING? CLOSE # Replace
+	: OPEN SYNTAX (SEMANTIC CASTING?)? CLOSE # Replace
 	;
 
 literal
