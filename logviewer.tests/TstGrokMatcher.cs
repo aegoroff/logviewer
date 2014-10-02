@@ -70,14 +70,14 @@ namespace logviewer.tests
         public void MatchesExistWithSemantic()
         {
             var matcher = new GrokMatcher("%{LOGLEVEL:level}");
-            Assert.That(matcher.Template, Is.EqualTo(@"([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)"));
+            Assert.That(matcher.Template, Is.EqualTo(@"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))"));
         }
 
         [Test]
         public void MatchesExistWithSemanticAndCasting()
         {
             var matcher = new GrokMatcher("%{POSINT:num:int}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b(?:[1-9][0-9]*)\b"));
+            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
         }
         
         [Test]

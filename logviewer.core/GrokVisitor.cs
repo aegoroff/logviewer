@@ -14,6 +14,7 @@ namespace logviewer.core
         private const int MaxDepth = 20;
         private const string PatternStart = "%{";
         private const string PatternStop = "}";
+        const string NamedPattern = @"(?<{0}>{1})";
 
         static readonly Dictionary<string, string> templates = new Dictionary<string, string>
         {
@@ -80,6 +81,15 @@ namespace logviewer.core
                     ++depth;
                 } while (regex.Contains(PatternStart) || depth > MaxDepth);
 
+                if (ctx.SEMANTIC() != null)
+                {
+                    var name = ctx.SEMANTIC().Symbol.Text.TrimStart(':');
+                    if (name.Contains(":"))
+                    {
+                        name = name.Split(':')[0];
+                    }
+                    regex = string.Format(NamedPattern, name, regex);
+                }
                 this.stringBuilder.Append(regex);
             }
             else
