@@ -75,6 +75,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="FormData.cs" />
+    <Compile Include="GrokVisitor.cs" />
     <Compile Include="ILogView.cs" />
     <Compile Include="ISettingsProvider.cs" />
     <Compile Include="ISettingsView.cs" />
@@ -118,8 +119,8 @@
     <Antlr4 Include="Grok.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>logviewer.core</CustomToolNamespace>
-      <Listener>False</Listener>
-      <Visitor>False</Visitor>
+      <Listener>True</Listener>
+      <Visitor>True</Visitor>
     </Antlr4>
     <None Include="packages.config">
       <SubType>Designer</SubType>
