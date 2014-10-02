@@ -104,6 +104,11 @@
 								Name="System.Data.SQLite.dll"
 								Source="$(var.SourcePath)\System.Data.SQLite.dll"
 								DiskId="1"/>
+                            <File
+								Id="Antlr4.Runtime.net45.dll"
+								Name="Antlr4.Runtime.net45.dll"
+								Source="$(var.SourcePath)\Antlr4.Runtime.net45.dll"
+								DiskId="1"/>
 						</Component>
                         <Directory Id="ru" Name="ru">
                             <Component Id="logviewer.resources.ru" Guid="{12C3AFFE-0000-4965-B0E2-293AF3AA4A78}">
