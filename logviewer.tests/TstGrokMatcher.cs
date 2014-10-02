@@ -46,6 +46,13 @@ namespace logviewer.tests
         }
         
         [Test]
+        public void MatchesSeveralLiteralsEverywhere()
+        {
+            var matcher = new GrokMatcher("str%{ID}str%{DATE}str");
+            Assert.That(matcher.Template, Is.EqualTo("str%{ID}str%{DATE}str"));
+        }
+        
+        [Test]
         public void NotMatches()
         {
             var matcher = new GrokMatcher("%{id}");

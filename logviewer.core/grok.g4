@@ -1,7 +1,7 @@
 grammar Grok;
 
 parse
-	: grok (literal? grok)* literal? 
+	: literal? grok (literal? grok)* literal? 
 	;
 
 grok
