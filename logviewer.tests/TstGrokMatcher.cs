@@ -2,6 +2,7 @@
 // Created at: 02.10.2014
 // © 2012-2014 Alexander Egorov
 
+using System.Text.RegularExpressions;
 using logviewer.core;
 using NUnit.Framework;
 
@@ -160,6 +161,16 @@ namespace logviewer.tests
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{TIMESTAMP_ISO8601}"));
             Assert.That(matcher.Template, Is.EqualTo(@"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?"));
+        }
+        
+        [Test]
+        public void CheckRealMessage()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}"));
+            const string m = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1";
+            Regex r = new Regex(matcher.Template);
+            Assert.That(r.IsMatch(m));
         }
     }
 }
