@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Text;
-using System.Text.RegularExpressions;
-using Antlr4.Runtime;
 using Ude;
 
 namespace logviewer.core
@@ -17,9 +15,9 @@ namespace logviewer.core
     public sealed class LogReader
     {
         private const int BufferSize = 0xFFFFFF;
-        private readonly Regex messageHead;
+        private readonly GrokMatcher messageHead;
 
-        public LogReader(string logPath, Regex messageHead)
+        public LogReader(string logPath, GrokMatcher messageHead)
         {
             this.LogPath = logPath;
             this.messageHead = messageHead;
@@ -99,7 +97,7 @@ namespace logviewer.core
                     {
                         break;
                     }
-                    if (this.messageHead.IsMatch(line))
+                    if (this.messageHead.Match(line))
                     {
                         onRead(message);
                         message = LogMessage.Create();

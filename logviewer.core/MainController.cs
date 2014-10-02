@@ -40,7 +40,7 @@ namespace logviewer.core
         private string currentPath;
 
         private LogLevel maxFilter = LogLevel.Fatal;
-        private Regex messageHead;
+        private GrokMatcher messageHead;
         private LogLevel minFilter = LogLevel.Trace;
         private int pageSize;
         private bool reverseChronological;
@@ -50,7 +50,7 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        private const int keepLastFilters = 20;
+        private const int KeepLastFilters = 20;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -79,7 +79,7 @@ namespace logviewer.core
 
         private void CreateMessageHead(string startMessagePattern)
         {
-            this.messageHead = new Regex(startMessagePattern, RegexOptions.Compiled);
+            this.messageHead = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
         }
 
         private void CreateMarkers(IEnumerable<string> levels)
@@ -782,7 +782,7 @@ namespace logviewer.core
         
         private void UseRecentFiltersStore(Action<RecentItemsStore> action)
         {
-            using (var filesStore = new RecentItemsStore(this.settings, "RecentFilters", keepLastFilters))
+            using (var filesStore = new RecentItemsStore(this.settings, "RecentFilters", KeepLastFilters))
             {
                 action(filesStore);
             }
