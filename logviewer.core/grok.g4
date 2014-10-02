@@ -9,7 +9,7 @@ grok
 	;
 
 literal
-	: STR+ # Paste
+	: STR+ # Passthrough
 	;
 
 SYNTAX 

@@ -96,7 +96,7 @@ namespace logviewer.core
             return this.VisitChildren(ctx);
         }
 
-        public override string VisitPaste(GrokParser.PasteContext context)
+        public override string VisitPassthrough(GrokParser.PassthroughContext context)
         {
             Console.WriteLine("str: " + context.GetText());
             this.stringBuilder.Append(context.GetText());
