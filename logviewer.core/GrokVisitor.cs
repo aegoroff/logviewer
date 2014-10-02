@@ -2,7 +2,6 @@
 // Created at: 02.10.2014
 // © 2012-2014 Alexander Egorov
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -60,11 +59,6 @@ namespace logviewer.core
             }
 
             Log.Instance.TraceFormatted(node);
-            Console.WriteLine("id: " + node);
-            if (ctx.SEMANTIC() != null)
-            {
-                Console.WriteLine("semantic: " + ctx.SEMANTIC().Symbol.Text);
-            }
             if (templates.ContainsKey(node))
             {
                 var regex = templates[node];
@@ -97,7 +91,6 @@ namespace logviewer.core
 
         public override string VisitPassthrough(GrokParser.PassthroughContext context)
         {
-            Console.WriteLine("str: " + context.GetText());
             this.stringBuilder.Append(context.GetText());
             return this.VisitChildren(context);
         }
