@@ -1,13 +1,17 @@
 grammar Grok;
 
-parse: grok+ # Build
+parse: grok* # Build
 ;       
 
-grok: OPEN ID CLOSE # Find
-;  
+grok
+	: OPEN ID CLOSE # Find
+	| literal #Paste
+	; 
+
+literal
+    : ~( OPEN | CLOSE )+
+    ;
 
 ID : [A-Z]+ ;
 OPEN : '%{' ;
 CLOSE : '}' ;
-
-WS :   [ \t\n\r]+ -> skip ;

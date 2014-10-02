@@ -18,10 +18,24 @@ namespace logviewer.tests
         }
 
         [Test]
+        public void MatchesSeveralWithoutLiteral()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{ID}%{DATE}"));
+        }
+        
+        [Test]
         public void MatchesSeveral()
         {
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{ID} %{DATE}"));
+        }
+        
+        [Test]
+        public void MatchesSeveralNotEmptyLiteral()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{ID},%{DATE}"));
         }
         
         [Test]

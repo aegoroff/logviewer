@@ -119,7 +119,7 @@
     <Antlr4 Include="Grok.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>logviewer.core</CustomToolNamespace>
-      <Listener>True</Listener>
+      <Listener>False</Listener>
       <Visitor>True</Visitor>
     </Antlr4>
     <None Include="packages.config">
