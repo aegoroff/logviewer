@@ -43,6 +43,14 @@ namespace logviewer.tests
         }
         
         [Test]
+        public void MatchesSeveralUnexistNotEmptyLiteralWithSeveralChars()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{ID}str%{DATE}"));
+            Assert.That(matcher.Template, Is.EqualTo("%{ID}str%{DATE}"));
+        }
+        
+        [Test]
         public void NotMatches()
         {
             GrokMatcher matcher = new GrokMatcher();

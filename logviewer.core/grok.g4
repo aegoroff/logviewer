@@ -7,9 +7,10 @@ grok
 	; 
 
 literal
-	: STRING # Paste
+	: STRING+ # Paste
 	;
 
+// string MUST be non greedy
 STRING : ~[%}{]+? ;
 
 ID : [A-Z]+ ;

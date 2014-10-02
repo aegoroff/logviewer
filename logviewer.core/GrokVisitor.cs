@@ -61,8 +61,11 @@ namespace logviewer.core
 
         public override string VisitPaste(GrokParser.PasteContext context)
         {
-            Console.WriteLine("str: " + context.STRING().Symbol.Text);
-            this.stringBuilder.Append(context.STRING().Symbol.Text);
+            foreach (var node in context.STRING())
+            {
+                Console.WriteLine("str: " + node.Symbol.Text);
+                this.stringBuilder.Append(node.Symbol.Text);
+            }
             return this.VisitChildren(context);
         }
     }
