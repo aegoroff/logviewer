@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 
 namespace logviewer.core
 {
@@ -26,6 +27,17 @@ namespace logviewer.core
                 return false;
             }
             return true;
+        }
+
+        void OnFind(GrokParser.FindContext ctx)
+        {
+            ITerminalNode node = ctx.ID();
+
+            Log.Instance.TraceFormatted(node.Symbol.Text);
+        }
+
+        void OnBuild(GrokParser.BuildContext ctx)
+        {
         }
     }
 }
