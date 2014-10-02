@@ -11,31 +11,35 @@ namespace logviewer.tests
     public class TstGrokMatcher
     {
         [Test]
-        public void Matches()
+        public void MatchesUnexist()
         {
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{ID}"));
+            Assert.That(matcher.Template, Is.EqualTo("%{ID}"));
         }
 
         [Test]
-        public void MatchesSeveralWithoutLiteral()
+        public void MatchesSeveraUnexistlWithoutLiteral()
         {
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{ID}%{DATE}"));
+            Assert.That(matcher.Template, Is.EqualTo("%{ID}%{DATE}"));
         }
         
         [Test]
-        public void MatchesSeveral()
+        public void MatchesSeveralUnexist()
         {
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{ID} %{DATE}"));
+            Assert.That(matcher.Template, Is.EqualTo("%{ID} %{DATE}"));
         }
         
         [Test]
-        public void MatchesSeveralNotEmptyLiteral()
+        public void MatchesSeveralUnexistNotEmptyLiteral()
         {
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{ID},%{DATE}"));
+            Assert.That(matcher.Template, Is.EqualTo("%{ID},%{DATE}"));
         }
         
         [Test]
@@ -43,6 +47,23 @@ namespace logviewer.tests
         {
             GrokMatcher matcher = new GrokMatcher();
             Assert.That(matcher.Match("%{id}"), Is.False);
+            Assert.That(matcher.Template, Is.Null);
+        }
+
+        [Test]
+        public void MatchesExist()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b"));
+        }
+        
+        [Test]
+        public void MatchesExistAndUnexist()
+        {
+            GrokMatcher matcher = new GrokMatcher();
+            Assert.That(matcher.Match("%{WORD}%{ID}"));
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b%{ID}"));
         }
     }
 }

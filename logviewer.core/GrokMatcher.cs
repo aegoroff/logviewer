@@ -2,13 +2,14 @@
 // Created at: 02.10.2014
 // © 2012-2014 Alexander Egorov
 
-using System;
 using Antlr4.Runtime;
 
 namespace logviewer.core
 {
     public class GrokMatcher
     {
+        public string Template { get; private set; }
+
         public bool Match(string s)
         {
             ICharStream inputStream = new AntlrInputStream(s);
@@ -17,11 +18,17 @@ namespace logviewer.core
             GrokParser parser = new GrokParser(tokenStream);
             var tree = parser.parse();
 
+            if (parser.NumberOfSyntaxErrors > 0)
+            {
+                return false;
+            }
+
             GrokVisitor grokVisitor = new GrokVisitor();
 
             grokVisitor.Visit(tree);
+            this.Template = grokVisitor.Template;
 
-            return parser.NumberOfSyntaxErrors == 0;
+            return true;
         }
     }
 }

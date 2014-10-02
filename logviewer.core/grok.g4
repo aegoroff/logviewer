@@ -1,12 +1,10 @@
 grammar Grok;
 
-parse: grok (literal? grok)* literal? # Build
-;       
+parse: grok (literal? grok)* literal? ;       
 
 grok
 	: OPEN ID CLOSE # Find
 	; 
-
 
 literal
 	: STRING # Paste
