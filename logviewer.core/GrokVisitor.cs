@@ -13,9 +13,20 @@ namespace logviewer.core
         {
             ITerminalNode node = ctx.ID();
 
+            if (node == null)
+            {
+                return VisitChildren(ctx);
+            }
+
             Log.Instance.TraceFormatted(node.Symbol.Text);
-            Console.WriteLine(node.Symbol.Text);
+            Console.WriteLine("id: " + node.Symbol.Text);
             return VisitChildren(ctx);
+        }
+
+        public override string VisitPaste(GrokParser.PasteContext context)
+        {
+            Console.WriteLine("str: " + context.STRING().Symbol.Text);
+            return VisitChildren(context);
         }
     }
 }
