@@ -47,12 +47,12 @@ namespace logviewer.tests
             this.controller.SetView(this.view.MockObject);
         }
 
-        private static ParsingTemplate ParsingTemplate(IList<string> levels)
+        private static ParsingTemplate ParsingTemplate(IList<string> levels, string startMessage = MessageStart)
         {
             var result = new ParsingTemplate
             {
                 Index = 0,
-                StartMessage = MessageStart
+                StartMessage = startMessage
             };
             for (var i = 0; i < levels.Count; i++)
             {
@@ -221,7 +221,7 @@ namespace logviewer.tests
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
 
-            var template = ParsingTemplate(markers);
+            var template = ParsingTemplate(markers, "^%{TIMESTAMP_ISO8601}%{DATA}");
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
             this.controller = new MainController(this.settings.MockObject);
