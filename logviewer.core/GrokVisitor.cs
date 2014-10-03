@@ -61,7 +61,7 @@ namespace logviewer.core
 
         public override string VisitReplace(GrokParser.ReplaceContext ctx)
         {
-            var node = ctx.SYNTAX().Symbol.Text;
+            var node = ctx.syntax().GetText();
 
             if (node == null)
             {

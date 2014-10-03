@@ -5,14 +5,24 @@ parse
 	;
 
 grok
-	: OPEN SYNTAX SEMANTIC? CLOSE # Replace
+	: OPEN syntax SEMANTIC? CLOSE # Replace
 	;
 
 literal
 	: STR+ # Passthrough
 	;
 
-SYNTAX 
+syntax
+	: PREDEFINED 
+	| CUSTOM
+	;
+
+PREDEFINED 
+	: 'LOGLEVEL' 
+	| 'TIMESTAMP_ISO8601' 
+	;
+
+CUSTOM 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
 	;
 
