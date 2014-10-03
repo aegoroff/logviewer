@@ -2,6 +2,7 @@
 // Created at: 19.09.2012
 // © 2012-2014 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -47,6 +48,7 @@ namespace logviewer.core
             this.Level = level;
             this.ix = 0;
             this.strings = null;
+            this.semantic = null;
         }
 
         public bool IsEmpty
@@ -83,6 +85,21 @@ namespace logviewer.core
         public void AddLine(string line)
         {
             this.strings.Add(line);
+        }
+
+        public void AddSemantic(IDictionary<Semantic, string> sem)
+        {
+            this.semantic = sem;
+        }
+
+        public void ApplySemantic(Func<IDictionary<Semantic, string>, LogLevel> method)
+        {
+            Level = method(this.semantic);
+        }
+
+        public bool HasSemantic
+        {
+            get { return this.semantic != null; }
         }
 
         public void Cache()
@@ -159,6 +176,7 @@ namespace logviewer.core
         private string body;
         private string head;
         private List<string> strings;
+        private IDictionary<Semantic, string> semantic;
         private long ix;
 
         #endregion

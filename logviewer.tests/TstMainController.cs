@@ -3,7 +3,6 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,8 +37,9 @@ namespace logviewer.tests
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
 
-            var template = ParsingTemplate(Levels);
+            var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+            this.settings.Expects.One.Method(_ => _.LogLevels()).WillReturn(new[] { LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal });
 
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
@@ -47,17 +47,13 @@ namespace logviewer.tests
             this.controller.SetView(this.view.MockObject);
         }
 
-        private static ParsingTemplate ParsingTemplate(IList<string> levels, string startMessage = MessageStart)
+        private static ParsingTemplate ParsingTemplate(string startMessage = MessageStart)
         {
             var result = new ParsingTemplate
             {
                 Index = 0,
                 StartMessage = startMessage
             };
-            for (var i = 0; i < levels.Count; i++)
-            {
-                result.UpdateLevelProperty(levels[i], (LogLevel)i);
-            }
             return result;
         }
 
@@ -135,7 +131,7 @@ namespace logviewer.tests
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        internal const string MessageStart = @"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}.*";
+        internal const string MessageStart = @"^%{TIMESTAMP_ISO8601}%{DATA}%{LOGLEVEL:level}%{DATA}";
 
         [Test]
         public void AllFilters()
@@ -169,12 +165,13 @@ namespace logviewer.tests
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(count));
         }
 
-        [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
-        [TestCase(LogLevel.Info, new[] { "TRACE", "DEBUG", @"\[?INFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
-        [TestCase(LogLevel.Debug, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 0)]
-        [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 2)]
-        [TestCase(LogLevel.Trace, new[] { "TRACE", "DEBUG", @"\[?InFO\]?", "WARN", "ERROR", "FATAL" }, 1)]
-        public void MaxFilter(LogLevel filter, string[] markers, int c)
+        [TestCase(LogLevel.Fatal, 2)]
+        [TestCase(LogLevel.Error, 2)]
+        [TestCase(LogLevel.Warn, 1)]
+        [TestCase(LogLevel.Info, 1)]
+        [TestCase(LogLevel.Debug, 0)]
+        [TestCase(LogLevel.Trace, 0)]
+        public void MaxFilter(LogLevel filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
@@ -184,8 +181,9 @@ namespace logviewer.tests
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
 
-            var template = ParsingTemplate(markers);
+            var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+            this.settings.Expects.One.Method(_ => _.LogLevels()).WillReturn(new[] { LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal });
 
             Cleanup(Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb));
             this.controller = new MainController(this.settings.MockObject);
@@ -204,12 +202,13 @@ namespace logviewer.tests
             completed = true;
         }
 
-        [TestCase(LogLevel.Warn, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 1)]
-        [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERROR\]?", "FATAL" }, 1)]
-        [TestCase(LogLevel.Info, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 2)]
-        [TestCase(LogLevel.Fatal, new[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" }, 0)]
-        [TestCase(LogLevel.Error, new[] { "TRACE", "DEBUG", "INFO", "WARN", @"\[?ERRoR\]?", "FATAL" }, 0)]
-        public void MinFilter(LogLevel filter, string[] markers, int c)
+        [TestCase(LogLevel.Fatal, 0)]
+        [TestCase(LogLevel.Error, 1)]
+        [TestCase(LogLevel.Warn, 1)]
+        [TestCase(LogLevel.Info, 2)]
+        [TestCase(LogLevel.Debug, 2)]
+        [TestCase(LogLevel.Trace, 2)]
+        public void MinFilter(LogLevel filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
             this.view.Expects.One.Method(_ => _.Initialize());
@@ -221,8 +220,9 @@ namespace logviewer.tests
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
 
-            var template = ParsingTemplate(markers, "^%{TIMESTAMP_ISO8601}%{DATA}");
+            var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+            this.settings.Expects.One.Method(_ => _.LogLevels()).WillReturn(new[] { LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal });
 
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;

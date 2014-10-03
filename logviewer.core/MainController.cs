@@ -29,9 +29,9 @@ namespace logviewer.core
         #region Constants and Fields
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
+        private readonly Dictionary<string, LogLevel> levelNames = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
-        private readonly List<Regex> markers;
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
         private readonly SynchronizationContext winformsOrDefaultContext;
 
@@ -68,11 +68,10 @@ namespace logviewer.core
             this.CurrentPage = 1;
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
-            this.markers = new List<Regex>();
             this.prevInput = DateTime.Now;
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
-            this.CreateMarkers(template.Levels);
+            this.CreateMarkers(this.settings.LogLevels());
             this.CreateMessageHead(template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
@@ -82,10 +81,12 @@ namespace logviewer.core
             this.matcher = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
         }
 
-        private void CreateMarkers(IEnumerable<string> levels)
+        private void CreateMarkers(IEnumerable<LogLevel> levels)
         {
-            this.markers.Clear();
-            this.markers.AddRange(levels.Select(level => level.ToMarker()));
+            foreach (var level in levels)
+            {
+                this.levelNames.Add(level.ToString("G"), level);
+            }
         }
 
         #endregion
@@ -551,7 +552,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    message.Level = this.DetectLevel(message.Header);
+                    message.ApplySemantic(this.DetectLevel);
                     message.Cache();
                     this.store.AddMessage(message);
                 }
@@ -793,7 +794,6 @@ namespace logviewer.core
             var template = this.settings.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
-                this.CreateMarkers(template.Levels);
                 this.CreateMessageHead(template.StartMessage);
             }
             this.PageSize();
@@ -959,21 +959,16 @@ namespace logviewer.core
             doc.AddNewLine(3);
         }
 
-        private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.None)
-        {
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                return defaultLevel;
-            }
-            for (var i = 0; i < this.markers.Count; i++)
-            {
-                if (this.markers[i].IsMatch(line))
-                {
-                    return (LogLevel)i;
-                }
-            }
+        private readonly Semantic levelSemantic = new Semantic("level");
 
-            return defaultLevel;
+        private LogLevel DetectLevel(IDictionary<Semantic, string> match)
+        {
+            if (match == null || !match.ContainsKey(this.levelSemantic))
+            {
+                return LogLevel.None;
+            }
+            LogLevel result;
+            return this.levelNames.TryGetValue(match[this.levelSemantic], out result) ? result : LogLevel.None;
         }
 
         #endregion

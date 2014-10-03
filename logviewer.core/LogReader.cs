@@ -78,7 +78,6 @@ namespace logviewer.core
             var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
             using (sr)
             {
-                var message = LogMessage.Create();
                 var total = this.Length;
                 var fraction = total / 20L;
                 var signalCounter = 1;
@@ -86,6 +85,7 @@ namespace logviewer.core
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
                 var measureStart = 0L;
+                var message = LogMessage.Create();
                 while (!sr.EndOfStream && canContinue())
                 {
                     var line = sr.ReadLine();
@@ -97,33 +97,37 @@ namespace logviewer.core
                     {
                         break;
                     }
-                    if (this.matcher.Match(line))
+                    var match = this.matcher.Parse(line);
+                    if (match != null)
                     {
-                        onRead(message);
-                        message = LogMessage.Create();
-                    }
-
-                    if (stream.Position >= signalCounter * fraction && this.ProgressChanged != null)
-                    {
-                        var elapsed = stopWatch.Elapsed;
-                        var read = stream.Position - measureStart;
-                        measureStart = stream.Position;
-                        var speed = read / elapsed.TotalSeconds;
-                        stopWatch.Restart();
-                        ++signalCounter;
-                        var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position) / speed;
-                        var progress = new LoadProgress
+                        if (message.HasSemantic)
                         {
-                            Speed = new FileSize((ulong)speed, true),
-                            Remainig = TimeSpan.FromSeconds(remain),
-                            Percent = (int)((stream.Position / (double)total) * 100)
-                        };
-                        this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
+                            onRead(message);
+                            message = LogMessage.Create();
+                        }
+                        message.AddSemantic(match);
                     }
-
                     message.AddLine(line);
-                }
 
+                    if (stream.Position < signalCounter*fraction || this.ProgressChanged == null)
+                    {
+                        continue;
+                    }
+                    var elapsed = stopWatch.Elapsed;
+                    var read = stream.Position - measureStart;
+                    measureStart = stream.Position;
+                    var speed = read / elapsed.TotalSeconds;
+                    stopWatch.Restart();
+                    ++signalCounter;
+                    var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position) / speed;
+                    var progress = new LoadProgress
+                    {
+                        Speed = new FileSize((ulong)speed, true),
+                        Remainig = TimeSpan.FromSeconds(remain),
+                        Percent = (int)((stream.Position / (double)total) * 100)
+                    };
+                    this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
+                }
                 // Add last message
                 onRead(message);
             }
