@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 
@@ -44,17 +45,8 @@ namespace logviewer.core
 
         public IDictionary<Semantic, string> Parse(string s)
         {
-            var result = new Dictionary<Semantic, string>();
             var match = this.regex.Match(s);
-            if (!match.Success)
-            {
-                return result;
-            }
-            foreach (var semantic in this.semantics)
-            {
-                result.Add(semantic, match.Groups[semantic.Name].Value);
-            }
-            return result;
+            return !match.Success ? null : this.semantics.ToDictionary(semantic => semantic, semantic => match.Groups[semantic.Name].Value);
         }
     }
 }

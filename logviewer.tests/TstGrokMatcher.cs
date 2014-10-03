@@ -185,5 +185,13 @@ namespace logviewer.tests
             Assert.That(result.ContainsKey(new Semantic("level")));
             Assert.That(result.ContainsKey(new Semantic("head")));
         }
+        
+        [Test]
+        public void ParseRealMessageWithDatatypesFailure()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}");
+            var result = matcher.Parse(" [4688] INFO \nmessage body 1");
+            Assert.That(result, Is.Null);
+        }
     }
 }

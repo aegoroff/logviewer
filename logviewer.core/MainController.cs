@@ -40,7 +40,7 @@ namespace logviewer.core
         private string currentPath;
 
         private LogLevel maxFilter = LogLevel.Fatal;
-        private GrokMatcher messageHead;
+        private GrokMatcher matcher;
         private LogLevel minFilter = LogLevel.Trace;
         private int pageSize;
         private bool reverseChronological;
@@ -79,7 +79,7 @@ namespace logviewer.core
 
         private void CreateMessageHead(string startMessagePattern)
         {
-            this.messageHead = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
+            this.matcher = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
         }
 
         private void CreateMarkers(IEnumerable<string> levels)
@@ -447,7 +447,7 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.view.LogPath, this.messageHead);
+            var reader = new LogReader(this.view.LogPath, this.matcher);
 
             var append = reader.Length > this.logSize && this.CurrentPathCached;
 

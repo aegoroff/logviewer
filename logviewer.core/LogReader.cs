@@ -15,12 +15,12 @@ namespace logviewer.core
     public sealed class LogReader
     {
         private const int BufferSize = 0xFFFFFF;
-        private readonly GrokMatcher messageHead;
+        private readonly GrokMatcher matcher;
 
-        public LogReader(string logPath, GrokMatcher messageHead)
+        public LogReader(string logPath, GrokMatcher matcher)
         {
             this.LogPath = logPath;
-            this.messageHead = messageHead;
+            this.matcher = matcher;
             this.Length = new FileInfo(logPath).Length;
         }
 
@@ -97,7 +97,7 @@ namespace logviewer.core
                     {
                         break;
                     }
-                    if (this.messageHead.Match(line))
+                    if (this.matcher.Match(line))
                     {
                         onRead(message);
                         message = LogMessage.Create();
