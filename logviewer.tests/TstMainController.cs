@@ -111,16 +111,6 @@ namespace logviewer.tests
 
         #endregion
 
-        internal static readonly string[] Levels =
-        {
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARN",
-            "ERROR",
-            "FATAL"
-        };
-
         private const string TestPath = "f";
         private const string RecentPath = "r";
         private MockFactory mockery;
