@@ -150,7 +150,7 @@ namespace logviewer.core
 
         public static LogMessage Create()
         {
-            return new LogMessage { strings = new List<string>(), Level = LogLevel.Trace };
+            return new LogMessage { strings = new List<string>(), Level = LogLevel.None };
         }
 
         #region Constants and Fields

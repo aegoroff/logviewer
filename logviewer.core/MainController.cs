@@ -959,7 +959,7 @@ namespace logviewer.core
             doc.AddNewLine(3);
         }
 
-        private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.Trace)
+        private LogLevel DetectLevel(string line, LogLevel defaultLevel = LogLevel.None)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
