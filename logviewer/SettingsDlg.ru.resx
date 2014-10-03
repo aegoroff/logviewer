@@ -179,73 +179,19 @@
     <value>Общие</value>
   </data>
   <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 25</value>
+    <value>160, 25</value>
   </data>
   <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>365, 20</value>
+  </data>
+  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 28</value>
   </data>
   <data name="messageStartPatternLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>147, 13</value>
   </data>
   <data name="messageStartPatternLabel.Text" xml:space="preserve">
     <value>Шаблон начала сообщения:</value>
-  </data>
-  <data name="logLevelsBox.Text" xml:space="preserve">
-    <value>Шаблоны разбора по уровням</value>
-  </data>
-  <data name="fatalLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>113, 162</value>
-  </data>
-  <data name="fatalBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 159</value>
-  </data>
-  <data name="fatalBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
-  </data>
-  <data name="errorLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 136</value>
-  </data>
-  <data name="errorBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 133</value>
-  </data>
-  <data name="errorBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
-  </data>
-  <data name="warnLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>96, 110</value>
-  </data>
-  <data name="warnBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 107</value>
-  </data>
-  <data name="warnBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
-  </data>
-  <data name="infoLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>84, 84</value>
-  </data>
-  <data name="infoBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 81</value>
-  </data>
-  <data name="infoBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
-  </data>
-  <data name="debugBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 55</value>
-  </data>
-  <data name="debugBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
-  </data>
-  <data name="traceBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 28</value>
-  </data>
-  <data name="traceBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
-  </data>
-  <data name="debugLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>104, 58</value>
-  </data>
-  <data name="traceLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 31</value>
   </data>
   <data name="closeButton.Text" xml:space="preserve">
     <value>Закрыть</value>

@@ -39,7 +39,6 @@ namespace logviewer.core
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
-            IEnumerable<string> defaultLeveles,
             string defaultStartMessageTemplate,
             int defaultPageSize,
             int defaultKeepLastNFiles)
@@ -60,17 +59,12 @@ namespace logviewer.core
             {
                 return;
             }
-            var defLevels = defaultLeveles.ToArray();
             var defaultTemplate = new ParsingTemplate
             {
                 Index = DefaultParsingProfileIndex,
                 StartMessage = defaultStartMessageTemplate,
                 Name = DefaultParsingProfileName
             };
-            for (var i = 0; i < defLevels.Length; i++)
-            {
-                defaultTemplate.UpdateLevelProperty(defLevels[i], (LogLevel)i);
-            }
 
             this.InsertParsingProfile(defaultTemplate);
         }
@@ -439,19 +433,6 @@ namespace logviewer.core
                 Index = DefaultParsingProfileIndex,
                 StartMessage = GetStringValue("StartMessageTemplate")
             };
-            var parameters = new[]
-            {
-                "TraceLevel",
-                "DebugLevel",
-                "InfoLevel",
-                "WarnLevel",
-                "ErrorLevel",
-                "FatalLevel"
-            };
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                template.UpdateLevelProperty(parameters[i], (LogLevel)i);
-            }
 
             this.InsertParsingProfile(template);
 

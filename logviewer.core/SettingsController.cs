@@ -109,11 +109,5 @@ namespace logviewer.core
             this.formData.KeepLastNFiles = value;
             this.view.EnableSave(true);
         }
-
-        public void UpdateLevel(string value, LogLevel level)
-        {
-            this.template.UpdateLevelProperty(value, level);
-            this.view.EnableSave(true);
-        }
     }
 }

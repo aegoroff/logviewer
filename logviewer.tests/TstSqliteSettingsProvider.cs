@@ -15,8 +15,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            this.provider = new SqliteSettingsProvider(dbPath, levels, TstMainController.MessageStart,
-                100, 5);
+            this.provider = new SqliteSettingsProvider(dbPath, TstMainController.MessageStart, 100, 5);
         }
 
         [TearDown]
@@ -48,12 +47,6 @@ namespace logviewer.tests
         {
             ParsingTemplate template = this.provider.ReadParsingTemplate();
             Assert.That(template.Index, Is.EqualTo(0));
-            Assert.That(template.Trace, Is.EqualTo(levels[0]));
-            Assert.That(template.Debug, Is.EqualTo(levels[1]));
-            Assert.That(template.Info, Is.EqualTo(levels[2]));
-            Assert.That(template.Warn, Is.EqualTo(levels[3]));
-            Assert.That(template.Error, Is.EqualTo(levels[4]));
-            Assert.That(template.Fatal, Is.EqualTo(levels[5]));
             Assert.That(template.StartMessage, Is.EqualTo(TstMainController.MessageStart));
         }
 
@@ -61,32 +54,16 @@ namespace logviewer.tests
         public void UpdateParsingTemplate()
         {
             ParsingTemplate template = this.provider.ReadParsingTemplate();
-            template.Trace += "1";
-            template.Debug += "1";
-            template.Info += "1";
-            template.Warn += "1";
-            template.Error += "1";
-            template.Fatal += "1";
             template.StartMessage += "1";
-
             this.provider.UpdateParsingProfile(template);
-
             ParsingTemplate template1 = this.provider.ReadParsingTemplate();
-
-            Assert.That(template1.Trace, Is.EqualTo(levels[0] + "1"));
-            Assert.That(template1.Debug, Is.EqualTo(levels[1] + "1"));
-            Assert.That(template1.Info, Is.EqualTo(levels[2] + "1"));
-            Assert.That(template1.Warn, Is.EqualTo(levels[3] + "1"));
-            Assert.That(template1.Error, Is.EqualTo(levels[4] + "1"));
-            Assert.That(template1.Fatal, Is.EqualTo(levels[5] + "1"));
-            Assert.That(template.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
+            Assert.That(template1.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
         }
 
         [Test]
         public void SecondSettingsObjectOnTheSameFile()
         {
-            var secondProvider = new SqliteSettingsProvider(dbPath, levels, TstMainController.MessageStart,
-                100, 5);
+            var secondProvider = new SqliteSettingsProvider(dbPath, TstMainController.MessageStart, 100, 5);
             Assert.That(secondProvider.PageSize, Is.EqualTo(100));
             ParsingTemplate template = secondProvider.ReadParsingTemplate();
             Assert.That(template.Name, Is.EqualTo("default"));
@@ -106,15 +83,5 @@ namespace logviewer.tests
             this.provider.AutoRefreshOnFileChange = true;
             Assert.That(this.provider.AutoRefreshOnFileChange, Is.True);
         }
-
-        private static readonly string[] levels =
-        {
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARN",
-            "ERROR",
-            "FATAL"
-        };
     }
 }

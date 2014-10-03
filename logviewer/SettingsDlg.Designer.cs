@@ -46,19 +46,6 @@
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
             this.messageStartPatternLabel = new System.Windows.Forms.Label();
-            this.logLevelsBox = new System.Windows.Forms.GroupBox();
-            this.fatalLabel = new System.Windows.Forms.Label();
-            this.fatalBox = new System.Windows.Forms.TextBox();
-            this.errorLabel = new System.Windows.Forms.Label();
-            this.errorBox = new System.Windows.Forms.TextBox();
-            this.warnLabel = new System.Windows.Forms.Label();
-            this.warnBox = new System.Windows.Forms.TextBox();
-            this.infoLabel = new System.Windows.Forms.Label();
-            this.infoBox = new System.Windows.Forms.TextBox();
-            this.debugBox = new System.Windows.Forms.TextBox();
-            this.traceBox = new System.Windows.Forms.TextBox();
-            this.debugLabel = new System.Windows.Forms.Label();
-            this.traceLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new System.Windows.Forms.Button();
@@ -69,7 +56,6 @@
             this.fileSettingsBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.commonTemplatesBox.SuspendLayout();
-            this.logLevelsBox.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -158,7 +144,6 @@
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.parsingTemplateSelector);
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
-            this.tabPage2.Controls.Add(this.logLevelsBox);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -192,90 +177,6 @@
             // 
             resources.ApplyResources(this.messageStartPatternLabel, "messageStartPatternLabel");
             this.messageStartPatternLabel.Name = "messageStartPatternLabel";
-            // 
-            // logLevelsBox
-            // 
-            resources.ApplyResources(this.logLevelsBox, "logLevelsBox");
-            this.logLevelsBox.Controls.Add(this.fatalLabel);
-            this.logLevelsBox.Controls.Add(this.fatalBox);
-            this.logLevelsBox.Controls.Add(this.errorLabel);
-            this.logLevelsBox.Controls.Add(this.errorBox);
-            this.logLevelsBox.Controls.Add(this.warnLabel);
-            this.logLevelsBox.Controls.Add(this.warnBox);
-            this.logLevelsBox.Controls.Add(this.infoLabel);
-            this.logLevelsBox.Controls.Add(this.infoBox);
-            this.logLevelsBox.Controls.Add(this.debugBox);
-            this.logLevelsBox.Controls.Add(this.traceBox);
-            this.logLevelsBox.Controls.Add(this.debugLabel);
-            this.logLevelsBox.Controls.Add(this.traceLabel);
-            this.logLevelsBox.Name = "logLevelsBox";
-            this.logLevelsBox.TabStop = false;
-            // 
-            // fatalLabel
-            // 
-            resources.ApplyResources(this.fatalLabel, "fatalLabel");
-            this.fatalLabel.Name = "fatalLabel";
-            // 
-            // fatalBox
-            // 
-            resources.ApplyResources(this.fatalBox, "fatalBox");
-            this.fatalBox.Name = "fatalBox";
-            this.fatalBox.TextChanged += new System.EventHandler(this.OnSetFatalLevel);
-            // 
-            // errorLabel
-            // 
-            resources.ApplyResources(this.errorLabel, "errorLabel");
-            this.errorLabel.Name = "errorLabel";
-            // 
-            // errorBox
-            // 
-            resources.ApplyResources(this.errorBox, "errorBox");
-            this.errorBox.Name = "errorBox";
-            this.errorBox.TextChanged += new System.EventHandler(this.OnSetErrorLevel);
-            // 
-            // warnLabel
-            // 
-            resources.ApplyResources(this.warnLabel, "warnLabel");
-            this.warnLabel.Name = "warnLabel";
-            // 
-            // warnBox
-            // 
-            resources.ApplyResources(this.warnBox, "warnBox");
-            this.warnBox.Name = "warnBox";
-            this.warnBox.TextChanged += new System.EventHandler(this.OnSetWarnLevel);
-            // 
-            // infoLabel
-            // 
-            resources.ApplyResources(this.infoLabel, "infoLabel");
-            this.infoLabel.Name = "infoLabel";
-            // 
-            // infoBox
-            // 
-            resources.ApplyResources(this.infoBox, "infoBox");
-            this.infoBox.Name = "infoBox";
-            this.infoBox.TextChanged += new System.EventHandler(this.OnSetInfoLevel);
-            // 
-            // debugBox
-            // 
-            resources.ApplyResources(this.debugBox, "debugBox");
-            this.debugBox.Name = "debugBox";
-            this.debugBox.TextChanged += new System.EventHandler(this.OnSetDebugLevel);
-            // 
-            // traceBox
-            // 
-            resources.ApplyResources(this.traceBox, "traceBox");
-            this.traceBox.Name = "traceBox";
-            this.traceBox.TextChanged += new System.EventHandler(this.OnSetTraceLevel);
-            // 
-            // debugLabel
-            // 
-            resources.ApplyResources(this.debugLabel, "debugLabel");
-            this.debugLabel.Name = "debugLabel";
-            // 
-            // traceLabel
-            // 
-            resources.ApplyResources(this.traceLabel, "traceLabel");
-            this.traceLabel.Name = "traceLabel";
             // 
             // tableLayoutPanel1
             // 
@@ -324,8 +225,6 @@
             this.tabPage2.PerformLayout();
             this.commonTemplatesBox.ResumeLayout(false);
             this.commonTemplatesBox.PerformLayout();
-            this.logLevelsBox.ResumeLayout(false);
-            this.logLevelsBox.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -342,22 +241,9 @@
         private System.Windows.Forms.GroupBox viewSettingsBox;
         private System.Windows.Forms.Label pageSizeLabel;
         private System.Windows.Forms.TextBox pageSizeBox;
-        private System.Windows.Forms.GroupBox logLevelsBox;
         private System.Windows.Forms.GroupBox commonTemplatesBox;
         private System.Windows.Forms.Label messageStartPatternLabel;
         private System.Windows.Forms.TextBox messageStartPatternBox;
-        private System.Windows.Forms.Label debugLabel;
-        private System.Windows.Forms.Label traceLabel;
-        private System.Windows.Forms.Label infoLabel;
-        private System.Windows.Forms.TextBox infoBox;
-        private System.Windows.Forms.TextBox debugBox;
-        private System.Windows.Forms.TextBox traceBox;
-        private System.Windows.Forms.Label warnLabel;
-        private System.Windows.Forms.TextBox warnBox;
-        private System.Windows.Forms.TextBox errorBox;
-        private System.Windows.Forms.Label errorLabel;
-        private System.Windows.Forms.Label fatalLabel;
-        private System.Windows.Forms.TextBox fatalBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox keepLastNFilesBox;
         private System.Windows.Forms.Label label1;

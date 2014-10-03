@@ -42,12 +42,6 @@ namespace logviewer
         public void LoadParsingTemplate(ParsingTemplate template)
         {
             this.messageStartPatternBox.Text = template.StartMessage;
-            this.traceBox.Text = template.Trace;
-            this.debugBox.Text = template.Debug;
-            this.infoBox.Text = template.Info;
-            this.warnBox.Text = template.Warn;
-            this.errorBox.Text = template.Error;
-            this.fatalBox.Text = template.Fatal;
         }
 
         public void AddTemplateName(string name)
@@ -78,36 +72,6 @@ namespace logviewer
         private void OnSetMessageStartPattern(object sender, EventArgs e)
         {
             this.controller.UpdateMessageStartPattern(this.messageStartPatternBox.Text);
-        }
-
-        private void OnSetTraceLevel(object sender, EventArgs e)
-        {
-            this.controller.UpdateLevel(this.traceBox.Text, LogLevel.Trace);
-        }
-
-        private void OnSetDebugLevel(object sender, EventArgs e)
-        {
-            this.controller.UpdateLevel(this.debugBox.Text, LogLevel.Debug);
-        }
-
-        private void OnSetInfoLevel(object sender, EventArgs e)
-        {
-            this.controller.UpdateLevel(this.infoBox.Text, LogLevel.Info);
-        }
-
-        private void OnSetWarnLevel(object sender, EventArgs e)
-        {
-            this.controller.UpdateLevel(this.warnBox.Text, LogLevel.Warn);
-        }
-
-        private void OnSetErrorLevel(object sender, EventArgs e)
-        {
-            this.controller.UpdateLevel(this.errorBox.Text, LogLevel.Error);
-        }
-
-        private void OnSetFatalLevel(object sender, EventArgs e)
-        {
-            this.controller.UpdateLevel(this.fatalBox.Text, LogLevel.Fatal);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)
