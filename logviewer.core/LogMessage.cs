@@ -17,6 +17,7 @@ namespace logviewer.core
         private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary
             <LogLevel, RtfCharFormat>
         {
+            { LogLevel.None, FormatBody(LogLevel.None) },
             { LogLevel.Trace, FormatBody(LogLevel.Trace) },
             { LogLevel.Debug, FormatBody(LogLevel.Debug) },
             { LogLevel.Info, FormatBody(LogLevel.Info) },
@@ -28,6 +29,7 @@ namespace logviewer.core
         private static readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary
             <LogLevel, RtfCharFormat>
         {
+            { LogLevel.None, FormatHead(LogLevel.None) },
             { LogLevel.Trace, FormatHead(LogLevel.Trace) },
             { LogLevel.Debug, FormatHead(LogLevel.Debug) },
             { LogLevel.Info, FormatHead(LogLevel.Info) },
@@ -119,6 +121,7 @@ namespace logviewer.core
             {
                 levelsMap = new Dictionary<LogLevel, Color>
                 {
+                    { LogLevel.None, Color.Black },
                     { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
                     { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
                     { LogLevel.Info, Color.Green },
