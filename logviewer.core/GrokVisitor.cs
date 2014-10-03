@@ -47,14 +47,14 @@ namespace logviewer.core
             { "LOGLEVEL", @"([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)" },
         };
 
-        readonly List<string> semantics = new List<string>();
+        readonly List<Semantic> semantics = new List<Semantic>();
 
         public string Template
         {
             get { return this.stringBuilder.ToString(); }
         }
 
-        public IEnumerable<string> Semantics
+        public IEnumerable<Semantic> Semantics
         {
             get { return this.semantics; }
         }
@@ -91,11 +91,16 @@ namespace logviewer.core
                 if (ctx.SEMANTIC() != null)
                 {
                     var name = ctx.SEMANTIC().Symbol.Text.TrimStart(':');
+                    var type = "string";
                     if (name.Contains(":"))
                     {
-                        name = name.Split(':')[0];
+                        var parts = name.Split(':');
+                        name = parts[0];
+                        type = parts[1];
                     }
-                    this.semantics.Add(name);
+                    var s = new Semantic(name, type);
+
+                    this.semantics.Add(s);
                     regex = string.Format(NamedPattern, name, regex);
                 }
                 this.stringBuilder.Append(regex);

@@ -11,7 +11,7 @@ namespace logviewer.core
     public class GrokMatcher
     {
         private readonly Regex regex;
-        readonly List<string> semantics = new List<string>();
+        private readonly List<Semantic> semantics = new List<Semantic>();
 
         public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
         {
@@ -34,25 +34,25 @@ namespace logviewer.core
             }
             this.regex = new Regex(this.Template, options);
         }
-        
+
         public string Template { get; private set; }
 
         public bool Match(string s)
         {
             return this.regex.IsMatch(s);
         }
-        
-        public IDictionary<string, object> Parse(string s)
+
+        public IDictionary<Semantic, string> Parse(string s)
         {
-            var result = new Dictionary<string, object>();
-            var match = regex.Match(s);
+            var result = new Dictionary<Semantic, string>();
+            var match = this.regex.Match(s);
             if (!match.Success)
             {
                 return result;
             }
-            foreach (var semantic in semantics)
+            foreach (var semantic in this.semantics)
             {
-                result.Add(semantic, match.Groups[semantic]);
+                result.Add(semantic, match.Groups[semantic.Name].Value);
             }
             return result;
         }

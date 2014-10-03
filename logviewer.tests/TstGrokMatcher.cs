@@ -169,10 +169,21 @@ namespace logviewer.tests
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
-            Assert.That(result.ContainsKey("datetime"));
-            Assert.That(result.ContainsKey("meta"));
-            Assert.That(result.ContainsKey("level"));
-            Assert.That(result.ContainsKey("head"));
+            Assert.That(result.ContainsKey(new Semantic("datetime")));
+            Assert.That(result.ContainsKey(new Semantic("meta")));
+            Assert.That(result.ContainsKey(new Semantic("level")));
+            Assert.That(result.ContainsKey(new Semantic("head")));
+        }
+        
+        [Test]
+        public void ParseRealMessageWithDatatypes()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}");
+            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(result.ContainsKey(new Semantic("datetime")));
+            Assert.That(result.ContainsKey(new Semantic("meta")));
+            Assert.That(result.ContainsKey(new Semantic("level")));
+            Assert.That(result.ContainsKey(new Semantic("head")));
         }
     }
 }

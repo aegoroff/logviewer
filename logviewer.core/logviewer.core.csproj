@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="RecentItemsStore.cs" />
     <Compile Include="SafeRunner.cs" />
+    <Compile Include="Semantic.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SqliteSettingsProvider.cs" />
     <Compile Include="SizeUnit.cs" />
