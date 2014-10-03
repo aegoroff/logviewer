@@ -200,10 +200,12 @@ namespace logviewer.core
 
         public IEnumerable<LogLevel> LogLevels()
         {
-            var levelAttrs = (from info in typeof(ParsingTemplate).GetProperties()
-                where info.IsDefined(typeof(LogLevelAttribute), false)
-                select info).ToArray();
-            return levelAttrs.Select(i => GetLogLevelAttribute(i).Level);
+            yield return LogLevel.Trace;
+            yield return LogLevel.Debug;
+            yield return LogLevel.Info;
+            yield return LogLevel.Warn;
+            yield return LogLevel.Error;
+            yield return LogLevel.Fatal;
         }
 
         public ParsingTemplate ReadParsingTemplate(int index)
@@ -242,11 +244,6 @@ namespace logviewer.core
         private static ColumnAttribute GetColumnAttribute(PropertyInfo column)
         {
             return (ColumnAttribute) column.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
-        }
-
-        private static LogLevelAttribute GetLogLevelAttribute(PropertyInfo column)
-        {
-            return (LogLevelAttribute)column.GetCustomAttributes(typeof(LogLevelAttribute), false)[0];
         }
 
         public void InsertParsingProfile(ParsingTemplate template)
