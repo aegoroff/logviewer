@@ -21,8 +21,6 @@ namespace logviewer
                     ConfigurationManager.AppSettings["SettingsDatabase"])
                 .WithConstructorArgument("defaultKeepLastNFiles", 10)
                 .WithConstructorArgument("defaultPageSize", 2000);
-            
-            
         }
     }
 }
