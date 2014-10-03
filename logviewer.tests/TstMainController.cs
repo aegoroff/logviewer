@@ -44,17 +44,17 @@ namespace logviewer.tests
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
+            this.view.Expects.One.SetProperty(_ => _.LogInfo).ToAnything();
             this.controller.SetView(this.view.MockObject);
         }
 
         private static ParsingTemplate ParsingTemplate(string startMessage = MessageStart)
         {
-            var result = new ParsingTemplate
+            return new ParsingTemplate
             {
                 Index = 0,
                 StartMessage = startMessage
             };
-            return result;
         }
 
         [TearDown]
@@ -164,21 +164,10 @@ namespace logviewer.tests
         public void MaxFilter(LogLevel filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
-            this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
 
-            this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
-
-            var template = ParsingTemplate();
-            this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
-            this.settings.Expects.One.Method(_ => _.LogLevels()).WillReturn(new[] { LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal });
-
-            Cleanup(Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb));
-            this.controller = new MainController(this.settings.MockObject);
-            this.controller.ReadCompleted += this.OnReadCompleted;
-            this.controller.SetView(this.view.MockObject);
             this.controller.MaxFilter((int)filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
@@ -201,22 +190,10 @@ namespace logviewer.tests
         public void MinFilter(LogLevel filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
-            this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
             this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
 
-            Cleanup(Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb));
-
-            this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
-
-            var template = ParsingTemplate();
-            this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
-            this.settings.Expects.One.Method(_ => _.LogLevels()).WillReturn(new[] { LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal });
-
-            this.controller = new MainController(this.settings.MockObject);
-            this.controller.ReadCompleted += this.OnReadCompleted;
-            this.controller.SetView(this.view.MockObject);
             this.controller.MinFilter((int)filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
