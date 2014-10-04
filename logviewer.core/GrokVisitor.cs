@@ -11,7 +11,6 @@ namespace logviewer.core
     {
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
-        private const int MaxDepth = 20;
         private const string PatternStart = "%{";
         private const string PatternStop = "}";
         const string NamedPattern = @"(?<{0}>{1})";
@@ -73,20 +72,23 @@ namespace logviewer.core
             {
                 var regex = templates[node];
 
-                var depth = 0;
-
+                bool continueMatch;
+                bool matchFound;
                 do
                 {
+                    matchFound = false;
                     foreach (var k in templates.Keys)
                     {
                         var link = PatternStart + k + PatternStop;
-                        if (regex.Contains(link))
+                        if (!regex.Contains(link))
                         {
-                            regex = regex.Replace(link, templates[k]);
+                            continue;
                         }
+                        regex = regex.Replace(link, templates[k]);
+                        matchFound = true;
                     }
-                    ++depth;
-                } while (regex.Contains(PatternStart) || depth > MaxDepth);
+                    continueMatch = regex.Contains(PatternStart);
+                } while (continueMatch && matchFound);
 
                 if (ctx.SEMANTIC() != null)
                 {
