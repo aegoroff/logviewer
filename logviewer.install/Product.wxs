@@ -35,7 +35,7 @@
 		</Feature>
 
         <InstallExecuteSequence>
-            <Custom Before="InstallInitialize" Action="WixCloseApplications">REMOVE = "ALL"</Custom>
+            <Custom Before="InstallInitialize" Action="WixCloseApplications">WIX_UPGRADE_DETECTED</Custom>
         </InstallExecuteSequence>
     
         <UIRef Id="WixUI_Minimal"/>
