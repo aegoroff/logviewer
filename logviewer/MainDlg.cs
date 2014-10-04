@@ -272,11 +272,10 @@ namespace logviewer
             this.filterBox.AutoCompleteCustomSource.AddRange(items);
         }
 
-        public bool ShowDialogAboutNewVersionAvaliable(Version current, Version latest)
+        public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri)
         {
             var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
-            var result = MessageBox.Show(m, Resources.NewVersion, MessageBoxButtons.OKCancel);
-            return result == DialogResult.OK;
+            MessageBox.Show(m, Resources.NewVersion, MessageBoxButtons.OKCancel);
         }
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)

@@ -424,15 +424,9 @@ namespace logviewer.core
                     return;
                 }
                 this.RunOnGuiThread(
-                    delegate
-                    {
-                        var download = this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion,
-                            checker.LatestVersion);
-                        if (download)
-                        {
-                            Process.Start(checker.LatestVersionUrl);
-                        }
-                    });
+                    () =>
+                        this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion,
+                            checker.LatestVersionUrl));
             });
         }
 

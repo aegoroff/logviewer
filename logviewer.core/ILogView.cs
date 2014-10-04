@@ -30,6 +30,6 @@ namespace logviewer.core
         void SetFileEncoding(string encoding);
         void StartReading();
         void AddFilterItems(string[] items);
-        bool ShowDialogAboutNewVersionAvaliable(Version current, Version latest);
+        void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri);
     }
 }
