@@ -452,5 +452,10 @@ namespace logviewer
             this.textFilterChanging = true;
             this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
         }
+
+        private void OnCheckUpdates(object sender, EventArgs e)
+        {
+            this.controller.CheckUpdates();
+        }
     }
 }
