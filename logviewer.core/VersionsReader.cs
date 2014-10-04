@@ -64,6 +64,10 @@ namespace logviewer.core
                     }
                 }
             }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+            }
             finally
             {
                 if (this.ReadCompleted != null)

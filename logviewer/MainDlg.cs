@@ -275,7 +275,9 @@ namespace logviewer
         public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri)
         {
             var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
-            MessageBox.Show(m, Resources.NewVersion, MessageBoxButtons.OKCancel);
+            //MessageBox.Show(m, Resources.NewVersion, MessageBoxButtons.OKCancel);
+            var update = new UpdateDlg(m);
+            update.Show(this);
         }
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
