@@ -159,6 +159,9 @@
   <data name="Trace" xml:space="preserve">
     <value>Trace</value>
   </data>
+  <data name="UpdateDownloadProgressFormat" xml:space="preserve">
+    <value>Загружено {0} из {1}   {2}%</value>
+  </data>
   <data name="VersionTemplate" xml:space="preserve">
     <value>Версия {0}</value>
   </data>

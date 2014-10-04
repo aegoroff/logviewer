@@ -53,9 +53,9 @@ namespace logviewer.core
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            long bytesIn = e.BytesReceived;
-            long totalBytes = e.TotalBytesToReceive;
-            var percentage = (int) ((bytesIn/totalBytes)*100);
+            var bytesIn = e.BytesReceived;
+            var totalBytes = e.TotalBytesToReceive;
+            var percentage = (int)((bytesIn / (double)totalBytes) * 100);
             this.RunOnGuiThread(
                 () =>
                     this.view.OnProgress(percentage, totalBytes, bytesIn));

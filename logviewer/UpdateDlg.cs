@@ -27,6 +27,7 @@ namespace logviewer
 
         public void OnProgress(int percent, long totalBytes, long readBytes)
         {
+            this.label2.Text = string.Format(Resources.UpdateDownloadProgressFormat, new FileSize((ulong)readBytes, true), new FileSize((ulong)totalBytes, true), percent);
             this.progressBar1.Value = percent;
         }
 

@@ -159,6 +159,9 @@
   <data name="Trace" xml:space="preserve">
     <value>Trace</value>
   </data>
+  <data name="UpdateDownloadProgressFormat" xml:space="preserve">
+    <value>Downloaded {0} of {1}   {2}%</value>
+  </data>
   <data name="VersionTemplate" xml:space="preserve">
     <value>Version {0}</value>
   </data>
