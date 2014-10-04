@@ -13,10 +13,10 @@ literal
 	;
 
 syntax
-	: CUSTOM
+	: PATTERN
 	;
 
-CUSTOM 
+PATTERN 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
 	;
 
