@@ -123,6 +123,9 @@
     <EmbeddedResource Include="UpdateDlg.resx">
       <DependentUpon>UpdateDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UpdateDlg.ru.resx">
+      <DependentUpon>UpdateDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
