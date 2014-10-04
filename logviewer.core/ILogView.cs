@@ -6,7 +6,7 @@ using System;
 
 namespace logviewer.core
 {
-    public interface ILogView
+    public interface ILogView : IUpdatable
     {
         string LogPath { get; set; }
         string LogFileName { get; }
@@ -30,6 +30,5 @@ namespace logviewer.core
         void SetFileEncoding(string encoding);
         void StartReading();
         void AddFilterItems(string[] items);
-        void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri);
     }
 }

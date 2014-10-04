@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseGuiController.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />
@@ -79,6 +80,8 @@
     <Compile Include="ILogView.cs" />
     <Compile Include="ISettingsProvider.cs" />
     <Compile Include="ISettingsView.cs" />
+    <Compile Include="IUpdatable.cs" />
+    <Compile Include="IUpdateView.cs" />
     <Compile Include="IVersionsReader.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="SizeUnit.cs" />
     <Compile Include="SqliteRegEx.cs" />
     <Compile Include="UpdatesChecker.cs" />
+    <Compile Include="UpdatesController.cs" />
     <Compile Include="VersionEventArgs.cs" />
     <Compile Include="VersionsReader.cs" />
   </ItemGroup>

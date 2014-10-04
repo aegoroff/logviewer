@@ -2,17 +2,42 @@
 // Created at: 04.10.2014
 // © 2012-2014 Alexander Egorov
 
+using System;
 using System.Windows.Forms;
+using logviewer.core;
 using logviewer.Properties;
 
 namespace logviewer
 {
-    public partial class UpdateDlg : Form
+    public partial class UpdateDlg : Form, IUpdateView
     {
-        public UpdateDlg(string message)
+        private readonly UpdatesController controller;
+
+        public UpdateDlg(string message, string uri)
         {
             this.InitializeComponent();
+            this.controller = new UpdatesController(this, uri);
             this.Localize(message);
+        }
+
+        public void EnableUpdateStartControl(bool enable)
+        {
+            this.updateBtn.Enabled = enable;
+        }
+
+        public void OnProgress(int percent, long totalBytes, long readBytes)
+        {
+            this.progressBar1.Value = percent;
+        }
+
+        public void DisableYesControl()
+        {
+            this.yesBtn.Enabled = false;
+        }
+
+        public void ShowErrorMessage(string message)
+        {
+            this.label1.Text = message;
         }
 
         private void Localize(string message)
@@ -21,19 +46,19 @@ namespace logviewer
             this.label1.Text = message;
         }
 
-        private void OnNo(object sender, System.EventArgs e)
+        private void OnNo(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void OnYes(object sender, System.EventArgs e)
+        private void OnYes(object sender, EventArgs e)
         {
-
+            this.controller.StartDownload();
         }
 
-        private void OnUpdate(object sender, System.EventArgs e)
+        private void OnUpdate(object sender, EventArgs e)
         {
-
+            this.controller.StartUpdate();
         }
     }
 }

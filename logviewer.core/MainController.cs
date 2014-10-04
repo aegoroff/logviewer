@@ -22,7 +22,7 @@ using NLog.Targets;
 
 namespace logviewer.core
 {
-    public sealed class MainController : IDisposable
+    public sealed class MainController : BaseGuiController, IDisposable
     {
         private readonly ISettingsProvider settings;
 
@@ -33,7 +33,6 @@ namespace logviewer.core
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
-        private readonly SynchronizationContext winformsOrDefaultContext;
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
 
@@ -69,7 +68,6 @@ namespace logviewer.core
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
-            this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             var template = this.settings.ReadParsingTemplate();
             this.CreateMarkers(this.settings.LogLevels());
             this.CreateMessageHead(template.StartMessage);
@@ -922,11 +920,6 @@ namespace logviewer.core
                 var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
                 this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
             });
-        }
-
-        private void RunOnGuiThread(Action action)
-        {
-            this.winformsOrDefaultContext.Post(o => action(), null);
         }
 
         private void AddMessage(RtfDocument doc, LogMessage message)
