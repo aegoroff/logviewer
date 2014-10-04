@@ -13,37 +13,7 @@ literal
 	;
 
 syntax
-	: PREDEFINED
-	| CUSTOM
-	;
-
-PREDEFINED 
-	: 'LOGLEVEL' 
-	| 'TIMESTAMP_ISO8601' 
-	| 'WORD' 
-	| 'SPACE' 
-	| 'DATA' 
-	| 'GREEDYDATA' 
-	| 'INT' 
-	| 'BASE10NUM' 
-	| 'BASE16NUM' 
-	| 'BASE16FLOAT' 
-	| 'POSINT' 
-	| 'NONNEGINT' 
-	| 'NOTSPACE' 
-	| 'QUOTEDSTRING' 
-	| 'YEAR' 
-	| 'HOUR' 
-	| 'MINUTE' 
-	| 'SECOND' 
-	| 'MONTH' 
-	| 'MONTHNUM' 
-	| 'MONTHDAY' 
-	| 'TIME' 
-	| 'DATE_US' 
-	| 'DATE_EU' 
-	| 'ISO8601_TIMEZONE' 
-	| 'ISO8601_SECOND' 
+	: CUSTOM
 	;
 
 CUSTOM 
