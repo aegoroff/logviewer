@@ -279,6 +279,11 @@ namespace logviewer
             update.Show(this);
         }
 
+        public void ShowNoUpdateAvaliable()
+        {
+            MessageBox.Show(Resources.NoUpdateAvailable, Resources.NoUpdateAvailableCaption, MessageBoxButtons.OK);
+        }
+
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
             this.Controller.ShowLogPageStatistic();
@@ -455,7 +460,7 @@ namespace logviewer
 
         private void OnCheckUpdates(object sender, EventArgs e)
         {
-            this.controller.CheckUpdates();
+            this.controller.CheckUpdates(true);
         }
     }
 }

@@ -412,15 +412,24 @@ namespace logviewer.core
             this.settings.UseRegexp = value;
         }
 
-        public void CheckUpdates()
+        /// <summary>
+        /// Check updates available
+        /// </summary>
+        /// <param name="showNoUpdateAvailableInGui">Whether to show no update available in GUI. False by default</param>
+        public void CheckUpdates(bool showNoUpdateAvailableInGui = false)
         {
             var checker = new UpdatesChecker();
             Task.Factory.StartNew(delegate
             {
                 if (!checker.IsUpdatesAvaliable())
                 {
+                    if (!showNoUpdateAvailableInGui)
+                    {
+                        this.RunOnGuiThread(() => this.view.ShowNoUpdateAvaliable());
+                    }
                     return;
                 }
+
                 this.RunOnGuiThread(
                     () =>
                         this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion,

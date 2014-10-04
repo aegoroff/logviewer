@@ -160,6 +160,24 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are using the latetest version of the program. No update available now..
+        /// </summary>
+        internal static string NoUpdateAvailable {
+            get {
+                return ResourceManager.GetString("NoUpdateAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No update available.
+        /// </summary>
+        internal static string NoUpdateAvailableCaption {
+            get {
+                return ResourceManager.GetString("NoUpdateAvailableCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Size.
         /// </summary>
         internal static string Size {

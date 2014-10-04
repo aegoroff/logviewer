@@ -150,6 +150,12 @@
   <data name="NewVersionAvailable" xml:space="preserve">
     <value>Доступна новая версия logviewer. Текущая версия {0} а новая {1}. Загрузить её сейчас?</value>
   </data>
+  <data name="NoUpdateAvailable" xml:space="preserve">
+    <value>Вы используете последнюю версию продукта. В настоящее время нет обновлений.</value>
+  </data>
+  <data name="NoUpdateAvailableCaption" xml:space="preserve">
+    <value>Нет новых обновлений</value>
+  </data>
   <data name="Size" xml:space="preserve">
     <value>Размер</value>
   </data>
