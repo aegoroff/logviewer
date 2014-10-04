@@ -179,10 +179,7 @@
     <value>Общие</value>
   </data>
   <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>160, 25</value>
-  </data>
-  <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>365, 20</value>
+    <value>6, 44</value>
   </data>
   <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 28</value>

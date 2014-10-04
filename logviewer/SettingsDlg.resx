@@ -148,7 +148,7 @@
     <value>2</value>
   </data>
   <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 19</value>
+    <value>6, 38</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -911,7 +911,7 @@
     <value>flowLayoutPanel1</value>
   </data>
   <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>394, 20</value>
+    <value>519, 20</value>
   </data>
   <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
