@@ -415,15 +415,15 @@ namespace logviewer.core
         /// <summary>
         /// Check updates available
         /// </summary>
-        /// <param name="showNoUpdateAvailableInGui">Whether to show no update available in GUI. False by default</param>
-        public void CheckUpdates(bool showNoUpdateAvailableInGui = false)
+        /// <param name="manualInvoke">Whether to show no update available in GUI. False by default</param>
+        public void CheckUpdates(bool manualInvoke = false)
         {
             var checker = new UpdatesChecker();
             Task.Factory.StartNew(delegate
             {
                 if (!checker.IsUpdatesAvaliable())
                 {
-                    if (showNoUpdateAvailableInGui)
+                    if (manualInvoke)
                     {
                         this.RunOnGuiThread(() => this.view.ShowNoUpdateAvaliable());
                     }
