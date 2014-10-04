@@ -1,7 +1,7 @@
 grammar Grok;
 
 parse
-	: literal? grok (literal? grok)* literal? 
+	: (literal? grok)* literal? 
 	;
 
 grok
@@ -13,7 +13,7 @@ literal
 	;
 
 syntax
-	: PREDEFINED 
+	: PREDEFINED
 	| CUSTOM
 	;
 
