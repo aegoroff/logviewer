@@ -116,7 +116,7 @@ namespace logviewer.core
             this.creationContext.Send(o => method(), null);
         }
 
-        internal static void AddParameter(IDbCommand cmd, string name, object value)
+        internal static void AddParameter<T>(IDbCommand cmd, string name, T value)
         {
             var parameter = SQLiteFactory.Instance.CreateParameter();
             if (parameter == null)
