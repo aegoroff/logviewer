@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
     <?define SourcePath = "$(var.SolutionDir)logviewer\bin\$(var.CONFIGURATION)" ?>
 	<?define Version = "1.0.0.0" ?>
 	<Product 
@@ -24,13 +24,19 @@
         
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-		<Feature Id="ProductFeature" Title="logviewer.install" Level="1">
+        <util:CloseApplication Id="CloseLogviewer" CloseMessage="yes" Target="logviewer.exe" RebootPrompt="no" />
+
+        <Feature Id="ProductFeature" Title="logviewer.install" Level="1">
 			<ComponentRef Id="logviewer.bin" />
 			<ComponentRef Id="logviewer.bin.x86" />
 			<ComponentRef Id="logviewer.bin.x64" />
 			<ComponentRef Id="logviewer.shortcut" />
 			<ComponentRef Id="logviewer.resources.ru" />
 		</Feature>
+
+        <InstallExecuteSequence>
+            <Custom Before="InstallInitialize" Action="WixCloseApplications">REMOVE = "ALL"</Custom>
+        </InstallExecuteSequence>
     
         <UIRef Id="WixUI_Minimal"/>
 	</Product>
