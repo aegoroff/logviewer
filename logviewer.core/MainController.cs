@@ -423,7 +423,7 @@ namespace logviewer.core
             {
                 if (!checker.IsUpdatesAvaliable())
                 {
-                    if (!showNoUpdateAvailableInGui)
+                    if (showNoUpdateAvailableInGui)
                     {
                         this.RunOnGuiThread(() => this.view.ShowNoUpdateAvaliable());
                     }
