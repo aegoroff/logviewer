@@ -26,13 +26,7 @@ namespace logviewer.core
             ICharStream inputStream = new AntlrInputStream(grok);
             var lexer = new GrokLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
-            var parser = new GrokParser(tokenStream)
-            {
-                Interpreter = { PredictionMode = PredictionMode.Sll }
-            };
-            parser.RemoveErrorListeners();
-            parser.ErrorHandler = new BailErrorStrategy();
-
+            var parser = new GrokParser(tokenStream);
             var tree = TryCompile(parser, tokenStream);
 
             if (parser.NumberOfSyntaxErrors > 0)
@@ -53,7 +47,9 @@ namespace logviewer.core
         {
             try
             {
-                return parser.parse();
+                parser.Interpreter.PredictionMode = PredictionMode.Sll;
+                parser.RemoveErrorListeners();
+                parser.ErrorHandler = new BailErrorStrategy();
             }
             catch (ParseCanceledException e)
             {
@@ -63,8 +59,8 @@ namespace logviewer.core
                 parser.ErrorListeners.Add(ConsoleErrorListener<IToken>.Instance);
                 parser.ErrorHandler = new DefaultErrorStrategy();
                 parser.Interpreter.PredictionMode = PredictionMode.Ll;
-                return parser.parse();
             }
+            return parser.parse();
         }
 
         public string Template { get; private set; }
