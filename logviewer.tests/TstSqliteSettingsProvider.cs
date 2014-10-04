@@ -2,6 +2,7 @@
 // Created at: 11.01.2014
 // © 2012-2014 Alexander Egorov
 
+using System;
 using System.IO;
 using System.Linq;
 using logviewer.core;
@@ -82,6 +83,15 @@ namespace logviewer.tests
             Assert.That(this.provider.AutoRefreshOnFileChange, Is.False);
             this.provider.AutoRefreshOnFileChange = true;
             Assert.That(this.provider.AutoRefreshOnFileChange, Is.True);
+        }
+        
+        [Test]
+        public void LastChekingUpdateTest()
+        {
+            Assert.That(this.provider.LastUpdateCheckTime, Is.EqualTo(DateTime.UtcNow).Within(5).Seconds);
+            var newValue = new DateTime(2014, 1, 10).ToUniversalTime();
+            this.provider.LastUpdateCheckTime = newValue;
+            Assert.That(this.provider.LastUpdateCheckTime, Is.EqualTo(newValue));
         }
     }
 }

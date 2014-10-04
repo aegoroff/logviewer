@@ -50,6 +50,7 @@ namespace logviewer.core
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
         private const int KeepLastFilters = 20;
+        private const int CheckUpdatesEveryDays = 7;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -418,7 +419,15 @@ namespace logviewer.core
         /// <param name="manualInvoke">Whether to show no update available in GUI. False by default</param>
         public void CheckUpdates(bool manualInvoke = false)
         {
+            if (!manualInvoke)
+            {
+                if (DateTime.UtcNow < this.settings.LastUpdateCheckTime.AddDays(CheckUpdatesEveryDays))
+                {
+                    return;
+                }
+            }
             var checker = new UpdatesChecker();
+            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
             Task.Factory.StartNew(delegate
             {
                 if (!checker.IsUpdatesAvaliable())

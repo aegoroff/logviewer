@@ -2,6 +2,7 @@
 // Created at: 25.09.2013
 // © 2012-2014 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 
 namespace logviewer.core
@@ -11,6 +12,7 @@ namespace logviewer.core
         int KeepLastNFiles { get; set; }
         string FullPathToDatabase { get; }
         string MessageFilter { get; set; }
+        DateTime LastUpdateCheckTime { get; set; }
         bool OpenLastFile { get; set; }
         bool AutoRefreshOnFileChange { get; set; }
         int MinLevel { get; set; }

@@ -18,6 +18,7 @@ namespace logviewer.core
 
         private const string OptionsSectionName = @"Options";
         private const string FilterParameterName = @"MessageFilter";
+        private const string LastUpdateCheckTimearameterName = @"LastUpdateCheckTime";
         private const string OpenLastFileParameterName = @"OpenLastFile";
         private const string AutoRefreshOnFileChangeName = @"AutoRefreshOnFileChange";
         private const string MinLevelParameterName = @"MinLevel";
@@ -95,6 +96,12 @@ namespace logviewer.core
         {
             get { return this.ReadStringOption(FilterParameterName); }
             set { this.UpdateStringOption(FilterParameterName, value); }
+        }
+
+        public DateTime LastUpdateCheckTime
+        {
+            get { return DateTime.Parse(this.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString("O"))).ToUniversalTime(); }
+            set { this.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString("O")); }
         }
 
         public bool OpenLastFile
