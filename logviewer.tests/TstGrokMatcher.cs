@@ -158,6 +158,13 @@ namespace logviewer.tests
         }
         
         [Test]
+        public void CheckRealMessageSyntaxErrorInTemplate()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601 %{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
+            Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"), Is.False);
+        }
+        
+        [Test]
         public void CompatibilityMatch()
         {
             var matcher = new GrokMatcher("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}");
