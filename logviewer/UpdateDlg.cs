@@ -25,5 +25,15 @@ namespace logviewer
         {
             this.Close();
         }
+
+        private void OnYes(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void OnUpdate(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }
