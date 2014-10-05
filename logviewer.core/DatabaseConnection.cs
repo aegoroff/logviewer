@@ -65,11 +65,12 @@ namespace logviewer.core
             {
                 try
                 {
-                    foreach (var command in commands)
+                    // ReSharper disable once ForCanBeConvertedToForeach
+                    for (var i = 0; i < commands.Length; i++)
                     {
                         using (var sqLiteCommand = this.connection.CreateCommand())
                         {
-                            sqLiteCommand.CommandText = command;
+                            sqLiteCommand.CommandText = commands[i];
                             action(sqLiteCommand);
                         }
                     }
