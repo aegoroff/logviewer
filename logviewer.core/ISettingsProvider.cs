@@ -22,7 +22,6 @@ namespace logviewer.core
         bool UseRegexp { get; set; }
         ParsingTemplate ReadParsingTemplate();
         IList<string> ReadParsingTemplateList();
-        IEnumerable<LogLevel> LogLevels();
         ParsingTemplate ReadParsingTemplate(int index);
         void UpdateParsingProfile(ParsingTemplate template);
         void InsertParsingProfile(ParsingTemplate template);

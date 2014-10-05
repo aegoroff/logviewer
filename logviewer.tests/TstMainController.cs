@@ -39,7 +39,6 @@ namespace logviewer.tests
 
             var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
-            this.settings.Expects.One.Method(_ => _.LogLevels()).WillReturn(new[] { LogLevel.Trace, LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal });
 
             this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;

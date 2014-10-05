@@ -70,7 +70,7 @@ namespace logviewer.core
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
             var template = this.settings.ReadParsingTemplate();
-            this.CreateMarkers(this.settings.LogLevels());
+            this.CreateMarkers();
             this.CreateMessageHead(template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
@@ -80,9 +80,9 @@ namespace logviewer.core
             this.matcher = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
         }
 
-        private void CreateMarkers(IEnumerable<LogLevel> levels)
+        private void CreateMarkers()
         {
-            foreach (var level in levels)
+            foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
             {
                 this.levelNames.Add(level.ToString("G"), level);
             }
