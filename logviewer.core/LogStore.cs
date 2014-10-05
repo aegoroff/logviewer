@@ -97,15 +97,14 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            const string Cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (@Ix, @Header, @Body, @Level)";
+            // ugly but very fast
+            var cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (" + message.Ix + ", @Header, @Body, " + (int)message.Level + ")";
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Ix", message.Ix);
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
-                DatabaseConnection.AddParameter(command, "@Level", (int)message.Level);
             };
-            this.connection.ExecuteNonQuery(Cmd, action);
+            this.connection.ExecuteNonQuery(cmd, action);
         }
 
         public void ReadMessages(
