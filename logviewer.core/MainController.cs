@@ -966,12 +966,17 @@ namespace logviewer.core
 
         private LogLevel DetectLevel(IDictionary<Semantic, string> match)
         {
-            if (match == null || !match.ContainsKey(this.levelSemantic))
+            if (match == null)
+            {
+                return LogLevel.None;
+            }
+            string level;
+            if (!match.TryGetValue(this.levelSemantic, out level))
             {
                 return LogLevel.None;
             }
             LogLevel result;
-            return this.levelNames.TryGetValue(match[this.levelSemantic], out result) ? result : LogLevel.None;
+            return this.levelNames.TryGetValue(level, out result) ? result : LogLevel.None;
         }
 
         #endregion
