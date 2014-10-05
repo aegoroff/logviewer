@@ -29,7 +29,7 @@ namespace logviewer.core
         #region Constants and Fields
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
-        private readonly Dictionary<string, LogLevel> levelNames = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, LogLevel> levelNames;
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
@@ -70,7 +70,7 @@ namespace logviewer.core
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
             var template = this.settings.ReadParsingTemplate();
-            this.CreateMarkers();
+            this.levelNames = CreateNames();
             this.CreateMessageHead(template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
@@ -80,12 +80,10 @@ namespace logviewer.core
             this.matcher = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
         }
 
-        private void CreateMarkers()
+        private static Dictionary<string, LogLevel> CreateNames()
         {
-            foreach (var level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
-            {
-                this.levelNames.Add(level.ToString("G"), level);
-            }
+            var levels = (LogLevel[]) Enum.GetValues(typeof (LogLevel));
+            return levels.Where(l => l != LogLevel.None).ToDictionary(l => l.ToString("G"), l => l, StringComparer.OrdinalIgnoreCase);
         }
 
         #endregion
