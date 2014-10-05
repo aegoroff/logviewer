@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -13,7 +12,7 @@ namespace logviewer.core
 {
     public struct LogMessage
     {
-        private const string NewLine = "\n";
+        private const char NewLine = '\n';
 
         private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary
             <LogLevel, RtfCharFormat>
@@ -47,13 +46,17 @@ namespace logviewer.core
             this.body = body;
             this.Level = level;
             this.ix = 0;
-            this.strings = null;
             this.semantic = null;
+            this.bodyBuilder = null;
         }
 
         public bool IsEmpty
         {
-            get { return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && (this.strings == null || this.strings.Count == 0 || this.strings.All(string.IsNullOrWhiteSpace)); }
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
+                       this.bodyBuilder.Length == 0;
+            }
         }
 
         public long Ix
@@ -64,12 +67,18 @@ namespace logviewer.core
 
         public string Header
         {
-            get { return this.head ?? (this.IsEmpty ? string.Empty : this.strings[0]); }
+            get { return this.head ?? string.Empty; }
         }
 
         public string Body
         {
-            get { return this.body ?? (this.strings.Count < 2 ? string.Empty : this.ToString(1)); }
+            get
+            {
+                return this.body ??
+                       (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
+                           ? string.Empty
+                           : this.bodyBuilder.ToString());
+            }
         }
 
         public RtfCharFormat HeadFormat
@@ -82,9 +91,22 @@ namespace logviewer.core
             get { return bodyFormatsMap[this.Level]; }
         }
 
+        public bool HasSemantic
+        {
+            get { return this.semantic != null; }
+        }
+
         public void AddLine(string line)
         {
-            this.strings.Add(line);
+            if (this.head == null)
+            {
+                this.head = line;
+            }
+            else
+            {
+                this.bodyBuilder.Append(line);
+                this.bodyBuilder.Append(NewLine);
+            }
         }
 
         public void AddSemantic(IDictionary<Semantic, string> sem)
@@ -94,12 +116,7 @@ namespace logviewer.core
 
         public void ApplySemantic(Func<IDictionary<Semantic, string>, LogLevel> method)
         {
-            Level = method(this.semantic);
-        }
-
-        public bool HasSemantic
-        {
-            get { return this.semantic != null; }
+            this.Level = method(this.semantic);
         }
 
         public void Cache()
@@ -108,10 +125,12 @@ namespace logviewer.core
             {
                 return;
             }
-            this.head = this.Header;
-            this.body = this.Body;
-            this.strings.Clear();
-            this.strings = null;
+            if (this.bodyBuilder.Length > 0)
+            {
+                this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
+            }
+            this.body = this.bodyBuilder.ToString();
+            this.bodyBuilder.Clear();
         }
 
         private static RtfCharFormat FormatHead(LogLevel level)
@@ -127,7 +146,7 @@ namespace logviewer.core
 
         private static RtfCharFormat FormatBody(LogLevel level)
         {
-            var f = FormatHead(level);
+            RtfCharFormat f = FormatHead(level);
             f.Bold = false;
             return f;
         }
@@ -150,34 +169,19 @@ namespace logviewer.core
             return levelsMap[level];
         }
 
-        private string ToString(int start)
-        {
-            var sb = new StringBuilder();
-            var count = this.strings.Count;
-            for (var i = start; i < count; i++)
-            {
-                sb.Append(this.strings[i]);
-                if (i < count - 1)
-                {
-                    sb.Append(NewLine);
-                }
-            }
-            return sb.ToString();
-        }
-
         public static LogMessage Create()
         {
-            return new LogMessage { strings = new List<string>(), Level = LogLevel.None };
+            return new LogMessage { Level = LogLevel.None, bodyBuilder = new StringBuilder() };
         }
 
         #region Constants and Fields
 
         internal LogLevel Level;
         private string body;
+        private StringBuilder bodyBuilder;
         private string head;
-        private List<string> strings;
-        private IDictionary<Semantic, string> semantic;
         private long ix;
+        private IDictionary<Semantic, string> semantic;
 
         #endregion
     }

@@ -27,7 +27,7 @@ namespace logviewer.tests
             this.m.AddLine(B);
             Assert.That(this.m.IsEmpty, Is.False);
             Assert.That(this.m.Header, Is.EqualTo(H));
-            Assert.That(this.m.Body, Is.EqualTo(B));
+            Assert.That(this.m.Body, Is.EqualTo(B + "\n"));
         }
 
         [Test]
@@ -54,9 +54,10 @@ namespace logviewer.tests
         {
             this.m.AddLine(string.Empty);
             this.m.AddLine(string.Empty);
-            Assert.That(this.m.IsEmpty);
-            Assert.That(this.m.Body, Is.Empty);
+            Assert.That(this.m.IsEmpty, Is.False);
             Assert.That(this.m.Header, Is.Empty);
+            Assert.That(this.m.Body, Is.Empty);
+            
         }
 
         [Test]
