@@ -39,6 +39,15 @@ namespace logviewer.core
         /// <summary>
         ///     Initializes new instance of <see cref="FileSize" /> structure using raw file size
         /// </summary>
+        /// <param name="bytes">File size in bytes (signed)</param>
+        /// <param name="bigWithoutBytes">Whether to output bytes info if size is greater then 1024 bytes. False by default</param>
+        public FileSize(long bytes, bool bigWithoutBytes = false) : this((ulong)bytes, bigWithoutBytes)
+        {
+        }
+        
+        /// <summary>
+        ///     Initializes new instance of <see cref="FileSize" /> structure using raw file size
+        /// </summary>
         /// <param name="bytes">File size in bytes</param>
         /// <param name="bigWithoutBytes">Whether to output bytes info if size is greater then 1024 bytes. False by default</param>
         public FileSize(ulong bytes, bool bigWithoutBytes = false)
