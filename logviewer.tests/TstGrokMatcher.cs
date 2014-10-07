@@ -2,6 +2,7 @@
 // Created at: 02.10.2014
 // © 2012-2014 Alexander Egorov
 
+using System;
 using logviewer.core;
 using NUnit.Framework;
 
@@ -79,7 +80,7 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{POSINT:num:int}");
             Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
         }
-        
+
         [Test]
         public void MatchesExistAndUnexist()
         {
@@ -189,6 +190,21 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}");
             var result = matcher.Parse(" [4688] INFO \nmessage body 1");
             Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void SemanticWithTheSameName()
+        {
+            var matcher = new GrokMatcher("%{S1:s}%{S2:s}");
+            Assert.That(matcher.Template, Is.EqualTo(@"%{S1}%{S2}"));
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SemanticWithTheSameNameParse()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:dt}%{DATA:meta}%{LOGLEVEL:dt}%{DATA:head}");
+            matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO Head");
         }
     }
 }
