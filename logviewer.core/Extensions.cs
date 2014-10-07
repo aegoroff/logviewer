@@ -70,6 +70,11 @@ namespace logviewer.core
             return (int)((value / (double)total) * 100);
         }
 
+        public static int PercentOf(this FileSize value, FileSize total)
+        {
+            return (int)((value.Bytes / (double)total.Bytes) * 100);
+        }
+
         private static string WithDays(TimeSpan input)
         {
             return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds, input.DaysToString(), input.HoursToString(), input.MinutesToString(), input.SecondsToString()) : null;

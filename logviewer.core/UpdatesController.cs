@@ -53,12 +53,12 @@ namespace logviewer.core
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            var bytesIn = e.BytesReceived;
-            var totalBytes = e.TotalBytesToReceive;
+            var bytesIn = new FileSize(e.BytesReceived, true);
+            var totalBytes = new FileSize(e.TotalBytesToReceive, true);
             var percentage = bytesIn.PercentOf(totalBytes);
             this.RunOnGuiThread(
                 () =>
-                    this.view.OnProgress(percentage, new FileSize(totalBytes, true), new FileSize(bytesIn, true)));
+                    this.view.OnProgress(percentage, totalBytes, bytesIn));
         }
 
         public void StartUpdate()
