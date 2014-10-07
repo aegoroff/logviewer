@@ -63,7 +63,7 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public MainController(ISettingsProvider settings)
+        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.Compiled)
         {
             this.CurrentPage = 1;
             this.settings = settings;
@@ -71,13 +71,13 @@ namespace logviewer.core
             this.prevInput = DateTime.Now;
             var template = this.settings.ReadParsingTemplate();
             this.levelNames = CreateNames();
-            this.CreateMessageHead(template.StartMessage);
+            this.CreateMessageHead(template.StartMessage, options);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
-        private void CreateMessageHead(string startMessagePattern)
+        private void CreateMessageHead(string startMessagePattern, RegexOptions options = RegexOptions.Compiled)
         {
-            this.matcher = new GrokMatcher(startMessagePattern, RegexOptions.Compiled);
+            this.matcher = new GrokMatcher(startMessagePattern, options);
         }
 
         private static Dictionary<string, LogLevel> CreateNames()

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using logviewer.core;
 using NMock;
@@ -28,7 +29,6 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            Console.WriteLine("Start setup: " + DateTime.Now);
             completed = false;
             CleanupTestFiles();
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
@@ -41,12 +41,11 @@ namespace logviewer.tests
             var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
-            this.controller = new MainController(this.settings.MockObject);
+            this.controller = new MainController(this.settings.MockObject, RegexOptions.None);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.One.SetProperty(_ => _.LogInfo).ToAnything();
             this.controller.SetView(this.view.MockObject);
-            Console.WriteLine("Finish setup: " + DateTime.Now);
         }
 
         private static ParsingTemplate ParsingTemplate(string startMessage = MessageStart)
@@ -61,11 +60,9 @@ namespace logviewer.tests
         [TearDown]
         public void Teardown()
         {
-            Console.WriteLine("Start teardown: " + DateTime.Now);
             Cleanup(TestPath, RecentPath, FullPathToTestDb);
             CleanupTestFiles();
             this.controller.Dispose();
-            Console.WriteLine("Finish setup: " + DateTime.Now);
         }
 
         private static string FullPathToTestDb
@@ -179,7 +176,6 @@ namespace logviewer.tests
         void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
             completed = true;
-            Console.WriteLine("OnReadCompleted: " + DateTime.Now);
         }
 
         [TestCase(LogLevel.Fatal, 0)]
