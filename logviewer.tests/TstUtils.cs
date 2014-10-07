@@ -74,6 +74,9 @@ namespace logviewer.tests
         [TestCase(200L, 100L, 200)]
         [TestCase(10L, 33L, 30)]
         [TestCase(5L, 33L, 15)]
+        [TestCase(-15L, -100L, 0)]
+        [TestCase(-15L, 100L, 0)]
+        [TestCase(5L, 0L, 0)]
         public void TestPercentOf(long value, long total, int percent)
         {
             Assert.That(value.PercentOf(total), Is.EqualTo(percent));

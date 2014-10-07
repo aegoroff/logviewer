@@ -65,14 +65,20 @@ namespace logviewer.core
             return value < min ? min : value;
         }
 
-        public static int PercentOf(this long value, long total)
+        public static int PercentOf(this ulong value, ulong total)
         {
             return (int)((value / (double)total) * 100);
         }
 
+        public static int PercentOf(this long value, long total)
+        {
+            var v = value > 0 ? (ulong)value : 0;
+            return total == 0 ? 0 : v.PercentOf((ulong)total);
+        }
+
         public static int PercentOf(this FileSize value, FileSize total)
         {
-            return (int)((value.Bytes / (double)total.Bytes) * 100);
+            return value.Bytes.PercentOf(total.Bytes);
         }
 
         private static string WithDays(TimeSpan input)
