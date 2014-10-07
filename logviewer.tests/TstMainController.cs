@@ -28,6 +28,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
+            Console.WriteLine("Start setup: " + DateTime.Now);
             completed = false;
             CleanupTestFiles();
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
@@ -45,6 +46,7 @@ namespace logviewer.tests
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.One.SetProperty(_ => _.LogInfo).ToAnything();
             this.controller.SetView(this.view.MockObject);
+            Console.WriteLine("Finish setup: " + DateTime.Now);
         }
 
         private static ParsingTemplate ParsingTemplate(string startMessage = MessageStart)
@@ -59,9 +61,11 @@ namespace logviewer.tests
         [TearDown]
         public void Teardown()
         {
+            Console.WriteLine("Start teardown: " + DateTime.Now);
             Cleanup(TestPath, RecentPath, FullPathToTestDb);
             CleanupTestFiles();
             this.controller.Dispose();
+            Console.WriteLine("Finish setup: " + DateTime.Now);
         }
 
         private static string FullPathToTestDb
@@ -125,9 +129,8 @@ namespace logviewer.tests
         [Test]
         public void AllFilters()
         {
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            this.ReadLogExpectations();
+            
             File.WriteAllText(TestPath,
                 MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN \n2008-12-27 19:42:11,906 [5555] WARN ");
             this.controller.MinFilter((int)LogLevel.Warn);
@@ -143,9 +146,8 @@ namespace logviewer.tests
         [TestCase((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples, 0)]
         public void MaxAndMaxFilter(int min, int max, string msg, int count)
         {
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            this.ReadLogExpectations();
+            
             File.WriteAllText(TestPath, msg);
             this.controller.MinFilter(min);
             this.controller.MaxFilter(max);
@@ -163,9 +165,8 @@ namespace logviewer.tests
         public void MaxFilter(LogLevel filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+
+            this.ReadLogExpectations();
 
             this.controller.MaxFilter((int)filter);
             this.controller.StartReadLog();
@@ -178,6 +179,7 @@ namespace logviewer.tests
         void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
             completed = true;
+            Console.WriteLine("OnReadCompleted: " + DateTime.Now);
         }
 
         [TestCase(LogLevel.Fatal, 0)]
@@ -189,14 +191,24 @@ namespace logviewer.tests
         public void MinFilter(LogLevel filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
+
+            this.ReadLogExpectations();
 
             this.controller.MinFilter((int)filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(c));
+        }
+
+        private void ReadLogExpectations()
+        {
+            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(null)).With(TestPath);
+            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            this.view.Expects.One.SetProperty(v => v.HumanReadableLogSize).ToAnything();
+            this.view.Expects.AtLeastOne.SetProperty(v => v.LogInfo).ToAnything();
+            this.view.Expects.AtLeast(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
+            this.view.Expects.Exactly(2).Method(v => v.SetFileEncoding(null)).WithAnyArguments();
+            this.view.Expects.AtLeastOne.Method(v => v.SetProgress(new LoadProgress())).WithAnyArguments();
         }
 
         [Test]
@@ -224,9 +236,8 @@ namespace logviewer.tests
         [TestCase("^(?!.*message body 2).*", 1, true)]
         public void FilterText(string filter, int messages, bool useRegexp)
         {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
+            this.ReadLogExpectations();
+
             File.WriteAllText(TestPath, MessageExamples);
             this.controller.TextFilter(filter);
             this.controller.UserRegexp(useRegexp);
@@ -293,9 +304,8 @@ namespace logviewer.tests
 
         void ReadNormalLog(Encoding encoding)
         {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
+            this.ReadLogExpectations();
+
             File.WriteAllText(TestPath, MessageExamples, encoding);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
@@ -317,9 +327,8 @@ namespace logviewer.tests
         [Test]
         public void ReadNotEmptyLogWithoutMessagesMatch()
         {
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
+            this.ReadLogExpectations();
+
             File.WriteAllText(TestPath, "test log");
             this.controller.StartReadLog();
             this.WaitReadingComplete();
@@ -426,9 +435,8 @@ namespace logviewer.tests
             {
                 sb.AppendLine(MessageExamples);
             }
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
+            this.ReadLogExpectations();
+
             File.WriteAllText(TestPath, sb.ToString());
             this.controller.StartReadLog();
             this.WaitReadingComplete();
