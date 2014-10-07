@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace logviewer.core
 {
-    public class BaseGuiController
+    public abstract class BaseGuiController
     {
         private readonly SynchronizationContext winformsOrDefaultContext;
 
