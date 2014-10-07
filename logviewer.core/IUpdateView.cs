@@ -7,8 +7,8 @@ namespace logviewer.core
     public interface IUpdateView
     {
         void EnableUpdateStartControl(bool enable);
-        
-        void OnProgress(int percent, long totalBytes, long readBytes);
+
+        void OnProgress(int percent, FileSize totalBytes, FileSize readBytes);
         
         void DisableYesControl();
         

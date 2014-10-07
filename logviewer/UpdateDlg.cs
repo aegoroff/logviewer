@@ -25,9 +25,9 @@ namespace logviewer
             this.updateBtn.Enabled = enable;
         }
 
-        public void OnProgress(int percent, long totalBytes, long readBytes)
+        public void OnProgress(int percent, FileSize totalBytes, FileSize readBytes)
         {
-            this.label2.Text = string.Format(Resources.UpdateDownloadProgressFormat, new FileSize((ulong)readBytes, true), new FileSize((ulong)totalBytes, true), percent);
+            this.label2.Text = string.Format(Resources.UpdateDownloadProgressFormat, readBytes, totalBytes, percent);
             this.progressBar1.Value = percent;
         }
 
