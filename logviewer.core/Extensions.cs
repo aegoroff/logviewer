@@ -65,6 +65,11 @@ namespace logviewer.core
             return value < min ? min : value;
         }
 
+        public static int PercentOf(this long value, long total)
+        {
+            return (int)((value / (double)total) * 100);
+        }
+
         private static string WithDays(TimeSpan input)
         {
             return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds, input.DaysToString(), input.HoursToString(), input.MinutesToString(), input.SecondsToString()) : null;

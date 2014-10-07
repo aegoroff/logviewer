@@ -124,7 +124,7 @@ namespace logviewer.core
                     {
                         Speed = new FileSize((ulong)speed, true),
                         Remainig = TimeSpan.FromSeconds(remain),
-                        Percent = (int)((stream.Position / (double)total) * 100)
+                        Percent = stream.Position.PercentOf(total)
                     };
                     this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
                 }

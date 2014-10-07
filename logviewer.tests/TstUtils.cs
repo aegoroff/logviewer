@@ -66,5 +66,17 @@ namespace logviewer.tests
             Assert.That(sz.Value, Is.EqualTo(value));
             Assert.That(sz.ToString(), Is.StringMatching(str));
         }
+
+        [TestCase(0L, 100L, 0)]
+        [TestCase(15L, 100L, 15)]
+        [TestCase(50L, 100L, 50)]
+        [TestCase(100L, 100L, 100)]
+        [TestCase(200L, 100L, 200)]
+        [TestCase(10L, 33L, 30)]
+        [TestCase(5L, 33L, 15)]
+        public void TestPercentOf(long value, long total, int percent)
+        {
+            Assert.That(value.PercentOf(total), Is.EqualTo(percent));
+        }
     }
 }

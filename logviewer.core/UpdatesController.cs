@@ -55,7 +55,7 @@ namespace logviewer.core
         {
             var bytesIn = e.BytesReceived;
             var totalBytes = e.TotalBytesToReceive;
-            var percentage = (int)((bytesIn / (double)totalBytes) * 100);
+            var percentage = bytesIn.PercentOf(totalBytes);
             this.RunOnGuiThread(
                 () =>
                     this.view.OnProgress(percentage, new FileSize(totalBytes, true), new FileSize(bytesIn, true)));
