@@ -41,7 +41,7 @@ namespace logviewer.tests
             var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
-            this.controller = new MainController(this.settings.MockObject, RegexOptions.None);
+            this.controller = new MainController(this.settings.MockObject, RegexOptions.ExplicitCapture);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.One.SetProperty(_ => _.LogInfo).ToAnything();

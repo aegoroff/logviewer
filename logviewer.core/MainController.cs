@@ -58,12 +58,13 @@ namespace logviewer.core
         private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
+        private readonly RegexOptions options;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.Compiled)
+        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture | RegexOptions.Compiled)
         {
             this.CurrentPage = 1;
             this.settings = settings;
@@ -71,13 +72,14 @@ namespace logviewer.core
             this.prevInput = DateTime.Now;
             var template = this.settings.ReadParsingTemplate();
             this.levelNames = CreateNames();
-            this.CreateMessageHead(template.StartMessage, options);
+            this.options = options;
+            this.CreateMessageHead(template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
-        private void CreateMessageHead(string startMessagePattern, RegexOptions options = RegexOptions.Compiled)
+        private void CreateMessageHead(string startMessagePattern)
         {
-            this.matcher = new GrokMatcher(startMessagePattern, options);
+            this.matcher = new GrokMatcher(startMessagePattern, this.options);
         }
 
         private static Dictionary<string, LogLevel> CreateNames()
