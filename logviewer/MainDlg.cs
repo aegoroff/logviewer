@@ -404,7 +404,7 @@ namespace logviewer
             var dlg = Program.Kernel.Get<SettingsDlg>();
             using (dlg)
             {
-                dlg.SetApplyAction(() => this.controller.UpdateSettings());
+                dlg.SetApplyAction(refresh => this.controller.UpdateSettings(refresh));
                 dlg.ShowDialog();
             }
         }

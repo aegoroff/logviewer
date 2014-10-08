@@ -82,6 +82,10 @@ namespace logviewer.core
                 int pageSize;
                 if (int.TryParse(this.formData.PageSize, out pageSize))
                 {
+                    if (this.settings.PageSize != pageSize)
+                    {
+                        this.RefreshOnClose = true;
+                    }
                     this.settings.PageSize = pageSize;
                 }
                 int value;
@@ -100,6 +104,8 @@ namespace logviewer.core
             });
         }
 
+        public bool RefreshOnClose { get; private set; }
+
         public static IEnumerable<LogLevel> SelectLevels(Func<LogLevel, bool> filter = null)
         {
             var levels = (LogLevel[])Enum.GetValues(typeof (LogLevel));
@@ -113,6 +119,10 @@ namespace logviewer.core
             if (!result.Result)
             {
                 return;
+            }
+            if (result.SelectedColor != this.formData.Colors[level])
+            {
+                this.RefreshOnClose = true;
             }
             this.formData.Colors[level] = result.SelectedColor;
             this.updateColorActions[level](result.SelectedColor);

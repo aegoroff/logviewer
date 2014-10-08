@@ -785,7 +785,7 @@ namespace logviewer.core
             }
         }
 
-        public void UpdateSettings()
+        public void UpdateSettings(bool refresh)
         {
             var template = this.settings.ReadParsingTemplate();
             if (!template.IsEmpty)
@@ -793,13 +793,11 @@ namespace logviewer.core
                 this.CreateMessageHead(template.StartMessage);
             }
             var value = this.settings.PageSize;
-            var reload = false;
             if (this.pageSize != value)
             {
                 this.CurrentPage = 1;
-                reload = true;
             }
-            if (reload)
+            if (refresh)
             {
                 this.BeginLogReading((int)this.minFilter, (int)this.maxFilter, this.textFilter, this.reverseChronological, this.useRegexp);
             }

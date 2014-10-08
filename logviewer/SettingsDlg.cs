@@ -13,7 +13,7 @@ namespace logviewer
     public partial class SettingsDlg : Form, ISettingsView
     {
         private readonly SettingsController controller;
-        private Action apply;
+        private Action<bool> apply;
 
         public SettingsDlg(ISettingsProvider settings)
         {
@@ -22,7 +22,7 @@ namespace logviewer
             this.controller.Load();
         }
 
-        public void SetApplyAction(Action action)
+        public void SetApplyAction(Action<bool> action)
         {
             this.apply = action;
         }
@@ -150,7 +150,7 @@ namespace logviewer
         private void OnClosed(object sender, FormClosedEventArgs e)
         {
             Debug.Assert(this.apply != null);
-            this.apply();
+            this.apply(this.controller.RefreshOnClose);
         }
 
         private void OnSetParsingTemplateName(object sender, EventArgs e)
