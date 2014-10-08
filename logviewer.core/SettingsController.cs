@@ -89,6 +89,12 @@ namespace logviewer.core
             this.settings.OpenLastFile = this.formData.OpenLastFile;
             this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
             this.settings.UpdateParsingProfile(this.template);
+
+            foreach (var pair in this.formData.Colors)
+            {
+                this.settings.UpdateColor(pair.Key, pair.Value);
+            }
+            
             this.view.EnableSave(false);
         }
 
@@ -106,8 +112,8 @@ namespace logviewer.core
             {
                 return;
             }
-            this.settings.UpdateColor(level, result.SelectedColor);
-            this.updateColorActions[level](this.settings.Colorize(level));
+            this.formData.Colors[level] = result.SelectedColor;
+            this.updateColorActions[level](result.SelectedColor);
             this.view.EnableSave(true);
         }
 
