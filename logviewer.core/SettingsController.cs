@@ -76,26 +76,28 @@ namespace logviewer.core
 
         public void Save()
         {
-            int pageSize;
-            if (int.TryParse(this.formData.PageSize, out pageSize))
-            {
-                this.settings.PageSize = pageSize;
-            }
-            int value;
-            if (int.TryParse(this.formData.KeepLastNFiles, out value))
-            {
-                this.settings.KeepLastNFiles = value;
-            }
-            this.settings.OpenLastFile = this.formData.OpenLastFile;
-            this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
-            this.settings.UpdateParsingProfile(this.template);
-
-            foreach (var pair in this.formData.Colors)
-            {
-                this.settings.UpdateColor(pair.Key, pair.Value);
-            }
-            
             this.view.EnableSave(false);
+            Task.Factory.StartNew(delegate
+            {
+                int pageSize;
+                if (int.TryParse(this.formData.PageSize, out pageSize))
+                {
+                    this.settings.PageSize = pageSize;
+                }
+                int value;
+                if (int.TryParse(this.formData.KeepLastNFiles, out value))
+                {
+                    this.settings.KeepLastNFiles = value;
+                }
+                this.settings.OpenLastFile = this.formData.OpenLastFile;
+                this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
+                this.settings.UpdateParsingProfile(this.template);
+
+                foreach (var pair in this.formData.Colors)
+                {
+                    this.settings.UpdateColor(pair.Key, pair.Value);
+                }
+            });
         }
 
         public static IEnumerable<LogLevel> SelectLevels(Func<LogLevel, bool> filter = null)
