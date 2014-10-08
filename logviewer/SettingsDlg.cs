@@ -135,6 +135,11 @@ namespace logviewer
             this.resetColorsBtn.Enabled = enabled;
         }
 
+        public void EnableResetColors(bool enabled)
+        {
+            this.resetColorsBtn.Enabled = enabled;
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
