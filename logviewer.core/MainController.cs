@@ -84,7 +84,7 @@ namespace logviewer.core
 
         private static Dictionary<string, LogLevel> CreateNames()
         {
-            return SettingsController.AllLevels.ToDictionary(l => l.ToString("G"), l => l, StringComparer.OrdinalIgnoreCase);
+            return SettingsController.SelectLevels(l => l != LogLevel.None).ToDictionary(l => l.ToString("G"), l => l, StringComparer.OrdinalIgnoreCase);
         }
 
         #endregion
@@ -950,7 +950,7 @@ namespace logviewer.core
                 this.byLevel.Add(message.Level, 1);
             }
 
-            doc.AddText(message.Header.Trim(), message.HeadFormat);
+            doc.AddText(message.Header.Trim(), this.settings.FormatHead(message.Level));
             doc.AddNewLine();
 
             var txt = message.Body;
@@ -959,7 +959,7 @@ namespace logviewer.core
                 doc.AddNewLine();
                 return;
             }
-            doc.AddText(txt.Trim(), message.BodyFormat);
+            doc.AddText(txt.Trim(), this.settings.FormatBody(message.Level));
             doc.AddNewLine(3);
         }
 

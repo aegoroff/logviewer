@@ -51,12 +51,12 @@ namespace logviewer.core
                 {
                     this.view.AddTemplateName(name);
                 }
-                this.view.UpdateTraceColor(LogMessage.Colorize(LogLevel.Trace));
-                this.view.UpdateDebugColor(LogMessage.Colorize(LogLevel.Debug));
-                this.view.UpdateInfoColor(LogMessage.Colorize(LogLevel.Info));
-                this.view.UpdateWarnColor(LogMessage.Colorize(LogLevel.Warn));
-                this.view.UpdateErrorColor(LogMessage.Colorize(LogLevel.Error));
-                this.view.UpdateFatalColor(LogMessage.Colorize(LogLevel.Fatal));
+                this.view.UpdateTraceColor(this.settings.Colorize(LogLevel.Trace));
+                this.view.UpdateDebugColor(this.settings.Colorize(LogLevel.Debug));
+                this.view.UpdateInfoColor(this.settings.Colorize(LogLevel.Info));
+                this.view.UpdateWarnColor(this.settings.Colorize(LogLevel.Warn));
+                this.view.UpdateErrorColor(this.settings.Colorize(LogLevel.Error));
+                this.view.UpdateFatalColor(this.settings.Colorize(LogLevel.Fatal));
                 
                 this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
             };
@@ -82,23 +82,21 @@ namespace logviewer.core
             this.view.EnableSave(false);
         }
 
-        public static IEnumerable<LogLevel> AllLevels
+        public static IEnumerable<LogLevel> SelectLevels(Func<LogLevel, bool> filter = null)
         {
-            get
-            {
-                var levels = (LogLevel[])Enum.GetValues(typeof (LogLevel));
-                return levels.Where(l => l != LogLevel.None);
-            }
+            var levels = (LogLevel[])Enum.GetValues(typeof (LogLevel));
+            // All levels by default
+            return levels.Where(filter ?? (l => true));
         }
 
         public void OnChangeLevelColor(LogLevel level)
         {
-            var result = this.view.PickColor(LogMessage.Colorize(level));
+            var result = this.view.PickColor(this.settings.Colorize(level));
             if (!result.Result)
             {
                 return;
             }
-            LogMessage.UpdateColor(level, result.SelectedColor);
+            this.settings.UpdateColor(level, result.SelectedColor);
             switch (level)
             {
                 case LogLevel.Trace:

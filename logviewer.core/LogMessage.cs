@@ -4,41 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
-using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer.core
 {
     public struct LogMessage
     {
         private const char NewLine = '\n';
-
-        private static readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary
-            <LogLevel, RtfCharFormat>
-        {
-            { LogLevel.None, FormatBody(LogLevel.None) },
-            { LogLevel.Trace, FormatBody(LogLevel.Trace) },
-            { LogLevel.Debug, FormatBody(LogLevel.Debug) },
-            { LogLevel.Info, FormatBody(LogLevel.Info) },
-            { LogLevel.Warn, FormatBody(LogLevel.Warn) },
-            { LogLevel.Error, FormatBody(LogLevel.Error) },
-            { LogLevel.Fatal, FormatBody(LogLevel.Fatal) },
-        };
-
-        private static readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary
-            <LogLevel, RtfCharFormat>
-        {
-            { LogLevel.None, FormatHead(LogLevel.None) },
-            { LogLevel.Trace, FormatHead(LogLevel.Trace) },
-            { LogLevel.Debug, FormatHead(LogLevel.Debug) },
-            { LogLevel.Info, FormatHead(LogLevel.Info) },
-            { LogLevel.Warn, FormatHead(LogLevel.Warn) },
-            { LogLevel.Error, FormatHead(LogLevel.Error) },
-            { LogLevel.Fatal, FormatHead(LogLevel.Fatal) },
-        };
-
-        private static Dictionary<LogLevel, Color> levelsMap;
 
         public LogMessage(string header, string body, LogLevel level)
         {
@@ -81,16 +53,6 @@ namespace logviewer.core
             }
         }
 
-        public RtfCharFormat HeadFormat
-        {
-            get { return headerFormatsMap[this.Level]; }
-        }
-
-        public RtfCharFormat BodyFormat
-        {
-            get { return bodyFormatsMap[this.Level]; }
-        }
-
         public bool HasSemantic
         {
             get { return this.semantic != null; }
@@ -131,51 +93,6 @@ namespace logviewer.core
             }
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
-        }
-
-        private static RtfCharFormat FormatHead(LogLevel level)
-        {
-            return new RtfCharFormat
-            {
-                Color = Colorize(level),
-                Font = "Courier New",
-                Size = 10,
-                Bold = true
-            };
-        }
-
-        private static RtfCharFormat FormatBody(LogLevel level)
-        {
-            RtfCharFormat f = FormatHead(level);
-            f.Bold = false;
-            return f;
-        }
-
-        internal static Color Colorize(LogLevel level)
-        {
-            if (levelsMap == null)
-            {
-                levelsMap = new Dictionary<LogLevel, Color>
-                {
-                    { LogLevel.None, Color.Black },
-                    { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
-                    { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
-                    { LogLevel.Info, Color.Green },
-                    { LogLevel.Warn, Color.Orange },
-                    { LogLevel.Error, Color.Red },
-                    { LogLevel.Fatal, Color.DarkViolet }
-                };
-            }
-            return levelsMap[level];
-        }
-
-        internal static void UpdateColor(LogLevel level, Color color)
-        {
-            if (levelsMap == null || !levelsMap.ContainsKey(level))
-            {
-                return;
-            }
-            levelsMap[level] = color;
         }
 
         public static LogMessage Create()

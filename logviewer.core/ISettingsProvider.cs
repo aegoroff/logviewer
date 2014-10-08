@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer.core
 {
@@ -25,5 +27,9 @@ namespace logviewer.core
         ParsingTemplate ReadParsingTemplate(int index);
         void UpdateParsingProfile(ParsingTemplate template);
         void InsertParsingProfile(ParsingTemplate template);
+        RtfCharFormat FormatHead(LogLevel level);
+        RtfCharFormat FormatBody(LogLevel level);
+        void UpdateColor(LogLevel level, Color color);
+        Color Colorize(LogLevel level);
     }
 }

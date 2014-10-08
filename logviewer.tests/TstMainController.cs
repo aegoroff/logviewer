@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using logviewer.core;
+using Net.Sgoliver.NRtfTree.Util;
 using NMock;
 using NMock.Matchers;
 using NUnit.Framework;
@@ -37,6 +38,8 @@ namespace logviewer.tests
             this.settings = this.mockery.CreateMock<ISettingsProvider>();
 
             this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
+            this.settings.Expects.Any.Method(_ => _.FormatBody(new LogLevel())).WithAnyArguments().WillReturn(new RtfCharFormat());
+            this.settings.Expects.Any.Method(_ => _.FormatHead(new LogLevel())).WithAnyArguments().WillReturn(new RtfCharFormat());
 
             var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
