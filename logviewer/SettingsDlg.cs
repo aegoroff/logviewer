@@ -132,6 +132,7 @@ namespace logviewer
             this.autoRefreshCheckBox.Enabled = enabled;
             this.parsingTemplateSelector.Enabled = enabled;
             this.messageStartPatternBox.Enabled = enabled;
+            this.resetColorsBtn.Enabled = enabled;
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
