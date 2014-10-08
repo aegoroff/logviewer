@@ -84,8 +84,7 @@ namespace logviewer.core
 
         private static Dictionary<string, LogLevel> CreateNames()
         {
-            var levels = (LogLevel[]) Enum.GetValues(typeof (LogLevel));
-            return levels.Where(l => l != LogLevel.None).ToDictionary(l => l.ToString("G"), l => l, StringComparer.OrdinalIgnoreCase);
+            return SettingsController.AllLevels.ToDictionary(l => l.ToString("G"), l => l, StringComparer.OrdinalIgnoreCase);
         }
 
         #endregion

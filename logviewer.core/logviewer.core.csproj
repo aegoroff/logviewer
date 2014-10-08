@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseGuiController.cs" />
+    <Compile Include="ColorPickResult.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />

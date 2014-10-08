@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using logviewer.core;
 
@@ -54,6 +55,68 @@ namespace logviewer
             this.parsingTemplateSelector.SelectedItem = name;
         }
 
+        public ColorPickResult PickColor(Color startColor)
+        {
+            this.colorDialog1.Color = startColor;
+            ColorPickResult result = new ColorPickResult();
+            result.Result = this.colorDialog1.ShowDialog() == DialogResult.OK;
+            result.SelectedColor = this.colorDialog1.Color;
+            return result;
+        }
+
+        static void Draw(ButtonBase button, Color color)
+        {
+            const int squareSize = 16;
+
+            Image img = new Bitmap(squareSize, squareSize);
+            using (var g = Graphics.FromImage(img))
+            {
+                // draw black background
+                g.Clear(Color.White);
+                var rect = new Rectangle(0, 0, squareSize, squareSize);
+                var pen = new Pen(color, 1);
+                using (pen)
+                {
+                    g.FillRectangle(pen.Brush, rect);
+                }
+            }
+            if (button.Image != null)
+            {
+                button.Image.Dispose();
+            }
+            button.Image = img;
+        }
+
+        public void UpdateTraceColor(Color color)
+        {
+            Draw(this.traceBtn, color);
+        }
+
+        public void UpdateDebugColor(Color color)
+        {
+            Draw(this.debugBtn, color);
+        }
+
+        public void UpdateInfoColor(Color color)
+        {
+            Draw(this.infoBtn, color);
+        }
+
+        public void UpdateWarnColor(Color color)
+        {
+            Draw(this.warnBtn, color);
+        }
+
+        public void UpdateErrorColor(Color color)
+        {
+            Draw(this.errorBtn, color);
+        }
+
+        public void UpdateFatalColor(Color color)
+        {
+            Draw(this.fatalBtn, color);
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
@@ -98,6 +161,36 @@ namespace logviewer
         private void OnChangeAutorefresh(object sender, EventArgs e)
         {
             this.controller.UpdateAutoRefreshOnFileChange(this.autoRefreshCheckBox.Checked);
+        }
+
+        private void OnChangeTrace(object sender, EventArgs e)
+        {
+            this.controller.OnChangeLevelColor(LogLevel.Trace);
+        }
+
+        private void OnChangeDebug(object sender, EventArgs e)
+        {
+            this.controller.OnChangeLevelColor(LogLevel.Debug);
+        }
+
+        private void OnChangeInfo(object sender, EventArgs e)
+        {
+            this.controller.OnChangeLevelColor(LogLevel.Info);
+        }
+
+        private void OnChangeWarn(object sender, EventArgs e)
+        {
+            this.controller.OnChangeLevelColor(LogLevel.Warn);
+        }
+
+        private void OnChangeError(object sender, EventArgs e)
+        {
+            this.controller.OnChangeLevelColor(LogLevel.Error);
+        }
+
+        private void OnChangeFatal(object sender, EventArgs e)
+        {
+            this.controller.OnChangeLevelColor(LogLevel.Fatal);
         }
     }
 }

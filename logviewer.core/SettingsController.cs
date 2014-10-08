@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -50,6 +51,13 @@ namespace logviewer.core
                 {
                     this.view.AddTemplateName(name);
                 }
+                this.view.UpdateTraceColor(LogMessage.Colorize(LogLevel.Trace));
+                this.view.UpdateDebugColor(LogMessage.Colorize(LogLevel.Debug));
+                this.view.UpdateInfoColor(LogMessage.Colorize(LogLevel.Info));
+                this.view.UpdateWarnColor(LogMessage.Colorize(LogLevel.Warn));
+                this.view.UpdateErrorColor(LogMessage.Colorize(LogLevel.Error));
+                this.view.UpdateFatalColor(LogMessage.Colorize(LogLevel.Fatal));
+                
                 this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
             };
 
@@ -72,6 +80,46 @@ namespace logviewer.core
             this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
             this.settings.UpdateParsingProfile(this.template);
             this.view.EnableSave(false);
+        }
+
+        public static IEnumerable<LogLevel> AllLevels
+        {
+            get
+            {
+                var levels = (LogLevel[])Enum.GetValues(typeof (LogLevel));
+                return levels.Where(l => l != LogLevel.None);
+            }
+        }
+
+        public void OnChangeLevelColor(LogLevel level)
+        {
+            var result = this.view.PickColor(LogMessage.Colorize(level));
+            if (!result.Result)
+            {
+                return;
+            }
+            LogMessage.UpdateColor(level, result.SelectedColor);
+            switch (level)
+            {
+                case LogLevel.Trace:
+                    this.view.UpdateTraceColor(result.SelectedColor);
+                    break;
+                case LogLevel.Debug:
+                    this.view.UpdateDebugColor(result.SelectedColor);
+                    break;
+                case LogLevel.Info:
+                    this.view.UpdateInfoColor(result.SelectedColor);
+                    break;
+                case LogLevel.Warn:
+                    this.view.UpdateWarnColor(result.SelectedColor);
+                    break;
+                case LogLevel.Error:
+                    this.view.UpdateErrorColor(result.SelectedColor);
+                    break;
+                case LogLevel.Fatal:
+                    this.view.UpdateFatalColor(result.SelectedColor);
+                    break;
+            }
         }
 
         public void UpdateOpenLastFile(bool value)

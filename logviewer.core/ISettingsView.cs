@@ -2,6 +2,8 @@
 // Created at: 25.09.2013
 // © 2012-2014 Alexander Egorov
 
+using System.Drawing;
+
 namespace logviewer.core
 {
     public interface ISettingsView
@@ -15,5 +17,19 @@ namespace logviewer.core
         void AddTemplateName(string name);
         
         void SelectParsingTemplateByName(string name);
+
+        ColorPickResult PickColor(Color startColor);
+        
+        void UpdateTraceColor(Color color);
+        
+        void UpdateDebugColor(Color color);
+        
+        void UpdateInfoColor(Color color);
+        
+        void UpdateWarnColor(Color color);
+        
+        void UpdateErrorColor(Color color);
+        
+        void UpdateFatalColor(Color color);
     }
 }

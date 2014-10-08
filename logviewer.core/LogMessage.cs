@@ -151,7 +151,7 @@ namespace logviewer.core
             return f;
         }
 
-        private static Color Colorize(LogLevel level)
+        internal static Color Colorize(LogLevel level)
         {
             if (levelsMap == null)
             {
@@ -167,6 +167,15 @@ namespace logviewer.core
                 };
             }
             return levelsMap[level];
+        }
+
+        internal static void UpdateColor(LogLevel level, Color color)
+        {
+            if (levelsMap == null || !levelsMap.ContainsKey(level))
+            {
+                return;
+            }
+            levelsMap[level] = color;
         }
 
         public static LogMessage Create()
