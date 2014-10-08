@@ -27,6 +27,11 @@ namespace logviewer.core
             return dstEncoding.GetString(dstBytes);
         }
 
+        internal static string ToParameterName(this LogLevel level)
+        {
+            return level.ToString("G") + "Color";
+        }
+
         public static string FormatString(this ulong value)
         {
             if (value == 0)

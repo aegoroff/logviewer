@@ -8,12 +8,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace logviewer.core
 {
-    public class SettingsController
+    public class SettingsController : BaseGuiController
     {
         private readonly FormData formData = new FormData();
         private readonly ISettingsProvider settings;
@@ -43,9 +42,7 @@ namespace logviewer.core
 
         public void Load()
         {
-            var uiContext = TaskScheduler.FromCurrentSynchronizationContext();
-
-            Action loader = delegate
+            Task.Factory.StartNew(delegate
             {
                 this.formData.OpenLastFile = this.settings.OpenLastFile;
                 this.formData.AutoRefreshOnFileChange = this.settings.AutoRefreshOnFileChange;
@@ -53,25 +50,28 @@ namespace logviewer.core
                 this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
 
                 this.templateList = this.settings.ReadParsingTemplateList();
-                this.template = this.settings.ReadParsingTemplate(parsingTemplateIndex);
-            };
-            Action<Task> onComplete = delegate
-            {
-                this.view.LoadFormData(this.formData);
-                this.view.LoadParsingTemplate(this.template);
-                this.view.EnableSave(false);
-                foreach (var name in this.templateList)
+                this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
+                this.formData.Colors = new Dictionary<LogLevel, Color>();
+                foreach (var logLevel in SelectLevels(l => l != LogLevel.None))
                 {
-                    this.view.AddTemplateName(name);
+                    this.formData.Colors.Add(logLevel, this.settings.Colorize(logLevel));
                 }
-                foreach (var level in SelectLevels(l => l != LogLevel.None))
+                this.RunOnGuiThread(delegate
                 {
-                    this.updateColorActions[level](this.settings.Colorize(level));
-                }
-                this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
-            };
-
-            Task.Factory.StartNew(loader).ContinueWith(onComplete, CancellationToken.None, TaskContinuationOptions.None, uiContext);
+                    this.view.LoadFormData(this.formData);
+                    this.view.LoadParsingTemplate(this.template);
+                    this.view.EnableSave(false);
+                    foreach (var name in this.templateList)
+                    {
+                        this.view.AddTemplateName(name);
+                    }
+                    foreach (var color in this.formData.Colors)
+                    {
+                        this.updateColorActions[color.Key](color.Value);
+                    }
+                    this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
+                });
+            });
         }
 
         public void Save()

@@ -705,19 +705,6 @@ namespace logviewer.core
             this.maxFilter = (LogLevel)value;
         }
 
-        private void PageSize()
-        {
-            var value = this.settings.PageSize;
-            if (this.pageSize != value)
-            {
-                this.CurrentPage = 1;
-                this.BeginLogReading((int)this.minFilter, (int)this.maxFilter, this.textFilter,
-                    this.reverseChronological, this.useRegexp);
-            }
-            this.pageSize = value;
-            this.SetPageSize();
-        }
-
         public void TextFilter(string value)
         {
             this.textFilter = string.IsNullOrWhiteSpace(value)
@@ -805,7 +792,19 @@ namespace logviewer.core
             {
                 this.CreateMessageHead(template.StartMessage);
             }
-            this.PageSize();
+            var value = this.settings.PageSize;
+            var reload = false;
+            if (this.pageSize != value)
+            {
+                this.CurrentPage = 1;
+                reload = true;
+            }
+            if (reload)
+            {
+                this.BeginLogReading((int)this.minFilter, (int)this.maxFilter, this.textFilter, this.reverseChronological, this.useRegexp);
+            }
+            this.pageSize = value;
+            this.SetPageSize();
         }
 
         public void AddCurrentFileToRecentFilesList()

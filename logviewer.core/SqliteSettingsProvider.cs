@@ -64,7 +64,6 @@ namespace logviewer.core
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
             this.parsingTemplatePropertiesNames = this.parsingTemplateProperties.Select(info => GetColumnAttribute(info).Name).ToArray();
-            this.CacheFormats();
 
             this.upgrades.Add(Upgrade1);
             this.upgrades.Add(Upgrade2);
@@ -72,6 +71,7 @@ namespace logviewer.core
             this.CreateTables();
             this.MigrateFromRegistry();
             this.RunUpgrade();
+            this.CacheFormats();
             var template = this.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
@@ -100,7 +100,16 @@ namespace logviewer.core
 
         public Color Colorize(LogLevel level)
         {
-            return defaultColors[level];
+            var argb = this.ReadIntegerOption(level.ToParameterName(), -1);
+            return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);
+        }
+
+        public void ResetColorsToDefault()
+        {
+            foreach (var color in defaultColors)
+            {
+                this.UpdateColor(color.Key, color.Value);
+            }
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -111,7 +120,7 @@ namespace logviewer.core
             }
             this.headerFormatsMap[level] = FormatChar(color, true);
             this.bodyFormatsMap[level] = FormatChar(color, false);
-            defaultColors[level] = color;
+            this.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
         private static RegistryKey RegistryKey
