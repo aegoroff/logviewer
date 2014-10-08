@@ -73,6 +73,7 @@ namespace logviewer.core
                         this.updateColorActions[color.Key](color.Value);
                     }
                     this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
+                    this.view.EnableResetColors(this.IsColorsChanged());
                 });
             });
         }
@@ -110,7 +111,11 @@ namespace logviewer.core
                 }
                 finally
                 {
-                    this.RunOnGuiThread(() => this.view.EnableChangeOrClose(true));
+                    this.RunOnGuiThread(() =>
+                    {
+                        this.view.EnableChangeOrClose(true);
+                        this.view.EnableResetColors(this.IsColorsChanged());
+                    });
                 }
             });
         }
@@ -137,7 +142,7 @@ namespace logviewer.core
 
         private void UpdateColor(LogLevel level, Color color)
         {
-            if (color != this.formData.Colors[level])
+            if (color.ToArgb() != this.formData.Colors[level].ToArgb())
             {
                 this.RefreshOnClose = true;
             }
@@ -152,6 +157,12 @@ namespace logviewer.core
                 this.UpdateColor(color.Key, color.Value);
             }
             this.view.EnableSave(true);
+        }
+
+        private bool IsColorsChanged()
+        {
+            return this.settings.DefaultColors.Where(c => c.Key != LogLevel.None)
+                .Aggregate(false, (current, c) => current | this.formData.Colors[c.Key].ToArgb() != c.Value.ToArgb());
         }
 
         public void UpdateOpenLastFile(bool value)
