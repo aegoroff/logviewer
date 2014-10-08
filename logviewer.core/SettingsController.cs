@@ -107,27 +107,7 @@ namespace logviewer.core
                 return;
             }
             this.settings.UpdateColor(level, result.SelectedColor);
-            switch (level)
-            {
-                case LogLevel.Trace:
-                    this.view.UpdateTraceColor(result.SelectedColor);
-                    break;
-                case LogLevel.Debug:
-                    this.view.UpdateDebugColor(result.SelectedColor);
-                    break;
-                case LogLevel.Info:
-                    this.view.UpdateInfoColor(result.SelectedColor);
-                    break;
-                case LogLevel.Warn:
-                    this.view.UpdateWarnColor(result.SelectedColor);
-                    break;
-                case LogLevel.Error:
-                    this.view.UpdateErrorColor(result.SelectedColor);
-                    break;
-                case LogLevel.Fatal:
-                    this.view.UpdateFatalColor(result.SelectedColor);
-                    break;
-            }
+            this.updateColorActions[level](this.settings.Colorize(level));
             this.view.EnableSave(true);
         }
 
