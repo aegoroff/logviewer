@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using logviewer.core.Properties;
 
@@ -14,11 +13,6 @@ namespace logviewer.core
 {
     public static class Extensions
     {
-        internal static Regex ToMarker(this string marker)
-        {
-            return new Regex(marker, RegexOptions.Compiled);
-        }
-
         /// <summary>
         ///     Decodes string into encoding specified
         /// </summary>
