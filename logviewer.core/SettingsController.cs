@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -20,12 +21,24 @@ namespace logviewer.core
         private ParsingTemplate template;
         private IList<string> templateList;
         private readonly int parsingTemplateIndex;
+        readonly Dictionary<LogLevel, Action<Color>> updateColorActions = new Dictionary<LogLevel, Action<Color>>();
 
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
             this.view = view;
             this.settings = settings;
             parsingTemplateIndex = 0;
+            this.InitializeUpdateActions();
+        }
+
+        private void InitializeUpdateActions()
+        {
+            this.updateColorActions.Add(LogLevel.Trace, this.view.UpdateTraceColor);
+            this.updateColorActions.Add(LogLevel.Debug, this.view.UpdateDebugColor);
+            this.updateColorActions.Add(LogLevel.Info, this.view.UpdateInfoColor);
+            this.updateColorActions.Add(LogLevel.Warn, this.view.UpdateWarnColor);
+            this.updateColorActions.Add(LogLevel.Error, this.view.UpdateErrorColor);
+            this.updateColorActions.Add(LogLevel.Fatal, this.view.UpdateFatalColor);
         }
 
         public void Load()
@@ -51,13 +64,10 @@ namespace logviewer.core
                 {
                     this.view.AddTemplateName(name);
                 }
-                this.view.UpdateTraceColor(this.settings.Colorize(LogLevel.Trace));
-                this.view.UpdateDebugColor(this.settings.Colorize(LogLevel.Debug));
-                this.view.UpdateInfoColor(this.settings.Colorize(LogLevel.Info));
-                this.view.UpdateWarnColor(this.settings.Colorize(LogLevel.Warn));
-                this.view.UpdateErrorColor(this.settings.Colorize(LogLevel.Error));
-                this.view.UpdateFatalColor(this.settings.Colorize(LogLevel.Fatal));
-                
+                foreach (var level in SelectLevels(l => l != LogLevel.None))
+                {
+                    this.updateColorActions[level](this.settings.Colorize(level));
+                }
                 this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
             };
 
@@ -118,6 +128,7 @@ namespace logviewer.core
                     this.view.UpdateFatalColor(result.SelectedColor);
                     break;
             }
+            this.view.EnableSave(true);
         }
 
         public void UpdateOpenLastFile(bool value)
