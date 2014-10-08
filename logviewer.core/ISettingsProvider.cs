@@ -32,5 +32,6 @@ namespace logviewer.core
         void UpdateColor(LogLevel level, Color color);
         Color ReadColor(LogLevel level);
         IDictionary<LogLevel, Color> DefaultColors { get; }
+        int SelectedParsingTemplate { get; set; }
     }
 }

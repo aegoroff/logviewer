@@ -27,6 +27,7 @@ namespace logviewer.core
         private const string MaxLevelParameterName = @"MaxLevel";
         private const string SortingParameterName = @"Sorting";
         private const string PageSizeParameterName = @"PageSize";
+        private const string SelectedTemplateParameterName = @"SelectedTemplate";
         private const string UseRegexpParameterName = @"UseRegexp";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
@@ -110,6 +111,12 @@ namespace logviewer.core
         public IDictionary<LogLevel, Color> DefaultColors
         {
             get { return defaultColors; }
+        }
+
+        public int SelectedParsingTemplate
+        {
+            get { return this.ReadIntegerOption(SelectedTemplateParameterName); }
+            set { this.UpdateIntegerOption(SelectedTemplateParameterName, value); }
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -235,7 +242,7 @@ namespace logviewer.core
 
         public ParsingTemplate ReadParsingTemplate()
         {
-            return this.ReadParsingTemplate(DefaultParsingProfileIndex);
+            return this.ReadParsingTemplate(this.SelectedParsingTemplate);
         }
 
         public IList<string> ReadParsingTemplateList()
