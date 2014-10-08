@@ -43,6 +43,9 @@ namespace logviewer.core
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
         private readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
 
+        private const int HeaderFontSize = 10;
+        private const int BodyFontSize = 9;
+
         private static readonly Dictionary<LogLevel, Color> defaultColors = new Dictionary<LogLevel, Color>
         {
             {LogLevel.None, Color.Black},
@@ -94,7 +97,7 @@ namespace logviewer.core
             {
                 var color = this.ReadColor(logLevel);
                 this.headerFormatsMap.Add(logLevel, FormatChar(color, true));
-                this.bodyFormatsMap.Add(logLevel, FormatChar(color, false));
+                this.bodyFormatsMap.Add(logLevel, FormatChar(color, false, BodyFontSize));
             }
         }
 
@@ -116,7 +119,7 @@ namespace logviewer.core
                 return;
             }
             this.headerFormatsMap[level] = FormatChar(color, true);
-            this.bodyFormatsMap[level] = FormatChar(color, false);
+            this.bodyFormatsMap[level] = FormatChar(color, false, BodyFontSize);
             this.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
@@ -321,13 +324,13 @@ namespace logviewer.core
             return bodyFormatsMap[level];
         }
 
-        private static RtfCharFormat FormatChar(Color color, bool bold)
+        private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {
             return new RtfCharFormat
             {
                 Color = color,
                 Font = "Courier New",
-                Size = 10,
+                Size = size,
                 Bold = bold
             };
         }
