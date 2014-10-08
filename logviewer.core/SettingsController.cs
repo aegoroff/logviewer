@@ -20,24 +20,27 @@ namespace logviewer.core
         private ParsingTemplate template;
         private IList<string> templateList;
         private readonly int parsingTemplateIndex;
-        readonly Dictionary<LogLevel, Action<Color>> updateColorActions = new Dictionary<LogLevel, Action<Color>>();
+        private readonly Dictionary<LogLevel, Action<Color>> updateColorActions;
 
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
             this.view = view;
             this.settings = settings;
-            parsingTemplateIndex = 0;
-            this.InitializeUpdateActions();
+            this.parsingTemplateIndex = 0;
+            this.updateColorActions = new Dictionary<LogLevel, Action<Color>>(this.InitializeUpdateActions());
         }
 
-        private void InitializeUpdateActions()
+        private Dictionary<LogLevel, Action<Color>> InitializeUpdateActions()
         {
-            this.updateColorActions.Add(LogLevel.Trace, this.view.UpdateTraceColor);
-            this.updateColorActions.Add(LogLevel.Debug, this.view.UpdateDebugColor);
-            this.updateColorActions.Add(LogLevel.Info, this.view.UpdateInfoColor);
-            this.updateColorActions.Add(LogLevel.Warn, this.view.UpdateWarnColor);
-            this.updateColorActions.Add(LogLevel.Error, this.view.UpdateErrorColor);
-            this.updateColorActions.Add(LogLevel.Fatal, this.view.UpdateFatalColor);
+            return new Dictionary<LogLevel, Action<Color>>
+            {
+                {LogLevel.Trace, this.view.UpdateTraceColor},
+                {LogLevel.Debug, this.view.UpdateDebugColor},
+                {LogLevel.Info, this.view.UpdateInfoColor},
+                {LogLevel.Warn, this.view.UpdateWarnColor},
+                {LogLevel.Error, this.view.UpdateErrorColor},
+                {LogLevel.Fatal, this.view.UpdateFatalColor},
+            };
         }
 
         public void Load()
