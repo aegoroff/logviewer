@@ -92,13 +92,13 @@ namespace logviewer.core
             var levels = SettingsController.SelectLevels();
             foreach (var logLevel in levels)
             {
-                var color = Colorize(logLevel);
+                var color = this.ReadColor(logLevel);
                 this.headerFormatsMap.Add(logLevel, FormatChar(color, true));
                 this.bodyFormatsMap.Add(logLevel, FormatChar(color, false));
             }
         }
 
-        public Color Colorize(LogLevel level)
+        public Color ReadColor(LogLevel level)
         {
             var argb = this.ReadIntegerOption(level.ToParameterName(), -1);
             return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);

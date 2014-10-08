@@ -57,7 +57,7 @@ namespace logviewer.core
                 this.formData.Colors = new Dictionary<LogLevel, Color>();
                 foreach (var logLevel in SelectLevels(l => l != LogLevel.None))
                 {
-                    this.formData.Colors.Add(logLevel, this.settings.Colorize(logLevel));
+                    this.formData.Colors.Add(logLevel, this.settings.ReadColor(logLevel));
                 }
                 this.RunOnGuiThread(delegate
                 {
@@ -126,7 +126,7 @@ namespace logviewer.core
 
         public void OnChangeLevelColor(LogLevel level)
         {
-            var result = this.view.PickColor(this.settings.Colorize(level));
+            var result = this.view.PickColor(this.settings.ReadColor(level));
             if (!result.Result)
             {
                 return;

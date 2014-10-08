@@ -30,7 +30,7 @@ namespace logviewer.core
         RtfCharFormat FormatHead(LogLevel level);
         RtfCharFormat FormatBody(LogLevel level);
         void UpdateColor(LogLevel level, Color color);
-        Color Colorize(LogLevel level);
+        Color ReadColor(LogLevel level);
         IDictionary<LogLevel, Color> DefaultColors { get; }
     }
 }
