@@ -77,29 +77,37 @@ namespace logviewer.core
         public void Save()
         {
             this.view.EnableSave(false);
+            this.view.EnableChangeOrClose(false);
             Task.Factory.StartNew(delegate
             {
-                int pageSize;
-                if (int.TryParse(this.formData.PageSize, out pageSize))
+                try
                 {
-                    if (this.settings.PageSize != pageSize)
+                    int pageSize;
+                    if (int.TryParse(this.formData.PageSize, out pageSize))
                     {
-                        this.RefreshOnClose = true;
+                        if (this.settings.PageSize != pageSize)
+                        {
+                            this.RefreshOnClose = true;
+                        }
+                        this.settings.PageSize = pageSize;
                     }
-                    this.settings.PageSize = pageSize;
-                }
-                int value;
-                if (int.TryParse(this.formData.KeepLastNFiles, out value))
-                {
-                    this.settings.KeepLastNFiles = value;
-                }
-                this.settings.OpenLastFile = this.formData.OpenLastFile;
-                this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
-                this.settings.UpdateParsingProfile(this.template);
+                    int value;
+                    if (int.TryParse(this.formData.KeepLastNFiles, out value))
+                    {
+                        this.settings.KeepLastNFiles = value;
+                    }
+                    this.settings.OpenLastFile = this.formData.OpenLastFile;
+                    this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
+                    this.settings.UpdateParsingProfile(this.template);
 
-                foreach (var pair in this.formData.Colors)
+                    foreach (var pair in this.formData.Colors)
+                    {
+                        this.settings.UpdateColor(pair.Key, pair.Value);
+                    }
+                }
+                finally
                 {
-                    this.settings.UpdateColor(pair.Key, pair.Value);
+                    this.RunOnGuiThread(() => this.view.EnableChangeOrClose(true));
                 }
             });
         }

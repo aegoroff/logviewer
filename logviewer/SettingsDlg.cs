@@ -117,6 +117,23 @@ namespace logviewer
             Draw(this.fatalBtn, color);
         }
 
+        public void EnableChangeOrClose(bool enabled)
+        {
+            this.closeButton.Enabled = enabled;
+            this.traceBtn.Enabled = enabled;
+            this.debugBtn.Enabled = enabled;
+            this.infoBtn.Enabled = enabled;
+            this.warnBtn.Enabled = enabled;
+            this.errorBtn.Enabled = enabled;
+            this.fatalBtn.Enabled = enabled;
+            this.pageSizeBox.Enabled = enabled;
+            this.keepLastNFilesBox.Enabled = enabled;
+            this.openLastFile.Enabled = enabled;
+            this.autoRefreshCheckBox.Enabled = enabled;
+            this.parsingTemplateSelector.Enabled = enabled;
+            this.messageStartPatternBox.Enabled = enabled;
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);

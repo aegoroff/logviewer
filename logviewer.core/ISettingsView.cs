@@ -31,5 +31,7 @@ namespace logviewer.core
         void UpdateErrorColor(Color color);
         
         void UpdateFatalColor(Color color);
+        
+        void EnableChangeOrClose(bool enabled);
     }
 }
