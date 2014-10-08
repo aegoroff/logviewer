@@ -120,13 +120,25 @@
   <data name="tabPage1.Text" xml:space="preserve">
     <value>Общие настройки</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>546, 282</value>
+  </data>
   <data name="tabPage2.Text" xml:space="preserve">
     <value>Шаблоны</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Цвета уровней лога</value>
+  </data>
+  <data name="resetColorsBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>230, 23</value>
+  </data>
+  <data name="resetColorsBtn.Text" xml:space="preserve">
+    <value>Сбросить цвета в значения по умолчанию</value>
   </data>
   <data name="viewSettingsBox.Text" xml:space="preserve">
     <value>Настройки отображения</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pageSizeBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>113, 31</value>
   </data>

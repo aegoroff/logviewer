@@ -104,12 +104,9 @@ namespace logviewer.core
             return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);
         }
 
-        public void ResetColorsToDefault()
+        public IDictionary<LogLevel, Color> DefaultColors
         {
-            foreach (var color in defaultColors)
-            {
-                this.UpdateColor(color.Key, color.Value);
-            }
+            get { return defaultColors; }
         }
 
         public void UpdateColor(LogLevel level, Color color)

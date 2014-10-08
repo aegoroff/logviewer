@@ -131,12 +131,26 @@ namespace logviewer.core
             {
                 return;
             }
-            if (result.SelectedColor != this.formData.Colors[level])
+            this.UpdateColor(level, result.SelectedColor);
+            this.view.EnableSave(true);
+        }
+
+        private void UpdateColor(LogLevel level, Color color)
+        {
+            if (color != this.formData.Colors[level])
             {
                 this.RefreshOnClose = true;
             }
-            this.formData.Colors[level] = result.SelectedColor;
-            this.updateColorActions[level](result.SelectedColor);
+            this.formData.Colors[level] = color;
+            this.updateColorActions[level](color);
+        }
+
+        public void ResetColorsToDefault()
+        {
+            foreach (var color in this.settings.DefaultColors.Where(c => c.Key != LogLevel.None))
+            {
+                this.UpdateColor(color.Key, color.Value);
+            }
             this.view.EnableSave(true);
         }
 

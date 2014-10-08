@@ -209,5 +209,10 @@ namespace logviewer
         {
             this.controller.OnChangeLevelColor(LogLevel.Fatal);
         }
+
+        private void OnResetToDefault(object sender, EventArgs e)
+        {
+            this.controller.ResetColorsToDefault();
+        }
     }
 }
