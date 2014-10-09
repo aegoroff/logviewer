@@ -9,12 +9,12 @@ parse
 	: (literal? grok)* literal? 
 	;
 
-grok
-	: OPEN syntax semantic? CLOSE # Replace
-	;
-
 literal
 	: STR+ # Passthrough
+	;
+
+grok
+	: OPEN syntax semantic? CLOSE # Replace
 	;
 
 syntax
