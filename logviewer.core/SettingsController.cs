@@ -66,10 +66,7 @@ namespace logviewer.core
                     this.view.LoadFormData(this.formData);
                     this.view.LoadParsingTemplate(this.template);
                     this.view.EnableSave(false);
-                    foreach (var name in this.templateList)
-                    {
-                        this.view.AddTemplateName(name);
-                    }
+                    this.UpdateParsingTemplatesList();
                     foreach (var color in this.formData.Colors)
                     {
                         this.updateColorActions[color.Key](color.Value);
@@ -78,6 +75,14 @@ namespace logviewer.core
                     this.view.EnableResetColors(this.IsColorsChanged);
                 });
             });
+        }
+
+        private void UpdateParsingTemplatesList()
+        {
+            foreach (var name in this.templateList)
+            {
+                this.view.AddTemplateName(name);
+            }
         }
 
         public void Save()
@@ -208,8 +213,15 @@ namespace logviewer.core
 
         public void AddNewParsingTemplate()
         {
-            // TODO: implement code
-            view.ShowNewParsingTemplateForm(false);
+            this.view.ShowNewParsingTemplateForm(false);
+            var t = this.view.NewParsingTemplateData;
+            t.Index = this.templateList.Count;
+            Task.Factory.StartNew(delegate
+            {
+                this.settings.InsertParsingProfile(t);
+                this.templateList = this.settings.ReadParsingTemplateList();
+                this.RunOnGuiThread(this.UpdateParsingTemplatesList);
+            });
         }
 
         public void StartAddNewParsingTemplate()

@@ -37,5 +37,7 @@ namespace logviewer.core
         void EnableResetColors(bool enabled);
         
         void ShowNewParsingTemplateForm(bool show);
+
+        ParsingTemplate NewParsingTemplateData { get; }
     }
 }

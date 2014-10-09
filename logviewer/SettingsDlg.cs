@@ -165,6 +165,18 @@ namespace logviewer
             }
         }
 
+        public ParsingTemplate NewParsingTemplateData
+        {
+            get
+            {
+                return new ParsingTemplate
+                {
+                    Name = this.newTemplateNameBox.Text,
+                    StartMessage = this.newTemplateMessageStartBox.Text
+                };
+            }
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
