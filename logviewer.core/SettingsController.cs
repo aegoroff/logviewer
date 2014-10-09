@@ -223,8 +223,6 @@ namespace logviewer.core
                     this.view.EnableSave(true);
                 });
             });
-
-            
         }
     }
 }
