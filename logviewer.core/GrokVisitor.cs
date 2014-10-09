@@ -90,9 +90,9 @@ namespace logviewer.core
                     continueMatch = regex.Contains(PatternStart);
                 } while (continueMatch && matchFound);
 
-                if (ctx.SEMANTIC() != null)
+                if (ctx.semantic() != null)
                 {
-                    var name = ctx.SEMANTIC().Symbol.Text.TrimStart(':');
+                    var name = ctx.semantic().GetText().TrimStart(':');
                     var type = "string";
                     if (name.Contains(":"))
                     {

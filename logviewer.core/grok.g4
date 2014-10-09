@@ -10,7 +10,7 @@ parse
 	;
 
 grok
-	: OPEN syntax SEMANTIC? CLOSE # Replace
+	: OPEN syntax semantic? CLOSE # Replace
 	;
 
 literal
@@ -19,6 +19,10 @@ literal
 
 syntax
 	: PATTERN
+	;
+
+semantic
+	: SEMANTIC
 	;
 
 PATTERN 
