@@ -54,7 +54,12 @@ namespace logviewer
         {
             this.parsingTemplateSelector.SelectedItem = name;
         }
-        
+
+        public void SelectParsingTemplate(int ix)
+        {
+            this.parsingTemplateSelector.SelectedIndex = ix;
+        }
+
         public void RemoveParsingTemplateName(int ix)
         {
             this.parsingTemplateSelector.Items.RemoveAt(ix);

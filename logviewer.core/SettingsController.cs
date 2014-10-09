@@ -232,8 +232,11 @@ namespace logviewer.core
             {
                 this.settings.DeleteParsingProfile(this.parsingTemplateIndex);
                 this.templateList.RemoveAt(this.parsingTemplateIndex);
-                this.RunOnGuiThread(() => this.view.RemoveParsingTemplateName(this.parsingTemplateIndex));
-                this.LoadParsingTemplate(this.parsingTemplateIndex - 1);
+                this.RunOnGuiThread(() =>
+                {
+                    this.view.RemoveParsingTemplateName(this.parsingTemplateIndex);
+                    this.view.SelectParsingTemplate(this.parsingTemplateIndex - 1);
+                });
             });
         }
 
