@@ -211,7 +211,6 @@ namespace logviewer.core
                 return;
             }
             this.parsingTemplateIndex = index;
-            this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
             this.view.EnableSave(true);
         }
     }
