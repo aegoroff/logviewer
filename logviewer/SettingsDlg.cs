@@ -140,6 +140,31 @@ namespace logviewer
             this.resetColorsBtn.Enabled = enabled;
         }
 
+        public void ShowNewParsingTemplateForm(bool show)
+        {
+            var controls = new Control[]
+            {
+                newTemplateNameLabel,
+                newTemplateNameBox,
+                newPatternMessageStartLabel,
+                newTemplateMessageStartBox,
+                addNewTemplateBtn,
+                cancelAddNewTemplateBtn
+            };
+
+            foreach (var control in controls)
+            {
+                if (show)
+                {
+                    control.Show();
+                }
+                else
+                {
+                    control.Hide();
+                }
+            }
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
@@ -224,6 +249,21 @@ namespace logviewer
         private void OnChangeParsingTemplate(object sender, EventArgs e)
         {
             this.controller.LoadParsingTemplate(this.parsingTemplateSelector.SelectedIndex);
+        }
+
+        private void OnStartAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.StartAddNewParsingTemplate();
+        }
+
+        private void OnCancelAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.CancelNewParsingTemplate();
+        }
+
+        private void OnAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.AddNewParsingTemplate();
         }
     }
 }

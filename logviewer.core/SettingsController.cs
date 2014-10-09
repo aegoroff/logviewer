@@ -45,6 +45,8 @@ namespace logviewer.core
 
         public void Load()
         {
+            this.view.ShowNewParsingTemplateForm(false);
+            
             Task.Factory.StartNew(delegate
             {
                 this.formData.OpenLastFile = this.settings.OpenLastFile;
@@ -202,6 +204,22 @@ namespace logviewer.core
         {
             this.formData.KeepLastNFiles = value;
             this.view.EnableSave(true);
+        }
+
+        public void AddNewParsingTemplate()
+        {
+            // TODO: implement code
+            view.ShowNewParsingTemplateForm(false);
+        }
+
+        public void StartAddNewParsingTemplate()
+        {
+            view.ShowNewParsingTemplateForm(true);
+        }
+        
+        public void CancelNewParsingTemplate()
+        {
+            view.ShowNewParsingTemplateForm(false);
         }
 
         public void LoadParsingTemplate(int index)

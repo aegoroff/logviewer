@@ -59,6 +59,13 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
+            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
+            this.newTemplateNameLabel = new System.Windows.Forms.Label();
+            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
+            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
+            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
+            this.addNewTemplateBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -242,6 +249,13 @@
             // 
             // commonTemplatesBox
             // 
+            this.commonTemplatesBox.Controls.Add(this.addNewTemplateBtn);
+            this.commonTemplatesBox.Controls.Add(this.cancelAddNewTemplateBtn);
+            this.commonTemplatesBox.Controls.Add(this.newTemplateMessageStartBox);
+            this.commonTemplatesBox.Controls.Add(this.newPatternMessageStartLabel);
+            this.commonTemplatesBox.Controls.Add(this.newTemplateNameLabel);
+            this.commonTemplatesBox.Controls.Add(this.newTemplateNameBox);
+            this.commonTemplatesBox.Controls.Add(this.addNewParsingTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
             resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
@@ -291,6 +305,47 @@
             // 
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
+            // 
+            // addNewParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
+            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
+            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
+            // 
+            // newTemplateNameBox
+            // 
+            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
+            this.newTemplateNameBox.Name = "newTemplateNameBox";
+            // 
+            // newTemplateNameLabel
+            // 
+            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
+            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
+            // 
+            // newPatternMessageStartLabel
+            // 
+            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
+            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
+            // 
+            // newTemplateMessageStartBox
+            // 
+            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
+            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
+            // 
+            // cancelAddNewTemplateBtn
+            // 
+            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
+            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
+            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
+            // 
+            // addNewTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
+            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
+            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
             // 
             // SettingsDlg
             // 
@@ -351,5 +406,12 @@
         private System.Windows.Forms.Button errorBtn;
         private System.Windows.Forms.Button fatalBtn;
         private System.Windows.Forms.Button resetColorsBtn;
+        private System.Windows.Forms.Button addNewParsingTemplateBtn;
+        private System.Windows.Forms.Label newTemplateNameLabel;
+        private System.Windows.Forms.TextBox newTemplateNameBox;
+        private System.Windows.Forms.Label newPatternMessageStartLabel;
+        private System.Windows.Forms.TextBox newTemplateMessageStartBox;
+        private System.Windows.Forms.Button cancelAddNewTemplateBtn;
+        private System.Windows.Forms.Button addNewTemplateBtn;
     }
 }
