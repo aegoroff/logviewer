@@ -211,7 +211,20 @@ namespace logviewer.core
                 return;
             }
             this.parsingTemplateIndex = index;
-            this.view.EnableSave(true);
+
+            Task.Factory.StartNew(delegate
+            {
+                this.RunOnGuiThread(() => this.view.EnableChangeOrClose(false));
+                this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
+                this.RunOnGuiThread(delegate
+                {
+                    this.view.LoadParsingTemplate(this.template);
+                    this.view.EnableChangeOrClose(true);
+                    this.view.EnableSave(true);
+                });
+            });
+
+            
         }
     }
 }
