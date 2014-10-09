@@ -223,6 +223,7 @@ namespace logviewer
 
         private void OnChangeParsingTemplate(object sender, EventArgs e)
         {
+            this.controller.LoadParsingTemplate(this.parsingTemplateSelector.SelectedIndex);
         }
     }
 }

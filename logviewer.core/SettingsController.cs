@@ -19,14 +19,14 @@ namespace logviewer.core
         private readonly ISettingsView view;
         private ParsingTemplate template;
         private IList<string> templateList;
-        private readonly int parsingTemplateIndex;
+        private int parsingTemplateIndex;
         private readonly Dictionary<LogLevel, Action<Color>> updateColorActions;
 
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
             this.view = view;
             this.settings = settings;
-            this.parsingTemplateIndex = 0;
+            this.parsingTemplateIndex = settings.SelectedParsingTemplate;
             this.updateColorActions = new Dictionary<LogLevel, Action<Color>>(this.InitializeUpdateActions());
         }
 
@@ -201,6 +201,17 @@ namespace logviewer.core
         public void UpdateKeepLastNFiles(string value)
         {
             this.formData.KeepLastNFiles = value;
+            this.view.EnableSave(true);
+        }
+
+        public void LoadParsingTemplate(int index)
+        {
+            if (this.parsingTemplateIndex == index)
+            {
+                return;
+            }
+            this.parsingTemplateIndex = index;
+            this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
             this.view.EnableSave(true);
         }
     }
