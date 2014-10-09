@@ -14,7 +14,11 @@ literal
 	;
 
 grok
-	: OPEN syntax semantic? CLOSE # Replace
+	: OPEN definition CLOSE
+	;
+
+definition
+	: syntax semantic?  # Replace
 	;
 
 syntax
