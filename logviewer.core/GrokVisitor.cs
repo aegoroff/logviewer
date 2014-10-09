@@ -2,8 +2,10 @@
 // Created at: 02.10.2014
 // © 2012-2014 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Antlr4.Runtime.Tree;
 
 namespace logviewer.core
 {
@@ -47,6 +49,7 @@ namespace logviewer.core
         };
 
         readonly List<Semantic> semantics = new List<Semantic>();
+        string regexp;
 
         public string Template
         {
@@ -58,63 +61,75 @@ namespace logviewer.core
             get { return this.semantics; }
         }
 
-        public override string VisitReplace(GrokParser.ReplaceContext ctx)
+        public override string VisitOnProperty(GrokParser.OnPropertyContext context)
         {
-            var node = ctx.PATTERN().Symbol.Text;
+            var node = context.property().GetText();
+            return this.HandleSemantic(context, node);
+        }
 
-            if (node == null)
+        public override string VisitOnPropertyWithCast(GrokParser.OnPropertyWithCastContext context)
+        {
+            var node = context.propertyWithCast().GetText();
+            return this.HandleSemantic(context, node);
+        }
+
+        private string HandleSemantic(IRuleNode context, string node)
+        {
+            if (this.regexp == null)
             {
-                return this.VisitChildren(ctx);
+                return this.VisitChildren(context);
             }
+            var parameters = node.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            var name = parameters[0];
+            var type = parameters.Length > 1 ? parameters[1] : "string";
+            var s = new Semantic(name, type);
+            this.semantics.Add(s);
+            this.regexp = string.Format(NamedPattern, name, this.regexp);
+            this.stringBuilder.Append(this.regexp);
+            return this.VisitChildren(context);
+        }
+
+        public override string VisitOnDefinition(GrokParser.OnDefinitionContext context)
+        {
+            string node = context.PATTERN().Symbol.Text;
 
             Log.Instance.TraceFormatted(node);
             if (templates.ContainsKey(node))
             {
-                var regex = templates[node];
+                this.regexp = templates[node];
 
                 bool continueMatch;
                 bool matchFound;
                 do
                 {
                     matchFound = false;
-                    foreach (var k in templates.Keys)
+                    foreach (string k in templates.Keys)
                     {
-                        var link = PatternStart + k + PatternStop;
-                        if (!regex.Contains(link))
+                        string link = PatternStart + k + PatternStop;
+                        if (!this.regexp.Contains(link))
                         {
                             continue;
                         }
-                        regex = regex.Replace(link, templates[k]);
+                        this.regexp = this.regexp.Replace(link, templates[k]);
                         matchFound = true;
                     }
-                    continueMatch = regex.Contains(PatternStart);
+                    continueMatch = this.regexp.Contains(PatternStart);
                 } while (continueMatch && matchFound);
-
-                var semantic = ctx.SEMANTIC();
-                if (semantic != null)
+                
+                // Semantic handlers do it later but without semantic it MUST BE done here
+                if (context.semantic() == null)
                 {
-                    var name = semantic.GetText().TrimStart(':');
-                    var type = "string";
-                    if (name.Contains(":"))
-                    {
-                        var parts = name.Split(':');
-                        name = parts[0];
-                        type = parts[1];
-                    }
-                    var s = new Semantic(name, type);
-
-                    this.semantics.Add(s);
-                    regex = string.Format(NamedPattern, name, regex);
+                    this.stringBuilder.Append(this.regexp);
                 }
-                this.stringBuilder.Append(regex);
             }
             else
             {
+                this.regexp = null;
                 this.stringBuilder.Append(PatternStart);
                 this.stringBuilder.Append(node);
                 this.stringBuilder.Append(PatternStop);
             }
-            return this.VisitChildren(ctx);
+            return this.VisitChildren(context);
         }
 
         public override string VisitPassthrough(GrokParser.PassthroughContext context)

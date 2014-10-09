@@ -18,19 +18,32 @@ grok
 	;
 
 definition
-	: PATTERN SEMANTIC?  # Replace
+	: PATTERN semantic?  # OnDefinition
+	;
+	
+semantic
+	: property          # OnProperty
+	| propertyWithCast  # OnPropertyWithCast
+	;
+	
+property
+	: PROPERTY_REFERENCE
+	;
+
+propertyWithCast
+	: PROPERTY_REFERENCE_WITH_CAST
 	;
 
 PATTERN 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
 	;
 
-SEMANTIC
-	: SEPARATOR PROPERTY CASTING?
+PROPERTY_REFERENCE
+	: SEPARATOR PROPERTY
 	;
-
-CASTING 
-	: SEPARATOR TYPE_NAME
+	
+PROPERTY_REFERENCE_WITH_CAST
+	: PROPERTY_REFERENCE SEPARATOR TYPE_NAME
 	;
 
 OPEN : '%{' ;
