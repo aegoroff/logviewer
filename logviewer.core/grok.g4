@@ -10,7 +10,7 @@ parse
 	;
 
 literal
-	: STR+ # Passthrough
+	: STR+ # OnLiteral
 	;
 
 grok
@@ -20,30 +20,21 @@ grok
 definition
 	: PATTERN semantic?  # OnDefinition
 	;
-	
-semantic
-	: property          # OnProperty
-	| propertyWithCast  # OnPropertyWithCast
-	;
-	
-property
-	: PROPERTY_REFERENCE
-	;
 
-propertyWithCast
-	: PROPERTY_REFERENCE_WITH_CAST
+semantic
+	: SEMANTIC # OnSemantic
 	;
 
 PATTERN 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
 	;
 
-PROPERTY_REFERENCE
-	: SEPARATOR PROPERTY
+SEMANTIC
+	: SEPARATOR PROPERTY CASTING?
 	;
-	
-PROPERTY_REFERENCE_WITH_CAST
-	: PROPERTY_REFERENCE SEPARATOR TYPE_NAME
+
+CASTING 
+	: SEPARATOR TYPE_NAME
 	;
 
 OPEN : '%{' ;

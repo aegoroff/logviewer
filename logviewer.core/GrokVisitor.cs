@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Antlr4.Runtime.Tree;
 
 namespace logviewer.core
 {
@@ -61,24 +60,13 @@ namespace logviewer.core
             get { return this.semantics; }
         }
 
-        public override string VisitOnProperty(GrokParser.OnPropertyContext context)
-        {
-            var node = context.property().GetText();
-            return this.HandleSemantic(context, node);
-        }
-
-        public override string VisitOnPropertyWithCast(GrokParser.OnPropertyWithCastContext context)
-        {
-            var node = context.propertyWithCast().GetText();
-            return this.HandleSemantic(context, node);
-        }
-
-        private string HandleSemantic(IRuleNode context, string node)
+        public override string VisitOnSemantic(GrokParser.OnSemanticContext context)
         {
             if (this.regexp == null)
             {
                 return this.VisitChildren(context);
             }
+            var node = context.SEMANTIC().GetText();
             var parameters = node.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             var name = parameters[0];
             var type = parameters.Length > 1 ? parameters[1] : "string";
@@ -132,7 +120,7 @@ namespace logviewer.core
             return this.VisitChildren(context);
         }
 
-        public override string VisitPassthrough(GrokParser.PassthroughContext context)
+        public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
             this.stringBuilder.Append(context.GetText());
             return this.VisitChildren(context);
