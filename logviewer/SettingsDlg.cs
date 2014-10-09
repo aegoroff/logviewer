@@ -220,5 +220,9 @@ namespace logviewer
         {
             this.controller.ResetColorsToDefault();
         }
+
+        private void OnChangeParsingTemplate(object sender, EventArgs e)
+        {
+        }
     }
 }
