@@ -87,6 +87,13 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{POSINT:num:int_number}");
             Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num:int_number}"));
         }
+        
+        [Test]
+        public void MatchesExistWithSemanticAndInvalidCastingSyntaxThreeGroup()
+        {
+            var matcher = new GrokMatcher("%{POSINT:num:int:LogLevel}");
+            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num:int:LogLevel}"));
+        }
 
         [Test]
         public void MatchesExistAndUnexist()
