@@ -76,6 +76,7 @@ namespace logviewer.core
                     }
                     this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
                     this.view.EnableResetColors(this.IsColorsChanged);
+                    this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
                 });
             });
         }
@@ -267,6 +268,7 @@ namespace logviewer.core
                 {
                     this.view.LoadParsingTemplate(this.template);
                     this.view.EnableChangeOrClose(true);
+                    this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
                     this.view.EnableSave(true);
                 });
             });

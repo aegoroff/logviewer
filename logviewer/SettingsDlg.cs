@@ -65,6 +65,10 @@ namespace logviewer
             this.parsingTemplateSelector.Items.RemoveAt(ix);
         }
 
+        public void EnableRemoveTemplateControl(bool enabled)
+        {
+            this.removeParsingTemplateBtn.Enabled = enabled;
+        }
 
         public ColorPickResult PickColor(Color startColor)
         {
