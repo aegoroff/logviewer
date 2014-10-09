@@ -26,11 +26,11 @@ PATTERN
 	;
 
 SEMANTIC
-	: SEPARATOR (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* CASTING?
+	: SEPARATOR PROPERTY CASTING?
 	;
 
 CASTING 
-	: SEPARATOR (LOWER_LETTER | UPPER_LETTER)+ 
+	: SEPARATOR TYPE_NAME
 	;
 
 OPEN : '%{' ;
@@ -39,6 +39,13 @@ CLOSE : '}' ;
 // string MUST be non greedy!
 STR : ~[}{%]+? ;
 
+
+fragment PROPERTY
+		: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)*
+		;
+fragment TYPE_NAME
+		: (LOWER_LETTER | UPPER_LETTER)+
+		;
 fragment SEPARATOR : ':' ;
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
