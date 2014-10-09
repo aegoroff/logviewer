@@ -52,6 +52,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
+            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
+            this.addNewTemplateBtn = new System.Windows.Forms.Button();
+            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
+            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
+            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
+            this.newTemplateNameLabel = new System.Windows.Forms.Label();
+            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
+            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
             this.messageStartPatternLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -59,14 +67,6 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
-            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
-            this.newTemplateNameLabel = new System.Windows.Forms.Label();
-            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
-            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
-            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
-            this.addNewTemplateBtn = new System.Windows.Forms.Button();
-            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -80,23 +80,24 @@
             // 
             // tabControl1
             // 
+            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             // 
             // tabPage1
             // 
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.viewSettingsBox);
             this.tabPage1.Controls.Add(this.fileSettingsBox);
-            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.resetColorsBtn);
             this.groupBox1.Controls.Add(this.fatalBtn);
             this.groupBox1.Controls.Add(this.errorBtn);
@@ -104,7 +105,6 @@
             this.groupBox1.Controls.Add(this.infoBtn);
             this.groupBox1.Controls.Add(this.debugBtn);
             this.groupBox1.Controls.Add(this.traceBtn);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -117,58 +117,58 @@
             // 
             // fatalBtn
             // 
-            this.fatalBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             resources.ApplyResources(this.fatalBtn, "fatalBtn");
+            this.fatalBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             this.fatalBtn.Name = "fatalBtn";
             this.fatalBtn.UseVisualStyleBackColor = true;
             this.fatalBtn.Click += new System.EventHandler(this.OnChangeFatal);
             // 
             // errorBtn
             // 
-            this.errorBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             resources.ApplyResources(this.errorBtn, "errorBtn");
+            this.errorBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             this.errorBtn.Name = "errorBtn";
             this.errorBtn.UseVisualStyleBackColor = true;
             this.errorBtn.Click += new System.EventHandler(this.OnChangeError);
             // 
             // warnBtn
             // 
-            this.warnBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             resources.ApplyResources(this.warnBtn, "warnBtn");
+            this.warnBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             this.warnBtn.Name = "warnBtn";
             this.warnBtn.UseVisualStyleBackColor = true;
             this.warnBtn.Click += new System.EventHandler(this.OnChangeWarn);
             // 
             // infoBtn
             // 
-            this.infoBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             resources.ApplyResources(this.infoBtn, "infoBtn");
+            this.infoBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             this.infoBtn.Name = "infoBtn";
             this.infoBtn.UseVisualStyleBackColor = true;
             this.infoBtn.Click += new System.EventHandler(this.OnChangeInfo);
             // 
             // debugBtn
             // 
-            this.debugBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             resources.ApplyResources(this.debugBtn, "debugBtn");
+            this.debugBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
             this.debugBtn.Name = "debugBtn";
             this.debugBtn.UseVisualStyleBackColor = true;
             this.debugBtn.Click += new System.EventHandler(this.OnChangeDebug);
             // 
             // traceBtn
             // 
+            resources.ApplyResources(this.traceBtn, "traceBtn");
             this.traceBtn.BackColor = System.Drawing.Color.Transparent;
             this.traceBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
-            resources.ApplyResources(this.traceBtn, "traceBtn");
             this.traceBtn.Name = "traceBtn";
             this.traceBtn.UseVisualStyleBackColor = false;
             this.traceBtn.Click += new System.EventHandler(this.OnChangeTrace);
             // 
             // viewSettingsBox
             // 
+            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Controls.Add(this.pageSizeBox);
             this.viewSettingsBox.Controls.Add(this.pageSizeLabel);
-            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Name = "viewSettingsBox";
             this.viewSettingsBox.TabStop = false;
             // 
@@ -186,12 +186,12 @@
             // 
             // fileSettingsBox
             // 
+            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Controls.Add(this.autoRefreshCheckBox);
             this.fileSettingsBox.Controls.Add(this.label2);
             this.fileSettingsBox.Controls.Add(this.keepLastNFilesBox);
             this.fileSettingsBox.Controls.Add(this.label1);
             this.fileSettingsBox.Controls.Add(this.openLastFile);
-            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Name = "fileSettingsBox";
             this.fileSettingsBox.TabStop = false;
             // 
@@ -228,10 +228,10 @@
             // 
             // tabPage2
             // 
+            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.parsingTemplateSelector);
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
-            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -250,6 +250,7 @@
             // 
             // commonTemplatesBox
             // 
+            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Controls.Add(this.removeParsingTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.addNewTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.cancelAddNewTemplateBtn);
@@ -260,9 +261,56 @@
             this.commonTemplatesBox.Controls.Add(this.addNewParsingTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
-            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
+            // 
+            // removeParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
+            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
+            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
+            // 
+            // addNewTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
+            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
+            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
+            // 
+            // cancelAddNewTemplateBtn
+            // 
+            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
+            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
+            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
+            // 
+            // newTemplateMessageStartBox
+            // 
+            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
+            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
+            // 
+            // newPatternMessageStartLabel
+            // 
+            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
+            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
+            // 
+            // newTemplateNameLabel
+            // 
+            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
+            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
+            // 
+            // newTemplateNameBox
+            // 
+            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
+            this.newTemplateNameBox.Name = "newTemplateNameBox";
+            // 
+            // addNewParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
+            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
+            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
             // 
             // messageStartPatternBox
             // 
@@ -284,15 +332,15 @@
             // 
             // flowLayoutPanel1
             // 
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Controls.Add(this.closeButton);
             this.flowLayoutPanel1.Controls.Add(this.saveButton);
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // closeButton
             // 
-            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             resources.ApplyResources(this.closeButton, "closeButton");
+            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.closeButton.Name = "closeButton";
             this.closeButton.UseVisualStyleBackColor = true;
             // 
@@ -307,54 +355,6 @@
             // 
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
-            // 
-            // addNewParsingTemplateBtn
-            // 
-            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
-            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
-            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
-            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
-            // 
-            // newTemplateNameBox
-            // 
-            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
-            this.newTemplateNameBox.Name = "newTemplateNameBox";
-            // 
-            // newTemplateNameLabel
-            // 
-            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
-            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
-            // 
-            // newPatternMessageStartLabel
-            // 
-            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
-            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
-            // 
-            // newTemplateMessageStartBox
-            // 
-            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
-            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
-            // 
-            // cancelAddNewTemplateBtn
-            // 
-            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
-            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
-            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
-            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
-            // 
-            // addNewTemplateBtn
-            // 
-            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
-            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
-            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
-            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
-            // 
-            // removeParsingTemplateBtn
-            // 
-            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
-            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
-            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
-            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
             // 
             // SettingsDlg
             // 
