@@ -60,7 +60,7 @@ namespace logviewer.core
 
         public override string VisitReplace(GrokParser.ReplaceContext ctx)
         {
-            var node = ctx.syntax().GetText();
+            var node = ctx.PATTERN().Symbol.Text;
 
             if (node == null)
             {
@@ -90,9 +90,10 @@ namespace logviewer.core
                     continueMatch = regex.Contains(PatternStart);
                 } while (continueMatch && matchFound);
 
-                if (ctx.semantic() != null)
+                var semantic = ctx.SEMANTIC();
+                if (semantic != null)
                 {
-                    var name = ctx.semantic().GetText().TrimStart(':');
+                    var name = semantic.GetText().TrimStart(':');
                     var type = "string";
                     if (name.Contains(":"))
                     {

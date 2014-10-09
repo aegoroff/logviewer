@@ -18,15 +18,7 @@ grok
 	;
 
 definition
-	: syntax semantic?  # Replace
-	;
-
-syntax
-	: PATTERN
-	;
-
-semantic
-	: SEMANTIC
+	: PATTERN SEMANTIC?  # Replace
 	;
 
 PATTERN 
