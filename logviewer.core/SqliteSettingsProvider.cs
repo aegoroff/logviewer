@@ -347,8 +347,6 @@ namespace logviewer.core
             var indexesToUpdate = new List<long>();
 
             Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Ix", ix);
-            
-            
 
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
