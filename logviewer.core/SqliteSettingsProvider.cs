@@ -321,6 +321,12 @@ namespace logviewer.core
             var query = string.Format(cmd, propertiesColumns, propertiesParams);
             this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
         }
+        
+        public void DeleteParsingProfile(int ix)
+        {
+            var query = string.Format(@"DELETE FROM ParsingTemplates WHERE Ix = {0}", ix);
+            this.ExecuteNonQuery(query);
+        }
 
         public RtfCharFormat FormatHead(LogLevel level)
         {

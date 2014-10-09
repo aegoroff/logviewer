@@ -226,6 +226,17 @@ namespace logviewer.core
             });
         }
 
+        public void RemoveSelectedParsingTemplate()
+        {
+            Task.Factory.StartNew(delegate
+            {
+                this.settings.DeleteParsingProfile(this.parsingTemplateIndex);
+                this.templateList.RemoveAt(this.parsingTemplateIndex);
+                this.RunOnGuiThread(() => this.view.RemoveParsingTemplateName(this.parsingTemplateIndex));
+                this.LoadParsingTemplate(this.parsingTemplateIndex - 1);
+            });
+        }
+
         public void StartAddNewParsingTemplate()
         {
             view.ShowNewParsingTemplateForm(true);
@@ -238,7 +249,7 @@ namespace logviewer.core
 
         public void LoadParsingTemplate(int index)
         {
-            if (this.parsingTemplateIndex == index)
+            if (this.parsingTemplateIndex == index || index < 0)
             {
                 return;
             }

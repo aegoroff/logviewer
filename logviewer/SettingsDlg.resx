@@ -117,543 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
-    <value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;viewSettingsBox.Name" xml:space="preserve">
-    <value>viewSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;viewSettingsBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;viewSettingsBox.Parent" xml:space="preserve">
-    <value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;viewSettingsBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.Name" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.Parent" xml:space="preserve">
-    <value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 282</value>
-  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
-    <value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
-    <value>tabControl1</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>50, 10</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 13</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Select pattern:</value>
-  </data>
-  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>tabPage2</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="parsingTemplateSelector.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="parsingTemplateSelector.Location" type="System.Drawing.Point, System.Drawing">
-    <value>132, 7</value>
-  </data>
-  <data name="parsingTemplateSelector.Size" type="System.Drawing.Size, System.Drawing">
-    <value>407, 22</value>
-  </data>
-  <data name="parsingTemplateSelector.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;parsingTemplateSelector.Name" xml:space="preserve">
-    <value>parsingTemplateSelector</value>
-  </data>
-  <data name="&gt;&gt;parsingTemplateSelector.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;parsingTemplateSelector.Parent" xml:space="preserve">
-    <value>tabPage2</value>
-  </data>
-  <data name="&gt;&gt;parsingTemplateSelector.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="addNewTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>366, 214</value>
-  </data>
-  <data name="addNewTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="addNewTemplateBtn.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="addNewTemplateBtn.Text" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="&gt;&gt;addNewTemplateBtn.Name" xml:space="preserve">
-    <value>addNewTemplateBtn</value>
-  </data>
-  <data name="&gt;&gt;addNewTemplateBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;addNewTemplateBtn.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;addNewTemplateBtn.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="cancelAddNewTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>447, 214</value>
-  </data>
-  <data name="cancelAddNewTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="cancelAddNewTemplateBtn.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="cancelAddNewTemplateBtn.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="&gt;&gt;cancelAddNewTemplateBtn.Name" xml:space="preserve">
-    <value>cancelAddNewTemplateBtn</value>
-  </data>
-  <data name="&gt;&gt;cancelAddNewTemplateBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cancelAddNewTemplateBtn.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;cancelAddNewTemplateBtn.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="newTemplateMessageStartBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="newTemplateMessageStartBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 171</value>
-  </data>
-  <data name="newTemplateMessageStartBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 20</value>
-  </data>
-  <data name="newTemplateMessageStartBox.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.Name" xml:space="preserve">
-    <value>newTemplateMessageStartBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="newPatternMessageStartLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="newPatternMessageStartLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 155</value>
-  </data>
-  <data name="newPatternMessageStartLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 13</value>
-  </data>
-  <data name="newPatternMessageStartLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="newPatternMessageStartLabel.Text" xml:space="preserve">
-    <value>Message start pattern</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.Name" xml:space="preserve">
-    <value>newPatternMessageStartLabel</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="newTemplateNameLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="newTemplateNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 102</value>
-  </data>
-  <data name="newTemplateNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 13</value>
-  </data>
-  <data name="newTemplateNameLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="newTemplateNameLabel.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameLabel.Name" xml:space="preserve">
-    <value>newTemplateNameLabel</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameLabel.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="newTemplateNameBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="newTemplateNameBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 118</value>
-  </data>
-  <data name="newTemplateNameBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 20</value>
-  </data>
-  <data name="newTemplateNameBox.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameBox.Name" xml:space="preserve">
-    <value>newTemplateNameBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameBox.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateNameBox.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="addNewParsingTemplateBtn.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="addNewParsingTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 71</value>
-  </data>
-  <data name="addNewParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 23</value>
-  </data>
-  <data name="addNewParsingTemplateBtn.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="addNewParsingTemplateBtn.Text" xml:space="preserve">
-    <value>Add new parsing template</value>
-  </data>
-  <data name="&gt;&gt;addNewParsingTemplateBtn.Name" xml:space="preserve">
-    <value>addNewParsingTemplateBtn</value>
-  </data>
-  <data name="&gt;&gt;addNewParsingTemplateBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;addNewParsingTemplateBtn.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;addNewParsingTemplateBtn.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="messageStartPatternBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 38</value>
-  </data>
-  <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>519, 20</value>
-  </data>
-  <data name="messageStartPatternBox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.Name" xml:space="preserve">
-    <value>messageStartPatternBox</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="messageStartPatternLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 22</value>
-  </data>
-  <data name="messageStartPatternLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>112, 13</value>
-  </data>
-  <data name="messageStartPatternLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="messageStartPatternLabel.Text" xml:space="preserve">
-    <value>Message start pattern:</value>
-  </data>
-  <data name="messageStartPatternLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.Name" xml:space="preserve">
-    <value>messageStartPatternLabel</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="commonTemplatesBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 33</value>
-  </data>
-  <data name="commonTemplatesBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>531, 243</value>
-  </data>
-  <data name="commonTemplatesBox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="commonTemplatesBox.Text" xml:space="preserve">
-    <value>Common</value>
-  </data>
-  <data name="&gt;&gt;commonTemplatesBox.Name" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;commonTemplatesBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;commonTemplatesBox.Parent" xml:space="preserve">
-    <value>tabPage2</value>
-  </data>
-  <data name="&gt;&gt;commonTemplatesBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="tabPage2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 282</value>
-  </data>
-  <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>Templates</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
-    <value>tabPage2</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
-    <value>tabControl1</value>
-  </data>
-  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="tabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>554, 308</value>
-  </data>
-  <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.Name" xml:space="preserve">
-    <value>tabControl1</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;resetColorsBtn.Name" xml:space="preserve">
-    <value>resetColorsBtn</value>
-  </data>
-  <data name="&gt;&gt;resetColorsBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;resetColorsBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;resetColorsBtn.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;fatalBtn.Name" xml:space="preserve">
-    <value>fatalBtn</value>
-  </data>
-  <data name="&gt;&gt;fatalBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fatalBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;fatalBtn.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;errorBtn.Name" xml:space="preserve">
-    <value>errorBtn</value>
-  </data>
-  <data name="&gt;&gt;errorBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;errorBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;errorBtn.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;warnBtn.Name" xml:space="preserve">
-    <value>warnBtn</value>
-  </data>
-  <data name="&gt;&gt;warnBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;warnBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;warnBtn.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;infoBtn.Name" xml:space="preserve">
-    <value>infoBtn</value>
-  </data>
-  <data name="&gt;&gt;infoBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;infoBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;infoBtn.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;debugBtn.Name" xml:space="preserve">
-    <value>debugBtn</value>
-  </data>
-  <data name="&gt;&gt;debugBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;debugBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;debugBtn.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;traceBtn.Name" xml:space="preserve">
-    <value>traceBtn</value>
-  </data>
-  <data name="&gt;&gt;traceBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;traceBtn.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;traceBtn.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 191</value>
-  </data>
-  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>527, 83</value>
-  </data>
-  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>Log level colors</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
-    <value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="resetColorsBtn.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="resetColorsBtn.Location" type="System.Drawing.Point, System.Drawing">
     <value>10, 50</value>
   </data>
@@ -678,6 +146,7 @@
   <data name="&gt;&gt;resetColorsBtn.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="fatalBtn.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -879,53 +348,29 @@
   <data name="&gt;&gt;traceBtn.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="&gt;&gt;pageSizeBox.Name" xml:space="preserve">
-    <value>pageSizeBox</value>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 191</value>
   </data>
-  <data name="&gt;&gt;pageSizeBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>527, 83</value>
   </data>
-  <data name="&gt;&gt;pageSizeBox.Parent" xml:space="preserve">
-    <value>viewSettingsBox</value>
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
-  <data name="&gt;&gt;pageSizeBox.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Log level colors</value>
   </data>
-  <data name="&gt;&gt;pageSizeLabel.Name" xml:space="preserve">
-    <value>pageSizeLabel</value>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+    <value>groupBox1</value>
   </data>
-  <data name="&gt;&gt;pageSizeLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;pageSizeLabel.Parent" xml:space="preserve">
-    <value>viewSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;pageSizeLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="viewSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 101</value>
-  </data>
-  <data name="viewSettingsBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>527, 84</value>
-  </data>
-  <data name="viewSettingsBox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="viewSettingsBox.Text" xml:space="preserve">
-    <value>View settings</value>
-  </data>
-  <data name="&gt;&gt;viewSettingsBox.Name" xml:space="preserve">
-    <value>viewSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;viewSettingsBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;viewSettingsBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
     <value>tabPage1</value>
   </data>
-  <data name="&gt;&gt;viewSettingsBox.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="pageSizeBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>68, 31</value>
@@ -975,89 +420,29 @@
   <data name="&gt;&gt;pageSizeLabel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;autoRefreshCheckBox.Name" xml:space="preserve">
-    <value>autoRefreshCheckBox</value>
+  <data name="viewSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 101</value>
   </data>
-  <data name="&gt;&gt;autoRefreshCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="viewSettingsBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>527, 84</value>
   </data>
-  <data name="&gt;&gt;autoRefreshCheckBox.Parent" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;autoRefreshCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+  <data name="viewSettingsBox.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;keepLastNFilesBox.Name" xml:space="preserve">
-    <value>keepLastNFilesBox</value>
+  <data name="viewSettingsBox.Text" xml:space="preserve">
+    <value>View settings</value>
   </data>
-  <data name="&gt;&gt;keepLastNFilesBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;viewSettingsBox.Name" xml:space="preserve">
+    <value>viewSettingsBox</value>
   </data>
-  <data name="&gt;&gt;keepLastNFilesBox.Parent" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;keepLastNFilesBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;openLastFile.Name" xml:space="preserve">
-    <value>openLastFile</value>
-  </data>
-  <data name="&gt;&gt;openLastFile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;openLastFile.Parent" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;openLastFile.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="fileSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 6</value>
-  </data>
-  <data name="fileSettingsBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>527, 89</value>
-  </data>
-  <data name="fileSettingsBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="fileSettingsBox.Text" xml:space="preserve">
-    <value>File settings</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.Name" xml:space="preserve">
-    <value>fileSettingsBox</value>
-  </data>
-  <data name="&gt;&gt;fileSettingsBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;viewSettingsBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;fileSettingsBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;viewSettingsBox.Parent" xml:space="preserve">
     <value>tabPage1</value>
   </data>
-  <data name="&gt;&gt;fileSettingsBox.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;viewSettingsBox.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="autoRefreshCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1191,8 +576,458 @@
   <data name="&gt;&gt;openLastFile.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="fileSettingsBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 6</value>
+  </data>
+  <data name="fileSettingsBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>527, 89</value>
+  </data>
+  <data name="fileSettingsBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="fileSettingsBox.Text" xml:space="preserve">
+    <value>File settings</value>
+  </data>
+  <data name="&gt;&gt;fileSettingsBox.Name" xml:space="preserve">
+    <value>fileSettingsBox</value>
+  </data>
+  <data name="&gt;&gt;fileSettingsBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fileSettingsBox.Parent" xml:space="preserve">
+    <value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;fileSettingsBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>546, 282</value>
+  </data>
+  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
+    <value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>50, 10</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 13</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Select pattern:</value>
+  </data>
+  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="parsingTemplateSelector.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Courier New, 8.25pt</value>
+  </data>
+  <data name="parsingTemplateSelector.Location" type="System.Drawing.Point, System.Drawing">
+    <value>132, 7</value>
+  </data>
+  <data name="parsingTemplateSelector.Size" type="System.Drawing.Size, System.Drawing">
+    <value>407, 22</value>
+  </data>
+  <data name="parsingTemplateSelector.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;parsingTemplateSelector.Name" xml:space="preserve">
+    <value>parsingTemplateSelector</value>
+  </data>
+  <data name="&gt;&gt;parsingTemplateSelector.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;parsingTemplateSelector.Parent" xml:space="preserve">
+    <value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;parsingTemplateSelector.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="removeParsingTemplateBtn.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="removeParsingTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>151, 71</value>
+  </data>
+  <data name="removeParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="removeParsingTemplateBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="removeParsingTemplateBtn.Text" xml:space="preserve">
+    <value>Remove selected</value>
+  </data>
+  <data name="&gt;&gt;removeParsingTemplateBtn.Name" xml:space="preserve">
+    <value>removeParsingTemplateBtn</value>
+  </data>
+  <data name="&gt;&gt;removeParsingTemplateBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;removeParsingTemplateBtn.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;removeParsingTemplateBtn.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="addNewTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>366, 214</value>
+  </data>
+  <data name="addNewTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="addNewTemplateBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="addNewTemplateBtn.Text" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="&gt;&gt;addNewTemplateBtn.Name" xml:space="preserve">
+    <value>addNewTemplateBtn</value>
+  </data>
+  <data name="&gt;&gt;addNewTemplateBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;addNewTemplateBtn.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;addNewTemplateBtn.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="cancelAddNewTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>447, 214</value>
+  </data>
+  <data name="cancelAddNewTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="cancelAddNewTemplateBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="cancelAddNewTemplateBtn.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;cancelAddNewTemplateBtn.Name" xml:space="preserve">
+    <value>cancelAddNewTemplateBtn</value>
+  </data>
+  <data name="&gt;&gt;cancelAddNewTemplateBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cancelAddNewTemplateBtn.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;cancelAddNewTemplateBtn.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="newTemplateMessageStartBox.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Courier New, 8.25pt</value>
+  </data>
+  <data name="newTemplateMessageStartBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 171</value>
+  </data>
+  <data name="newTemplateMessageStartBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>516, 20</value>
+  </data>
+  <data name="newTemplateMessageStartBox.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;newTemplateMessageStartBox.Name" xml:space="preserve">
+    <value>newTemplateMessageStartBox</value>
+  </data>
+  <data name="&gt;&gt;newTemplateMessageStartBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;newTemplateMessageStartBox.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;newTemplateMessageStartBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="newPatternMessageStartLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="newPatternMessageStartLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 155</value>
+  </data>
+  <data name="newPatternMessageStartLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 13</value>
+  </data>
+  <data name="newPatternMessageStartLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="newPatternMessageStartLabel.Text" xml:space="preserve">
+    <value>Message start pattern</value>
+  </data>
+  <data name="&gt;&gt;newPatternMessageStartLabel.Name" xml:space="preserve">
+    <value>newPatternMessageStartLabel</value>
+  </data>
+  <data name="&gt;&gt;newPatternMessageStartLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;newPatternMessageStartLabel.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;newPatternMessageStartLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="newTemplateNameLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="newTemplateNameLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 102</value>
+  </data>
+  <data name="newTemplateNameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>35, 13</value>
+  </data>
+  <data name="newTemplateNameLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="newTemplateNameLabel.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameLabel.Name" xml:space="preserve">
+    <value>newTemplateNameLabel</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameLabel.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="newTemplateNameBox.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Courier New, 8.25pt</value>
+  </data>
+  <data name="newTemplateNameBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 118</value>
+  </data>
+  <data name="newTemplateNameBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>516, 20</value>
+  </data>
+  <data name="newTemplateNameBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameBox.Name" xml:space="preserve">
+    <value>newTemplateNameBox</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameBox.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;newTemplateNameBox.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 71</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>139, 23</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.Text" xml:space="preserve">
+    <value>Add new parsing template</value>
+  </data>
+  <data name="&gt;&gt;addNewParsingTemplateBtn.Name" xml:space="preserve">
+    <value>addNewParsingTemplateBtn</value>
+  </data>
+  <data name="&gt;&gt;addNewParsingTemplateBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;addNewParsingTemplateBtn.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;addNewParsingTemplateBtn.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="messageStartPatternBox.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Courier New, 8.25pt</value>
+  </data>
+  <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 38</value>
+  </data>
+  <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>519, 20</value>
+  </data>
+  <data name="messageStartPatternBox.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternBox.Name" xml:space="preserve">
+    <value>messageStartPatternBox</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternBox.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternBox.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="messageStartPatternLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 22</value>
+  </data>
+  <data name="messageStartPatternLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 13</value>
+  </data>
+  <data name="messageStartPatternLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="messageStartPatternLabel.Text" xml:space="preserve">
+    <value>Message start pattern:</value>
+  </data>
+  <data name="messageStartPatternLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternLabel.Name" xml:space="preserve">
+    <value>messageStartPatternLabel</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternLabel.Parent" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;messageStartPatternLabel.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="commonTemplatesBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 33</value>
+  </data>
+  <data name="commonTemplatesBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>531, 243</value>
+  </data>
+  <data name="commonTemplatesBox.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="commonTemplatesBox.Text" xml:space="preserve">
+    <value>Common</value>
+  </data>
+  <data name="&gt;&gt;commonTemplatesBox.Name" xml:space="preserve">
+    <value>commonTemplatesBox</value>
+  </data>
+  <data name="&gt;&gt;commonTemplatesBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;commonTemplatesBox.Parent" xml:space="preserve">
+    <value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;commonTemplatesBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="tabPage2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>546, 282</value>
+  </data>
+  <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Templates</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
+    <value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>554, 308</value>
+  </data>
+  <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Name" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
+  </data>
+  <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>476, 3</value>
+  </data>
+  <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="closeButton.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="closeButton.Text" xml:space="preserve">
+    <value>Close</value>
   </data>
   <data name="&gt;&gt;closeButton.Name" xml:space="preserve">
     <value>closeButton</value>
@@ -1205,6 +1040,18 @@
   </data>
   <data name="&gt;&gt;closeButton.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="saveButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>395, 3</value>
+  </data>
+  <data name="saveButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="saveButton.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="saveButton.Text" xml:space="preserve">
+    <value>Save</value>
   </data>
   <data name="&gt;&gt;saveButton.Name" xml:space="preserve">
     <value>saveButton</value>
@@ -1274,54 +1121,6 @@
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="tabControl1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="flowLayoutPanel1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,35" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>476, 3</value>
-  </data>
-  <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="closeButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="closeButton.Text" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="&gt;&gt;closeButton.Name" xml:space="preserve">
-    <value>closeButton</value>
-  </data>
-  <data name="&gt;&gt;closeButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;closeButton.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;closeButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="saveButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>395, 3</value>
-  </data>
-  <data name="saveButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="saveButton.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="saveButton.Text" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="&gt;&gt;saveButton.Name" xml:space="preserve">
-    <value>saveButton</value>
-  </data>
-  <data name="&gt;&gt;saveButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;saveButton.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;saveButton.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <metadata name="colorDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

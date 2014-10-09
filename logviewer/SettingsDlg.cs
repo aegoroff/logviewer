@@ -54,6 +54,12 @@ namespace logviewer
         {
             this.parsingTemplateSelector.SelectedItem = name;
         }
+        
+        public void RemoveParsingTemplateName(int ix)
+        {
+            this.parsingTemplateSelector.Items.RemoveAt(ix);
+        }
+
 
         public ColorPickResult PickColor(Color startColor)
         {
@@ -276,6 +282,11 @@ namespace logviewer
         private void OnAddNewParsingTemplate(object sender, EventArgs e)
         {
             this.controller.AddNewParsingTemplate();
+        }
+
+        private void OnRemoveSelectedParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.RemoveSelectedParsingTemplate();
         }
     }
 }

@@ -18,6 +18,8 @@ namespace logviewer.core
         
         void SelectParsingTemplateByName(string name);
 
+        void RemoveParsingTemplateName(int ix);
+
         ColorPickResult PickColor(Color startColor);
         
         void UpdateTraceColor(Color color);

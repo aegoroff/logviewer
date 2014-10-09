@@ -66,6 +66,7 @@
             this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
             this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
             this.addNewTemplateBtn = new System.Windows.Forms.Button();
+            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -249,6 +250,7 @@
             // 
             // commonTemplatesBox
             // 
+            this.commonTemplatesBox.Controls.Add(this.removeParsingTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.addNewTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.cancelAddNewTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.newTemplateMessageStartBox);
@@ -347,6 +349,13 @@
             this.addNewTemplateBtn.UseVisualStyleBackColor = true;
             this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
             // 
+            // removeParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
+            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
+            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
+            // 
             // SettingsDlg
             // 
             resources.ApplyResources(this, "$this");
@@ -413,5 +422,6 @@
         private System.Windows.Forms.TextBox newTemplateMessageStartBox;
         private System.Windows.Forms.Button cancelAddNewTemplateBtn;
         private System.Windows.Forms.Button addNewTemplateBtn;
+        private System.Windows.Forms.Button removeParsingTemplateBtn;
     }
 }
