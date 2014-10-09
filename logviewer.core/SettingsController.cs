@@ -247,6 +247,7 @@ namespace logviewer.core
             Task.Factory.StartNew(delegate
             {
                 this.RunOnGuiThread(() => this.view.EnableChangeOrClose(false));
+                this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
                 this.RunOnGuiThread(delegate
                 {
