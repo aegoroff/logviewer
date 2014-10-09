@@ -132,5 +132,34 @@ namespace logviewer.tests
             templates = this.provider.ReadParsingTemplateList();
             Assert.That(templates.Count, Is.EqualTo(1));
         }
+        
+        [Test]
+        public void RemoveParsingTemplateFromMiddle()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(1));
+            var newTemplate = new ParsingTemplate
+            {
+                Index = templates.Count, 
+                Name = "second", 
+                StartMessage = "^.+?$"
+            };
+            
+            var newTemplate1 = new ParsingTemplate
+            {
+                Index = templates.Count + 1, 
+                Name = "third", 
+                StartMessage = "^.+?$"
+            };
+            this.provider.InsertParsingProfile(newTemplate);
+            this.provider.InsertParsingProfile(newTemplate1);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(3));
+            this.provider.DeleteParsingProfile(newTemplate.Index);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(2));
+            ParsingTemplate template = this.provider.ReadParsingTemplate(templates.Count - 1);
+            Assert.That(template.Name, Is.EqualTo(newTemplate1.Name));
+        }
     }
 }
