@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Linq;
 using logviewer.core;
 using NUnit.Framework;
 
@@ -193,10 +194,22 @@ namespace logviewer.tests
             var matcher = new GrokMatcher(pattern);
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
             Assert.That(matcher.CompilationFailed, Is.False);
+            
             Assert.That(result.ContainsKey(new Semantic("datetime")));
             Assert.That(result.ContainsKey(new Semantic("meta")));
             Assert.That(result.ContainsKey(new Semantic("level")));
             Assert.That(result.ContainsKey(new Semantic("head")));
+        }
+
+        [Test]
+        public void ParseRealMessageNonDefaultCasting()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}");
+            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(result.ContainsKey(new Semantic("datetime")));
+            Assert.That(result.Keys.Count, Is.EqualTo(1));
+            Assert.That(result.Keys.First().Type, Is.EqualTo("DateTime"));
         }
         
         [Test]
