@@ -554,7 +554,6 @@ namespace logviewer.core
             {
                 try
                 {
-                    message.ApplySemantic(this.DetectLevel);
                     message.Cache();
                     this.store.AddMessage(message);
                 }
@@ -951,23 +950,6 @@ namespace logviewer.core
             }
             doc.AddText(txt.Trim(), this.settings.FormatBody(message.Level));
             doc.AddNewLine(3);
-        }
-
-        private readonly Semantic levelSemantic = new Semantic("level");
-
-        private LogLevel DetectLevel(IDictionary<Semantic, string> match)
-        {
-            if (match == null)
-            {
-                return LogLevel.None;
-            }
-            string level;
-            if (!match.TryGetValue(this.levelSemantic, out level))
-            {
-                return LogLevel.None;
-            }
-            LogLevel result;
-            return Enum.TryParse(level, true, out result) ? result : LogLevel.None;
         }
 
         #endregion

@@ -76,9 +76,21 @@ namespace logviewer.core
             this.semantic = sem;
         }
 
-        public void ApplySemantic(Func<IDictionary<Semantic, string>, LogLevel> method)
+        private static readonly Semantic levelSemantic = new Semantic("level");
+
+        private static LogLevel DetectLevel(IDictionary<Semantic, string> match)
         {
-            this.Level = method(this.semantic);
+            if (match == null)
+            {
+                return LogLevel.None;
+            }
+            string level;
+            if (!match.TryGetValue(levelSemantic, out level))
+            {
+                return LogLevel.None;
+            }
+            LogLevel result;
+            return Enum.TryParse(level, true, out result) ? result : LogLevel.None;
         }
 
         public void Cache()
@@ -91,6 +103,7 @@ namespace logviewer.core
             {
                 this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
             }
+            this.Level = DetectLevel(this.semantic);
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
         }
