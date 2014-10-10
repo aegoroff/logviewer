@@ -7,14 +7,8 @@ grammar Grok;
 
 @lexer::members {
 	public static bool inPattern;
-	
-	public static void InPattern() {
-		inPattern = true;
-	}
-	
-	public static void OutPattern() {
-		inPattern = false;
-	}
+	public static void InPattern() { inPattern = true; }
+	public static void OutPattern() { inPattern = false; }
 }
 
 parse
@@ -34,11 +28,11 @@ definition
 	;
 
 semantic
-	: SEMANTIC (COMMA casting)? # OnSemantic
+	: SEMANTIC casting? # OnSemantic
 	;
 
 casting
-	: cast (COMMA cast)*
+	: COMMA cast (COMMA cast)*
 	;
 
 cast
@@ -74,6 +68,8 @@ COMMA : ',' ;
 DOT : '.' ;
 ARROW : '->' ;
 
+fragment COLON : ':' ;
+
 fragment PROPERTY
 		: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)*
 		;
@@ -81,7 +77,6 @@ fragment PROPERTY
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
 fragment DIGIT : '0' .. '9' ;
-fragment COLON : ':' ;
 fragment PERCENT : '%' ;
 fragment OPEN_BRACE : '{' ;
 fragment CLOSE_BRACE : '}';

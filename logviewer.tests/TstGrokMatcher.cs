@@ -72,6 +72,7 @@ namespace logviewer.tests
         [TestCase("->")]
         [TestCase(".")]
         [TestCase("_")]
+        [TestCase(", ")]
         public void MatchesExistWithSpecialChars(string special)
         {
             var matcher = new GrokMatcher("%{WORD}" + special + "%{POSINT}");
@@ -160,13 +161,6 @@ namespace logviewer.tests
         {
             var matcher = new GrokMatcher("%{WORD} %{INT}str");
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))str"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistNotEmptyLiteral()
-        {
-            var matcher = new GrokMatcher("%{WORD}, %{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b, (?:[+-]?(?:[0-9]+))"));
         }
         
         [Test]
