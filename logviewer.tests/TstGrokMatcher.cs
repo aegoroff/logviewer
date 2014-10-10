@@ -11,53 +11,17 @@ namespace logviewer.tests
     [TestFixture]
     public class TstGrokMatcher
     {
-        [Test]
-        public void MatchesUnexist()
+        [TestCase("%{ID}")]
+        [TestCase("%{ID}%{DATE}")]
+        [TestCase("%{ID} %{DATE}")]
+        [TestCase("%{ID},%{DATE}")]
+        [TestCase("%{ID}str%{DATE}")]
+        [TestCase("str%{ID}str%{DATE}str")]
+        public void PositiveMatchTestsOnCustomTemplates(string pattern)
         {
-            var matcher = new GrokMatcher("%{ID}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID}"));
-        }
-
-        [Test]
-        public void MatchesSeveraUnexistlWithoutLiteral()
-        {
-            var matcher = new GrokMatcher("%{ID}%{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID}%{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralUnexist()
-        {
-            var matcher = new GrokMatcher("%{ID} %{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID} %{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralUnexistNotEmptyLiteral()
-        {
-            var matcher = new GrokMatcher("%{ID},%{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID},%{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralUnexistNotEmptyLiteralWithSeveralChars()
-        {
-            var matcher = new GrokMatcher("%{ID}str%{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID}str%{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralLiteralsEverywhere()
-        {
-            var matcher = new GrokMatcher("str%{ID}str%{DATE}str");
-            Assert.That(matcher.Template, Is.EqualTo("str%{ID}str%{DATE}str"));
-        }
-        
-        [Test]
-        public void NotMatches()
-        {
-            var matcher = new GrokMatcher("%{id}");
-            Assert.That(matcher.Template, Is.EqualTo("%{id}"));
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(matcher.Template, Is.EqualTo(pattern));
         }
 
         [Test]
@@ -74,9 +38,11 @@ namespace logviewer.tests
         [TestCase("%{POSINT:N1}")]
         [TestCase("%{POSINT:1N}")]
         [TestCase("%{POSINT:1n}")]
+        [TestCase("%{id}")]
         public void NegativeMatchTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.CompilationFailed);
             Assert.That(matcher.Template, Is.EqualTo(pattern));
         }
 
@@ -194,6 +160,7 @@ namespace logviewer.tests
         public void MatchesExistComplexSeveralLevels()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601}");
+            Assert.That(matcher.CompilationFailed, Is.False);
             Assert.That(matcher.Template, Is.EqualTo(@"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?"));
         }
         
