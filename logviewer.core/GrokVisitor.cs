@@ -49,6 +49,7 @@ namespace logviewer.core
 
         readonly List<Semantic> semantics = new List<Semantic>();
         string regexp;
+        string semantic;
 
         public string Template
         {
@@ -60,20 +61,40 @@ namespace logviewer.core
             get { return this.semantics; }
         }
 
+        public override string VisitOnCasting(GrokParser.OnCastingContext context)
+        {
+            if (context.TYPE_NAME() == null)
+            {
+                this.AddSemantic();
+                return this.VisitChildren(context);
+            }
+            var typeName = context.TYPE_NAME().Symbol.Text;
+
+            this.AddSemantic(typeName);
+
+            return this.VisitChildren(context);
+        }
+
+        private void AddSemantic(string typeName = "string")
+        {
+            var s = new Semantic(this.semantic, typeName);
+            this.semantics.Add(s);
+            this.regexp = string.Format(NamedPattern, this.semantic, this.regexp);
+            this.stringBuilder.Append(this.regexp);
+        }
+
         public override string VisitOnSemantic(GrokParser.OnSemanticContext context)
         {
             if (this.regexp == null)
             {
                 return this.VisitChildren(context);
             }
-            var node = context.SEMANTIC().GetText();
-            var parameters = node.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-            var name = parameters[0];
-            var type = parameters.Length > 1 ? parameters[1] : "string";
-            var s = new Semantic(name, type);
-            this.semantics.Add(s);
-            this.regexp = string.Format(NamedPattern, name, this.regexp);
-            this.stringBuilder.Append(this.regexp);
+            this.semantic = context.PROPERTY().GetText();
+
+            if (context.casting() == null)
+            {
+                this.AddSemantic();
+            }
             return this.VisitChildren(context);
         }
 

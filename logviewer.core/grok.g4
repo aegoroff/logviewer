@@ -31,15 +31,15 @@ definition
 	;
 
 semantic
-	: SEMANTIC casting? # OnSemantic
+	: COLON PROPERTY casting? # OnSemantic
 	;
 
 casting
-	: COMMA (TYPE_NAME | cast (COMMA cast)*)
+	: COMMA (TYPE_NAME | cast (COMMA cast)*) # OnCasting
 	;
 
 cast
-	: QUOTED_STR ARROW target
+	: QUOTED_STR ARROW target # OnCastingCustomRule
 	;
 
 target
@@ -48,10 +48,6 @@ target
 
 PATTERN 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | UNDERSCORE)* {!inSemantic}?
-	;
-
-SEMANTIC
-	: COLON PROPERTY  { InSemantic(); }
 	;
 
 OPEN : PERCENT OPEN_BRACE { InPattern(); };
@@ -69,12 +65,12 @@ TYPE_NAME
 COMMA : ',' ;
 DOT : '.' ;
 ARROW : '->' ;
+COLON : ':' ;
 
-fragment COLON : ':' ;
 fragment UNDERSCORE : '_' ;
 
 PROPERTY
-	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* {!inSemantic}?
+	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* { InSemantic(); } {!inSemantic}?
 	;
 
 fragment UPPER_LETTER : 'A' .. 'Z' ;

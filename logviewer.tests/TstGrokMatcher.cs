@@ -35,7 +35,7 @@ namespace logviewer.tests
         [TestCase("%{POSINT:num,int,int}")]
         [TestCase("%{POSINT:num,int_number}")]
         [TestCase("%{POSINT:_num}")]
-        [TestCase("%{POSINT:num1}")]
+        [TestCase("%{POSINT:num1,num1}")]
         [TestCase("%{POSINT:N1}")]
         [TestCase("%{POSINT:1N}")]
         [TestCase("%{POSINT:1n}")]
