@@ -32,12 +32,11 @@ semantic
 	;
 
 casting
-	: COMMA cast (COMMA cast)*
+	: COMMA (TYPE_NAME | cast (COMMA cast)*)
 	;
 
 cast
-	: TYPE_NAME
-	| QUOTED_STR ARROW target
+	: QUOTED_STR ARROW target
 	;
 
 target

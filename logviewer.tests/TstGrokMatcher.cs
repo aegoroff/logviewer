@@ -92,6 +92,13 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{POSINT:num,int}");
             Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
         }
+        
+        [Test]
+        public void MatchesExistWithSemanticAndCastingPlainTypesCommaSeparated()
+        {
+            var matcher = new GrokMatcher("%{POSINT:num,int,int}");
+            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num,int,int}"));
+        }
 
         [Test]
         public void MatchesExistWithSemanticAndComplexCasting()
