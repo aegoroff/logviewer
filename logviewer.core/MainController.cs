@@ -29,7 +29,6 @@ namespace logviewer.core
         #region Constants and Fields
 
         private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
-        private readonly Dictionary<string, LogLevel> levelNames;
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
@@ -71,7 +70,6 @@ namespace logviewer.core
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
             var template = this.settings.ReadParsingTemplate();
-            this.levelNames = CreateNames();
             this.options = options;
             this.CreateMessageHead(template.StartMessage);
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
@@ -80,11 +78,6 @@ namespace logviewer.core
         private void CreateMessageHead(string startMessagePattern)
         {
             this.matcher = new GrokMatcher(startMessagePattern, this.options);
-        }
-
-        private static Dictionary<string, LogLevel> CreateNames()
-        {
-            return SettingsController.SelectLevels(l => l != LogLevel.None).ToDictionary(l => l.ToString("G"), l => l, StringComparer.OrdinalIgnoreCase);
         }
 
         #endregion
@@ -974,7 +967,7 @@ namespace logviewer.core
                 return LogLevel.None;
             }
             LogLevel result;
-            return this.levelNames.TryGetValue(level, out result) ? result : LogLevel.None;
+            return Enum.TryParse(level, true, out result) ? result : LogLevel.None;
         }
 
         #endregion
