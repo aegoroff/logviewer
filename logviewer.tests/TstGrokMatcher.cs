@@ -55,6 +55,7 @@ namespace logviewer.tests
         public void MatchesExistWithSpecialChars(string special)
         {
             var matcher = new GrokMatcher("%{WORD}" + special + "%{POSINT}");
+            Assert.That(matcher.CompilationFailed, Is.False);
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b"));
         }
         
@@ -191,6 +192,7 @@ namespace logviewer.tests
         {
             var matcher = new GrokMatcher(pattern);
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(matcher.CompilationFailed, Is.False);
             Assert.That(result.ContainsKey(new Semantic("datetime")));
             Assert.That(result.ContainsKey(new Semantic("meta")));
             Assert.That(result.ContainsKey(new Semantic("level")));
