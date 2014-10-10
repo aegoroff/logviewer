@@ -14,7 +14,10 @@ namespace logviewer.core
     {
         public GrokVisitor()
         {
-            var patterns = File.ReadAllLines("grok.patterns");
+            const string localPath = "grok.patterns";
+            var fullPath = Path.Combine(Extensions.AssemblyDirectory, localPath);
+
+            var patterns = File.ReadAllLines(File.Exists(fullPath) ? fullPath : localPath);
             foreach (var pattern in patterns)
             {
                 var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
