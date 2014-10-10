@@ -209,7 +209,8 @@ namespace logviewer.tests
             Assert.That(matcher.CompilationFailed, Is.False);
             Assert.That(result.ContainsKey(new Semantic("datetime")));
             Assert.That(result.Keys.Count, Is.EqualTo(1));
-            Assert.That(result.Keys.First().Type, Is.EqualTo("DateTime"));
+            Assert.That(result.Keys.First().CastingRules.ContainsKey("*"));
+            Assert.That(result.Keys.First().CastingRules["*"], Is.EqualTo("DateTime"));
         }
         
         [Test]

@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace logviewer.core
@@ -11,23 +12,26 @@ namespace logviewer.core
     public struct Semantic
     {
         private readonly string name;
-        private string type;
+        private readonly IDictionary<string, string> castingRules; 
 
-        public Semantic(string name, string type = "string")
+        public Semantic(string name, string pattern = null, string type = null)
         {
             this.name = name;
-            this.type = type;
-        }
-
-        public string Type
-        {
-            get { return this.type; }
-            set { this.type = value; }
+            this.castingRules = new Dictionary<string, string>();
+            if (pattern != null && type != null)
+            {
+                this.castingRules.Add(pattern, type);
+            }
         }
 
         public string Name
         {
             get { return this.name; }
+        }
+
+        public IDictionary<string, string> CastingRules
+        {
+            get { return this.castingRules; }
         }
 
         public bool Equals(Semantic other)

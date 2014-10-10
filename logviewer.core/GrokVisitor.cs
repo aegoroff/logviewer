@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace logviewer.core
@@ -61,11 +62,27 @@ namespace logviewer.core
             get { return this.semantics; }
         }
 
+        private void AddSemantic(string typeName = "string", string pattern = "*")
+        {
+            var s = new Semantic(this.semantic, pattern, typeName);
+            this.semantics.Add(s);
+            this.regexp = string.Format(NamedPattern, this.semantic, this.regexp);
+            this.stringBuilder.Append(this.regexp);
+        }
+
+        public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
+        {
+            var pattern = context.QUOTED_STR().Symbol.Text.Trim('\'', '"');
+            var value = context.target().GetText();
+             this.semantics.Last().CastingRules.Add(pattern, value);
+            return this.VisitChildren(context);
+        }
+
         public override string VisitOnCasting(GrokParser.OnCastingContext context)
         {
             if (context.TYPE_NAME() == null)
             {
-                this.AddSemantic();
+                this.AddSemantic(null, null);
                 return this.VisitChildren(context);
             }
             var typeName = context.TYPE_NAME().Symbol.Text;
@@ -73,14 +90,6 @@ namespace logviewer.core
             this.AddSemantic(typeName);
 
             return this.VisitChildren(context);
-        }
-
-        private void AddSemantic(string typeName = "string")
-        {
-            var s = new Semantic(this.semantic, typeName);
-            this.semantics.Add(s);
-            this.regexp = string.Format(NamedPattern, this.semantic, this.regexp);
-            this.stringBuilder.Append(this.regexp);
         }
 
         public override string VisitOnSemantic(GrokParser.OnSemanticContext context)
