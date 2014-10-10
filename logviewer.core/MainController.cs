@@ -63,7 +63,7 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture | RegexOptions.Compiled)
+        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture)
         {
             this.CurrentPage = 1;
             this.settings = settings;
