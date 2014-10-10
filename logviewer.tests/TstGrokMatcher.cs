@@ -67,6 +67,19 @@ namespace logviewer.tests
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b"));
         }
 
+        [TestCase("%{POSINT:num,int,int}")]
+        [TestCase("%{POSINT:num,int_number}")]
+        [TestCase("%{POSINT:_num}")]
+        [TestCase("%{POSINT:num1}")]
+        [TestCase("%{POSINT:N1}")]
+        [TestCase("%{POSINT:1N}")]
+        [TestCase("%{POSINT:1n}")]
+        public void NegativeMatchTests(string pattern)
+        {
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.Template, Is.EqualTo(pattern));
+        }
+
         [TestCase(",")]
         [TestCase(":")]
         [TestCase("->")]
@@ -92,13 +105,6 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{POSINT:num,int}");
             Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
         }
-        
-        [Test]
-        public void MatchesExistWithSemanticAndCastingPlainTypesCommaSeparated()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num,int,int}");
-            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num,int,int}"));
-        }
 
         [Test]
         public void MatchesExistWithSemanticAndComplexCasting()
@@ -119,13 +125,6 @@ namespace logviewer.tests
         {
             var matcher = new GrokMatcher("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}");
             Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
-        }
-        
-        [Test]
-        public void MatchesExistWithSemanticAndInvalidCastingSyntax()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num,int_number}");
-            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num,int_number}"));
         }
 
         [Test]

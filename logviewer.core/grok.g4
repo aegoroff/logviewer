@@ -7,8 +7,11 @@ grammar Grok;
 
 @lexer::members {
 	public static bool inPattern;
+	public static bool inSemantic;
 	public static void InPattern() { inPattern = true; }
 	public static void OutPattern() { inPattern = false; }
+	public static void InSemantic() { inSemantic = true; }
+	public static void OutSemantic() { inSemantic = false; }
 }
 
 parse
@@ -44,15 +47,15 @@ target
 	;
 
 PATTERN 
-	: UPPER_LETTER (UPPER_LETTER | DIGIT | '_')* 
+	: UPPER_LETTER (UPPER_LETTER | DIGIT | UNDERSCORE)* {!inSemantic}?
 	;
 
 SEMANTIC
-	: COLON PROPERTY
+	: COLON PROPERTY  { InSemantic(); }
 	;
 
 OPEN : PERCENT OPEN_BRACE { InPattern(); };
-CLOSE : CLOSE_BRACE { OutPattern(); };
+CLOSE : CLOSE_BRACE { OutPattern(); OutSemantic(); };
 
 
 SKIP : (~[}{%])+ {!inPattern}?;
@@ -60,18 +63,19 @@ SKIP : (~[}{%])+ {!inPattern}?;
 QUOTED_STR : SHORT_STRING ;
 
 TYPE_NAME
-		: (LOWER_LETTER | UPPER_LETTER)+
-		;
+	: (LOWER_LETTER | UPPER_LETTER)+ {inSemantic}?
+	;
 
 COMMA : ',' ;
 DOT : '.' ;
 ARROW : '->' ;
 
 fragment COLON : ':' ;
+fragment UNDERSCORE : '_' ;
 
-fragment PROPERTY
-		: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)*
-		;
+PROPERTY
+	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* {!inSemantic}?
+	;
 
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
