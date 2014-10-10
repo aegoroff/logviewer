@@ -17,7 +17,7 @@ namespace logviewer.core
         public Semantic(string name, string pattern = null, string type = null)
         {
             this.name = name;
-            this.castingRules = new Dictionary<string, string>();
+            this.castingRules = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (pattern != null && type != null)
             {
                 this.castingRules.Add(pattern, type);

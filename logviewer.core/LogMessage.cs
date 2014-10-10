@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace logviewer.core
@@ -11,6 +12,7 @@ namespace logviewer.core
     public struct LogMessage
     {
         private const char NewLine = '\n';
+        private const string All = "*";
 
         public LogMessage(string header, string body, LogLevel level)
         {
@@ -76,21 +78,67 @@ namespace logviewer.core
             this.semantic = sem;
         }
 
-        private static readonly Semantic levelSemantic = new Semantic("level");
-
-        private static LogLevel DetectLevel(IDictionary<Semantic, string> match)
+        private static readonly IDictionary<string, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
+            <string, Func<string, ParseResult<LogLevel>>>
         {
-            if (match == null)
             {
-                return LogLevel.None;
-            }
-            string level;
-            if (!match.TryGetValue(levelSemantic, out level))
+                "LogLevel", 
+                delegate(string s)
+                {
+                    LogLevel r;
+                    var success = Enum.TryParse(s, true, out r);
+                    return new ParseResult<LogLevel> { Result = success, Value = r };
+                }
+            },
+            { "LogLevel.Trace", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Trace } },
+            { "LogLevel.Debug", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Debug } },
+            { "LogLevel.Info", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Info } },
+            { "LogLevel.Warn", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Warn } },
+            { "LogLevel.Error", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Error } },
+            { "LogLevel.Fatal", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Fatal } }
+        };
+
+        private void DetectLevel()
+        {
+            if (semantic == null)
             {
-                return LogLevel.None;
+                return;
             }
-            LogLevel result;
-            return Enum.TryParse(level, true, out result) ? result : LogLevel.None;
+            foreach (var item in semantic)
+            {
+                var matchedData = item.Value;
+                foreach (var rule in item.Key.CastingRules.Where(rule => rule.Key != All))
+                {
+                    if (!matchedData.Contains(rule.Key))
+                    {
+                        continue;
+                    }
+                    if (this.ApplyRule(item, rule.Key, matchedData))
+                    {
+                        return;
+                    }
+                }
+                this.ApplyRule(item, All, matchedData);
+            }
+        }
+
+        private bool ApplyRule(KeyValuePair<Semantic, string> item, string rule, string matchedData)
+        {
+            if (!item.Key.CastingRules.ContainsKey(rule))
+            {
+                return false;
+            }
+            var castingType = item.Key.CastingRules[rule];
+            if (!castingType.Contains("LogLevel") || !logLevelParsers.ContainsKey(castingType))
+            {
+                return false;
+            }
+            var result = logLevelParsers[castingType](matchedData);
+            if (result.Result)
+            {
+                this.Level = result.Value;
+            }
+            return result.Result;
         }
 
         public void Cache()
@@ -103,7 +151,7 @@ namespace logviewer.core
             {
                 this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
             }
-            this.Level = DetectLevel(this.semantic);
+            this.DetectLevel();
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
         }

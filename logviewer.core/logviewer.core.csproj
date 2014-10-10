@@ -93,6 +93,7 @@
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="GrokMatcher.cs" />
+    <Compile Include="ParseResult.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
