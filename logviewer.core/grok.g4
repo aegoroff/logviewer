@@ -62,11 +62,7 @@ OPEN : PERCENT OPEN_BRACE { InPattern(); };
 CLOSE : CLOSE_BRACE { OutPattern(); };
 
 
-SKIP : STR+ {!inPattern}?;
-
-// string MUST be non greedy!
-fragment STR : ~[}{%] ;
-
+SKIP : (~[}{%])+ {!inPattern}?;
 
 QUOTED_STR : SHORT_STRING ;
 

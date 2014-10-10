@@ -66,33 +66,16 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{WORD}");
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b"));
         }
-        
-        [Test]
-        public void MatchesExistCommaSeparated()
+
+        [TestCase(",")]
+        [TestCase(":")]
+        [TestCase("->")]
+        [TestCase(".")]
+        [TestCase("_")]
+        public void MatchesExistWithSpecialChars(string special)
         {
-            var matcher = new GrokMatcher("%{WORD},%{POSINT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b,\b(?:[1-9][0-9]*)\b"));
-        }
-        
-        [Test]
-        public void MatchesExistDotSeparated()
-        {
-            var matcher = new GrokMatcher("%{WORD}.%{POSINT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b.\b(?:[1-9][0-9]*)\b"));
-        }
-        
-        [Test]
-        public void MatchesExistUnderscoreSeparated()
-        {
-            var matcher = new GrokMatcher("%{WORD}_%{POSINT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b_\b(?:[1-9][0-9]*)\b"));
-        }
-        
-        [Test]
-        public void MatchesExistArrowSeparated()
-        {
-            var matcher = new GrokMatcher("%{WORD}->%{POSINT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b->\b(?:[1-9][0-9]*)\b"));
+            var matcher = new GrokMatcher("%{WORD}" + special + "%{POSINT}");
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b"));
         }
         
         [Test]
