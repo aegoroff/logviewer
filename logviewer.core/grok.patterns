@@ -74,18 +74,23 @@ DATESTAMP_OTHER %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{TZ} %{YEAR}
 # Syslog Dates: Month Day HH:MM:SS
 SYSLOGTIMESTAMP %{MONTH} +%{MONTHDAY} %{TIME}
 PROG (?:[\w._/%-]+)
-SYSLOGPROG %{PROG:program}(?:\[%{POSINT:pid}\])?
+SYSLOGPROG %{PROG}(?:\[%{POSINT\])?
 SYSLOGHOST %{IPORHOST}
-SYSLOGFACILITY <%{NONNEGINT:facility}.%{NONNEGINT:priority}>
+SYSLOGFACILITY <%{NONNEGINT}.%{NONNEGINT}>
 HTTPDATE %{MONTHDAY}/%{MONTH}/%{YEAR}:%{TIME} %{INT}
 
 # Shortcuts
 QS %{QUOTEDSTRING}
 
 # Log formats
-SYSLOGBASE %{SYSLOGTIMESTAMP:timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGHOST:logsource} %{SYSLOGPROG}:
-COMMONAPACHELOG %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})" %{NUMBER:response} (?:%{NUMBER:bytes}|-)
-COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS:referrer} %{QS:agent}
+SYSLOGBASE %{SYSLOGTIMESTAMP} (?:%{SYSLOGFACILITY} )?%{SYSLOGHOST} %{SYSLOGPROG}:
+COMMONAPACHELOG %{IPORHOST} %{USER} %{USER} \[%{HTTPDATE}\] "(?:%{WORD} %{NOTSPACE}(?: HTTP/%{NUMBER})?|%{DATA})" %{NUMBER} (?:%{NUMBER}|-)
+COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS} %{QS}
 
 # Log Levels
 LOGLEVEL ([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)
+
+# Nginx
+NGUSERNAME [a-zA-Z\.\@\-\+_%]+
+NGUSER %{NGUSERNAME}
+NGINXACCESS %{IPORHOST} %{NGUSER} %{NGUSER} \[%{HTTPDATE}\] "%{WORD} %{URIPATHPARAM} HTTP/%{NUMBER}" %{NUMBER}  (?:%{NUMBER}|-) (?:"(?:%{URI}|-)"|%{QS}) %{QS} %{QS} %{IPORHOST} %{BASE10NUM}
