@@ -68,6 +68,34 @@ namespace logviewer.tests
         }
         
         [Test]
+        public void MatchesExistCommaSeparated()
+        {
+            var matcher = new GrokMatcher("%{WORD},%{POSINT}");
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b,\b(?:[1-9][0-9]*)\b"));
+        }
+        
+        [Test]
+        public void MatchesExistDotSeparated()
+        {
+            var matcher = new GrokMatcher("%{WORD}.%{POSINT}");
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b.\b(?:[1-9][0-9]*)\b"));
+        }
+        
+        [Test]
+        public void MatchesExistUnderscoreSeparated()
+        {
+            var matcher = new GrokMatcher("%{WORD}_%{POSINT}");
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b_\b(?:[1-9][0-9]*)\b"));
+        }
+        
+        [Test]
+        public void MatchesExistArrowSeparated()
+        {
+            var matcher = new GrokMatcher("%{WORD}->%{POSINT}");
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b->\b(?:[1-9][0-9]*)\b"));
+        }
+        
+        [Test]
         public void MatchesExistWithSemantic()
         {
             var matcher = new GrokMatcher("%{LOGLEVEL:level}");
@@ -77,22 +105,36 @@ namespace logviewer.tests
         [Test]
         public void MatchesExistWithSemanticAndCasting()
         {
-            var matcher = new GrokMatcher("%{POSINT:num:int}");
+            var matcher = new GrokMatcher("%{POSINT:num,int}");
+            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
+        }
+
+        [Test]
+        public void MatchesExistWithSemanticAndComplexCasting()
+        {
+            var matcher = new GrokMatcher("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}");
+            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
+        }
+        
+        [Test]
+        public void MatchesExistWithSemanticAndComplexCastingStringWithDoubleQuotes()
+        {
+            var matcher = new GrokMatcher("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}");
+            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
+        }
+        
+        [Test]
+        public void MatchesExistWithSemanticAndComplexCastingWithSpacesInStrings()
+        {
+            var matcher = new GrokMatcher("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}");
             Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
         }
         
         [Test]
         public void MatchesExistWithSemanticAndInvalidCastingSyntax()
         {
-            var matcher = new GrokMatcher("%{POSINT:num:int_number}");
-            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num:int_number}"));
-        }
-        
-        [Test]
-        public void MatchesExistWithSemanticAndInvalidCastingSyntaxThreeGroup()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num:int:LogLevel}");
-            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num:int:LogLevel}"));
+            var matcher = new GrokMatcher("%{POSINT:num,int_number}");
+            Assert.That(matcher.Template, Is.EqualTo(@"%{POSINT:num,int_number}"));
         }
 
         [Test]
@@ -121,6 +163,13 @@ namespace logviewer.tests
         {
             var matcher = new GrokMatcher("%{WORD} %{INT} ");
             Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+)) "));
+        }
+        
+        [Test]
+        public void MatchesSeveralExistLiteralEndManyDigits()
+        {
+            var matcher = new GrokMatcher("%{WORD} %{INT}1234");
+            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))1234"));
         }
         
         [Test]
@@ -187,7 +236,7 @@ namespace logviewer.tests
         }
 
         [TestCase("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}")]
-        [TestCase("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}")]
+        [TestCase("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}")]
         public void ParseRealMessage(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
@@ -201,7 +250,7 @@ namespace logviewer.tests
         [Test]
         public void ParseRealMessageWithDatatypesFailure()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}");
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}");
             var result = matcher.Parse(" [4688] INFO \nmessage body 1");
             Assert.That(result, Is.Null);
         }

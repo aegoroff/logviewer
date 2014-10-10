@@ -5,12 +5,24 @@
 
 grammar Grok;
 
+@lexer::members {
+	public static bool inPattern;
+	
+	public static void InPattern() {
+		inPattern = true;
+	}
+	
+	public static void OutPattern() {
+		inPattern = false;
+	}
+}
+
 parse
 	: (literal? grok)* literal? 
 	;
 
 literal
-	: STR+ # OnLiteral
+	: SKIP # OnLiteral
 	;
 
 grok
@@ -22,7 +34,20 @@ definition
 	;
 
 semantic
-	: SEMANTIC # OnSemantic
+	: SEMANTIC (COMMA casting)? # OnSemantic
+	;
+
+casting
+	: cast (COMMA cast)*
+	;
+
+cast
+	: TYPE_NAME
+	| QUOTED_STR ARROW target
+	;
+
+target
+	: TYPE_NAME (DOT TYPE_NAME)*
 	;
 
 PATTERN 
@@ -30,28 +55,50 @@ PATTERN
 	;
 
 SEMANTIC
-	: SEPARATOR PROPERTY CASTING?
+	: COLON PROPERTY
 	;
 
-CASTING 
-	: SEPARATOR TYPE_NAME
-	;
+OPEN : PERCENT OPEN_BRACE { InPattern(); };
+CLOSE : CLOSE_BRACE { OutPattern(); };
 
-OPEN : '%{' ;
-CLOSE : '}' ;
+
+SKIP : STR+ {!inPattern}?;
 
 // string MUST be non greedy!
-STR : ~[}{%]+? ;
+fragment STR : ~[}{%] ;
 
+
+QUOTED_STR : SHORT_STRING ;
+
+TYPE_NAME
+		: (LOWER_LETTER | UPPER_LETTER)+
+		;
+
+COMMA : ',' ;
+DOT : '.' ;
+ARROW : '->' ;
 
 fragment PROPERTY
 		: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)*
 		;
-fragment TYPE_NAME
-		: (LOWER_LETTER | UPPER_LETTER)+
-		;
-fragment SEPARATOR : ':' ;
+
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
 fragment DIGIT : '0' .. '9' ;
+fragment COLON : ':' ;
+fragment PERCENT : '%' ;
+fragment OPEN_BRACE : '{' ;
+fragment CLOSE_BRACE : '}';
 
+/// shortstring     ::=  "'" shortstringitem* "'" | '"' shortstringitem* '"'
+/// shortstringitem ::=  shortstringchar | stringescapeseq
+/// shortstringchar ::=  <any source character except "\" or newline or the quote>
+fragment SHORT_STRING
+ : '\'' ( STRING_ESCAPE_SEQ | ~[\\\r\n'] )* '\''
+ | '"' ( STRING_ESCAPE_SEQ | ~[\\\r\n"] )* '"'
+ ;
+
+/// stringescapeseq ::=  "\" <any source character>
+fragment STRING_ESCAPE_SEQ
+ : '\\' .
+ ;
