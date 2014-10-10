@@ -42,8 +42,8 @@ namespace logviewer.tests
         public void NegativeMatchTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
-            Assert.That(matcher.CompilationFailed);
             Assert.That(matcher.Template, Is.EqualTo(pattern));
+            Assert.That(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
         }
 
         [TestCase(",")]

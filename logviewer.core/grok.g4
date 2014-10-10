@@ -6,12 +6,12 @@
 grammar Grok;
 
 @lexer::members {
-	public static bool inPattern;
-	public static bool inSemantic;
-	public static void InPattern() { inPattern = true; }
-	public static void OutPattern() { inPattern = false; }
-	public static void InSemantic() { inSemantic = true; }
-	public static void OutSemantic() { inSemantic = false; }
+	public bool inPattern;
+	public bool inSemantic;
+	public void InPattern() { inPattern = true; }
+	public void OutPattern() { inPattern = false; }
+	public void InSemantic() { inSemantic = true; }
+	public void OutSemantic() { inSemantic = false; }
 }
 
 parse
