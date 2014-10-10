@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -11,42 +12,32 @@ namespace logviewer.core
 {
     public class GrokVisitor : GrokBaseVisitor<string>
     {
+        public GrokVisitor()
+        {
+            var patterns = File.ReadAllLines("grok.patterns");
+            foreach (var pattern in patterns)
+            {
+                var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
+                if (parts.Length < 2)
+                {
+                    continue;
+                }
+                var template = parts[0];
+                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || templates.ContainsKey(template))
+                {
+                    continue;
+                }
+                templates.Add(template, pattern.Substring(template.Length).Trim());
+            }
+        }
+        
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
         private const string PatternStart = "%{";
         private const string PatternStop = "}";
         const string NamedPattern = @"(?<{0}>{1})";
 
-        static readonly Dictionary<string, string> templates = new Dictionary<string, string>
-        {
-            { "USERNAME", "[a-zA-Z0-9._-]+" },
-            { "WORD", @"\b\w+\b" },
-            { "SPACE", @"\s*" },
-            { "DATA", @".*?" },
-            { "GREEDYDATA", @".*" },
-            { "INT", @"(?:[+-]?(?:[0-9]+))" },
-            { "BASE10NUM", @"(?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)))" },
-            { "BASE16NUM", @"(?<![0-9A-Fa-f])(?:[+-]?(?:0x)?(?:[0-9A-Fa-f]+))" },
-            { "BASE16FLOAT", @"\b(?<![0-9A-Fa-f.])(?:[+-]?(?:0x)?(?:(?:[0-9A-Fa-f]+(?:\.[0-9A-Fa-f]*)?)|(?:\.[0-9A-Fa-f]+)))\b" },
-            { "POSINT", @"\b(?:[1-9][0-9]*)\b" },
-            { "NONNEGINT", @"\b(?:[0-9]+)\b" },
-            { "NOTSPACE", @"\S+" },
-            { "QUOTEDSTRING", "(?>(?<!\\\\)(?>\"(?>\\\\.|[^\\\\\"]+)+\"|\"\"|(?>'(?>\\\\.|[^\\\\']+)+')|''|(?>`(?>\\\\.|[^\\\\`]+)+`)|``))" },
-            { "YEAR", @"(?>\d\d){1,2}" },
-            { "HOUR", @"(?:2[0123]|[01]?[0-9])" },
-            { "MINUTE", @"(?:[0-5][0-9])" },
-            { "SECOND", @"(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?)" },
-            { "MONTH", @"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b" },
-            { "MONTHNUM", @"(?:0?[1-9]|1[0-2])" },
-            { "MONTHDAY", @"(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])" },
-            { "TIME", @"(?!<[0-9])%{HOUR}:%{MINUTE}(?::%{SECOND})(?![0-9])" },
-            { "DATE_US", @"%{MONTHNUM}[/-]%{MONTHDAY}[/-]%{YEAR}" },
-            { "DATE_EU", @"%{MONTHDAY}[./-]%{MONTHNUM}[./-]%{YEAR}" },
-            { "ISO8601_TIMEZONE", @"(?:Z|[+-]%{HOUR}(?::?%{MINUTE}))" },
-            { "ISO8601_SECOND", @"(?:%{SECOND}|60)" },
-            { "TIMESTAMP_ISO8601", @"%{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?%{ISO8601_TIMEZONE}?" },
-            { "LOGLEVEL", @"([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?)" },
-        };
+        readonly Dictionary<string, string> templates = new Dictionary<string, string>();
 
         readonly List<Semantic> semantics = new List<Semantic>();
         string regexp;

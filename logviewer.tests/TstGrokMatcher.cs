@@ -13,11 +13,11 @@ namespace logviewer.tests
     public class TstGrokMatcher
     {
         [TestCase("%{ID}")]
-        [TestCase("%{ID}%{DATE}")]
-        [TestCase("%{ID} %{DATE}")]
-        [TestCase("%{ID},%{DATE}")]
-        [TestCase("%{ID}str%{DATE}")]
-        [TestCase("str%{ID}str%{DATE}str")]
+        [TestCase("%{ID}%{DAT}")]
+        [TestCase("%{ID} %{DAT}")]
+        [TestCase("%{ID},%{DAT}")]
+        [TestCase("%{ID}str%{DAT}")]
+        [TestCase("str%{ID}str%{DAT}str")]
         public void PositiveMatchTestsOnCustomTemplates(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
