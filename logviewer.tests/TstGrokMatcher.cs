@@ -40,6 +40,8 @@ namespace logviewer.tests
         [TestCase("%{POSINT:1N}")]
         [TestCase("%{POSINT:1n}")]
         [TestCase("%{id}")]
+        [TestCase("%{POSINT}%%{POSINT}")]
+        [TestCase("%{POSINT}}%{POSINT}")]
         public void NegativeMatchTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
