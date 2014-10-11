@@ -29,6 +29,21 @@ namespace logviewer.tests
         [TestCase("%{ID}\" %{} \"%{DAT}", "%{ID} %{} %{DAT}")]
         [TestCase("%{ID}''%{DAT}", "%{ID}%{DAT}")]
         [TestCase("%{ID}\"\"%{DAT}", "%{ID}%{DAT}")]
+        [TestCase("%{WORD}%{ID}", @"\b\w+\b%{ID}")]
+        [TestCase("%{WORD}%{INT}", @"\b\w+\b(?:[+-]?(?:[0-9]+))")]
+        [TestCase("%{WORD} %{INT}", @"\b\w+\b (?:[+-]?(?:[0-9]+))")]
+        [TestCase("%{WORD} %{INT} ", @"\b\w+\b (?:[+-]?(?:[0-9]+)) ")]
+        [TestCase("%{WORD} %{INT}1234", @"\b\w+\b (?:[+-]?(?:[0-9]+))1234")]
+        [TestCase("%{WORD} %{INT}str", @"\b\w+\b (?:[+-]?(?:[0-9]+))str")]
+        [TestCase("%{WORD}str%{INT}trs", @"\b\w+\bstr(?:[+-]?(?:[0-9]+))trs")]
+        [TestCase("%{TIME}", @"(?!<[0-9])(?:2[0123]|[01]?[0-9]):(?:[0-5][0-9])(?::(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))(?![0-9])")]
+        [TestCase("%{TIMESTAMP_ISO8601}", @"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?")]
+        [TestCase("%{S1:s}%{S2:s}", @"%{S1}%{S2}")]
+        [TestCase("%{LOGLEVEL:level}", @"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))")]
+        [TestCase("%{POSINT:num,int}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         public void PositiveMatchTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
@@ -68,44 +83,7 @@ namespace logviewer.tests
         [TestCase(", ")]
         public void MatchesExistWithSpecialChars(string special)
         {
-            var matcher = new GrokMatcher("%{WORD}" + special + "%{POSINT}");
-            Assert.That(matcher.CompilationFailed, Is.False);
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b"));
-        }
-        
-        [Test]
-        public void MatchesExistWithSemantic()
-        {
-            var matcher = new GrokMatcher("%{LOGLEVEL:level}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))"));
-        }
-
-        [Test]
-        public void MatchesExistWithSemanticAndCasting()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num,int}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
-        }
-
-        [Test]
-        public void MatchesExistWithSemanticAndComplexCasting()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
-        }
-        
-        [Test]
-        public void MatchesExistWithSemanticAndComplexCastingStringWithDoubleQuotes()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
-        }
-        
-        [Test]
-        public void MatchesExistWithSemanticAndComplexCastingWithSpacesInStrings()
-        {
-            var matcher = new GrokMatcher("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
+            PositiveMatchTestsThatChangeString("%{WORD}" + special + "%{POSINT}", @"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b");
         }
 
         [Test]
@@ -114,77 +92,6 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{MAC}");
             Assert.That(matcher.CompilationFailed, Is.False);
             Assert.That(matcher.Match("00:15:F2:1E:D2:68"));
-        }
-
-        [Test]
-        public void MatchesExistAndUnexist()
-        {
-            var matcher = new GrokMatcher("%{WORD}%{ID}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b%{ID}"));
-        }
-
-        [Test]
-        public void MatchesSeveralExistWithoutLiteral()
-        {
-            var matcher = new GrokMatcher("%{WORD}%{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b(?:[+-]?(?:[0-9]+))"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExist()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistLiteralEnd()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT} ");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+)) "));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistLiteralEndManyDigits()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT}1234");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))1234"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistLiteralEndManyChars()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT}str");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))str"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistNotEmptyLiteralWithoutSpace()
-        {
-            var matcher = new GrokMatcher("%{WORD}str%{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\bstr(?:[+-]?(?:[0-9]+))"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistNotEmptyLiteralWithoutSpaceWithTrail()
-        {
-            var matcher = new GrokMatcher("%{WORD}str%{INT}trs");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\bstr(?:[+-]?(?:[0-9]+))trs"));
-        }
-
-        [Test]
-        public void MatchesExistComplex()
-        {
-            var matcher = new GrokMatcher("%{TIME}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?!<[0-9])(?:2[0123]|[01]?[0-9]):(?:[0-5][0-9])(?::(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))(?![0-9])"));
-        }
-        
-        [Test]
-        public void MatchesExistComplexSeveralLevels()
-        {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601}");
-            Assert.That(matcher.CompilationFailed, Is.False);
-            Assert.That(matcher.Template, Is.EqualTo(@"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?"));
         }
         
         [Test]
@@ -240,13 +147,6 @@ namespace logviewer.tests
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}");
             var result = matcher.Parse(" [4688] INFO \nmessage body 1");
             Assert.That(result, Is.Null);
-        }
-
-        [Test]
-        public void SemanticWithTheSameName()
-        {
-            var matcher = new GrokMatcher("%{S1:s}%{S2:s}");
-            Assert.That(matcher.Template, Is.EqualTo(@"%{S1}%{S2}"));
         }
 
         [Test]
