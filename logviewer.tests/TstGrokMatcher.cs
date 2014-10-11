@@ -96,6 +96,14 @@ namespace logviewer.tests
         }
 
         [Test]
+        public void MatchesMac()
+        {
+            var matcher = new GrokMatcher("%{MAC}");
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(matcher.Match("00:15:F2:1E:D2:68"));
+        }
+
+        [Test]
         public void MatchesExistAndUnexist()
         {
             var matcher = new GrokMatcher("%{WORD}%{ID}");
