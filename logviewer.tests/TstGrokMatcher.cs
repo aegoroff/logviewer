@@ -20,6 +20,8 @@ namespace logviewer.tests
         [TestCase("str%{ID}str%{DAT}str")]
         [TestCase("%{ID}' %{} '%{DAT}")]
         [TestCase("%{ID}\" %{} \"%{DAT}")]
+        [TestCase("%{ID}\"%{DAT}")]
+        [TestCase("%{ID}'%{DAT}")]
         public void PositiveMatchTestsOnCustomTemplates(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
