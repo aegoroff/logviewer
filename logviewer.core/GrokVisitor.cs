@@ -146,7 +146,12 @@ namespace logviewer.core
 
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
-            this.stringBuilder.Append(context.GetText());
+            var raw = context.GetText();
+            if (raw.Length > 1 && (raw.StartsWith("'") && raw.EndsWith("'") || raw.StartsWith("\"") && raw.EndsWith("\"")))
+            {
+                raw = raw.Trim('\'', '"');
+            }
+            this.stringBuilder.Append(raw);
             return this.VisitChildren(context);
         }
     }

@@ -18,15 +18,22 @@ namespace logviewer.tests
         [TestCase("%{ID},%{DAT}")]
         [TestCase("%{ID}str%{DAT}")]
         [TestCase("str%{ID}str%{DAT}str")]
-        [TestCase("%{ID}' %{} '%{DAT}")]
-        [TestCase("%{ID}\" %{} \"%{DAT}")]
         [TestCase("%{ID}\"%{DAT}")]
         [TestCase("%{ID}'%{DAT}")]
-        public void PositiveMatchTestsOnCustomTemplates(string pattern)
+        public void PositiveMatchTestsNotChangingString(string pattern)
+        {
+            PositiveMatchTestsThatChangeString(pattern, pattern);
+        }
+
+        [TestCase("%{ID}' %{} '%{DAT}", "%{ID} %{} %{DAT}")]
+        [TestCase("%{ID}\" %{} \"%{DAT}", "%{ID} %{} %{DAT}")]
+        [TestCase("%{ID}''%{DAT}", "%{ID}%{DAT}")]
+        [TestCase("%{ID}\"\"%{DAT}", "%{ID}%{DAT}")]
+        public void PositiveMatchTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
             Assert.That(matcher.CompilationFailed, Is.False);
-            Assert.That(matcher.Template, Is.EqualTo(pattern));
+            Assert.That(matcher.Template, Is.EqualTo(result));
         }
 
         [Test]
