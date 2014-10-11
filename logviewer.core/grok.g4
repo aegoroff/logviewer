@@ -54,7 +54,9 @@ OPEN : PERCENT OPEN_BRACE { InPattern(); };
 CLOSE : CLOSE_BRACE { OutPattern(); OutSemantic(); };
 
 
-SKIP : (~[}{%])+ {!inPattern}?;
+SKIP : (QUOTED_STR | NOT_QUOTED_STR) {!inPattern}?;
+
+fragment NOT_QUOTED_STR : (~[}{%])+  ;
 
 QUOTED_STR : SHORT_STRING ;
 
