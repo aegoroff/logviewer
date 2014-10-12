@@ -25,6 +25,7 @@ namespace logviewer.tests
             PositiveMatchTestsThatChangeString(pattern, pattern);
         }
 
+        [TestCase("%{WORD}", @"\b\w+\b")]
         [TestCase("%{ID}' %{} '%{DAT}", "%{ID} %{} %{DAT}")]
         [TestCase("%{ID}\" %{} \"%{DAT}", "%{ID} %{} %{DAT}")]
         [TestCase("%{ID}''%{DAT}", "%{ID}%{DAT}")]
@@ -49,13 +50,6 @@ namespace logviewer.tests
             var matcher = new GrokMatcher(pattern);
             Assert.That(matcher.CompilationFailed, Is.False);
             Assert.That(matcher.Template, Is.EqualTo(result));
-        }
-
-        [Test]
-        public void MatchesExist()
-        {
-            var matcher = new GrokMatcher("%{WORD}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b"));
         }
 
         [TestCase("%{POSINT:num,int,int}")]
