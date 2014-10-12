@@ -28,6 +28,8 @@ namespace logviewer.tests
         [TestCase("%{WORD}", @"\b\w+\b")]
         [TestCase("%{ID}' %{} '%{DAT}", "%{ID} %{} %{DAT}")]
         [TestCase("%{ID}\" %{} \"%{DAT}", "%{ID} %{} %{DAT}")]
+        [TestCase("%{ID}\" %{} \"%{DAT}\" %{} \"", "%{ID} %{} %{DAT} %{} ")]
+        [TestCase("\" %{} \"%{ID}\" %{} \"%{DAT}\" %{} \"", " %{} %{ID} %{} %{DAT} %{} ")]
         [TestCase("%{ID}''%{DAT}", "%{ID}%{DAT}")]
         [TestCase("%{ID}\"\"%{DAT}", "%{ID}%{DAT}")]
         [TestCase("%{WORD}%{ID}", @"\b\w+\b%{ID}")]
