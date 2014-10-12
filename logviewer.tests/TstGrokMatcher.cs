@@ -20,9 +20,9 @@ namespace logviewer.tests
         [TestCase("str%{ID}str%{DAT}str")]
         [TestCase("%{ID}\"%{DAT}")]
         [TestCase("%{ID}'%{DAT}")]
-        public void PositiveMatchTestsNotChangingString(string pattern)
+        public void PositiveCompileTestsNotChangingString(string pattern)
         {
-            PositiveMatchTestsThatChangeString(pattern, pattern);
+            this.PositiveCompileTestsThatChangeString(pattern, pattern);
         }
 
         [TestCase("%{WORD}", @"\b\w+\b")]
@@ -45,7 +45,7 @@ namespace logviewer.tests
         [TestCase("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [TestCase("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [TestCase("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
-        public void PositiveMatchTestsThatChangeString(string pattern, string result)
+        public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
             Assert.That(matcher.CompilationFailed, Is.False);
@@ -62,7 +62,7 @@ namespace logviewer.tests
         [TestCase("%{id}")]
         [TestCase("%{POSINT}%%{POSINT}")]
         [TestCase("%{POSINT}}%{POSINT}")]
-        public void NegativeMatchTests(string pattern)
+        public void NegativeCompileTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
             Assert.That(matcher.Template, Is.EqualTo(pattern));
@@ -75,38 +75,25 @@ namespace logviewer.tests
         [TestCase(".")]
         [TestCase("_")]
         [TestCase(", ")]
-        public void MatchesExistWithSpecialChars(string special)
+        public void PositiveCompileExistWithSpecialChars(string special)
         {
-            PositiveMatchTestsThatChangeString("%{WORD}" + special + "%{POSINT}", @"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b");
+            this.PositiveCompileTestsThatChangeString("%{WORD}" + special + "%{POSINT}", @"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b");
         }
 
-        [Test]
-        public void MatchesMac()
+        [TestCase("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}", "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1")]
+        [TestCase("%{MAC}", "00:15:F2:1E:D2:68")]
+        [TestCase("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}", "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1")]
+        public void PositiveMatch(string pattern, string message)
         {
-            var matcher = new GrokMatcher("%{MAC}");
-            Assert.That(matcher.CompilationFailed, Is.False);
-            Assert.That(matcher.Match("00:15:F2:1E:D2:68"));
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.Match(message));
         }
         
         [Test]
-        public void CheckRealMessage()
-        {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
-            Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"));
-        }
-        
-        [Test]
-        public void CheckRealMessageSyntaxErrorInTemplate()
+        public void NegativeMatch()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601 %{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
             Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"), Is.False);
-        }
-        
-        [Test]
-        public void CompatibilityMatch()
-        {
-            var matcher = new GrokMatcher("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}");
-            Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"));
         }
 
         [TestCase("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}")]
@@ -145,7 +132,7 @@ namespace logviewer.tests
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void SemanticWithTheSameNameParse()
+        public void ParseSemanticWithTheSameName()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:dt}%{DATA:meta}%{LOGLEVEL:dt}%{DATA:head}");
             matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO Head");
