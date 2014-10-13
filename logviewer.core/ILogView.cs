@@ -30,5 +30,7 @@ namespace logviewer.core
         void SetFileEncoding(string encoding);
         void StartReading();
         void AddFilterItems(string[] items);
+        void ClearTemplatesList();
+        void CreateTemplateSelectionItem(ParsingTemplate template, int current);
     }
 }

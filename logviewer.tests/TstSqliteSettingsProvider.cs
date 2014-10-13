@@ -76,6 +76,13 @@ namespace logviewer.tests
             var list = this.provider.ReadParsingTemplateList();
             Assert.That(list.Count(), Is.EqualTo(1));
         }
+        
+        [Test]
+        public void ReadAllParsingTemplates()
+        {
+            var list = this.provider.ReadAllParsingTemplates();
+            Assert.That(list.Count(), Is.EqualTo(1));
+        }
 
         [Test]
         public void AutoRefreshTest()
