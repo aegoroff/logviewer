@@ -11,6 +11,8 @@ namespace logviewer.core
     {
         None = 0,
         LogLevel = 1,
-        DateTime = 2
+        DateTime = 2,
+        Integer = 4,
+        String = 8
     }
 }

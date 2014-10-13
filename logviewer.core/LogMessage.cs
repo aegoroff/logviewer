@@ -126,6 +126,26 @@ namespace logviewer.core
             },
         };
 
+        private static readonly IDictionary<string, Func<string, ParseResult<long>>> integerParsers = new Dictionary
+            <string, Func<string, ParseResult<long>>>
+        {
+            { "long", ParseInteger },
+            { "int", ParseInteger },
+        };
+
+        private static ParseResult<long> ParseInteger(string s)
+        {
+            long r;
+            var success = long.TryParse(s, out r);
+            return new ParseResult<long> { Result = success, Value = r };
+        }
+
+        private static readonly IDictionary<string, Func<string, ParseResult<string>>> stringParsers = new Dictionary
+            <string, Func<string, ParseResult<string>>>
+        {
+            { "string", s => new ParseResult<string> { Result = true, Value = s } }
+        };
+
         private void ApplySemanticRules(LogMessageParseOptions options = LogMessageParseOptions.None)
         {
             if (this.semantic == null)
@@ -140,14 +160,21 @@ namespace logviewer.core
                     this.Level = levelResult.Value;
                 }
             }
-            if (!options.HasFlag(LogMessageParseOptions.DateTime))
+            if (options.HasFlag(LogMessageParseOptions.DateTime))
             {
-                return;
+                var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> { Key = "DateTime", Parsers = dateTimeParsers });
+                if (dateResult.Result)
+                {
+                    this.Occured = dateResult.Value;
+                }
             }
-            var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> {Key = "DateTime", Parsers = dateTimeParsers});
-            if (dateResult.Result)
+            if (options.HasFlag(LogMessageParseOptions.Integer))
             {
-                this.Occured = dateResult.Value;
+                var integerResult = this.RunSemanticAction(new SemanticAction<long> { Key = "int", Parsers = integerParsers });
+                if (integerResult.Result)
+                {
+                    // TODO: this.Occured = dateResult.Value;
+                }
             }
         }
 
