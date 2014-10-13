@@ -12,16 +12,17 @@ namespace logviewer.core
     public struct Semantic
     {
         private readonly string name;
-        private readonly IDictionary<string, string> castingRules; 
+        private readonly HashSet<Rule> castingRules;
 
-        public Semantic(string name, string pattern = null, string type = null)
+        public Semantic(string name)
         {
             this.name = name;
-            this.castingRules = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            if (pattern != null && type != null)
-            {
-                this.castingRules.Add(pattern, type);
-            }
+            this.castingRules = new HashSet<Rule>();
+        }
+        
+        public Semantic(string name, Rule rule) : this(name)
+        {
+            this.castingRules.Add(rule);
         }
 
         public string Name
@@ -29,9 +30,14 @@ namespace logviewer.core
             get { return this.name; }
         }
 
-        public IDictionary<string, string> CastingRules
+        public ISet<Rule> CastingRules
         {
             get { return this.castingRules; }
+        }
+
+        public bool Contains(Rule rule)
+        {
+            return this.castingRules.Contains(rule);
         }
 
         public bool Equals(Semantic other)

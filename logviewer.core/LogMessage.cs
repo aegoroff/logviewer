@@ -186,12 +186,12 @@ namespace logviewer.core
             }
         }
 
-        private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> logLevelSemantic)
+        private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> action)
         {
 // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var item in this.semantic)
             {
-                var r = this.ApplySemantic(item, logLevelSemantic);
+                var r = ApplySemantic(item, action);
                 if (r.Result)
                 {
                     return r;
@@ -200,22 +200,18 @@ namespace logviewer.core
             return new ParseResult<T>();
         }
 
-        private ParseResult<T> ApplySemantic<T>(KeyValuePair<Semantic, string> item, SemanticAction<T> action)
+        private static ParseResult<T> ApplySemantic<T>(KeyValuePair<Semantic, string> semantic, SemanticAction<T> action)
         {
-            var matchedData = item.Value;
-            foreach (var rule in item.Key.CastingRules.Where(rule => rule.Key != All))
+            var matchedData = semantic.Value;
+            foreach (var rule in semantic.Key.CastingRules.Where(rule => rule.Pattern != All && matchedData.Contains(rule.Pattern)))
             {
-                if (!matchedData.Contains(rule.Key))
-                {
-                    continue;
-                }
-                var r = ApplyRule(item, rule.Key, matchedData, action.Key, action.Parsers);
+                var r = ApplyRule(rule, matchedData, action);
                 if (r.Result)
                 {
                     return r;
                 }
             }
-            return ApplyRule(item, All, matchedData, action.Key, action.Parsers);
+            return ApplyRule(new Rule(action.Key), matchedData, action);
         }
 
         private struct SemanticAction<T>
@@ -225,18 +221,9 @@ namespace logviewer.core
         }
 
 
-        private static ParseResult<T> ApplyRule<T>(KeyValuePair<Semantic, string> item, string rule, string matchedData, string type, IDictionary<string, Func<string, ParseResult<T>>> parsers)
+        private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, SemanticAction<T> action)
         {
-            if (!item.Key.CastingRules.ContainsKey(rule))
-            {
-                return new ParseResult<T>();
-            }
-            var castingType = item.Key.CastingRules[rule];
-            if (!castingType.Contains(type) || !parsers.ContainsKey(castingType))
-            {
-                return new ParseResult<T>();
-            }
-            return parsers[castingType](matchedData);
+            return action.Parsers.ContainsKey(rule.Type) ? action.Parsers[rule.Type](matchedData) : new ParseResult<T>();
         }
 
         public void Cache(LogMessageParseOptions options = LogMessageParseOptions.LogLevel)

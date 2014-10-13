@@ -104,6 +104,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RecentItemsStore.cs" />
+    <Compile Include="Rule.cs" />
     <Compile Include="SafeRunner.cs" />
     <Compile Include="Semantic.cs" />
     <Compile Include="SettingsController.cs" />

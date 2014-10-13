@@ -56,9 +56,14 @@ namespace logviewer.core
             get { return this.semantics; }
         }
 
-        private void AddSemantic(string typeName = "string", string pattern = "*")
+        private void AddSemantic(Rule rule)
         {
-            var s = new Semantic(this.semantic, pattern, typeName);
+            var s = new Semantic(this.semantic, rule);
+            AddSemantic(s);
+        }
+        
+        private void AddSemantic(Semantic s)
+        {
             this.semantics.Add(s);
             this.regexp = string.Format(NamedPattern, this.semantic, this.regexp);
             this.stringBuilder.Append(this.regexp);
@@ -68,7 +73,7 @@ namespace logviewer.core
         {
             var pattern = context.QUOTED_STR().Symbol.Text.Trim('\'', '"');
             var value = context.target().GetText();
-             this.semantics.Last().CastingRules.Add(pattern, value);
+             this.semantics.Last().CastingRules.Add(new Rule(value, pattern));
             return this.VisitChildren(context);
         }
 
@@ -76,12 +81,12 @@ namespace logviewer.core
         {
             if (context.TYPE_NAME() == null)
             {
-                this.AddSemantic(null, null);
+                this.AddSemantic(new Rule());
                 return this.VisitChildren(context);
             }
             var typeName = context.TYPE_NAME().Symbol.Text;
 
-            this.AddSemantic(typeName);
+            this.AddSemantic(new Rule(typeName));
 
             return this.VisitChildren(context);
         }
@@ -96,7 +101,7 @@ namespace logviewer.core
 
             if (context.casting() == null)
             {
-                this.AddSemantic();
+                this.AddSemantic(new Semantic(this.semantic));
             }
             return this.VisitChildren(context);
         }
