@@ -13,7 +13,6 @@ namespace logviewer.core
     public struct LogMessage
     {
         private const char NewLine = '\n';
-        private const string All = "*";
 
         static readonly string[] formats =
                     {
@@ -203,7 +202,8 @@ namespace logviewer.core
         private static ParseResult<T> ApplySemantic<T>(KeyValuePair<Semantic, string> semantic, SemanticAction<T> action)
         {
             var matchedData = semantic.Value;
-            foreach (var rule in semantic.Key.CastingRules.Where(rule => rule.Pattern != All && matchedData.Contains(rule.Pattern)))
+            var defaultRule = new Rule(action.Key);
+            foreach (var rule in semantic.Key.CastingRules.Where(rule => rule != defaultRule && matchedData.Contains(rule.Pattern)))
             {
                 var r = ApplyRule(rule, matchedData, action);
                 if (r.Result)
@@ -211,7 +211,7 @@ namespace logviewer.core
                     return r;
                 }
             }
-            return ApplyRule(new Rule(action.Key), matchedData, action);
+            return ApplyRule(defaultRule, matchedData, action);
         }
 
         private struct SemanticAction<T>
