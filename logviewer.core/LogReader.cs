@@ -97,15 +97,15 @@ namespace logviewer.core
                     {
                         break;
                     }
-                    var match = this.matcher.Parse(line);
-                    if (match != null)
+                    var semantic = this.matcher.Parse(line);
+                    if (semantic != null)
                     {
                         if (message.HasSemantic)
                         {
                             onRead(message);
                             message = LogMessage.Create();
                         }
-                        message.AddSemantic(match);
+                        message.AddSemantic(semantic);
                     }
                     message.AddLine(line);
 

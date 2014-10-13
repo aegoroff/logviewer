@@ -86,6 +86,7 @@
     <Compile Include="IVersionsReader.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
+    <Compile Include="LogMessageParseOptions.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="GrokMatcher.cs" />
+    <Compile Include="ParseResult.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,6 +129,9 @@
       <Listener>False</Listener>
       <Visitor>True</Visitor>
     </Antlr4>
+    <None Include="grok.patterns">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

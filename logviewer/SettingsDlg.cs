@@ -55,6 +55,21 @@ namespace logviewer
             this.parsingTemplateSelector.SelectedItem = name;
         }
 
+        public void SelectParsingTemplate(int ix)
+        {
+            this.parsingTemplateSelector.SelectedIndex = ix;
+        }
+
+        public void RemoveParsingTemplateName(int ix)
+        {
+            this.parsingTemplateSelector.Items.RemoveAt(ix);
+        }
+
+        public void EnableRemoveTemplateControl(bool enabled)
+        {
+            this.removeParsingTemplateBtn.Enabled = enabled;
+        }
+
         public ColorPickResult PickColor(Color startColor)
         {
             this.colorDialog1.Color = startColor;
@@ -140,6 +155,43 @@ namespace logviewer
             this.resetColorsBtn.Enabled = enabled;
         }
 
+        public void ShowNewParsingTemplateForm(bool show)
+        {
+            var controls = new Control[]
+            {
+                newTemplateNameLabel,
+                newTemplateNameBox,
+                newPatternMessageStartLabel,
+                newTemplateMessageStartBox,
+                addNewTemplateBtn,
+                cancelAddNewTemplateBtn
+            };
+
+            foreach (var control in controls)
+            {
+                if (show)
+                {
+                    control.Show();
+                }
+                else
+                {
+                    control.Hide();
+                }
+            }
+        }
+
+        public ParsingTemplate NewParsingTemplateData
+        {
+            get
+            {
+                return new ParsingTemplate
+                {
+                    Name = this.newTemplateNameBox.Text,
+                    StartMessage = this.newTemplateMessageStartBox.Text
+                };
+            }
+        }
+
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {
             this.controller.UpdateOpenLastFile(this.openLastFile.Checked);
@@ -219,6 +271,31 @@ namespace logviewer
         private void OnResetToDefault(object sender, EventArgs e)
         {
             this.controller.ResetColorsToDefault();
+        }
+
+        private void OnChangeParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.LoadParsingTemplate(this.parsingTemplateSelector.SelectedIndex);
+        }
+
+        private void OnStartAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.StartAddNewParsingTemplate();
+        }
+
+        private void OnCancelAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.CancelNewParsingTemplate();
+        }
+
+        private void OnAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.AddNewParsingTemplate();
+        }
+
+        private void OnRemoveSelectedParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.RemoveSelectedParsingTemplate();
         }
     }
 }

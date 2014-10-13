@@ -27,10 +27,12 @@ namespace logviewer.core
         ParsingTemplate ReadParsingTemplate(int index);
         void UpdateParsingProfile(ParsingTemplate template);
         void InsertParsingProfile(ParsingTemplate template);
+        void DeleteParsingProfile(int ix);
         RtfCharFormat FormatHead(LogLevel level);
         RtfCharFormat FormatBody(LogLevel level);
         void UpdateColor(LogLevel level, Color color);
         Color ReadColor(LogLevel level);
         IDictionary<LogLevel, Color> DefaultColors { get; }
+        int SelectedParsingTemplate { get; set; }
     }
 }
