@@ -2,8 +2,6 @@
 // Created at: 19.09.2012
 // © 2012-2014 Alexander Egorov
 
-using System;
-
 namespace logviewer.core
 {
     public interface ILogView : IUpdatable
