@@ -441,6 +441,7 @@ namespace logviewer
                 dlg.SetApplyAction(refresh => this.controller.UpdateSettings(refresh));
                 dlg.ShowDialog();
             }
+            this.Controller.ReadTemplates();
         }
 
         /// <summary>
