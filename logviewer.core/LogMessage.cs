@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -13,6 +14,18 @@ namespace logviewer.core
     {
         private const char NewLine = '\n';
         private const string All = "*";
+
+        static readonly string[] formats =
+                    {
+                        "yyyy-MM-dd HH:mm:ss,FFF",
+                        "yyyy-MM-dd HH:mm:ss.FFF",
+                        "yyyy-MM-dd HH:mm:ss,FFFK",
+                        "yyyy-MM-dd HH:mm:ss.FFFK",
+                        "yyyy-MM-dd HH:mm", 
+                        "yyyy-MM-dd HH:mm:ss", 
+                        "yyyy-MM-ddTHH:mm:ss,FFFK",
+                        "yyyy-MM-ddTHH:mm:ss.FFFK"
+                    };
 
         public LogMessage(string header, string body, LogLevel level)
         {
@@ -107,7 +120,7 @@ namespace logviewer.core
                 delegate(string s)
                 {
                     DateTime r;
-                    var success = DateTime.TryParse(s, out r);
+                    var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out r);
                     return new ParseResult<DateTime> { Result = success, Value = r };
                 }
             },

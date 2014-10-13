@@ -351,7 +351,9 @@ namespace logviewer.tests
         {
             this.ReadLogExpectations();
 
-            File.WriteAllText(TestPath, MessageExamples);
+            const string examples = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27T19:40:11,906Z+03 [5272] ERROR \nmessage body 2";
+
+            File.WriteAllText(TestPath, examples);
             this.controller.ParseOptions = LogMessageParseOptions.LogLevel | LogMessageParseOptions.DateTime;
             this.controller.MinFilter((int)LogLevel.Info);
             this.controller.StartReadLog();
