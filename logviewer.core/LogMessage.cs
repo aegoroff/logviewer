@@ -22,6 +22,7 @@ namespace logviewer.core
             this.ix = 0;
             this.semantic = null;
             this.bodyBuilder = null;
+            this.Occured = DateTime.MinValue;
         }
 
         public bool IsEmpty
@@ -112,18 +113,29 @@ namespace logviewer.core
             },
         };
 
-        private void DetectLevel()
+        private void ApplySemanticRules(LogMessageParseOptions options = LogMessageParseOptions.None)
         {
             if (this.semantic == null)
             {
                 return;
             }
-            var r = this.RunSemanticAction(new SemanticAction<LogLevel> { Key = "LogLevel", Parsers = logLevelParsers });
-            if (r.Result)
+            if (options.HasFlag(LogMessageParseOptions.LogLevel))
             {
-                this.SetLevel(r.Value);
+                var levelResult = this.RunSemanticAction(new SemanticAction<LogLevel> {Key = "LogLevel", Parsers = logLevelParsers});
+                if (levelResult.Result)
+                {
+                    this.Level = levelResult.Value;
+                }
             }
-            this.RunSemanticAction(new SemanticAction<DateTime> { Key = "DateTime", Parsers = dateTimeParsers });
+            if (!options.HasFlag(LogMessageParseOptions.DateTime))
+            {
+                return;
+            }
+            var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> {Key = "DateTime", Parsers = dateTimeParsers});
+            if (dateResult.Result)
+            {
+                this.Occured = dateResult.Value;
+            }
         }
 
         private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> logLevelSemantic)
@@ -165,11 +177,6 @@ namespace logviewer.core
         }
 
 
-        void SetLevel(LogLevel level)
-        {
-            this.Level = level;
-        }
-
         private static ParseResult<T> ApplyRule<T>(KeyValuePair<Semantic, string> item, string rule, string matchedData, string type, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
             if (!item.Key.CastingRules.ContainsKey(rule))
@@ -184,7 +191,7 @@ namespace logviewer.core
             return parsers[castingType](matchedData);
         }
 
-        public void Cache()
+        public void Cache(LogMessageParseOptions options = LogMessageParseOptions.LogLevel)
         {
             if (this.head != null && this.body != null)
             {
@@ -194,7 +201,7 @@ namespace logviewer.core
             {
                 this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
             }
-            this.DetectLevel();
+            this.ApplySemanticRules(options);
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
         }
@@ -207,6 +214,7 @@ namespace logviewer.core
         #region Constants and Fields
 
         internal LogLevel Level;
+        internal DateTime Occured;
         private string body;
         private StringBuilder bodyBuilder;
         private string head;
