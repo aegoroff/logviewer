@@ -103,9 +103,10 @@ namespace logviewer.tests
         public void ParseRealMessage(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
-            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(matcher.Semantics.Count, Is.EqualTo(4));
             Assert.That(matcher.CompilationFailed, Is.False);
             
+            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
             Assert.That(result.ContainsKey(new Semantic("datetime")));
             Assert.That(result.ContainsKey(new Semantic("meta")));
             Assert.That(result.ContainsKey(new Semantic("level")));
@@ -116,8 +117,10 @@ namespace logviewer.tests
         public void ParseRealMessageNonDefaultCasting()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}");
-            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(matcher.Semantics.Count, Is.EqualTo(1));
             Assert.That(matcher.CompilationFailed, Is.False);
+            
+            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
             Assert.That(result.ContainsKey(new Semantic("datetime")));
             Assert.That(result.Keys.Count, Is.EqualTo(1));
             Assert.That(result.Keys.First().CastingRules.ContainsKey("*"));

@@ -47,6 +47,11 @@ namespace logviewer.core
 
         public bool CompilationFailed { get; private set; }
 
+        public ICollection<Semantic> Semantics
+        {
+            get { return this.semantics; }
+        }
+
         public bool Match(string s)
         {
             return this.regex.IsMatch(s);
@@ -55,7 +60,7 @@ namespace logviewer.core
         public IDictionary<Semantic, string> Parse(string s)
         {
             var match = this.regex.Match(s);
-            return !match.Success ? null : this.semantics.ToDictionary(semantic => semantic, semantic => match.Groups[semantic.Name].Value);
+            return !match.Success ? null : this.Semantics.ToDictionary(semantic => semantic, semantic => match.Groups[semantic.Name].Value);
         }
     }
 }
