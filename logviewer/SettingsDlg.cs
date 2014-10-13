@@ -73,7 +73,7 @@ namespace logviewer
         public ColorPickResult PickColor(Color startColor)
         {
             this.colorDialog1.Color = startColor;
-            ColorPickResult result = new ColorPickResult();
+            var result = new ColorPickResult();
             result.Result = this.colorDialog1.ShowDialog() == DialogResult.OK;
             result.SelectedColor = this.colorDialog1.Color;
             return result;

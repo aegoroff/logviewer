@@ -262,14 +262,13 @@ namespace logviewer.core
             Task.Factory.StartNew(delegate
             {
                 this.RunOnGuiThread(() => this.view.EnableChangeOrClose(false));
-                this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
                 this.RunOnGuiThread(delegate
                 {
                     this.view.LoadParsingTemplate(this.template);
                     this.view.EnableChangeOrClose(true);
                     this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
-                    this.view.EnableSave(true);
+                    this.view.EnableSave(false);
                 });
             });
         }
