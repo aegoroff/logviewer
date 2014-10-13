@@ -176,6 +176,14 @@ namespace logviewer.core
                     // TODO: this.Occured = dateResult.Value;
                 }
             }
+            if (options.HasFlag(LogMessageParseOptions.String))
+            {
+                var stringResult = this.RunSemanticAction(new SemanticAction<string> { Key = "string", Parsers = stringParsers });
+                if (stringResult.Result)
+                {
+                    // TODO: this.Occured = dateResult.Value;
+                }
+            }
         }
 
         private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> logLevelSemantic)
