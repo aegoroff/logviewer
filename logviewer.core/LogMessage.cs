@@ -98,45 +98,101 @@ namespace logviewer.core
             { "LogLevel.Fatal", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Fatal } }
         };
 
+        private static readonly IDictionary<string, Func<string, ParseResult<DateTime>>> dateTimeParsers = new Dictionary
+            <string, Func<string, ParseResult<DateTime>>>
+        {
+            {
+                "DateTime", 
+                delegate(string s)
+                {
+                    DateTime r;
+                    var success = DateTime.TryParse(s, out r);
+                    return new ParseResult<DateTime> { Result = success, Value = r };
+                }
+            },
+        };
+
         private void DetectLevel()
         {
-            if (semantic == null)
+            if (this.semantic == null)
             {
                 return;
             }
-            foreach (var item in semantic)
+            var logLevelSemantic = new SemanticAction<LogLevel>
             {
-                var matchedData = item.Value;
-                foreach (var rule in item.Key.CastingRules.Where(rule => rule.Key != All))
+                Key = "LogLevel",
+                Parsers = logLevelParsers,
+                OnSuccess = this.SetLevel
+            };
+            
+            var dateTimeSemantic = new SemanticAction<DateTime>
+            {
+                Key = "DateTime",
+                Parsers = dateTimeParsers,
+                OnSuccess = delegate {  }
+            };
+
+            this.RunSemanticAction(logLevelSemantic);
+            this.RunSemanticAction(dateTimeSemantic);
+        }
+
+        private void RunSemanticAction<T>(SemanticAction<T> logLevelSemantic)
+        {
+// ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var item in this.semantic)
+            {
+                if (this.ApplySemantic(item, logLevelSemantic))
                 {
-                    if (!matchedData.Contains(rule.Key))
-                    {
-                        continue;
-                    }
-                    if (this.ApplyRule(item, rule.Key, matchedData))
-                    {
-                        return;
-                    }
+                    return;
                 }
-                this.ApplyRule(item, All, matchedData);
             }
         }
 
-        private bool ApplyRule(KeyValuePair<Semantic, string> item, string rule, string matchedData)
+        private bool ApplySemantic<T>(KeyValuePair<Semantic, string> item, SemanticAction<T> action)
+        {
+            var matchedData = item.Value;
+            foreach (var rule in item.Key.CastingRules.Where(rule => rule.Key != All))
+            {
+                if (!matchedData.Contains(rule.Key))
+                {
+                    continue;
+                }
+                if (ApplyRule(item, rule.Key, matchedData, action.Key, action.Parsers, action.OnSuccess))
+                {
+                    return true;
+                }
+            }
+            return ApplyRule(item, All, matchedData, action.Key, action.Parsers, action.OnSuccess);
+        }
+
+        private struct SemanticAction<T>
+        {
+            internal string Key;
+            internal IDictionary<string, Func<string, ParseResult<T>>> Parsers;
+            internal Action<T> OnSuccess;
+        }
+
+
+        void SetLevel(LogLevel level)
+        {
+            this.Level = level;
+        }
+
+        private static bool ApplyRule<T>(KeyValuePair<Semantic, string> item, string rule, string matchedData, string type, IDictionary<string, Func<string, ParseResult<T>>> parsers, Action<T> onSuccess)
         {
             if (!item.Key.CastingRules.ContainsKey(rule))
             {
                 return false;
             }
             var castingType = item.Key.CastingRules[rule];
-            if (!castingType.Contains("LogLevel") || !logLevelParsers.ContainsKey(castingType))
+            if (!castingType.Contains(type) || !parsers.ContainsKey(castingType))
             {
                 return false;
             }
-            var result = logLevelParsers[castingType](matchedData);
+            var result = parsers[castingType](matchedData);
             if (result.Result)
             {
-                this.Level = result.Value;
+                onSuccess(result.Value);
             }
             return result.Result;
         }
