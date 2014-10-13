@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace logviewer.core
@@ -11,6 +13,19 @@ namespace logviewer.core
     public struct LogMessage
     {
         private const char NewLine = '\n';
+        private const string All = "*";
+
+        static readonly string[] formats =
+                    {
+                        "yyyy-MM-dd HH:mm:ss,FFF",
+                        "yyyy-MM-dd HH:mm:ss.FFF",
+                        "yyyy-MM-dd HH:mm:ss,FFFK",
+                        "yyyy-MM-dd HH:mm:ss.FFFK",
+                        "yyyy-MM-dd HH:mm", 
+                        "yyyy-MM-dd HH:mm:ss", 
+                        "yyyy-MM-ddTHH:mm:ss,FFFK",
+                        "yyyy-MM-ddTHH:mm:ss.FFFK"
+                    };
 
         public LogMessage(string header, string body, LogLevel level)
         {
@@ -20,6 +35,7 @@ namespace logviewer.core
             this.ix = 0;
             this.semantic = null;
             this.bodyBuilder = null;
+            this.Occured = DateTime.MinValue;
         }
 
         public bool IsEmpty
@@ -76,12 +92,119 @@ namespace logviewer.core
             this.semantic = sem;
         }
 
-        public void ApplySemantic(Func<IDictionary<Semantic, string>, LogLevel> method)
+        private static readonly IDictionary<string, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
+            <string, Func<string, ParseResult<LogLevel>>>
         {
-            this.Level = method(this.semantic);
+            {
+                "LogLevel", 
+                delegate(string s)
+                {
+                    LogLevel r;
+                    var success = Enum.TryParse(s, true, out r);
+                    return new ParseResult<LogLevel> { Result = success, Value = r };
+                }
+            },
+            { "LogLevel.Trace", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Trace } },
+            { "LogLevel.Debug", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Debug } },
+            { "LogLevel.Info", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Info } },
+            { "LogLevel.Warn", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Warn } },
+            { "LogLevel.Error", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Error } },
+            { "LogLevel.Fatal", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Fatal } }
+        };
+
+        private static readonly IDictionary<string, Func<string, ParseResult<DateTime>>> dateTimeParsers = new Dictionary
+            <string, Func<string, ParseResult<DateTime>>>
+        {
+            {
+                "DateTime", 
+                delegate(string s)
+                {
+                    DateTime r;
+                    var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out r);
+                    return new ParseResult<DateTime> { Result = success, Value = r };
+                }
+            },
+        };
+
+        private void ApplySemanticRules(LogMessageParseOptions options = LogMessageParseOptions.None)
+        {
+            if (this.semantic == null)
+            {
+                return;
+            }
+            if (options.HasFlag(LogMessageParseOptions.LogLevel))
+            {
+                var levelResult = this.RunSemanticAction(new SemanticAction<LogLevel> {Key = "LogLevel", Parsers = logLevelParsers});
+                if (levelResult.Result)
+                {
+                    this.Level = levelResult.Value;
+                }
+            }
+            if (!options.HasFlag(LogMessageParseOptions.DateTime))
+            {
+                return;
+            }
+            var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> {Key = "DateTime", Parsers = dateTimeParsers});
+            if (dateResult.Result)
+            {
+                this.Occured = dateResult.Value;
+            }
         }
 
-        public void Cache()
+        private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> logLevelSemantic)
+        {
+// ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var item in this.semantic)
+            {
+                var r = this.ApplySemantic(item, logLevelSemantic);
+                if (r.Result)
+                {
+                    return r;
+                }
+            }
+            return new ParseResult<T>();
+        }
+
+        private ParseResult<T> ApplySemantic<T>(KeyValuePair<Semantic, string> item, SemanticAction<T> action)
+        {
+            var matchedData = item.Value;
+            foreach (var rule in item.Key.CastingRules.Where(rule => rule.Key != All))
+            {
+                if (!matchedData.Contains(rule.Key))
+                {
+                    continue;
+                }
+                var r = ApplyRule(item, rule.Key, matchedData, action.Key, action.Parsers);
+                if (r.Result)
+                {
+                    return r;
+                }
+            }
+            return ApplyRule(item, All, matchedData, action.Key, action.Parsers);
+        }
+
+        private struct SemanticAction<T>
+        {
+            internal string Key;
+            internal IDictionary<string, Func<string, ParseResult<T>>> Parsers;
+        }
+
+
+        private static ParseResult<T> ApplyRule<T>(KeyValuePair<Semantic, string> item, string rule, string matchedData, string type, IDictionary<string, Func<string, ParseResult<T>>> parsers)
+        {
+            if (!item.Key.CastingRules.ContainsKey(rule))
+            {
+                return new ParseResult<T>();
+            }
+            var castingType = item.Key.CastingRules[rule];
+            if (!castingType.Contains(type) || !parsers.ContainsKey(castingType))
+            {
+                return new ParseResult<T>();
+            }
+            return parsers[castingType](matchedData);
+        }
+
+        public void Cache(LogMessageParseOptions options = LogMessageParseOptions.LogLevel)
         {
             if (this.head != null && this.body != null)
             {
@@ -91,6 +214,7 @@ namespace logviewer.core
             {
                 this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
             }
+            this.ApplySemanticRules(options);
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
         }
@@ -103,6 +227,7 @@ namespace logviewer.core
         #region Constants and Fields
 
         internal LogLevel Level;
+        internal DateTime Occured;
         private string body;
         private StringBuilder bodyBuilder;
         private string head;

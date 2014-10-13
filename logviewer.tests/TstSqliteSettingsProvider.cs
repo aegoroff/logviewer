@@ -93,5 +93,73 @@ namespace logviewer.tests
             this.provider.LastUpdateCheckTime = newValue;
             Assert.That(this.provider.LastUpdateCheckTime, Is.EqualTo(newValue));
         }
+
+        [Test]
+        public void InsertParsingTemplate()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(1));
+            var newTemplate = new ParsingTemplate
+            {
+                Index = templates.Count, 
+                Name = "second", 
+                StartMessage = "%{DATA}"
+            };
+            this.provider.InsertParsingProfile(newTemplate);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(2));
+            var template = this.provider.ReadParsingTemplate(newTemplate.Index);
+            Assert.That(template.Index, Is.EqualTo(newTemplate.Index));
+            Assert.That(template.Name, Is.EqualTo("second"));
+            Assert.That(template.StartMessage, Is.EqualTo("%{DATA}"));
+        }
+        
+        [Test]
+        public void RemoveParsingTemplate()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(1));
+            var newTemplate = new ParsingTemplate
+            {
+                Index = templates.Count, 
+                Name = "second", 
+                StartMessage = "^.+?$"
+            };
+            this.provider.InsertParsingProfile(newTemplate);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(2));
+            this.provider.DeleteParsingProfile(newTemplate.Index);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(1));
+        }
+        
+        [Test]
+        public void RemoveParsingTemplateFromMiddle()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(1));
+            var newTemplate = new ParsingTemplate
+            {
+                Index = templates.Count, 
+                Name = "second", 
+                StartMessage = "^.+?$"
+            };
+            
+            var newTemplate1 = new ParsingTemplate
+            {
+                Index = templates.Count + 1, 
+                Name = "third", 
+                StartMessage = "^.+?$"
+            };
+            this.provider.InsertParsingProfile(newTemplate);
+            this.provider.InsertParsingProfile(newTemplate1);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(3));
+            this.provider.DeleteParsingProfile(newTemplate.Index);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(2));
+            ParsingTemplate template = this.provider.ReadParsingTemplate(templates.Count - 1);
+            Assert.That(template.Name, Is.EqualTo(newTemplate1.Name));
+        }
     }
 }

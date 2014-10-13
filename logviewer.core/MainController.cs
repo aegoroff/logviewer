@@ -58,12 +58,13 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
+        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture | RegexOptions.Compiled)
+        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture)
         {
             this.CurrentPage = 1;
             this.settings = settings;
@@ -554,8 +555,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    message.ApplySemantic(this.DetectLevel);
-                    message.Cache();
+                    message.Cache(this.parseOptions);
                     this.store.AddMessage(message);
                 }
                 finally
@@ -866,6 +866,12 @@ namespace logviewer.core
             get { return this.store; }
         }
 
+        public LogMessageParseOptions ParseOptions
+        {
+            get { return this.parseOptions; }
+            set { this.parseOptions = value; }
+        }
+
         private long queuedMessages;
 
         private string CreateRtf(bool signalProgress = false)
@@ -951,23 +957,6 @@ namespace logviewer.core
             }
             doc.AddText(txt.Trim(), this.settings.FormatBody(message.Level));
             doc.AddNewLine(3);
-        }
-
-        private readonly Semantic levelSemantic = new Semantic("level");
-
-        private LogLevel DetectLevel(IDictionary<Semantic, string> match)
-        {
-            if (match == null)
-            {
-                return LogLevel.None;
-            }
-            string level;
-            if (!match.TryGetValue(this.levelSemantic, out level))
-            {
-                return LogLevel.None;
-            }
-            LogLevel result;
-            return Enum.TryParse(level, true, out result) ? result : LogLevel.None;
         }
 
         #endregion

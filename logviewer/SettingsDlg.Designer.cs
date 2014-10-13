@@ -52,6 +52,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
+            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
+            this.addNewTemplateBtn = new System.Windows.Forms.Button();
+            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
+            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
+            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
+            this.newTemplateNameLabel = new System.Windows.Forms.Label();
+            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
+            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
             this.messageStartPatternLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -237,15 +245,72 @@
             resources.ApplyResources(this.parsingTemplateSelector, "parsingTemplateSelector");
             this.parsingTemplateSelector.FormattingEnabled = true;
             this.parsingTemplateSelector.Name = "parsingTemplateSelector";
+            this.parsingTemplateSelector.SelectedIndexChanged += new System.EventHandler(this.OnChangeParsingTemplate);
             this.parsingTemplateSelector.TextUpdate += new System.EventHandler(this.OnSetParsingTemplateName);
             // 
             // commonTemplatesBox
             // 
             resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
+            this.commonTemplatesBox.Controls.Add(this.removeParsingTemplateBtn);
+            this.commonTemplatesBox.Controls.Add(this.addNewTemplateBtn);
+            this.commonTemplatesBox.Controls.Add(this.cancelAddNewTemplateBtn);
+            this.commonTemplatesBox.Controls.Add(this.newTemplateMessageStartBox);
+            this.commonTemplatesBox.Controls.Add(this.newPatternMessageStartLabel);
+            this.commonTemplatesBox.Controls.Add(this.newTemplateNameLabel);
+            this.commonTemplatesBox.Controls.Add(this.newTemplateNameBox);
+            this.commonTemplatesBox.Controls.Add(this.addNewParsingTemplateBtn);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
+            // 
+            // removeParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
+            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
+            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
+            // 
+            // addNewTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
+            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
+            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
+            // 
+            // cancelAddNewTemplateBtn
+            // 
+            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
+            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
+            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
+            // 
+            // newTemplateMessageStartBox
+            // 
+            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
+            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
+            // 
+            // newPatternMessageStartLabel
+            // 
+            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
+            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
+            // 
+            // newTemplateNameLabel
+            // 
+            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
+            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
+            // 
+            // newTemplateNameBox
+            // 
+            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
+            this.newTemplateNameBox.Name = "newTemplateNameBox";
+            // 
+            // addNewParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
+            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
+            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
             // 
             // messageStartPatternBox
             // 
@@ -350,5 +415,13 @@
         private System.Windows.Forms.Button errorBtn;
         private System.Windows.Forms.Button fatalBtn;
         private System.Windows.Forms.Button resetColorsBtn;
+        private System.Windows.Forms.Button addNewParsingTemplateBtn;
+        private System.Windows.Forms.Label newTemplateNameLabel;
+        private System.Windows.Forms.TextBox newTemplateNameBox;
+        private System.Windows.Forms.Label newPatternMessageStartLabel;
+        private System.Windows.Forms.TextBox newTemplateMessageStartBox;
+        private System.Windows.Forms.Button cancelAddNewTemplateBtn;
+        private System.Windows.Forms.Button addNewTemplateBtn;
+        private System.Windows.Forms.Button removeParsingTemplateBtn;
     }
 }

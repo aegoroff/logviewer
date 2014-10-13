@@ -27,7 +27,9 @@ namespace logviewer.core
             var parser = new GrokParser(tokenStream);
             var tree = parser.parse();
 
-            if (parser.NumberOfSyntaxErrors > 0)
+            this.CompilationFailed = parser.NumberOfSyntaxErrors > 0;
+
+            if (this.CompilationFailed)
             {
                 this.Template = grok;
             }
@@ -42,6 +44,8 @@ namespace logviewer.core
         }
 
         public string Template { get; private set; }
+
+        public bool CompilationFailed { get; private set; }
 
         public bool Match(string s)
         {
