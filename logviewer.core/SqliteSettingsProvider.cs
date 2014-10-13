@@ -266,6 +266,27 @@ namespace logviewer.core
             return result;
         }
 
+        public IList<ParsingTemplate> ReadAllParsingTemplates()
+        {
+            const string cmd = @"
+                    SELECT
+                        Ix,                        
+                        Name
+                    FROM
+                        ParsingTemplates
+                    ORDER BY Ix
+                    ";
+
+            var result = new List<ParsingTemplate>();
+
+            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string });
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
+
+            ExecuteQuery(action);
+
+            return result;
+        }
+
         public ParsingTemplate ReadParsingTemplate(int index)
         {
             var propertiesGet = string.Join(",", from level in parsingTemplatePropertiesNames select level);

@@ -70,10 +70,15 @@ namespace logviewer.core
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
-            var template = this.settings.ReadParsingTemplate();
             this.options = options;
-            this.CreateMessageHead(template.StartMessage);
+            this.SetCurrentParsingTemplate();
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
+        }
+
+        private void SetCurrentParsingTemplate()
+        {
+            var template = this.settings.ReadParsingTemplate();
+            this.CreateMessageHead(template.StartMessage);
         }
 
         private void CreateMessageHead(string startMessagePattern)
@@ -760,6 +765,26 @@ namespace logviewer.core
                 }
             }
             this.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
+        }
+
+        public void ReadTemplates()
+        {
+            this.view.ClearTemplatesList();
+            Task.Factory.StartNew(delegate
+            {
+                var templates = settings.ReadAllParsingTemplates();
+                var current = settings.SelectedParsingTemplate;
+                foreach (var template in templates)
+                {
+                    this.RunOnGuiThread(() => this.view.CreateTemplateSelectionItem(template, current));
+                }
+            });
+        }
+
+        public void ChangeParsingTemplate(int index)
+        {
+            this.settings.SelectedParsingTemplate = index;
+            this.SetCurrentParsingTemplate();
         }
 
         private void UseRecentFilesStore(Action<RecentItemsStore> action)

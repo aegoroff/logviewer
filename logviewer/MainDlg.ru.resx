@@ -378,6 +378,23 @@
   <data name="statButton.Text" xml:space="preserve">
     <value>Статистика по журналу</value>
   </data>
+  <data name="templateSelectButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHFSURBVDhPnZJrSyJRGMf9EH2T/Uy90BeruF9hX0dXw+1C
+        IS2VjI6OXZAu7lKQUS1obC0KOXkdbzPjmJYi/z3Pc5ZYX1n94ccD8z/zO3DOcana3nQ0pkGJxgWxNxBH
+        RKxXNW3aRaGPxVIJtm3DssyJ0LpiqYiYtgcWhJUoUj9+4j05OU3h+CQlBTthBenLNBdutxs+nw9+v5+n
+        x+NBuVKF/lhkCvojrzs7P0fy6FgKvm+HcX3zi4tGownH6bKAZrPZQq1moFqtMeVyldddpC9xmDySgtDW
+        NjLZWy6Meh12p8O706w3GmNQT7m6vsHBYVIKNkNbuL//w0Wz1UL36Qler5dnq90eg3pKJpNFYv9ACtY3
+        Qsjn81yYloX+8zMLaFp0M/9BPeXu7jfiiX0pWFnbgK7rXHQcBy+DAR8eTafbHYN6Si6XgxpPSEFwZR2V
+        SpmLXq+HF7HzcDjk2e/3x6Ce8lAoIKLGpCAQXEX93+EMxK6ToJTEw1MiqhQsBoIwTZOL0Wg0EYphGNgN
+        R6RgbiHwejhvTdtsY2dXkYLZ+SVx57Z4C1l+D5PJ8o0Elr9JwWffl68zswt4L/QfC0SmBJ8+gPjP5foL
+        5AMXhF8eGF0AAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="templateSelectButton.Text" xml:space="preserve">
+    <value>Выбор шаблона</value>
+  </data>
   <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 22</value>
   </data>
@@ -415,13 +432,13 @@
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGfSURBVDhPrZK/SwJhGMfPM66Dfkw1VKBDQ9FWS0SCUwhB
-        OIVDhIOIP8AQLkQTcXMLV92CGlr8G/wjnG5wED0HRVQQkfPOt+f7+hYE1Tn0wIfH530+34cblP6lCoXC
+        OIVDhIOIP8AQLkQTcXMLV92CGlr8G/wf3G5wED0HRVQQkfPOt+f7+hYE1Tn0wIfH530+34cblP6lCoXC
         DXGVz+cPc7ncrqZpG8VicY1WLnTMeMceHvxlUhQtYv1+X6/X6+9Uz5VK5alUKj2QGEfHjHfs4cEX0WVl
         MpnYYrFgtm07Ag++iC4rnU7HLcti8/ncEXjwRVSSUqnUejKZTJimyWazmSPw4CPHD0Sj0fNarfYynU7Z
         ZDJxBB585PiBcDh81+12O+PxmK0KfOT4gVAolDAMwxwMBmxV4CPHDwSDwftms9np9XpsVeAjxw8EAoGL
         arX62mg0bPo0fN6fwIOPHD/g9/tVn893Wy6X33RdNyDQn4W12+0vMOMde3jwkeMHUF6vV/V4PJdEhH5r
         1B9HoxFrtVoMHbN4j8CDL6I/l6IoJ6qqZofDIUPHLFa/lkxsEvvEEXHqdruvZVnOotN8RhwTB8QWAf9b
-        uQiFwHKH2CNw7BPMeN8m8A+ETyVJH4LiAPEc8WbYAAAAAElFTkSuQmCC
+        uQiFwHKH2CNw7BPMeN8m8A+ETyVJH3OIAOXh7O21AAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="useRegexp.Text" xml:space="preserve">
