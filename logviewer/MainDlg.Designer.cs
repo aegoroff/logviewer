@@ -39,6 +39,7 @@
             this.refreshButton = new System.Windows.Forms.ToolStripButton();
             this.settingsButton = new System.Windows.Forms.ToolStripButton();
             this.statButton = new System.Windows.Forms.ToolStripButton();
+            this.templateSelectButton = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.minLevelBox = new System.Windows.Forms.ToolStripComboBox();
@@ -63,7 +64,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.logWatch = new System.IO.FileSystemWatcher();
             this.exportDialog = new System.Windows.Forms.SaveFileDialog();
-            this.templateSelectButton = new System.Windows.Forms.ToolStripSplitButton();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -238,6 +238,12 @@
             this.statButton.Name = "statButton";
             this.statButton.Click += new System.EventHandler(this.OnOpenStatistic);
             // 
+            // templateSelectButton
+            // 
+            this.templateSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            resources.ApplyResources(this.templateSelectButton, "templateSelectButton");
+            this.templateSelectButton.Name = "templateSelectButton";
+            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -411,12 +417,6 @@
             // 
             this.exportDialog.DefaultExt = "rtf";
             resources.ApplyResources(this.exportDialog, "exportDialog");
-            // 
-            // templateSelectButton
-            // 
-            this.templateSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            resources.ApplyResources(this.templateSelectButton, "templateSelectButton");
-            this.templateSelectButton.Name = "templateSelectButton";
             // 
             // MainDlg
             // 

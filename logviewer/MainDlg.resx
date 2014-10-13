@@ -500,7 +500,7 @@
     <value>32, 22</value>
   </data>
   <data name="templateSelectButton.Text" xml:space="preserve">
-    <value>toolStripSplitButton1</value>
+    <value>Select log parsing template</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>6, 25</value>
@@ -599,13 +599,13 @@
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGfSURBVDhPrZK/SwJhGMfPM66Dfkw1VKBDQ9FWS0SCUwhB
-        OIVDhIOIP8AQLkQTcXMLV92CGlr8G9z8H25wED0HRVQQkfPOt+f7+hYE1Tn0wIfH530+34cblP6lCoXC
+        OIVDhIOIP8AQLkQTcXMLV92CGlr8G5z8I25wED0HRVQQkfPOt+f7+hYE1Tn0wIfH530+34cblP6lCoXC
         DXGVz+cPc7ncrqZpG8VicY1WLnTMeMceHvxlUhQtYv1+X6/X6+9Uz5VK5alUKj2QGEfHjHfs4cEX0WVl
         MpnYYrFgtm07Ag++iC4rnU7HLcti8/ncEXjwRVSSUqnUejKZTJimyWazmSPw4CPHD0Sj0fNarfYynU7Z
         ZDJxBB585PiBcDh81+12O+PxmK0KfOT4gVAolDAMwxwMBmxV4CPHDwSDwftms9np9XpsVeAjxw8EAoGL
         arX62mg0bPo0fN6fwIOPHD/g9/tVn893Wy6X33RdNyDQn4W12+0vMOMde3jwkeMHUF6vV/V4PJdEhH5r
         1B9HoxFrtVoMHbN4j8CDL6I/l6IoJ6qqZofDIUPHLFa/lkxsEvvEEXHqdruvZVnOotN8RhwTB8QWAf9b
-        uQiFwHKH2CNw7BPMeN8m8A+ETyVJH7tBAFUYN6D5AAAAAElFTkSuQmCC
+        uQiFwHKH2CNw7BPMeN8m8A+ETyVJH6vnAElKGCuXAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="useRegexp.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -1665,6 +1665,12 @@
   <data name="&gt;&gt;statButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;templateSelectButton.Name" xml:space="preserve">
+    <value>templateSelectButton</value>
+  </data>
+  <data name="&gt;&gt;templateSelectButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSplitButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
     <value>toolStripSeparator3</value>
   </data>
@@ -1748,12 +1754,6 @@
   </data>
   <data name="&gt;&gt;exportDialog.Type" xml:space="preserve">
     <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;templateSelectButton.Name" xml:space="preserve">
-    <value>templateSelectButton</value>
-  </data>
-  <data name="&gt;&gt;templateSelectButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSplitButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainDlg</value>
