@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using logviewer.core;
 using Net.Sgoliver.NRtfTree.Util;
@@ -44,7 +43,7 @@ namespace logviewer.tests
             var template = ParsingTemplate();
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
-            this.controller = new MainController(this.settings.MockObject, RegexOptions.ExplicitCapture);
+            this.controller = new MainController(this.settings.MockObject);
             this.controller.ReadCompleted += this.OnReadCompleted;
             this.view.Expects.One.Method(_ => _.Initialize());
             this.view.Expects.One.SetProperty(_ => _.LogInfo).ToAnything();
@@ -124,7 +123,7 @@ namespace logviewer.tests
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        internal const string MessageStart = @"^%{TIMESTAMP_ISO8601}%{DATA}%{LOGLEVEL:level,LogLevel}%{DATA}";
+        internal const string MessageStart = @"^%{TIMESTAMP_ISO8601:occured,DateTime}%{DATA}%{LOGLEVEL:level,LogLevel}%{DATA}";
 
         [Test]
         public void AllFilters()
@@ -332,6 +331,32 @@ namespace logviewer.tests
             this.controller.StartReadLog();
             this.WaitReadingComplete();
             Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
+        }
+        
+        [Test]
+        public void NoLogLevelParsing()
+        {
+            this.ReadLogExpectations();
+
+            File.WriteAllText(TestPath, MessageExamples);
+            this.controller.ParseOptions = LogMessageParseOptions.None;
+            this.controller.MinFilter((int)LogLevel.Info);
+            this.controller.StartReadLog();
+            this.WaitReadingComplete();
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
+        }
+        
+        [Test]
+        public void AllSemanticsParsing()
+        {
+            this.ReadLogExpectations();
+
+            File.WriteAllText(TestPath, MessageExamples);
+            this.controller.ParseOptions = LogMessageParseOptions.LogLevel | LogMessageParseOptions.DateTime;
+            this.controller.MinFilter((int)LogLevel.Info);
+            this.controller.StartReadLog();
+            this.WaitReadingComplete();
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
         }
 
         [Test]

@@ -58,6 +58,7 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
+        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel;
 
         #endregion
 
@@ -554,7 +555,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    message.Cache();
+                    message.Cache(this.parseOptions);
                     this.store.AddMessage(message);
                 }
                 finally
@@ -863,6 +864,12 @@ namespace logviewer.core
         public LogStore Store
         {
             get { return this.store; }
+        }
+
+        public LogMessageParseOptions ParseOptions
+        {
+            get { return this.parseOptions; }
+            set { this.parseOptions = value; }
         }
 
         private long queuedMessages;
