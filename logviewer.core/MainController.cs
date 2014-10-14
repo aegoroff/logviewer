@@ -59,7 +59,7 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
-        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel;
+        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel | LogMessageParseOptions.DateTime;
 
         #endregion
 

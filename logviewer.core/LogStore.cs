@@ -13,21 +13,35 @@ namespace logviewer.core
 {
     public sealed class LogStore : IDisposable
     {
+        private readonly LogMessageParseOptions parseOptions;
+
         #region Constants and Fields
 
         private const string CreateIndexOnLevel = @"CREATE INDEX IF NOT EXISTS IX_Level ON Log (Level)";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
 
+        private static readonly IDictionary<LogMessageParseOptions, string> additionalColumns = new Dictionary<LogMessageParseOptions, string>
+        {
+            {LogMessageParseOptions.LogLevel, "Level INTEGER NOT NULL"},
+            {LogMessageParseOptions.DateTime, "Datetime INTEGER NOT NULL"}
+        }; 
+
         #endregion
 
         #region Constructors and Destructors
 
-        public LogStore(long dbSize = 0L, string databaseFilePath = null)
+        public LogStore(long dbSize = 0L, string databaseFilePath = null, LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel)
         {
+            this.parseOptions = parseOptions;
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
             this.CreateTables(dbSize);
+        }
+
+        IEnumerable<string> ReadAdditionalColumns()
+        {
+            return from column in additionalColumns where this.parseOptions.HasFlag(column.Key) select column.Value;
         }
 
         public string DatabasePath { get; private set; }
@@ -38,30 +52,34 @@ namespace logviewer.core
             {
                 return;
             }
-            const string CreateTable = @"
+            const string createTableTemplate = @"
                         CREATE TABLE IF NOT EXISTS Log (
                                  Ix INTEGER PRIMARY KEY,
                                  Header TEXT  NOT NULL,
-                                 Body  TEXT,
-                                 Level INTEGER NOT NULL
+                                 Body  TEXT
+                                 {0}
                         );
                     ";
 
-            const string SyncOff = @"PRAGMA synchronous = OFF;";
-            const string Journal = @"PRAGMA journal_mode = OFF;";
-            const string Cache = @"PRAGMA cache_size = {0};";
-            const string Temp = @"PRAGMA temp_store = MEMORY;";
-            const string Encode = @"PRAGMA encoding = 'UTF-8';";
-            const string Mmap = @"PRAGMA mmap_size={0};";
+            const string syncOff = @"PRAGMA synchronous = OFF;";
+            const string journal = @"PRAGMA journal_mode = OFF;";
+            const string cacheTemplate = @"PRAGMA cache_size = {0};";
+            const string temp = @"PRAGMA temp_store = MEMORY;";
+            const string encode = @"PRAGMA encoding = 'UTF-8';";
+            const string mmapTemplate = @"PRAGMA mmap_size={0};";
 
             var freePages = new ComputerInfo().AvailablePhysicalMemory / PageSize;
             var sqliteAvailablePages = (int)(freePages * 0.2);
 
             var pages = Math.Min(sqliteAvailablePages, dbSize / PageSize + 1);
 
-            var mmap = string.Format(Mmap, dbSize);
-            var cache = string.Format(Cache, pages);
-            this.connection.ExecuteNonQuery(SyncOff, Journal, cache, Temp, Encode, mmap, CreateTable, CreateIndexOnLevel);
+            var colums = string.Join(",", ReadAdditionalColumns());
+            var additionalCreate = string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
+
+            var mmap = string.Format(mmapTemplate, dbSize);
+            var cache = string.Format(cacheTemplate, pages);
+            var createTable = string.Format(createTableTemplate, additionalCreate);
+            this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable, CreateIndexOnLevel);
         }
 
         #endregion
