@@ -154,7 +154,7 @@ namespace logviewer.core
             var raw = context.GetText();
             if (raw.Length > 1 && (raw.StartsWith("'") && raw.EndsWith("'") || raw.StartsWith("\"") && raw.EndsWith("\"")))
             {
-                raw = raw.Trim('\'', '"');
+                raw = raw.Substring(1, raw.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
             }
             this.stringBuilder.Append(raw);
             return this.VisitChildren(context);
