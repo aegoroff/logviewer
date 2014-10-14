@@ -105,7 +105,7 @@ namespace logviewer.core
                     }
                     this.settings.OpenLastFile = this.formData.OpenLastFile;
                     this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
-                    this.settings.UpdateParsingProfile(this.template);
+                    this.settings.UpdateParsingTemplate(this.template);
 
                     foreach (var pair in this.formData.Colors)
                     {
@@ -231,7 +231,7 @@ namespace logviewer.core
         {
             Task.Factory.StartNew(delegate
             {
-                this.settings.DeleteParsingProfile(this.parsingTemplateIndex);
+                this.settings.DeleteParsingTemplate(this.parsingTemplateIndex);
                 this.templateList.RemoveAt(this.parsingTemplateIndex);
                 this.RunOnGuiThread(() =>
                 {

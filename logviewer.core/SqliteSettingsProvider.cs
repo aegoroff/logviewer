@@ -218,7 +218,7 @@ namespace logviewer.core
             get { return this.settingsDatabaseFilePath; }
         }
 
-        public void UpdateParsingProfile(ParsingTemplate template)
+        public void UpdateParsingTemplate(ParsingTemplate template)
         {
             var propertiesSet = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
 
@@ -343,7 +343,7 @@ namespace logviewer.core
             this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
         }
         
-        public void DeleteParsingProfile(int ix)
+        public void DeleteParsingTemplate(int ix)
         {
             var query = string.Format(@"DELETE FROM ParsingTemplates WHERE Ix = {0}", ix);
 

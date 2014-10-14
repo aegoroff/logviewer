@@ -56,7 +56,7 @@ namespace logviewer.tests
         {
             ParsingTemplate template = this.provider.ReadParsingTemplate();
             template.StartMessage += "1";
-            this.provider.UpdateParsingProfile(template);
+            this.provider.UpdateParsingTemplate(template);
             ParsingTemplate template1 = this.provider.ReadParsingTemplate();
             Assert.That(template1.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
         }
@@ -135,7 +135,7 @@ namespace logviewer.tests
             this.provider.InsertParsingTemplate(newTemplate);
             templates = this.provider.ReadParsingTemplateList();
             Assert.That(templates.Count, Is.EqualTo(2));
-            this.provider.DeleteParsingProfile(newTemplate.Index);
+            this.provider.DeleteParsingTemplate(newTemplate.Index);
             templates = this.provider.ReadParsingTemplateList();
             Assert.That(templates.Count, Is.EqualTo(1));
         }
@@ -162,7 +162,7 @@ namespace logviewer.tests
             this.provider.InsertParsingTemplate(newTemplate1);
             templates = this.provider.ReadParsingTemplateList();
             Assert.That(templates.Count, Is.EqualTo(3));
-            this.provider.DeleteParsingProfile(newTemplate.Index);
+            this.provider.DeleteParsingTemplate(newTemplate.Index);
             templates = this.provider.ReadParsingTemplateList();
             Assert.That(templates.Count, Is.EqualTo(2));
             ParsingTemplate template = this.provider.ReadParsingTemplate(templates.Count - 1);
