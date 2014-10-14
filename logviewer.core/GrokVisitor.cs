@@ -51,7 +51,7 @@ namespace logviewer.core
             get { return this.stringBuilder.ToString(); }
         }
 
-        public IEnumerable<Semantic> Schema
+        public ICollection<Semantic> Schema
         {
             get { return this.schema; }
         }
