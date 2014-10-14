@@ -39,6 +39,7 @@ namespace logviewer.core
         private readonly int defaultPageSize;
         private readonly string settingsDatabaseFilePath;
         private readonly IEnumerable<string> parsingTemplatePropertiesNames;
+        private readonly IEnumerable<ColumnAttribute> parsingTemplatePropertiesColumns;
         private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
@@ -67,11 +68,13 @@ namespace logviewer.core
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
-            this.parsingTemplatePropertiesNames = this.parsingTemplateProperties.Select(info => GetColumnAttribute(info).Name).ToArray();
+            this.parsingTemplatePropertiesColumns = this.parsingTemplateProperties.Select(GetColumnAttribute).ToArray();
+            this.parsingTemplatePropertiesNames = this.parsingTemplatePropertiesColumns.Select(c => c.Name).ToArray();
 
             this.upgrades.Add(Upgrade1);
             this.upgrades.Add(Upgrade2);
             this.upgrades.Add(Upgrade3);
+            this.upgrades.Add(Upgrade4);
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -309,7 +312,7 @@ namespace logviewer.core
                 foreach (var column in parsingTemplateProperties)
                 {
                     var attr = GetColumnAttribute(column);
-                    column.SetValue(result, rdr[attr.Name], null);
+                    column.SetValue(result, rdr[attr.Name] as string, null);
                 }
             };
 
@@ -451,7 +454,7 @@ namespace logviewer.core
         private string ParsingTeplateCreateCmd()
         {
             var propertiesCreate = string.Join(",",
-                from string member in this.parsingTemplatePropertiesNames select string.Format("{0} TEXT NOT NULL", member));
+                from ColumnAttribute member in this.parsingTemplatePropertiesColumns select string.Format("{0} TEXT {1} NULL", member.Name, member.Nullable ? string.Empty : "NOT"));
             const string parsingTemplates = @"
                         CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
@@ -552,6 +555,20 @@ namespace logviewer.core
             
             connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
             connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
+        }
+        
+        void Upgrade4(DatabaseConnection connection)
+        {
+            var properties = string.Join(",",
+                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Filter", StringComparison.Ordinal)) select member);
+
+            properties = "Ix," + properties;
+            
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
+            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Filter TEXT NULL");
             connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
             connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
         }

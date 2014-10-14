@@ -14,6 +14,9 @@ namespace logviewer.core
         [Column("Name")]
         public string Name { get; set; }
 
+        [Column("Filter", Nullable = true)]
+        public string Filter { get; set; }
+
         public bool IsEmpty
         {
             get { return this.StartMessage == null; }

@@ -195,6 +195,12 @@ namespace logviewer.core
             this.view.EnableSave(true);
         }
         
+        public void UpdateMessageFilter(string value)
+        {
+            this.template.Filter = value;
+            this.view.EnableSave(true);
+        }
+        
         public void UpdateParsingTemplateName(string value)
         {
             this.template.Name = value;

@@ -15,5 +15,7 @@ namespace logviewer.core
         }
 
         public string Name { get; private set; }
+        
+        public bool Nullable { get; set; }
     }
 }

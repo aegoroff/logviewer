@@ -39,6 +39,7 @@ namespace logviewer.core
 
         private LogLevel maxFilter = LogLevel.Fatal;
         private GrokMatcher matcher;
+        private GrokMatcher filter;
         private LogLevel minFilter = LogLevel.Trace;
         private int pageSize;
         private bool reverseChronological;
@@ -79,11 +80,17 @@ namespace logviewer.core
         {
             var template = this.settings.ReadParsingTemplate();
             this.CreateMessageHead(template.StartMessage);
+            this.CreateMessageFilter(template.Filter);
         }
 
         private void CreateMessageHead(string startMessagePattern)
         {
             this.matcher = new GrokMatcher(startMessagePattern, this.options);
+        }
+        
+        private void CreateMessageFilter(string messageFilter)
+        {
+            this.filter = string.IsNullOrWhiteSpace(messageFilter) ? null : new GrokMatcher(messageFilter, this.options);
         }
 
         #endregion
@@ -456,7 +463,7 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.view.LogPath, this.matcher);
+            var reader = new LogReader(this.view.LogPath, this.matcher, this.filter);
 
             var append = reader.Length > this.logSize && this.CurrentPathCached;
 

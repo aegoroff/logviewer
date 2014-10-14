@@ -16,11 +16,13 @@ namespace logviewer.core
     {
         private const int BufferSize = 0xFFFFFF;
         private readonly GrokMatcher matcher;
+        private readonly GrokMatcher filter;
 
-        public LogReader(string logPath, GrokMatcher matcher)
+        public LogReader(string logPath, GrokMatcher matcher, GrokMatcher filter = null)
         {
             this.LogPath = logPath;
             this.matcher = matcher;
+            this.filter = filter;
             this.Length = new FileInfo(logPath).Length;
         }
 
@@ -96,6 +98,10 @@ namespace logviewer.core
                     if (line == null)
                     {
                         break;
+                    }
+                    if (this.filter != null && this.filter.Match(line))
+                    {
+                        continue;
                     }
                     var semantic = this.matcher.Parse(line);
                     if (semantic != null)
