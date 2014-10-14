@@ -90,7 +90,7 @@ namespace logviewer.core
         
         private void CreateMessageFilter(string messageFilter)
         {
-            this.filter = string.IsNullOrWhiteSpace(messageFilter) ? null : new GrokMatcher(messageFilter, this.options);
+            this.filter = string.IsNullOrWhiteSpace(messageFilter) ? null : new GrokMatcher(messageFilter);
         }
 
         #endregion
