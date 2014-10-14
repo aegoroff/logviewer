@@ -57,6 +57,15 @@ namespace logviewer.core
             return builder.ToString();
         }
 
+        public static string UescapeString(this string escaped)
+        {
+            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
+            {
+                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
+            }
+            return escaped;
+        }
+
         public static int ToSafePercent(this int value, int min, int max)
         {
             if (value > max)

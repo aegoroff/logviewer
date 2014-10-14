@@ -71,7 +71,7 @@ namespace logviewer.core
 
         public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
         {
-            var pattern = context.QUOTED_STR().Symbol.Text.Trim('\'', '"');
+            var pattern = context.QUOTED_STR().Symbol.Text.UescapeString();
             var value = context.target().GetText();
              this.semantics.Last().CastingRules.Add(new Rule(value, pattern));
             return this.VisitChildren(context);
@@ -81,7 +81,7 @@ namespace logviewer.core
         {
             if (context.TYPE_NAME() == null)
             {
-                this.AddSemantic(new Rule());
+                this.AddSemantic(new Semantic(this.semantic));
                 return this.VisitChildren(context);
             }
             var typeName = context.TYPE_NAME().Symbol.Text;
@@ -152,11 +152,7 @@ namespace logviewer.core
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
             var raw = context.GetText();
-            if (raw.Length > 1 && (raw.StartsWith("'") && raw.EndsWith("'") || raw.StartsWith("\"") && raw.EndsWith("\"")))
-            {
-                raw = raw.Substring(1, raw.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
-            }
-            this.stringBuilder.Append(raw);
+            this.stringBuilder.Append(raw.UescapeString());
             return this.VisitChildren(context);
         }
     }

@@ -99,7 +99,7 @@ namespace logviewer.core
                 delegate(string s)
                 {
                     LogLevel r;
-                    var success = Enum.TryParse(s, true, out r);
+                    var success = Enum.TryParse(s, true, out r) && Enum.IsDefined(typeof(LogLevel), r);
                     return new ParseResult<LogLevel> { Result = success, Value = r };
                 }
             },
