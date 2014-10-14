@@ -30,10 +30,11 @@ namespace logviewer.core
         {
             this.head = header;
             this.body = body;
-            this.Level = LogLevel.None;
             this.ix = 0;
-            this.semantic = null;
+            this.properties = null;
             this.bodyBuilder = null;
+
+            this.Level = LogLevel.None;
             this.Occured = DateTime.MinValue;
         }
 
@@ -68,9 +69,9 @@ namespace logviewer.core
             }
         }
 
-        public bool HasSemantic
+        public bool HasHeader
         {
-            get { return this.semantic != null; }
+            get { return this.properties != null; }
         }
 
         public void AddLine(string line)
@@ -86,9 +87,9 @@ namespace logviewer.core
             }
         }
 
-        public void AddSemantic(IDictionary<Semantic, string> sem)
+        public void AddProperties(IDictionary<Semantic, string> parsedProperties)
         {
-            this.semantic = sem;
+            this.properties = parsedProperties;
         }
 
         private static readonly IDictionary<string, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
@@ -147,7 +148,7 @@ namespace logviewer.core
 
         private void ApplySemanticRules(LogMessageParseOptions options = LogMessageParseOptions.None)
         {
-            if (this.semantic == null)
+            if (this.properties == null)
             {
                 return;
             }
@@ -188,7 +189,7 @@ namespace logviewer.core
         private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> action)
         {
 // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var item in this.semantic)
+            foreach (var item in this.properties)
             {
                 var r = ApplySemantic(item, action);
                 if (r.Result)
@@ -254,7 +255,7 @@ namespace logviewer.core
         private StringBuilder bodyBuilder;
         private string head;
         private long ix;
-        private IDictionary<Semantic, string> semantic;
+        private IDictionary<Semantic, string> properties;
 
         #endregion
     }

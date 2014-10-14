@@ -12,7 +12,7 @@ namespace logviewer.core
     public class GrokMatcher
     {
         private Regex regex;
-        private readonly List<Semantic> semantics = new List<Semantic>();
+        private readonly List<Semantic> messageSchema = new List<Semantic>();
 
         public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
         {
@@ -38,7 +38,7 @@ namespace logviewer.core
                 var grokVisitor = new GrokVisitor();
                 grokVisitor.Visit(tree);
                 this.Template = grokVisitor.Template;
-                this.semantics.AddRange(grokVisitor.Semantics);
+                this.messageSchema.AddRange(grokVisitor.Schema);
             }
             this.regex = new Regex(this.Template, options);
         }
@@ -47,9 +47,9 @@ namespace logviewer.core
 
         public bool CompilationFailed { get; private set; }
 
-        public ICollection<Semantic> Semantics
+        public ICollection<Semantic> MessageSchema
         {
-            get { return this.semantics; }
+            get { return this.messageSchema; }
         }
 
         public bool Match(string s)
@@ -60,7 +60,7 @@ namespace logviewer.core
         public IDictionary<Semantic, string> Parse(string s)
         {
             var match = this.regex.Match(s);
-            return !match.Success ? null : this.Semantics.ToDictionary(semantic => semantic, semantic => match.Groups[semantic.Name].Value);
+            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic, semantic => match.Groups[semantic.Property].Value);
         }
     }
 }

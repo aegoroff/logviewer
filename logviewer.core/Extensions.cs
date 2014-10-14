@@ -57,7 +57,7 @@ namespace logviewer.core
             return builder.ToString();
         }
 
-        public static string UescapeString(this string escaped)
+        public static string UnescapeString(this string escaped)
         {
             if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
             {

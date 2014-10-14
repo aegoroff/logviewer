@@ -42,38 +42,38 @@ namespace logviewer.core
 
         readonly Dictionary<string, string> templates = new Dictionary<string, string>();
 
-        readonly List<Semantic> semantics = new List<Semantic>();
+        readonly List<Semantic> schema = new List<Semantic>();
         string regexp;
-        string semantic;
+        string property;
 
         public string Template
         {
             get { return this.stringBuilder.ToString(); }
         }
 
-        public IEnumerable<Semantic> Semantics
+        public IEnumerable<Semantic> Schema
         {
-            get { return this.semantics; }
+            get { return this.schema; }
         }
 
         private void AddSemantic(Rule rule)
         {
-            var s = new Semantic(this.semantic, rule);
+            var s = new Semantic(this.property, rule);
             AddSemantic(s);
         }
         
         private void AddSemantic(Semantic s)
         {
-            this.semantics.Add(s);
-            this.regexp = string.Format(NamedPattern, this.semantic, this.regexp);
+            this.schema.Add(s);
+            this.regexp = string.Format(NamedPattern, this.property, this.regexp);
             this.stringBuilder.Append(this.regexp);
         }
 
         public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
         {
-            var pattern = context.QUOTED_STR().Symbol.Text.UescapeString();
+            var pattern = context.QUOTED_STR().Symbol.Text.UnescapeString();
             var value = context.target().GetText();
-             this.semantics.Last().CastingRules.Add(new Rule(value, pattern));
+             this.schema.Last().CastingRules.Add(new Rule(value, pattern));
             return this.VisitChildren(context);
         }
 
@@ -81,7 +81,7 @@ namespace logviewer.core
         {
             if (context.TYPE_NAME() == null)
             {
-                this.AddSemantic(new Semantic(this.semantic));
+                this.AddSemantic(new Semantic(this.property));
                 return this.VisitChildren(context);
             }
             var typeName = context.TYPE_NAME().Symbol.Text;
@@ -97,11 +97,11 @@ namespace logviewer.core
             {
                 return this.VisitChildren(context);
             }
-            this.semantic = context.PROPERTY().GetText();
+            this.property = context.PROPERTY().GetText();
 
             if (context.casting() == null)
             {
-                this.AddSemantic(new Semantic(this.semantic));
+                this.AddSemantic(new Semantic(this.property));
             }
             return this.VisitChildren(context);
         }
@@ -152,7 +152,7 @@ namespace logviewer.core
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
             var raw = context.GetText();
-            this.stringBuilder.Append(raw.UescapeString());
+            this.stringBuilder.Append(raw.UnescapeString());
             return this.VisitChildren(context);
         }
     }

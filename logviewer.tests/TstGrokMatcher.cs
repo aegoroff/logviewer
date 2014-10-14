@@ -111,7 +111,7 @@ namespace logviewer.tests
         public void ParseRealMessage(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
-            Assert.That(matcher.Semantics.Count, Is.EqualTo(4));
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(4));
             Assert.That(matcher.CompilationFailed, Is.False);
             
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
@@ -125,7 +125,7 @@ namespace logviewer.tests
         public void ParseRealMessageNonDefaultCasting()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}");
-            Assert.That(matcher.Semantics.Count, Is.EqualTo(1));
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(1));
             Assert.That(matcher.CompilationFailed, Is.False);
             
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");

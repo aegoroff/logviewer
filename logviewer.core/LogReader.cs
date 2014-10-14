@@ -103,15 +103,15 @@ namespace logviewer.core
                     {
                         continue;
                     }
-                    var semantic = this.matcher.Parse(line);
-                    if (semantic != null)
+                    var properties = this.matcher.Parse(line);
+                    if (properties != null)
                     {
-                        if (message.HasSemantic)
+                        if (message.HasHeader)
                         {
                             onRead(message);
                             message = LogMessage.Create();
                         }
-                        message.AddSemantic(semantic);
+                        message.AddProperties(properties);
                     }
                     message.AddLine(line);
 

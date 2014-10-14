@@ -8,26 +8,26 @@ using System.Diagnostics;
 
 namespace logviewer.core
 {
-    [DebuggerDisplay("{Name}")]
+    [DebuggerDisplay("{Property}")]
     public struct Semantic
     {
-        private readonly string name;
+        private readonly string property;
         private readonly HashSet<Rule> castingRules;
 
-        public Semantic(string name)
+        public Semantic(string property)
         {
-            this.name = name;
+            this.property = property;
             this.castingRules = new HashSet<Rule>();
         }
         
-        public Semantic(string name, Rule rule) : this(name)
+        public Semantic(string property, Rule rule) : this(property)
         {
             this.castingRules.Add(rule);
         }
 
-        public string Name
+        public string Property
         {
-            get { return this.name; }
+            get { return this.property; }
         }
 
         public ISet<Rule> CastingRules
@@ -42,7 +42,7 @@ namespace logviewer.core
 
         public bool Equals(Semantic other)
         {
-            return string.Equals(this.name, other.name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(this.property, other.property, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)
@@ -56,7 +56,7 @@ namespace logviewer.core
 
         public override int GetHashCode()
         {
-            return this.name != null ? this.name.GetHashCode() : 0;
+            return this.property != null ? this.property.GetHashCode() : 0;
         }
 
         public static bool operator ==(Semantic s1, Semantic s2)
