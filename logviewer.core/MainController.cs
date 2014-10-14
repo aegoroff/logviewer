@@ -90,10 +90,7 @@ namespace logviewer.core
         
         private void CreateMessageFilter(string messageFilter)
         {
-            if (!string.IsNullOrWhiteSpace(messageFilter))
-            {
-                this.filter = new GrokMatcher(messageFilter, this.options);
-            }
+            this.filter = string.IsNullOrWhiteSpace(messageFilter) ? null : new GrokMatcher(messageFilter, this.options);
         }
 
         #endregion
@@ -466,7 +463,7 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.view.LogPath, this.matcher);
+            var reader = new LogReader(this.view.LogPath, this.matcher, this.filter);
 
             var append = reader.Length > this.logSize && this.CurrentPathCached;
 

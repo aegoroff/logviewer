@@ -67,6 +67,11 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.messageFilterLabel = new System.Windows.Forms.Label();
+            this.messageFilterBox = new System.Windows.Forms.TextBox();
+            this.newTemplateFilterLabel = new System.Windows.Forms.Label();
+            this.newTemplateMessageFilterBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -76,28 +81,28 @@
             this.commonTemplatesBox.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
-            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             // 
             // tabPage1
             // 
-            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.viewSettingsBox);
             this.tabPage1.Controls.Add(this.fileSettingsBox);
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.resetColorsBtn);
             this.groupBox1.Controls.Add(this.fatalBtn);
             this.groupBox1.Controls.Add(this.errorBtn);
@@ -105,6 +110,7 @@
             this.groupBox1.Controls.Add(this.infoBtn);
             this.groupBox1.Controls.Add(this.debugBtn);
             this.groupBox1.Controls.Add(this.traceBtn);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -117,58 +123,58 @@
             // 
             // fatalBtn
             // 
-            resources.ApplyResources(this.fatalBtn, "fatalBtn");
             this.fatalBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.fatalBtn, "fatalBtn");
             this.fatalBtn.Name = "fatalBtn";
             this.fatalBtn.UseVisualStyleBackColor = true;
             this.fatalBtn.Click += new System.EventHandler(this.OnChangeFatal);
             // 
             // errorBtn
             // 
-            resources.ApplyResources(this.errorBtn, "errorBtn");
             this.errorBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.errorBtn, "errorBtn");
             this.errorBtn.Name = "errorBtn";
             this.errorBtn.UseVisualStyleBackColor = true;
             this.errorBtn.Click += new System.EventHandler(this.OnChangeError);
             // 
             // warnBtn
             // 
-            resources.ApplyResources(this.warnBtn, "warnBtn");
             this.warnBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.warnBtn, "warnBtn");
             this.warnBtn.Name = "warnBtn";
             this.warnBtn.UseVisualStyleBackColor = true;
             this.warnBtn.Click += new System.EventHandler(this.OnChangeWarn);
             // 
             // infoBtn
             // 
-            resources.ApplyResources(this.infoBtn, "infoBtn");
             this.infoBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.infoBtn, "infoBtn");
             this.infoBtn.Name = "infoBtn";
             this.infoBtn.UseVisualStyleBackColor = true;
             this.infoBtn.Click += new System.EventHandler(this.OnChangeInfo);
             // 
             // debugBtn
             // 
-            resources.ApplyResources(this.debugBtn, "debugBtn");
             this.debugBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.debugBtn, "debugBtn");
             this.debugBtn.Name = "debugBtn";
             this.debugBtn.UseVisualStyleBackColor = true;
             this.debugBtn.Click += new System.EventHandler(this.OnChangeDebug);
             // 
             // traceBtn
             // 
-            resources.ApplyResources(this.traceBtn, "traceBtn");
             this.traceBtn.BackColor = System.Drawing.Color.Transparent;
             this.traceBtn.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+            resources.ApplyResources(this.traceBtn, "traceBtn");
             this.traceBtn.Name = "traceBtn";
             this.traceBtn.UseVisualStyleBackColor = false;
             this.traceBtn.Click += new System.EventHandler(this.OnChangeTrace);
             // 
             // viewSettingsBox
             // 
-            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Controls.Add(this.pageSizeBox);
             this.viewSettingsBox.Controls.Add(this.pageSizeLabel);
+            resources.ApplyResources(this.viewSettingsBox, "viewSettingsBox");
             this.viewSettingsBox.Name = "viewSettingsBox";
             this.viewSettingsBox.TabStop = false;
             // 
@@ -186,12 +192,12 @@
             // 
             // fileSettingsBox
             // 
-            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Controls.Add(this.autoRefreshCheckBox);
             this.fileSettingsBox.Controls.Add(this.label2);
             this.fileSettingsBox.Controls.Add(this.keepLastNFilesBox);
             this.fileSettingsBox.Controls.Add(this.label1);
             this.fileSettingsBox.Controls.Add(this.openLastFile);
+            resources.ApplyResources(this.fileSettingsBox, "fileSettingsBox");
             this.fileSettingsBox.Name = "fileSettingsBox";
             this.fileSettingsBox.TabStop = false;
             // 
@@ -228,10 +234,13 @@
             // 
             // tabPage2
             // 
-            resources.ApplyResources(this.tabPage2, "tabPage2");
+            this.tabPage2.Controls.Add(this.removeParsingTemplateBtn);
+            this.tabPage2.Controls.Add(this.groupBox2);
+            this.tabPage2.Controls.Add(this.addNewParsingTemplateBtn);
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.parsingTemplateSelector);
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
+            resources.ApplyResources(this.tabPage2, "tabPage2");
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -250,17 +259,11 @@
             // 
             // commonTemplatesBox
             // 
-            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
-            this.commonTemplatesBox.Controls.Add(this.removeParsingTemplateBtn);
-            this.commonTemplatesBox.Controls.Add(this.addNewTemplateBtn);
-            this.commonTemplatesBox.Controls.Add(this.cancelAddNewTemplateBtn);
-            this.commonTemplatesBox.Controls.Add(this.newTemplateMessageStartBox);
-            this.commonTemplatesBox.Controls.Add(this.newPatternMessageStartLabel);
-            this.commonTemplatesBox.Controls.Add(this.newTemplateNameLabel);
-            this.commonTemplatesBox.Controls.Add(this.newTemplateNameBox);
-            this.commonTemplatesBox.Controls.Add(this.addNewParsingTemplateBtn);
+            this.commonTemplatesBox.Controls.Add(this.messageFilterBox);
+            this.commonTemplatesBox.Controls.Add(this.messageFilterLabel);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
+            resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
             // 
@@ -332,15 +335,15 @@
             // 
             // flowLayoutPanel1
             // 
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Controls.Add(this.closeButton);
             this.flowLayoutPanel1.Controls.Add(this.saveButton);
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // closeButton
             // 
-            resources.ApplyResources(this.closeButton, "closeButton");
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.closeButton, "closeButton");
             this.closeButton.Name = "closeButton";
             this.closeButton.UseVisualStyleBackColor = true;
             // 
@@ -355,6 +358,41 @@
             // 
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.newTemplateMessageFilterBox);
+            this.groupBox2.Controls.Add(this.newTemplateFilterLabel);
+            this.groupBox2.Controls.Add(this.newTemplateNameLabel);
+            this.groupBox2.Controls.Add(this.addNewTemplateBtn);
+            this.groupBox2.Controls.Add(this.newTemplateNameBox);
+            this.groupBox2.Controls.Add(this.cancelAddNewTemplateBtn);
+            this.groupBox2.Controls.Add(this.newPatternMessageStartLabel);
+            this.groupBox2.Controls.Add(this.newTemplateMessageStartBox);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.TabStop = false;
+            // 
+            // messageFilterLabel
+            // 
+            resources.ApplyResources(this.messageFilterLabel, "messageFilterLabel");
+            this.messageFilterLabel.Name = "messageFilterLabel";
+            // 
+            // messageFilterBox
+            // 
+            resources.ApplyResources(this.messageFilterBox, "messageFilterBox");
+            this.messageFilterBox.Name = "messageFilterBox";
+            this.messageFilterBox.TextChanged += new System.EventHandler(this.OnSetMessageFilter);
+            // 
+            // newTemplateFilterLabel
+            // 
+            resources.ApplyResources(this.newTemplateFilterLabel, "newTemplateFilterLabel");
+            this.newTemplateFilterLabel.Name = "newTemplateFilterLabel";
+            // 
+            // newTemplateMessageFilterBox
+            // 
+            resources.ApplyResources(this.newTemplateMessageFilterBox, "newTemplateMessageFilterBox");
+            this.newTemplateMessageFilterBox.Name = "newTemplateMessageFilterBox";
             // 
             // SettingsDlg
             // 
@@ -379,6 +417,8 @@
             this.commonTemplatesBox.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -423,5 +463,10 @@
         private System.Windows.Forms.Button cancelAddNewTemplateBtn;
         private System.Windows.Forms.Button addNewTemplateBtn;
         private System.Windows.Forms.Button removeParsingTemplateBtn;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label messageFilterLabel;
+        private System.Windows.Forms.TextBox messageFilterBox;
+        private System.Windows.Forms.Label newTemplateFilterLabel;
+        private System.Windows.Forms.TextBox newTemplateMessageFilterBox;
     }
 }
