@@ -87,7 +87,7 @@ namespace logviewer.core
             }
         }
 
-        public void AddProperties(IDictionary<Semantic, string> parsedProperties)
+        public void AddProperties(IDictionary<string, string> parsedProperties)
         {
             this.properties = parsedProperties;
         }
@@ -146,110 +146,88 @@ namespace logviewer.core
             { "string", s => new ParseResult<string> { Result = true, Value = s } }
         };
 
-        void ParseLogLevel(string type)
+        bool ParseLogLevel(string dataToParse, ISet<Rule> rules)
         {
-            var levelResult = this.RunSemanticAction(new SemanticAction<LogLevel> { Key = type, Parsers = logLevelParsers });
+            var levelResult = RunSemanticAction(logLevelParsers, dataToParse, rules);
             if (levelResult.Result)
             {
                 this.Level = levelResult.Value;
             }
+            return levelResult.Result;
         }
-        
-        void ParseDateTime(string type)
+
+        bool ParseDateTime(string dataToParse, ISet<Rule> rules)
         {
-            var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> { Key = type, Parsers = dateTimeParsers });
+            var dateResult = RunSemanticAction(dateTimeParsers, dataToParse, rules);
             if (dateResult.Result)
             {
                 this.Occured = dateResult.Value;
             }
+            return dateResult.Result;
         }
-        
-        void ParseInt(string type)
+
+        bool ParseInt(string dataToParse, ISet<Rule> rules)
         {
-            var integerResult = this.RunSemanticAction(new SemanticAction<long> { Key = type, Parsers = integerParsers });
+            var integerResult = RunSemanticAction(integerParsers, dataToParse, rules);
             if (integerResult.Result)
             {
                 // TODO: this.Occured = dateResult.Value;
             }
+            return integerResult.Result;
         }
-        
-        void ParseString(string type)
+
+        void ParseString(string dataToParse, ISet<Rule> rules)
         {
-            var stringResult = this.RunSemanticAction(new SemanticAction<string> { Key = type, Parsers = stringParsers });
+            var stringResult = RunSemanticAction(stringParsers, dataToParse, rules);
             if (stringResult.Result)
             {
                 // TODO: this.Occured = dateResult.Value;
             }
         }
 
-        private void ApplySemanticRules(params string[] types)
+        private void ApplySemanticRules(IDictionary<string, ISet<Rule>> schema)
         {
-            if (this.properties == null)
+            if (this.properties == null || schema == null)
             {
                 return;
             }
-            foreach (var type in types)
-            {
-                switch (type)
-                {
-                    case "LogLevel":
-                        this.ParseLogLevel(type);
-                        break;
-                    case "DateTime":
-                        this.ParseDateTime(type);
-                        break;
-                    case "int":
-                        this.ParseInt(type);
-                        break;
-                    case "string":
-                        this.ParseString(type);
-                        break;
-                }
-            }
-        }
-
-        private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> action)
-        {
-// ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var property in this.properties)
             {
-                var r = ApplySemantic(property, action);
-                if (r.Result)
+                if (!schema.ContainsKey(property.Key))
                 {
-                    return r;
+                    continue;
                 }
+                var rules = schema[property.Key];
+                var matchedData = property.Value;
+                if (this.ParseLogLevel(matchedData, rules) || this.ParseDateTime(matchedData, rules) || this.ParseInt(matchedData, rules))
+                {
+                    continue;
+                }
+                this.ParseString(matchedData, rules);
             }
-            return new ParseResult<T>();
         }
 
-        private static ParseResult<T> ApplySemantic<T>(KeyValuePair<Semantic, string> semantic, SemanticAction<T> action)
+        private static ParseResult<T> RunSemanticAction<T>(IDictionary<string, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<Rule> rules)
         {
-            var matchedData = semantic.Value;
-            var defaultRule = new Rule(action.Key);
-            foreach (var rule in semantic.Key.CastingRules.Where(rule => rule == defaultRule || matchedData.Contains(rule.Pattern)))
+            var defaultRule = new Rule(rules.First().Type);
+            foreach (var rule in rules.Where(rule => rule == defaultRule || dataToParse.Contains(rule.Pattern)))
             {
-                var r = ApplyRule(rule, matchedData, action);
+                var r = ApplyRule(rule, dataToParse, parsers);
                 if (r.Result)
                 {
                     return r;
                 }
             }
-            return ApplyRule(defaultRule, matchedData, action);
+            return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
-        private struct SemanticAction<T>
+
+        private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
-            internal string Key;
-            internal IDictionary<string, Func<string, ParseResult<T>>> Parsers;
+            return parsers.ContainsKey(rule.Type) ? parsers[rule.Type](matchedData) : new ParseResult<T>();
         }
 
-
-        private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, SemanticAction<T> action)
-        {
-            return action.Parsers.ContainsKey(rule.Type) ? action.Parsers[rule.Type](matchedData) : new ParseResult<T>();
-        }
-
-        public void Cache(params string[] types)
+        public void Cache(IDictionary<string, ISet<Rule>> schema)
         {
             if (this.head != null && this.body != null)
             {
@@ -259,7 +237,7 @@ namespace logviewer.core
             {
                 this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
             }
-            this.ApplySemanticRules(types);
+            this.ApplySemanticRules(schema);
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
         }
@@ -277,7 +255,7 @@ namespace logviewer.core
         private StringBuilder bodyBuilder;
         private string head;
         private long ix;
-        private IDictionary<Semantic, string> properties;
+        private IDictionary<string, string> properties;
 
         #endregion
     }

@@ -115,10 +115,10 @@ namespace logviewer.tests
             Assert.That(matcher.CompilationFailed, Is.False);
             
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
-            Assert.That(result.ContainsKey(new Semantic("datetime")));
-            Assert.That(result.ContainsKey(new Semantic("meta")));
-            Assert.That(result.ContainsKey(new Semantic("level")));
-            Assert.That(result.ContainsKey(new Semantic("head")));
+            Assert.That(result.ContainsKey("datetime"));
+            Assert.That(result.ContainsKey("meta"));
+            Assert.That(result.ContainsKey("level"));
+            Assert.That(result.ContainsKey("head"));
         }
 
         [Test]
@@ -129,12 +129,12 @@ namespace logviewer.tests
             Assert.That(matcher.CompilationFailed, Is.False);
             
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
-            Assert.That(result.ContainsKey(new Semantic("datetime")));
+            Assert.That(result.ContainsKey("datetime"));
             Assert.That(result.Keys.Count, Is.EqualTo(1));
-            Assert.That(result.Keys.First().CastingRules.Contains(new Rule("*")));
+            Assert.That(matcher.MessageSchema.First().CastingRules.Contains(new Rule("*")));
             var rule = new Rule("*");
-            Assert.That(result.Keys.First().Contains(rule));
-            Assert.That(result.Keys.First().CastingRules.First(r => r == rule).Type, Is.EqualTo("DateTime"));
+            Assert.That(matcher.MessageSchema.First().Contains(rule));
+            Assert.That(matcher.MessageSchema.First().CastingRules.First(r => r == rule).Type, Is.EqualTo("DateTime"));
         }
         
         [Test]

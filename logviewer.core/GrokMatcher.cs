@@ -57,10 +57,10 @@ namespace logviewer.core
             return this.regex.IsMatch(s);
         }
 
-        public IDictionary<Semantic, string> Parse(string s)
+        public IDictionary<string, string> Parse(string s)
         {
             var match = this.regex.Match(s);
-            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic, semantic => match.Groups[semantic.Property].Value);
+            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
         }
     }
 }

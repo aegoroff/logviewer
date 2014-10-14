@@ -13,7 +13,7 @@ namespace logviewer.core
 {
     public sealed class LogStore : IDisposable
     {
-        private readonly ICollection<Semantic> schema;
+        
 
         #region Constants and Fields
 
@@ -28,7 +28,8 @@ namespace logviewer.core
         private readonly bool hasDateTimeProperty;
         private readonly string logLevelProperty;
         private readonly string dateTimeProperty;
-        private readonly string[] types;
+        private readonly ICollection<Semantic> schema;
+        private readonly IDictionary<string, ISet<Rule>> rules;
 
         #endregion
 
@@ -37,21 +38,15 @@ namespace logviewer.core
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
             this.schema = schema;
+            this.rules = this.schema != null ? this.schema.ToDictionary(s => s.Property, s => s.CastingRules) : null;
             this.hasLogLevelProperty = this.HasProperty("LogLevel");
             this.hasDateTimeProperty = this.HasProperty("DateTime");
             this.logLevelProperty = this.PropertyName("LogLevel");
             this.dateTimeProperty = this.PropertyName("DateTime");
-            this.types = this.SchemaTypes().ToArray();
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
             this.CreateTables(dbSize);
-        }
-
-        IEnumerable<string> SchemaTypes()
-        {
-            var def = new Rule("string");
-            return from semantic in this.schema from rule in semantic.CastingRules where rule == def select rule.Type;
         }
 
         private bool HasProperty(string type)
@@ -166,7 +161,7 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
-            message.Cache(this.types);
+            message.Cache(this.rules);
             // ugly but very fast
             var cmd = @"INSERT INTO Log(Ix, Header, Body" + additionalColumnList + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersList + ")";
             Action<IDbCommand> action = delegate(IDbCommand command)
