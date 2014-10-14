@@ -203,7 +203,7 @@ namespace logviewer.core
         {
             var matchedData = semantic.Value;
             var defaultRule = new Rule(action.Key);
-            foreach (var rule in semantic.Key.CastingRules.Where(rule => rule != defaultRule && matchedData.Contains(rule.Pattern)))
+            foreach (var rule in semantic.Key.CastingRules.Where(rule => rule == defaultRule || matchedData.Contains(rule.Pattern)))
             {
                 var r = ApplyRule(rule, matchedData, action);
                 if (r.Result)
