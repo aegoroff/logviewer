@@ -17,15 +17,17 @@ namespace logviewer.core
 
         #region Constants and Fields
 
-        private const string CreateIndexOnLevel = @"CREATE INDEX IF NOT EXISTS IX_Level ON Log (Level)";
+        private const string CreateColumnTemplate = @"{0} INTEGER NOT NULL";
+        private const string CreateIndexTemplate = @"CREATE INDEX IF NOT EXISTS IX_{0} ON Log ({0})";
+        private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
 
         private static readonly IDictionary<LogMessageParseOptions, string> additionalColumns = new Dictionary<LogMessageParseOptions, string>
         {
-            {LogMessageParseOptions.LogLevel, "Level INTEGER NOT NULL"},
-            {LogMessageParseOptions.DateTime, "Datetime INTEGER NOT NULL"}
-        }; 
+            {LogMessageParseOptions.LogLevel, "Level"},
+            {LogMessageParseOptions.DateTime, "Datetime"}
+        };
 
         #endregion
 
@@ -39,7 +41,22 @@ namespace logviewer.core
             this.CreateTables(dbSize);
         }
 
-        IEnumerable<string> ReadAdditionalColumns()
+        private IEnumerable<string> CreateAdditionalColumns()
+        {
+            return this.ReadAdditionalColumns().Select(column => string.Format(CreateColumnTemplate, column));
+        }
+
+        private IEnumerable<string> CreateAdditionalIndexes()
+        {
+            return this.ReadAdditionalColumns().Select(column => string.Format(CreateIndexTemplate, column));
+        }
+        
+        private IEnumerable<string> DropAdditionalIndexes()
+        {
+            return this.ReadAdditionalColumns().Select(column => string.Format(DropIndexTemplate, column));
+        }
+
+        private IEnumerable<string> ReadAdditionalColumns()
         {
             return from column in additionalColumns where this.parseOptions.HasFlag(column.Key) select column.Value;
         }
@@ -73,13 +90,14 @@ namespace logviewer.core
 
             var pages = Math.Min(sqliteAvailablePages, dbSize / PageSize + 1);
 
-            var colums = string.Join(",", ReadAdditionalColumns());
+            var colums = string.Join(",", this.CreateAdditionalColumns());
             var additionalCreate = string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
 
             var mmap = string.Format(mmapTemplate, dbSize);
             var cache = string.Format(cacheTemplate, pages);
             var createTable = string.Format(createTableTemplate, additionalCreate);
-            this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable, CreateIndexOnLevel);
+            this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable);
+            this.Index();
         }
 
         #endregion
@@ -105,12 +123,12 @@ namespace logviewer.core
 
         public void Index()
         {
-            this.connection.ExecuteNonQuery(CreateIndexOnLevel);
+            this.connection.ExecuteNonQuery(this.CreateAdditionalIndexes().ToArray());
         }
 
         public void NoIndex()
         {
-            this.connection.ExecuteNonQuery(@"DROP INDEX IF EXISTS IX_Level");
+            this.connection.ExecuteNonQuery(this.DropAdditionalIndexes().ToArray());
         }
 
         public void AddMessage(LogMessage message)

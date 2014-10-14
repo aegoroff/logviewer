@@ -59,7 +59,7 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
-        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel | LogMessageParseOptions.DateTime;
+        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel;
 
         #endregion
 
@@ -498,7 +498,7 @@ namespace logviewer.core
             }
             if (!append || this.store == null)
             {
-                this.store = new LogStore(dbSize);
+                this.store = new LogStore(dbSize, null, parseOptions);
             }
             GC.Collect();
             this.store.StartAddMessages();
