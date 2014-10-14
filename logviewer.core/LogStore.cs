@@ -22,6 +22,8 @@ namespace logviewer.core
         private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
+        private string additionalColumnList;
+        private string additionalParametersList;
 
         private static readonly IDictionary<LogMessageParseOptions, string> additionalColumns = new Dictionary<LogMessageParseOptions, string>
         {
@@ -60,6 +62,14 @@ namespace logviewer.core
         {
             return from column in additionalColumns where this.parseOptions.HasFlag(column.Key) select column.Value;
         }
+        
+        
+        private string CreateAdditionalColumnsList(string prefix = null)
+        {
+            var colums = string.Join(",", this.ReadAdditionalColumns().Select(s => prefix + s));
+            return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
+        }
+
 
         public string DatabasePath { get; private set; }
 
@@ -98,6 +108,8 @@ namespace logviewer.core
             var createTable = string.Format(createTableTemplate, additionalCreate);
             this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable);
             this.Index();
+            this.additionalColumnList = this.CreateAdditionalColumnsList();
+            this.additionalParametersList = this.CreateAdditionalColumnsList("@");
         }
 
         #endregion
@@ -134,11 +146,19 @@ namespace logviewer.core
         public void AddMessage(LogMessage message)
         {
             // ugly but very fast
-            var cmd = @"INSERT INTO Log(Ix, Header, Body, Level) VALUES (" + message.Ix + ", @Header, @Body, " + (int)message.Level + ")";
+            var cmd = @"INSERT INTO Log(Ix, Header, Body" + additionalColumnList + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersList + ")";
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
+                if (this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel))
+                {
+                    DatabaseConnection.AddParameter(command, "@" + additionalColumns[LogMessageParseOptions.LogLevel], (int)message.Level);
+                }
+                if (this.parseOptions.HasFlag(LogMessageParseOptions.DateTime))
+                {
+                    DatabaseConnection.AddParameter(command, "@" + additionalColumns[LogMessageParseOptions.DateTime], message.Occured.ToFileTime());
+                }
             };
             this.connection.ExecuteNonQuery(cmd, action);
         }
@@ -157,13 +177,23 @@ namespace logviewer.core
             var order = reverse ? "DESC" : "ASC";
 
             var where = Where(min, max, filter, useRegexp);
-            var query = string.Format("SELECT Header, Body, Level FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
+            
+            var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,
-                where);
+                where, additionalColumnList);
             Action<IDbCommand> beforeRead = command => AddParameters(command, min, max, filter, useRegexp);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
-                var msg = new LogMessage(rdr[0] as string, rdr[1] as string, (LogLevel) ((long) rdr[2]));
+                var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
+                if (this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel))
+                {
+                    msg.Level = (LogLevel)((long)rdr[additionalColumns[LogMessageParseOptions.LogLevel]]);
+                }
+                if (this.parseOptions.HasFlag(LogMessageParseOptions.DateTime))
+                {
+                    var fileTime = ((long)rdr[additionalColumns[LogMessageParseOptions.DateTime]]);
+                    msg.Occured = DateTime.FromFileTime(fileTime);
+                }
                 onReadMessage(msg);
             };
             this.connection.ExecuteReader(onRead, query, beforeRead, notCancelled);
@@ -182,11 +212,11 @@ namespace logviewer.core
             return result;
         }
 
-        private static string Where(LogLevel min, LogLevel max, string filter, bool useRegexp)
+        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
             var clauses = new[]
             {
-                LevelClause(min, max),
+                this.LevelClause(min, max),
                 FilterClause(filter, useRegexp)
             };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
@@ -197,14 +227,14 @@ namespace logviewer.core
             return "WHERE " + string.Join(" AND ", notEmpty);
         }
 
-        private static string LevelClause(LogLevel min, LogLevel max)
+        private string LevelClause(LogLevel min, LogLevel max)
         {
             var clause = new List<string>();
-            if (min != LogLevel.Trace)
+            if (this.SetMinLevel(min))
             {
                 clause.Add("Level >= @Min");
             }
-            if (max != LogLevel.Fatal)
+            if (this.SetMaxLevel(max))
             {
                 clause.Add("Level <= @Max");
             }
@@ -218,13 +248,13 @@ namespace logviewer.core
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
-        private static void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
+        private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
-            if (min != LogLevel.Trace)
+            if (this.SetMinLevel(min))
             {
                 DatabaseConnection.AddParameter(command, "@Min", (int)min);
             }
-            if (max != LogLevel.Fatal)
+            if (this.SetMaxLevel(max))
             {
                 DatabaseConnection.AddParameter(command, "@Max", (int)max);
             }
@@ -233,6 +263,16 @@ namespace logviewer.core
                 var f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
                 DatabaseConnection.AddParameter(command, "@Filter", f);
             }
+        }
+
+        private bool SetMaxLevel(LogLevel max)
+        {
+            return max != LogLevel.Fatal && this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel);
+        }
+
+        private bool SetMinLevel(LogLevel min)
+        {
+            return min != LogLevel.Trace && this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel);
         }
 
         #endregion

@@ -343,7 +343,7 @@ namespace logviewer.tests
             this.controller.MinFilter((int)LogLevel.Info);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(2));
         }
         
         [Test]

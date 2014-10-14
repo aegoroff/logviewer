@@ -26,11 +26,11 @@ namespace logviewer.core
                         "yyyy-MM-ddTHH:mm:ss.FFFK"
                     };
 
-        public LogMessage(string header, string body, LogLevel level)
+        public LogMessage(string header, string body)
         {
             this.head = header;
             this.body = body;
-            this.Level = level;
+            this.Level = LogLevel.None;
             this.ix = 0;
             this.semantic = null;
             this.bodyBuilder = null;
