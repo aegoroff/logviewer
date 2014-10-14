@@ -60,6 +60,19 @@ namespace logviewer.tests
             ParsingTemplate template1 = this.provider.ReadParsingTemplate();
             Assert.That(template1.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
         }
+        
+        [Test]
+        public void UpdateParsingTemplateWithFilter()
+        {
+            const string filter = "^#%{DATA}";
+            ParsingTemplate template = this.provider.ReadParsingTemplate();
+            template.StartMessage += "1";
+            template.Filter = filter;
+            this.provider.UpdateParsingTemplate(template);
+            ParsingTemplate template1 = this.provider.ReadParsingTemplate();
+            Assert.That(template1.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
+            Assert.That(template1.Filter, Is.EqualTo(filter));
+        }
 
         [Test]
         public void SecondSettingsObjectOnTheSameFile()
