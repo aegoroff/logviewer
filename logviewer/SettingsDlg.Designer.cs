@@ -49,17 +49,22 @@
             this.label1 = new System.Windows.Forms.Label();
             this.openLastFile = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.newTemplateMessageFilterBox = new System.Windows.Forms.TextBox();
+            this.newTemplateFilterLabel = new System.Windows.Forms.Label();
+            this.newTemplateNameLabel = new System.Windows.Forms.Label();
+            this.addNewTemplateBtn = new System.Windows.Forms.Button();
+            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
+            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
+            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
+            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
+            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
-            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
-            this.addNewTemplateBtn = new System.Windows.Forms.Button();
-            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
-            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
-            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
-            this.newTemplateNameLabel = new System.Windows.Forms.Label();
-            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
-            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
+            this.messageFilterBox = new System.Windows.Forms.TextBox();
+            this.messageFilterLabel = new System.Windows.Forms.Label();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
             this.messageStartPatternLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -67,21 +72,16 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.messageFilterLabel = new System.Windows.Forms.Label();
-            this.messageFilterBox = new System.Windows.Forms.TextBox();
-            this.newTemplateFilterLabel = new System.Windows.Forms.Label();
-            this.newTemplateMessageFilterBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.viewSettingsBox.SuspendLayout();
             this.fileSettingsBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.commonTemplatesBox.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -244,6 +244,78 @@
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // removeParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
+            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
+            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.newTemplateMessageFilterBox);
+            this.groupBox2.Controls.Add(this.newTemplateFilterLabel);
+            this.groupBox2.Controls.Add(this.newTemplateNameLabel);
+            this.groupBox2.Controls.Add(this.addNewTemplateBtn);
+            this.groupBox2.Controls.Add(this.newTemplateNameBox);
+            this.groupBox2.Controls.Add(this.cancelAddNewTemplateBtn);
+            this.groupBox2.Controls.Add(this.newPatternMessageStartLabel);
+            this.groupBox2.Controls.Add(this.newTemplateMessageStartBox);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.TabStop = false;
+            // 
+            // newTemplateMessageFilterBox
+            // 
+            resources.ApplyResources(this.newTemplateMessageFilterBox, "newTemplateMessageFilterBox");
+            this.newTemplateMessageFilterBox.Name = "newTemplateMessageFilterBox";
+            // 
+            // newTemplateFilterLabel
+            // 
+            resources.ApplyResources(this.newTemplateFilterLabel, "newTemplateFilterLabel");
+            this.newTemplateFilterLabel.Name = "newTemplateFilterLabel";
+            // 
+            // newTemplateNameLabel
+            // 
+            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
+            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
+            // 
+            // addNewTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
+            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
+            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
+            // 
+            // newTemplateNameBox
+            // 
+            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
+            this.newTemplateNameBox.Name = "newTemplateNameBox";
+            // 
+            // cancelAddNewTemplateBtn
+            // 
+            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
+            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
+            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
+            // 
+            // newPatternMessageStartLabel
+            // 
+            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
+            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
+            // 
+            // newTemplateMessageStartBox
+            // 
+            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
+            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
+            // 
+            // addNewParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
+            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
+            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
+            // 
             // label3
             // 
             resources.ApplyResources(this.label3, "label3");
@@ -267,53 +339,16 @@
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
             // 
-            // removeParsingTemplateBtn
+            // messageFilterBox
             // 
-            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
-            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
-            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
-            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
+            resources.ApplyResources(this.messageFilterBox, "messageFilterBox");
+            this.messageFilterBox.Name = "messageFilterBox";
+            this.messageFilterBox.TextChanged += new System.EventHandler(this.OnSetMessageFilter);
             // 
-            // addNewTemplateBtn
+            // messageFilterLabel
             // 
-            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
-            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
-            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
-            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
-            // 
-            // cancelAddNewTemplateBtn
-            // 
-            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
-            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
-            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
-            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
-            // 
-            // newTemplateMessageStartBox
-            // 
-            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
-            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
-            // 
-            // newPatternMessageStartLabel
-            // 
-            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
-            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
-            // 
-            // newTemplateNameLabel
-            // 
-            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
-            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
-            // 
-            // newTemplateNameBox
-            // 
-            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
-            this.newTemplateNameBox.Name = "newTemplateNameBox";
-            // 
-            // addNewParsingTemplateBtn
-            // 
-            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
-            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
-            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
-            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
+            resources.ApplyResources(this.messageFilterLabel, "messageFilterLabel");
+            this.messageFilterLabel.Name = "messageFilterLabel";
             // 
             // messageStartPatternBox
             // 
@@ -359,41 +394,6 @@
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.newTemplateMessageFilterBox);
-            this.groupBox2.Controls.Add(this.newTemplateFilterLabel);
-            this.groupBox2.Controls.Add(this.newTemplateNameLabel);
-            this.groupBox2.Controls.Add(this.addNewTemplateBtn);
-            this.groupBox2.Controls.Add(this.newTemplateNameBox);
-            this.groupBox2.Controls.Add(this.cancelAddNewTemplateBtn);
-            this.groupBox2.Controls.Add(this.newPatternMessageStartLabel);
-            this.groupBox2.Controls.Add(this.newTemplateMessageStartBox);
-            resources.ApplyResources(this.groupBox2, "groupBox2");
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.TabStop = false;
-            // 
-            // messageFilterLabel
-            // 
-            resources.ApplyResources(this.messageFilterLabel, "messageFilterLabel");
-            this.messageFilterLabel.Name = "messageFilterLabel";
-            // 
-            // messageFilterBox
-            // 
-            resources.ApplyResources(this.messageFilterBox, "messageFilterBox");
-            this.messageFilterBox.Name = "messageFilterBox";
-            this.messageFilterBox.TextChanged += new System.EventHandler(this.OnSetMessageFilter);
-            // 
-            // newTemplateFilterLabel
-            // 
-            resources.ApplyResources(this.newTemplateFilterLabel, "newTemplateFilterLabel");
-            this.newTemplateFilterLabel.Name = "newTemplateFilterLabel";
-            // 
-            // newTemplateMessageFilterBox
-            // 
-            resources.ApplyResources(this.newTemplateMessageFilterBox, "newTemplateMessageFilterBox");
-            this.newTemplateMessageFilterBox.Name = "newTemplateMessageFilterBox";
-            // 
             // SettingsDlg
             // 
             resources.ApplyResources(this, "$this");
@@ -413,12 +413,12 @@
             this.fileSettingsBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.commonTemplatesBox.ResumeLayout(false);
             this.commonTemplatesBox.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
