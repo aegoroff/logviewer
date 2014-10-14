@@ -146,42 +146,64 @@ namespace logviewer.core
             { "string", s => new ParseResult<string> { Result = true, Value = s } }
         };
 
-        private void ApplySemanticRules(LogMessageParseOptions options = LogMessageParseOptions.None)
+        void ParseLogLevel(string type)
+        {
+            var levelResult = this.RunSemanticAction(new SemanticAction<LogLevel> { Key = type, Parsers = logLevelParsers });
+            if (levelResult.Result)
+            {
+                this.Level = levelResult.Value;
+            }
+        }
+        
+        void ParseDateTime(string type)
+        {
+            var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> { Key = type, Parsers = dateTimeParsers });
+            if (dateResult.Result)
+            {
+                this.Occured = dateResult.Value;
+            }
+        }
+        
+        void ParseInt(string type)
+        {
+            var integerResult = this.RunSemanticAction(new SemanticAction<long> { Key = type, Parsers = integerParsers });
+            if (integerResult.Result)
+            {
+                // TODO: this.Occured = dateResult.Value;
+            }
+        }
+        
+        void ParseString(string type)
+        {
+            var stringResult = this.RunSemanticAction(new SemanticAction<string> { Key = type, Parsers = stringParsers });
+            if (stringResult.Result)
+            {
+                // TODO: this.Occured = dateResult.Value;
+            }
+        }
+
+        private void ApplySemanticRules(params string[] types)
         {
             if (this.properties == null)
             {
                 return;
             }
-            if (options.HasFlag(LogMessageParseOptions.LogLevel))
+            foreach (var type in types)
             {
-                var levelResult = this.RunSemanticAction(new SemanticAction<LogLevel> {Key = "LogLevel", Parsers = logLevelParsers});
-                if (levelResult.Result)
+                switch (type)
                 {
-                    this.Level = levelResult.Value;
-                }
-            }
-            if (options.HasFlag(LogMessageParseOptions.DateTime))
-            {
-                var dateResult = this.RunSemanticAction(new SemanticAction<DateTime> { Key = "DateTime", Parsers = dateTimeParsers });
-                if (dateResult.Result)
-                {
-                    this.Occured = dateResult.Value;
-                }
-            }
-            if (options.HasFlag(LogMessageParseOptions.Integer))
-            {
-                var integerResult = this.RunSemanticAction(new SemanticAction<long> { Key = "int", Parsers = integerParsers });
-                if (integerResult.Result)
-                {
-                    // TODO: this.Occured = dateResult.Value;
-                }
-            }
-            if (options.HasFlag(LogMessageParseOptions.String))
-            {
-                var stringResult = this.RunSemanticAction(new SemanticAction<string> { Key = "string", Parsers = stringParsers });
-                if (stringResult.Result)
-                {
-                    // TODO: this.Occured = dateResult.Value;
+                    case "LogLevel":
+                        this.ParseLogLevel(type);
+                        break;
+                    case "DateTime":
+                        this.ParseDateTime(type);
+                        break;
+                    case "int":
+                        this.ParseInt(type);
+                        break;
+                    case "string":
+                        this.ParseString(type);
+                        break;
                 }
             }
         }
@@ -189,9 +211,9 @@ namespace logviewer.core
         private ParseResult<T> RunSemanticAction<T>(SemanticAction<T> action)
         {
 // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var item in this.properties)
+            foreach (var property in this.properties)
             {
-                var r = ApplySemantic(item, action);
+                var r = ApplySemantic(property, action);
                 if (r.Result)
                 {
                     return r;
@@ -227,7 +249,7 @@ namespace logviewer.core
             return action.Parsers.ContainsKey(rule.Type) ? action.Parsers[rule.Type](matchedData) : new ParseResult<T>();
         }
 
-        public void Cache(LogMessageParseOptions options = LogMessageParseOptions.LogLevel)
+        public void Cache(params string[] types)
         {
             if (this.head != null && this.body != null)
             {
@@ -237,7 +259,7 @@ namespace logviewer.core
             {
                 this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
             }
-            this.ApplySemanticRules(options);
+            this.ApplySemanticRules(types);
             this.body = this.bodyBuilder.ToString();
             this.bodyBuilder.Clear();
         }

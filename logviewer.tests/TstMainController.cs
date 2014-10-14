@@ -123,7 +123,7 @@ namespace logviewer.tests
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        internal const string MessageStart = @"^%{TIMESTAMP_ISO8601:occured,DateTime}%{DATA}%{LOGLEVEL:level,LogLevel}%{DATA}";
+        internal const string MessageStart = @"^%{TIMESTAMP_ISO8601:Occured,DateTime}%{DATA}%{LOGLEVEL:Level,LogLevel}%{DATA}";
 
         [Test]
         public void AllFilters()
@@ -330,7 +330,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, "test log");
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
         }
         
         [Test]
@@ -339,7 +339,6 @@ namespace logviewer.tests
             this.ReadLogExpectations();
 
             File.WriteAllText(TestPath, MessageExamples);
-            this.controller.ParseOptions = LogMessageParseOptions.None;
             this.controller.MinFilter((int)LogLevel.Info);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
@@ -354,7 +353,6 @@ namespace logviewer.tests
             const string examples = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27T19:40:11,906Z+03 [5272] ERROR \nmessage body 2";
 
             File.WriteAllText(TestPath, examples);
-            this.controller.ParseOptions = LogMessageParseOptions.LogLevel | LogMessageParseOptions.DateTime;
             this.controller.MinFilter((int)LogLevel.Info);
             this.controller.StartReadLog();
             this.WaitReadingComplete();

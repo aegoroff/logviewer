@@ -59,7 +59,6 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
-        private LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel;
 
         #endregion
 
@@ -202,14 +201,14 @@ namespace logviewer.core
 
         public bool PendingStart { get; private set; }
 
-        public void StartReading(string filter, bool regexp)
+        public void StartReading(string messageFilter, bool regexp)
         {
-            if (!IsValidFilter(filter, regexp))
+            if (!IsValidFilter(messageFilter, regexp))
             {
                 return;
             }
 
-            this.UpdateMessageFilter(filter);
+            this.UpdateMessageFilter(messageFilter);
 
             this.prevInput = DateTime.Now;
 
@@ -230,7 +229,7 @@ namespace logviewer.core
                     });
                     this.RunOnGuiThread(() =>
                     {
-                        this.UpdateRecentFilters(filter);
+                        this.UpdateRecentFilters(messageFilter);
                         this.view.StartReading();
                     });
                 }
@@ -263,7 +262,7 @@ namespace logviewer.core
             }
         }
 
-        public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
+        public void BeginLogReading(int min, int max, string messageFilter, bool reverse, bool regexp)
         {
             this.settings.MinLevel = min;
             this.settings.MaxLevel = max;
@@ -271,7 +270,7 @@ namespace logviewer.core
             this.CancelPreviousTask();
             this.MinFilter(min);
             this.MaxFilter(max);
-            this.TextFilter(filter);
+            this.TextFilter(messageFilter);
             this.UserRegexp(regexp);
             this.Ordering(reverse);
             this.BeginLogReading();
@@ -498,7 +497,7 @@ namespace logviewer.core
             }
             if (!append || this.store == null)
             {
-                this.store = new LogStore(dbSize, null, parseOptions);
+                this.store = new LogStore(dbSize, null, this.matcher.MessageSchema);
             }
             GC.Collect();
             this.store.StartAddMessages();
@@ -567,7 +566,6 @@ namespace logviewer.core
             {
                 try
                 {
-                    message.Cache(this.parseOptions);
                     this.store.AddMessage(message);
                 }
                 finally
@@ -896,12 +894,6 @@ namespace logviewer.core
         public LogStore Store
         {
             get { return this.store; }
-        }
-
-        public LogMessageParseOptions ParseOptions
-        {
-            get { return this.parseOptions; }
-            set { this.parseOptions = value; }
         }
 
         private long queuedMessages;

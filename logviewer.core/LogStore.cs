@@ -13,7 +13,7 @@ namespace logviewer.core
 {
     public sealed class LogStore : IDisposable
     {
-        private readonly LogMessageParseOptions parseOptions;
+        private readonly ICollection<Semantic> schema;
 
         #region Constants and Fields
 
@@ -24,23 +24,44 @@ namespace logviewer.core
         private readonly DatabaseConnection connection;
         private string additionalColumnList;
         private string additionalParametersList;
-
-        private static readonly IDictionary<LogMessageParseOptions, string> additionalColumns = new Dictionary<LogMessageParseOptions, string>
-        {
-            {LogMessageParseOptions.LogLevel, "Level"},
-            {LogMessageParseOptions.DateTime, "Datetime"}
-        };
+        private readonly bool hasLogLevelProperty;
+        private readonly bool hasDateTimeProperty;
+        private readonly string logLevelProperty;
+        private readonly string dateTimeProperty;
+        private readonly string[] types;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public LogStore(long dbSize = 0L, string databaseFilePath = null, LogMessageParseOptions parseOptions = LogMessageParseOptions.LogLevel)
+        public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
-            this.parseOptions = parseOptions;
+            this.schema = schema;
+            this.hasLogLevelProperty = this.HasProperty("LogLevel");
+            this.hasDateTimeProperty = this.HasProperty("DateTime");
+            this.logLevelProperty = this.PropertyName("LogLevel");
+            this.dateTimeProperty = this.PropertyName("DateTime");
+            this.types = this.SchemaTypes().ToArray();
+
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
             this.CreateTables(dbSize);
+        }
+
+        IEnumerable<string> SchemaTypes()
+        {
+            var def = new Rule("string");
+            return from semantic in this.schema from rule in semantic.CastingRules where rule == def select rule.Type;
+        }
+
+        private bool HasProperty(string type)
+        {
+            return this.schema.SelectMany(s => s.CastingRules).Any(r => r.Type.Contains(type));
+        }
+        
+        private string PropertyName(string type)
+        {
+            return (from s in this.schema from rule in s.CastingRules where rule.Type.Contains(type) select s.Property).FirstOrDefault();
         }
 
         private IEnumerable<string> CreateAdditionalColumns()
@@ -60,7 +81,7 @@ namespace logviewer.core
 
         private IEnumerable<string> ReadAdditionalColumns()
         {
-            return from column in additionalColumns where this.parseOptions.HasFlag(column.Key) select column.Value;
+            return from semantic in schema select semantic.Property;
         }
         
         
@@ -145,19 +166,20 @@ namespace logviewer.core
 
         public void AddMessage(LogMessage message)
         {
+            message.Cache(this.types);
             // ugly but very fast
             var cmd = @"INSERT INTO Log(Ix, Header, Body" + additionalColumnList + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersList + ")";
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
-                if (this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel))
+                if (this.hasLogLevelProperty)
                 {
-                    DatabaseConnection.AddParameter(command, "@" + additionalColumns[LogMessageParseOptions.LogLevel], (int)message.Level);
+                    DatabaseConnection.AddParameter(command, "@" + logLevelProperty, (int)message.Level);
                 }
-                if (this.parseOptions.HasFlag(LogMessageParseOptions.DateTime))
+                if (this.hasDateTimeProperty)
                 {
-                    DatabaseConnection.AddParameter(command, "@" + additionalColumns[LogMessageParseOptions.DateTime], message.Occured.ToFileTime());
+                    DatabaseConnection.AddParameter(command, "@" + dateTimeProperty, message.Occured.ToFileTime());
                 }
             };
             this.connection.ExecuteNonQuery(cmd, action);
@@ -185,13 +207,13 @@ namespace logviewer.core
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
-                if (this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel))
+                if (this.hasLogLevelProperty)
                 {
-                    msg.Level = (LogLevel)((long)rdr[additionalColumns[LogMessageParseOptions.LogLevel]]);
+                    msg.Level = (LogLevel)((long)rdr[logLevelProperty]);
                 }
-                if (this.parseOptions.HasFlag(LogMessageParseOptions.DateTime))
+                if (this.hasDateTimeProperty)
                 {
-                    var fileTime = ((long)rdr[additionalColumns[LogMessageParseOptions.DateTime]]);
+                    var fileTime = ((long)rdr[dateTimeProperty]);
                     msg.Occured = DateTime.FromFileTime(fileTime);
                 }
                 onReadMessage(msg);
@@ -216,7 +238,7 @@ namespace logviewer.core
         {
             var clauses = new[]
             {
-                this.LevelClause(min, max),
+                LevelClause(min, max),
                 FilterClause(filter, useRegexp)
             };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
@@ -230,11 +252,11 @@ namespace logviewer.core
         private string LevelClause(LogLevel min, LogLevel max)
         {
             var clause = new List<string>();
-            if (this.SetMinLevel(min))
+            if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
                 clause.Add("Level >= @Min");
             }
-            if (this.SetMaxLevel(max))
+            if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
                 clause.Add("Level <= @Max");
             }
@@ -250,29 +272,19 @@ namespace logviewer.core
 
         private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
         {
-            if (this.SetMinLevel(min))
+            if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
-                DatabaseConnection.AddParameter(command, "@Min", (int)min);
+                DatabaseConnection.AddParameter(command, "@Min", (int) min);
             }
-            if (this.SetMaxLevel(max))
+            if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
-                DatabaseConnection.AddParameter(command, "@Max", (int)max);
+                DatabaseConnection.AddParameter(command, "@Max", (int) max);
             }
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                var f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
+                string f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
                 DatabaseConnection.AddParameter(command, "@Filter", f);
             }
-        }
-
-        private bool SetMaxLevel(LogLevel max)
-        {
-            return max != LogLevel.Fatal && this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel);
-        }
-
-        private bool SetMinLevel(LogLevel min)
-        {
-            return min != LogLevel.Trace && this.parseOptions.HasFlag(LogMessageParseOptions.LogLevel);
         }
 
         #endregion
