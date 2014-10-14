@@ -89,7 +89,7 @@ namespace logviewer.core
                 Name = DefaultParsingProfileName
             };
 
-            this.InsertParsingProfile(defaultTemplate);
+            this.InsertParsingTemplate(defaultTemplate);
         }
 
         private void CacheFormats()
@@ -325,7 +325,7 @@ namespace logviewer.core
             return (ColumnAttribute) column.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
         }
 
-        public void InsertParsingProfile(ParsingTemplate template)
+        public void InsertParsingTemplate(ParsingTemplate template)
         {
             var propertiesColumns = string.Join(",", from level in parsingTemplatePropertiesNames select level);
             var propertiesParams = string.Join(",", from level in parsingTemplatePropertiesNames select "@" + level);
@@ -618,7 +618,7 @@ namespace logviewer.core
                 StartMessage = GetStringValue("StartMessageTemplate")
             };
 
-            this.InsertParsingProfile(template);
+            this.InsertParsingTemplate(template);
 
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
         }

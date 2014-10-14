@@ -27,7 +27,7 @@ namespace logviewer.core
         IList<ParsingTemplate> ReadAllParsingTemplates();
         ParsingTemplate ReadParsingTemplate(int index);
         void UpdateParsingProfile(ParsingTemplate template);
-        void InsertParsingProfile(ParsingTemplate template);
+        void InsertParsingTemplate(ParsingTemplate template);
         void DeleteParsingProfile(int ix);
         RtfCharFormat FormatHead(LogLevel level);
         RtfCharFormat FormatBody(LogLevel level);

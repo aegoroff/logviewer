@@ -214,7 +214,7 @@ namespace logviewer.core
             t.Index = this.templateList.Count;
             Task.Factory.StartNew(delegate
             {
-                this.settings.InsertParsingProfile(t);
+                this.settings.InsertParsingTemplate(t);
                 var newList = this.settings.ReadParsingTemplateList();
                 this.RunOnGuiThread(delegate
                 {
