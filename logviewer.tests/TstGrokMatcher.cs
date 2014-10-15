@@ -139,7 +139,7 @@ namespace logviewer.tests
         [TestCase("%{SYSLOGPROG}", 2)]
         [TestCase("%{SYSLOGFACILITY}", 2)]
         [TestCase("%{SYSLOGBASE}", 6)]
-        [TestCase("%{NGINXACCESS}", 16)]
+        [TestCase("%{NGINXACCESS}", 15)]
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
             var matcher = new GrokMatcher(pattern);

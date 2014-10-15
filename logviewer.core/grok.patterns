@@ -35,7 +35,7 @@ UNIXPATH (?>/(?>[\w_%!$@:.,-]+|\\.)*)+
 TTY (?:/dev/(pts|tty([pq])?)(\w+)?/?(?:[0-9]+))
 WINPATH (?>[A-Za-z]+:|\\)(?:\\[^\\?*]*)+
 URIPROTO [A-Za-z]+(\+[A-Za-z+]+)?
-URIHOST %{IPORHOST}(?::%{POSINT:port})?
+URIHOST %{IPORHOST}(?::%{POSINT})?
 # uripath comes loosely from RFC1738, but mostly from what Firefox
 # doesn't turn into %XX
 URIPATH (?:/[A-Za-z0-9$.+!*'(){},~:;=@#%_\-]*)+

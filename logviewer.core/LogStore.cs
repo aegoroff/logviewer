@@ -54,7 +54,20 @@ namespace logviewer.core
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
             this.schema = schema;
-            this.rules = this.schema != null ? this.schema.ToDictionary(s => s.Property, s => s.CastingRules) : new Dictionary<string, ISet<Rule>>();
+            var dictionary = new Dictionary<string, ISet<Rule>>();
+            if (this.schema == null)
+            {
+                this.rules = new Dictionary<string, ISet<Rule>>();
+            }
+            else
+            {
+                foreach (var semantic in this.schema)
+                {
+                    var k = dictionary.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
+                    dictionary.Add(k, semantic.CastingRules);
+                }
+                this.rules = dictionary;
+            }
             this.hasLogLevelProperty = this.HasProperty("LogLevel");
             this.logLevelProperty = this.PropertyName("LogLevel");
 
