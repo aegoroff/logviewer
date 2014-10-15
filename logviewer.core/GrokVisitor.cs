@@ -14,10 +14,21 @@ namespace logviewer.core
     {
         public GrokVisitor()
         {
-            const string localPath = "grok.patterns";
-            var fullPath = Path.Combine(Extensions.AssemblyDirectory, localPath);
+            const string pattern = "*.patterns";
+            var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
+            if (patternFiles.Length == 0)
+            {
+                patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
+            }
+            foreach (var file in patternFiles)
+            {
+                this.AddTemplates(file);
+            }
+        }
 
-            var patterns = File.ReadAllLines(File.Exists(fullPath) ? fullPath : localPath);
+        private void AddTemplates(string fullPath)
+        {
+            var patterns = File.ReadAllLines(fullPath);
             foreach (var pattern in patterns)
             {
                 var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
@@ -26,14 +37,14 @@ namespace logviewer.core
                     continue;
                 }
                 var template = parts[0];
-                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || templates.ContainsKey(template))
+                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || this.templates.ContainsKey(template))
                 {
                     continue;
                 }
-                templates.Add(template, pattern.Substring(template.Length).Trim());
+                this.templates.Add(template, pattern.Substring(template.Length).Trim());
             }
         }
-        
+
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
         private const string PatternStart = "%{";
