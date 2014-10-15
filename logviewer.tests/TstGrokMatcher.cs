@@ -82,18 +82,11 @@ namespace logviewer.tests
         [TestCase("%{POSINT:num,small}")]
         [TestCase("%{INT:Id,'0'->LogLevel.T}")]
         [TestCase("%{INT:Id,'0'->LogLevel.None}")]
+        [TestCase("%{ID:Id,'0'->LogLevel.Trace}")]
         public void NegativeCompileTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
             Assert.That(matcher.Template, Is.EqualTo(pattern));
-            Assert.That(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
-        }
-        
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void CastingOnUnknownPattern()
-        {
-            var matcher = new GrokMatcher("%{ID:Id,'0'->LogLevel.Trace}");
             Assert.That(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
         }
 
