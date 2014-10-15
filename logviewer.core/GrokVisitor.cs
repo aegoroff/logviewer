@@ -149,7 +149,7 @@ namespace logviewer.core
 
                 if (!this.RecompilationNeeded)
                 {
-                    var r = new Regex("(" + PatternStart + @"[^:]+?:\S+?\" + PatternStop + ")");
+                    var r = new Regex(@"(%\{[^:]+?:\S+?\})");
                     var m = r.Match(this.regexp);
                     this.RecompilationNeeded = m.Success;
 

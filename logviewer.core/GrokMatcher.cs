@@ -43,6 +43,7 @@ namespace logviewer.core
 
                     if (grokVisitor.RecompilationNeeded)
                     {
+                        messageSchema.AddRange(grokVisitor.Schema);
                         this.Compile(grokVisitor.Template, options);
                         return;
                     }
@@ -76,6 +77,10 @@ namespace logviewer.core
 
         public IDictionary<string, string> Parse(string s)
         {
+            if (this.regex == null)
+            {
+                return null;
+            }
             var match = this.regex.Match(s);
             return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
         }
