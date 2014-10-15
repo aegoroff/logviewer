@@ -43,7 +43,7 @@ cast
 	;
 
 target
-	: TYPE_NAME (DOT TYPE_NAME)*
+	: TYPE_NAME (DOT TYPE_MEMBER)*
 	;
 
 PATTERN 
@@ -61,7 +61,11 @@ fragment NOT_QUOTED_STR : (~[}{%])+  ;
 QUOTED_STR : SHORT_STRING ;
 
 TYPE_NAME
-	: (LOWER_LETTER | UPPER_LETTER)+ {inSemantic}?
+	: (INT | INT32 | INT64 | LONG | LOG_LEVEL | DATE_TIME | STRING_TYPE | STRING_ALT_TYPE) {inSemantic}?
+	;
+
+TYPE_MEMBER
+	: (LEVEL_TRACE | LEVEL_DEBUG | LEVEL_INFO | LEVEL_WARN | LEVEL_ERROR | LEVEL_FATAL) {inSemantic}?
 	;
 
 COMMA : ',' ;
@@ -94,3 +98,19 @@ fragment SHORT_STRING
 fragment STRING_ESCAPE_SEQ
  : '\\' .
  ;
+
+fragment INT : 'int' ;
+fragment INT32 : 'Int32' ;
+fragment INT64 : 'Int64' ;
+fragment LONG : 'long' ;
+fragment DATE_TIME : 'DateTime' ;
+fragment LOG_LEVEL : 'LogLevel' ;
+fragment STRING_TYPE : 'string' ;
+fragment STRING_ALT_TYPE : 'String' ;
+
+fragment LEVEL_TRACE : 'Trace' ;
+fragment LEVEL_DEBUG : 'Debug' ;
+fragment LEVEL_INFO : 'Info' ;
+fragment LEVEL_WARN : 'Warn' ;
+fragment LEVEL_ERROR : 'Error' ;
+fragment LEVEL_FATAL : 'Error' ;
