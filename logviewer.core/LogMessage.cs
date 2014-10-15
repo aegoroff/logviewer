@@ -95,15 +95,7 @@ namespace logviewer.core
         private static readonly IDictionary<string, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
             <string, Func<string, ParseResult<LogLevel>>>
         {
-            {
-                "LogLevel", 
-                delegate(string s)
-                {
-                    LogLevel r;
-                    var success = Enum.TryParse(s, true, out r) && Enum.IsDefined(typeof(LogLevel), r);
-                    return new ParseResult<LogLevel> { Result = success, Value = r };
-                }
-            },
+            { "LogLevel", ParseLogLevel },
             { "LogLevel.Trace", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Trace } },
             { "LogLevel.Debug", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Debug } },
             { "LogLevel.Info", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Info } },
@@ -116,13 +108,7 @@ namespace logviewer.core
             <string, Func<string, ParseResult<DateTime>>>
         {
             {
-                "DateTime", 
-                delegate(string s)
-                {
-                    DateTime r;
-                    var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out r);
-                    return new ParseResult<DateTime> { Result = success, Value = r };
-                }
+                "DateTime", ParseDateTime
             },
         };
 
@@ -133,18 +119,32 @@ namespace logviewer.core
             { "int", ParseInteger },
         };
 
+        private static readonly IDictionary<string, Func<string, ParseResult<string>>> stringParsers = new Dictionary
+            <string, Func<string, ParseResult<string>>>
+        {
+            {"string", s => new ParseResult<string> {Result = true, Value = s}}
+        };
+
+        private static ParseResult<LogLevel> ParseLogLevel(string s)
+        {
+            LogLevel r;
+            var success = Enum.TryParse(s, true, out r) && Enum.IsDefined(typeof(LogLevel), r);
+            return new ParseResult<LogLevel> { Result = success, Value = r };
+        }
+        
+        private static ParseResult<DateTime> ParseDateTime(string s)
+        {
+            DateTime r;
+            var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out r);
+            return new ParseResult<DateTime> { Result = success, Value = r };
+        }
+        
         private static ParseResult<long> ParseInteger(string s)
         {
             long r;
             var success = long.TryParse(s, out r);
             return new ParseResult<long> { Result = success, Value = r };
         }
-
-        private static readonly IDictionary<string, Func<string, ParseResult<string>>> stringParsers = new Dictionary
-            <string, Func<string, ParseResult<string>>>
-        {
-            { "string", s => new ParseResult<string> { Result = true, Value = s } }
-        };
 
         bool ParseLogLevel(string dataToParse, ISet<Rule> rules)
         {
@@ -166,7 +166,7 @@ namespace logviewer.core
             return dateResult.Result;
         }
 
-        bool ParseInt(string dataToParse, ISet<Rule> rules)
+        bool ParseInteger(string dataToParse, ISet<Rule> rules)
         {
             var integerResult = RunSemanticAction(integerParsers, dataToParse, rules);
             if (integerResult.Result)
@@ -199,7 +199,7 @@ namespace logviewer.core
                 }
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
-                if (this.ParseLogLevel(matchedData, rules) || this.ParseDateTime(matchedData, rules) || this.ParseInt(matchedData, rules))
+                if (this.ParseLogLevel(matchedData, rules) || this.ParseDateTime(matchedData, rules) || this.ParseInteger(matchedData, rules))
                 {
                     continue;
                 }
