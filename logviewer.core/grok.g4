@@ -113,4 +113,4 @@ fragment LEVEL_DEBUG : 'Debug' ;
 fragment LEVEL_INFO : 'Info' ;
 fragment LEVEL_WARN : 'Warn' ;
 fragment LEVEL_ERROR : 'Error' ;
-fragment LEVEL_FATAL : 'Error' ;
+fragment LEVEL_FATAL : 'Fatal' ;

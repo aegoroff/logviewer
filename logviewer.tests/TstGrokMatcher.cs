@@ -55,6 +55,13 @@ namespace logviewer.tests
         [TestCase("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [TestCase("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [TestCase("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{INT:Id,'0'->LogLevel.Trace}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'1'->LogLevel.Debug}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'2'->LogLevel.Info}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'3'->LogLevel.Warn}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'4'->LogLevel.Error}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
@@ -73,6 +80,8 @@ namespace logviewer.tests
         [TestCase("%{POSINT}%%{POSINT}")]
         [TestCase("%{POSINT}}%{POSINT}")]
         [TestCase("%{POSINT:num,small}")]
+        [TestCase("%{INT:Id,'0'->LogLevel.T}")]
+        [TestCase("%{INT:Id,'0'->LogLevel.None}")]
         public void NegativeCompileTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
