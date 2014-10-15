@@ -191,6 +191,14 @@ namespace logviewer.core
 
         public void UpdateMessageStartPattern(string value)
         {
+            if (new GrokMatcher(value).CompilationFailed)
+            {
+                return;
+            }
+            if (this.template.StartMessage.Equals(value, StringComparison.Ordinal))
+            {
+                return;
+            }
             this.template.StartMessage = value;
             this.view.EnableSave(true);
         }
