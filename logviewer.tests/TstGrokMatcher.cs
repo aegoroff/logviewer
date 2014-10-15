@@ -88,6 +88,14 @@ namespace logviewer.tests
             Assert.That(matcher.Template, Is.EqualTo(pattern));
             Assert.That(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
         }
+        
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CastingOnUnknownPattern()
+        {
+            var matcher = new GrokMatcher("%{ID:Id,'0'->LogLevel.Trace}");
+            Assert.That(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
+        }
 
         [TestCase(",")]
         [TestCase(":")]
