@@ -961,16 +961,21 @@ namespace logviewer.core
 
         private void AddMessage(RtfDocument doc, LogMessage message)
         {
-            if (this.byLevel.ContainsKey(message.Level))
+            var logLvel = LogLevel.None;
+            if (this.store.HasLogLevelProperty)
             {
-                this.byLevel[message.Level] = this.byLevel[message.Level] + 1;
+                logLvel = (LogLevel)message.IntegerProperty(this.store.LogLevelProperty);
+            }
+            if (this.byLevel.ContainsKey(logLvel))
+            {
+                this.byLevel[logLvel] = this.byLevel[logLvel] + 1;
             }
             else
             {
-                this.byLevel.Add(message.Level, 1);
+                this.byLevel.Add(logLvel, 1);
             }
 
-            doc.AddText(message.Header.Trim(), this.settings.FormatHead(message.Level));
+            doc.AddText(message.Header.Trim(), this.settings.FormatHead(logLvel));
             doc.AddNewLine();
 
             var txt = message.Body;
@@ -979,7 +984,7 @@ namespace logviewer.core
                 doc.AddNewLine();
                 return;
             }
-            doc.AddText(txt.Trim(), this.settings.FormatBody(message.Level));
+            doc.AddText(txt.Trim(), this.settings.FormatBody(logLvel));
             doc.AddNewLine(3);
         }
 

@@ -25,9 +25,7 @@ namespace logviewer.core
         private string additionalColumnList;
         private string additionalParametersList;
         private readonly bool hasLogLevelProperty;
-        private readonly bool hasDateTimeProperty;
         private readonly string logLevelProperty;
-        private readonly string dateTimeProperty;
         private readonly ICollection<Semantic> schema;
         private readonly IDictionary<string, ISet<Rule>> rules;
 
@@ -38,11 +36,9 @@ namespace logviewer.core
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
             this.schema = schema;
-            this.rules = this.schema != null ? this.schema.ToDictionary(s => s.Property, s => s.CastingRules) : null;
+            this.rules = this.schema != null ? this.schema.ToDictionary(s => s.Property, s => s.CastingRules) : new Dictionary<string, ISet<Rule>>();
             this.hasLogLevelProperty = this.HasProperty("LogLevel");
-            this.hasDateTimeProperty = this.HasProperty("DateTime");
             this.logLevelProperty = this.PropertyName("LogLevel");
-            this.dateTimeProperty = this.PropertyName("DateTime");
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
@@ -76,7 +72,7 @@ namespace logviewer.core
 
         private IEnumerable<string> ReadAdditionalColumns()
         {
-            return from semantic in schema select semantic.Property;
+            return this.rules.Keys;
         }
         
         
@@ -88,6 +84,16 @@ namespace logviewer.core
 
 
         public string DatabasePath { get; private set; }
+
+        public bool HasLogLevelProperty
+        {
+            get { return this.hasLogLevelProperty; }
+        }
+
+        public string LogLevelProperty
+        {
+            get { return this.logLevelProperty; }
+        }
 
         private void CreateTables(long dbSize)
         {
@@ -168,13 +174,9 @@ namespace logviewer.core
             {
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
-                if (this.hasLogLevelProperty)
+                foreach (var param in this.rules.Keys)
                 {
-                    DatabaseConnection.AddParameter(command, "@" + logLevelProperty, (int)message.Level);
-                }
-                if (this.hasDateTimeProperty)
-                {
-                    DatabaseConnection.AddParameter(command, "@" + dateTimeProperty, message.Occured.ToFileTime());
+                    DatabaseConnection.AddParameter(command, "@" + param, message.IntegerProperty(param));
                 }
             };
             this.connection.ExecuteNonQuery(cmd, action);
@@ -202,14 +204,9 @@ namespace logviewer.core
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
-                if (this.hasLogLevelProperty)
+                foreach (var param in this.rules.Keys)
                 {
-                    msg.Level = (LogLevel)((long)rdr[logLevelProperty]);
-                }
-                if (this.hasDateTimeProperty)
-                {
-                    var fileTime = ((long)rdr[dateTimeProperty]);
-                    msg.Occured = DateTime.FromFileTime(fileTime);
+                    msg.UpdateIntegerProperty(param, (long)rdr[param]);
                 }
                 onReadMessage(msg);
             };
@@ -249,11 +246,11 @@ namespace logviewer.core
             var clause = new List<string>();
             if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
-                clause.Add(logLevelProperty + " >= @Min");
+                clause.Add(this.logLevelProperty + " >= @Min");
             }
             if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
-                clause.Add(logLevelProperty + " <= @Max");
+                clause.Add(this.logLevelProperty + " <= @Max");
             }
             return string.Join(" AND ", clause);
         }

@@ -33,9 +33,8 @@ namespace logviewer.core
             this.ix = 0;
             this.properties = null;
             this.bodyBuilder = null;
-
-            this.Level = LogLevel.None;
-            this.Occured = DateTime.MinValue;
+            this.integerProperties = new Dictionary<string, long>();
+            this.stringProperties = new Dictionary<string, string>();
         }
 
         public bool IsEmpty
@@ -146,42 +145,42 @@ namespace logviewer.core
             return new ParseResult<long> { Result = success, Value = r };
         }
 
-        bool ParseLogLevel(string dataToParse, ISet<Rule> rules)
+        bool ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
         {
-            var levelResult = RunSemanticAction(logLevelParsers, dataToParse, rules);
-            if (levelResult.Result)
+            var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
+            if (result.Result)
             {
-                this.Level = levelResult.Value;
+                this.integerProperties[property] = (int)result.Value;
             }
-            return levelResult.Result;
+            return result.Result;
         }
 
-        bool ParseDateTime(string dataToParse, ISet<Rule> rules)
+        bool ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
         {
-            var dateResult = RunSemanticAction(dateTimeParsers, dataToParse, rules);
-            if (dateResult.Result)
+            var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
+            if (result.Result)
             {
-                this.Occured = dateResult.Value;
+                this.integerProperties[property] = result.Value.ToFileTime();
             }
-            return dateResult.Result;
+            return result.Result;
         }
 
-        bool ParseInteger(string dataToParse, ISet<Rule> rules)
+        bool ParseInteger(string dataToParse, ISet<Rule> rules, string property)
         {
-            var integerResult = RunSemanticAction(integerParsers, dataToParse, rules);
-            if (integerResult.Result)
+            var result = RunSemanticAction(integerParsers, dataToParse, rules);
+            if (result.Result)
             {
-                // TODO: this.Occured = dateResult.Value;
+                this.integerProperties[property] = result.Value;
             }
-            return integerResult.Result;
+            return result.Result;
         }
 
-        void ParseString(string dataToParse, ISet<Rule> rules)
+        private void ParseString(string dataToParse, ISet<Rule> rules, string property)
         {
-            var stringResult = RunSemanticAction(stringParsers, dataToParse, rules);
-            if (stringResult.Result)
+            var result = RunSemanticAction(stringParsers, dataToParse, rules);
+            if (result.Result)
             {
-                // TODO: this.Occured = dateResult.Value;
+                this.stringProperties[property] = result.Value;
             }
         }
 
@@ -199,11 +198,11 @@ namespace logviewer.core
                 }
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
-                if (this.ParseLogLevel(matchedData, rules) || this.ParseDateTime(matchedData, rules) || this.ParseInteger(matchedData, rules))
+                if (this.ParseLogLevel(matchedData, rules, property.Key) || this.ParseDateTime(matchedData, rules, property.Key) || this.ParseInteger(matchedData, rules, property.Key))
                 {
                     continue;
                 }
-                this.ParseString(matchedData, rules);
+                this.ParseString(matchedData, rules, property.Key);
             }
         }
 
@@ -227,6 +226,30 @@ namespace logviewer.core
             return parsers.ContainsKey(rule.Type) ? parsers[rule.Type](matchedData) : new ParseResult<T>();
         }
 
+        public long IntegerProperty(string property)
+        {
+            long result;
+            this.integerProperties.TryGetValue(property, out result);
+            return result;
+        }
+        
+        public string StringProperty(string property)
+        {
+            string result;
+            this.stringProperties.TryGetValue(property, out result);
+            return result;
+        }
+        
+        public void UpdateIntegerProperty(string property, long value)
+        {
+            this.integerProperties[property] = value;
+        }
+
+        public void UpdateStringProperty(string property, string value)
+        {
+            this.stringProperties[property] = value;
+        }
+
         public void Cache(IDictionary<string, ISet<Rule>> schema)
         {
             if (this.head != null && this.body != null)
@@ -244,13 +267,18 @@ namespace logviewer.core
 
         public static LogMessage Create()
         {
-            return new LogMessage { Level = LogLevel.None, bodyBuilder = new StringBuilder() };
+            return new LogMessage
+            {
+                bodyBuilder = new StringBuilder(),
+                integerProperties = new Dictionary<string, long>(5),
+                stringProperties = new Dictionary<string, string>(5)
+            };
         }
 
         #region Constants and Fields
 
-        internal LogLevel Level;
-        internal DateTime Occured;
+        private IDictionary<string, long> integerProperties; 
+        private IDictionary<string, string> stringProperties; 
         private string body;
         private StringBuilder bodyBuilder;
         private string head;
