@@ -249,11 +249,11 @@ namespace logviewer.core
             var clause = new List<string>();
             if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
-                clause.Add("Level >= @Min");
+                clause.Add(logLevelProperty + " >= @Min");
             }
             if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
-                clause.Add("Level <= @Max");
+                clause.Add(logLevelProperty + " <= @Max");
             }
             return string.Join(" AND ", clause);
         }
