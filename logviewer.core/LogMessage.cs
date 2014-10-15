@@ -265,6 +265,11 @@ namespace logviewer.core
             }
             this.ApplySemanticRules(schema);
             this.body = this.bodyBuilder.ToString();
+            this.Clear();
+        }
+
+        public void Clear()
+        {
             this.bodyBuilder.Clear();
         }
 

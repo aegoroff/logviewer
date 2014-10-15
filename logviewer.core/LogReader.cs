@@ -111,6 +111,11 @@ namespace logviewer.core
                             onRead(message);
                             message = LogMessage.Create();
                         }
+                        else
+                        {
+                            // Remove trash from prev bad match
+                            message.Clear();
+                        }
                         message.AddProperties(properties);
                     }
                     message.AddLine(line);
