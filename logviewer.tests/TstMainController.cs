@@ -330,7 +330,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, "test log");
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(0));
+            Assert.That(this.controller.MessagesCount, NUnit.Framework.Is.EqualTo(1));
         }
         
         [Test]

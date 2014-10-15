@@ -28,6 +28,24 @@ namespace logviewer.core
         private readonly string logLevelProperty;
         private readonly ICollection<Semantic> schema;
         private readonly IDictionary<string, ISet<Rule>> rules;
+        private readonly IDictionary<string, PropertyType> typesStorage = new Dictionary<string, PropertyType>
+        {
+            { "LogLevel", PropertyType.Integer },
+            { "LogLevel.None", PropertyType.Integer },
+            { "LogLevel.Trace", PropertyType.Integer },
+            { "LogLevel.Debug", PropertyType.Integer },
+            { "LogLevel.Info", PropertyType.Integer },
+            { "LogLevel.Warn", PropertyType.Integer },
+            { "LogLevel.Error", PropertyType.Integer },
+            { "LogLevel.Fatal", PropertyType.Integer },
+            { "DateTime", PropertyType.Integer },
+            { "int", PropertyType.Integer },
+            { "Int32", PropertyType.Integer },
+            { "long", PropertyType.Integer },
+            { "Int64", PropertyType.Integer },
+            { "string", PropertyType.String },
+            { "String", PropertyType.String },
+        };
 
         #endregion
 
@@ -176,7 +194,14 @@ namespace logviewer.core
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
                 foreach (var param in this.rules.Keys)
                 {
-                    DatabaseConnection.AddParameter(command, "@" + param, message.IntegerProperty(param));
+                    if (this.DefinePropertyType(param) == PropertyType.Integer)
+                    {
+                        DatabaseConnection.AddParameter(command, "@" + param, message.IntegerProperty(param));
+                    }
+                    else
+                    {
+                        DatabaseConnection.AddParameter(command, "@" + param, message.StringProperty(param));
+                    }
                 }
             };
             this.connection.ExecuteNonQuery(cmd, action);
@@ -206,11 +231,27 @@ namespace logviewer.core
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
                 foreach (var param in this.rules.Keys)
                 {
-                    msg.UpdateIntegerProperty(param, (long)rdr[param]);
+                    if (this.DefinePropertyType(param) == PropertyType.Integer)
+                    {
+                        msg.UpdateIntegerProperty(param, (long)rdr[param]);
+                    }
+                    else
+                    {
+                        msg.UpdateStringProperty(param, rdr[param] as string);
+                    }
                 }
+
                 onReadMessage(msg);
             };
             this.connection.ExecuteReader(onRead, query, beforeRead, notCancelled);
+        }
+
+        private PropertyType DefinePropertyType(string param)
+        {
+            var ruleSet = this.rules[param];
+            PropertyType result;
+            this.typesStorage.TryGetValue(ruleSet.First().Type, out result);
+            return result;
         }
 
         public long CountMessages(

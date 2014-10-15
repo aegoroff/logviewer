@@ -102,6 +102,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyType.cs" />
     <Compile Include="RecentItemsStore.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="SafeRunner.cs" />

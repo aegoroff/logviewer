@@ -116,12 +116,15 @@ namespace logviewer.core
         {
             { "long", ParseInteger },
             { "int", ParseInteger },
+            { "Int32", ParseInteger },
+            { "Int64", ParseInteger },
         };
 
         private static readonly IDictionary<string, Func<string, ParseResult<string>>> stringParsers = new Dictionary
             <string, Func<string, ParseResult<string>>>
         {
-            {"string", s => new ParseResult<string> {Result = true, Value = s}}
+            {"string", s => new ParseResult<string> {Result = true, Value = s}},
+            {"String", s => new ParseResult<string> {Result = true, Value = s}}
         };
 
         private static ParseResult<LogLevel> ParseLogLevel(string s)
