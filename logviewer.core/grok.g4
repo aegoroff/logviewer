@@ -76,7 +76,7 @@ COLON : ':' ;
 fragment UNDERSCORE : '_' ;
 
 PROPERTY
-	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* { InSemantic(); } {!inSemantic}?
+	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT | UNDERSCORE)* { InSemantic(); } {!inSemantic}?
 	;
 
 fragment UPPER_LETTER : 'A' .. 'Z' ;
@@ -113,4 +113,4 @@ fragment LEVEL_DEBUG : 'Debug' ;
 fragment LEVEL_INFO : 'Info' ;
 fragment LEVEL_WARN : 'Warn' ;
 fragment LEVEL_ERROR : 'Error' ;
-fragment LEVEL_FATAL : 'Error' ;
+fragment LEVEL_FATAL : 'Fatal' ;

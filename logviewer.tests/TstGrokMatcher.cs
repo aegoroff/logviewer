@@ -55,6 +55,14 @@ namespace logviewer.tests
         [TestCase("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [TestCase("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [TestCase("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{INT:Id,'0'->LogLevel.Trace}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'1'->LogLevel.Debug}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'2'->LogLevel.Info}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'3'->LogLevel.Warn}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'4'->LogLevel.Error}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
@@ -73,6 +81,9 @@ namespace logviewer.tests
         [TestCase("%{POSINT}%%{POSINT}")]
         [TestCase("%{POSINT}}%{POSINT}")]
         [TestCase("%{POSINT:num,small}")]
+        [TestCase("%{INT:Id,'0'->LogLevel.T}")]
+        [TestCase("%{INT:Id,'0'->LogLevel.None}")]
+        [TestCase("%{ID:Id,'0'->LogLevel.Trace}")]
         public void NegativeCompileTests(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
@@ -120,6 +131,21 @@ namespace logviewer.tests
             Assert.That(result.ContainsKey("meta"));
             Assert.That(result.ContainsKey("level"));
             Assert.That(result.ContainsKey("head"));
+        }
+
+        [TestCase("%{IIS}", 1)]
+        [TestCase("%{COMMONAPACHELOG}", 10)]
+        [TestCase("%{COMBINEDAPACHELOG}", 12)]
+        [TestCase("%{SYSLOGPROG}", 2)]
+        [TestCase("%{SYSLOGFACILITY}", 2)]
+        [TestCase("%{SYSLOGBASE}", 6)]
+        [TestCase("%{NGINXACCESS}", 15)]
+        public void ParsePatternWithCastingInside(string pattern, int semanticCount)
+        {
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(semanticCount));
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(matcher.Template, Is.Not.EqualTo(pattern));
         }
 
         [Test]

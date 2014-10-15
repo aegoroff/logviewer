@@ -1,0 +1,6 @@
+NGUSERNAME [a-zA-Z\.\@\-\+_%]+
+NGUSER %{NGUSERNAME}
+NGINXACCESS %{IPORHOST:clientip} %{NGUSER:ident} %{NGUSER:auth} \[%{HTTPDATE:timestamp}\] "%{WORD:verb} %{URIPATHPARAM:request} HTTP/%{NUMBER:httpversion}" %{NUMBER:response}  (?:%{NUMBER:bytes}|-) (?:"(?:%{URI:referrer}|-)"|%{QS:referrer}) %{QS:agent} %{QS:xforwardedfor} %{IPORHOST:host} %{BASE10NUM:request_duration}
+
+# IIS 7.5
+IIS %{TIMESTAMP_ISO8601} %{IPORHOST} %{WORD} %{URIPATH} %{NOTSPACE} %{NUMBER} %{NOTSPACE} %{IPORHOST} %{NOTSPACE} %{NUMBER:Response,'20'->LogLevel.Info,'40'->LogLevel.Error,'50'->LogLevel.Fatal,'*'->LogLevel.Warn} %{NUMBER} %{NUMBER} %{NUMBER}

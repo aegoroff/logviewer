@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace logviewer.core
 {
@@ -14,10 +15,21 @@ namespace logviewer.core
     {
         public GrokVisitor()
         {
-            const string localPath = "grok.patterns";
-            var fullPath = Path.Combine(Extensions.AssemblyDirectory, localPath);
+            const string pattern = "*.patterns";
+            var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
+            if (patternFiles.Length == 0)
+            {
+                patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
+            }
+            foreach (var file in patternFiles)
+            {
+                this.AddTemplates(file);
+            }
+        }
 
-            var patterns = File.ReadAllLines(File.Exists(fullPath) ? fullPath : localPath);
+        private void AddTemplates(string fullPath)
+        {
+            var patterns = File.ReadAllLines(fullPath);
             foreach (var pattern in patterns)
             {
                 var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
@@ -26,14 +38,14 @@ namespace logviewer.core
                     continue;
                 }
                 var template = parts[0];
-                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || templates.ContainsKey(template))
+                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || this.templates.ContainsKey(template))
                 {
                     continue;
                 }
-                templates.Add(template, pattern.Substring(template.Length).Trim());
+                this.templates.Add(template, pattern.Substring(template.Length).Trim());
             }
         }
-        
+
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
         private const string PatternStart = "%{";
@@ -50,6 +62,8 @@ namespace logviewer.core
         {
             get { return this.stringBuilder.ToString(); }
         }
+
+        public bool RecompilationNeeded { get;private set ;}
 
         public ICollection<Semantic> Schema
         {
@@ -132,6 +146,43 @@ namespace logviewer.core
                     }
                     continueMatch = this.regexp.Contains(PatternStart);
                 } while (continueMatch && matchFound);
+
+                if (!this.RecompilationNeeded)
+                {
+                    var r = new Regex(@"(%\{[^:]+?:\S+?\})");
+                    var m = r.Match(this.regexp);
+                    this.RecompilationNeeded = m.Success;
+
+                    if (this.RecompilationNeeded)
+                    {
+                        var ix = 0;
+                        var sb = new StringBuilder();
+                        do
+                        {
+                            var capture = m.Groups[1];
+                            if (capture.Index > 0)
+                            {
+                                var substr = this.regexp.Substring(ix, capture.Index - ix);
+                                Escape(sb, substr);
+                            }
+                            ix = capture.Index + capture.Length;
+                            sb.Append(capture.Value);
+                            m = m.NextMatch();
+                            if (m.Success)
+                            {
+                                continue;
+                            }
+                            var tailLength = this.regexp.Length - ix;
+                            if (tailLength <= 0)
+                            {
+                                continue;
+                            }
+                            var tail = this.regexp.Substring(ix, tailLength);
+                            Escape(sb, tail);
+                        } while (m.Success);
+                        this.regexp = sb.ToString();
+                    }
+                }
                 
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
@@ -147,6 +198,13 @@ namespace logviewer.core
                 this.stringBuilder.Append(PatternStop);
             }
             return this.VisitChildren(context);
+        }
+
+        private static void Escape(StringBuilder sb, string str)
+        {
+            sb.Append("'");
+            sb.Append(str.Replace("'", @"\'"));
+            sb.Append("'");
         }
 
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
