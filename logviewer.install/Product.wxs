@@ -120,6 +120,11 @@
 								Name="grok.patterns"
 								Source="$(var.SourcePath)\grok.patterns"
 								DiskId="1"/>
+                            <File
+								Id="webservers.patterns"
+								Name="webservers.patterns"
+								Source="$(var.SourcePath)\webservers.patterns"
+								DiskId="1"/>
 						</Component>
                         <Directory Id="ru" Name="ru">
                             <Component Id="logviewer.resources.ru" Guid="{12C3AFFE-0000-4965-B0E2-293AF3AA4A78}">
