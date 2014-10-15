@@ -132,6 +132,22 @@ namespace logviewer.tests
             Assert.That(result.ContainsKey("head"));
         }
 
+        [TestCase("%{IIS}", 1)]
+        [TestCase("%{COMMONAPACHELOG}", 10)]
+        [TestCase("%{COMMONAPACHELOG}", 12)]
+        [TestCase("%{SYSLOGPROG}", 2)]
+        [TestCase("%{SYSLOGFACILITY}", 2)]
+        [TestCase("%{SYSLOGBASE}", 6)]
+        [TestCase("%{NGINXACCESS}", 15)]
+        public void ParsePatternWithCastingInside(string pattern, int semanticCount)
+        {
+            const string p = "%{IIS}";
+            var matcher = new GrokMatcher(p);
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(1));
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(matcher.Template, Is.Not.EqualTo(p));
+        }
+
         [Test]
         public void ParseRealMessageNonDefaultCasting()
         {

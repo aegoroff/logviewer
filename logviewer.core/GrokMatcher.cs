@@ -40,6 +40,13 @@ namespace logviewer.core
                 {
                     var grokVisitor = new GrokVisitor();
                     grokVisitor.Visit(tree);
+
+                    if (grokVisitor.RecompilationNeeded)
+                    {
+                        this.Compile(grokVisitor.Template, options);
+                        return;
+                    }
+
                     this.Template = grokVisitor.Template;
                     this.messageSchema.AddRange(grokVisitor.Schema);
                 }
