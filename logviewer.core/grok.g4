@@ -76,7 +76,7 @@ COLON : ':' ;
 fragment UNDERSCORE : '_' ;
 
 PROPERTY
-	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT)* { InSemantic(); } {!inSemantic}?
+	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT | UNDERSCORE)* { InSemantic(); } {!inSemantic}?
 	;
 
 fragment UPPER_LETTER : 'A' .. 'Z' ;

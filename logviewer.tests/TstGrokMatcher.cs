@@ -62,6 +62,7 @@ namespace logviewer.tests
         [TestCase("%{INT:Id,'4'->LogLevel.Error}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [TestCase("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [TestCase("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
@@ -134,18 +135,17 @@ namespace logviewer.tests
 
         [TestCase("%{IIS}", 1)]
         [TestCase("%{COMMONAPACHELOG}", 10)]
-        [TestCase("%{COMMONAPACHELOG}", 12)]
+        [TestCase("%{COMBINEDAPACHELOG}", 12)]
         [TestCase("%{SYSLOGPROG}", 2)]
         [TestCase("%{SYSLOGFACILITY}", 2)]
         [TestCase("%{SYSLOGBASE}", 6)]
         [TestCase("%{NGINXACCESS}", 15)]
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
-            const string p = "%{IIS}";
-            var matcher = new GrokMatcher(p);
-            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(1));
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(semanticCount));
             Assert.That(matcher.CompilationFailed, Is.False);
-            Assert.That(matcher.Template, Is.Not.EqualTo(p));
+            Assert.That(matcher.Template, Is.Not.EqualTo(pattern));
         }
 
         [Test]
