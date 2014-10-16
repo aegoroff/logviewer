@@ -275,7 +275,8 @@ namespace logviewer.core
             const string cmd = @"
                     SELECT
                         Ix,                        
-                        Name
+                        Name,
+                        StartMessage
                     FROM
                         ParsingTemplates
                     ORDER BY Ix
@@ -283,7 +284,7 @@ namespace logviewer.core
 
             var result = new List<ParsingTemplate>();
 
-            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string });
+            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string, StartMessage = rdr[2] as string });
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
 
             ExecuteQuery(action);

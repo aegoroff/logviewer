@@ -297,7 +297,7 @@ namespace logviewer
 
         public void CreateTemplateSelectionItem(ParsingTemplate template, int current)
         {
-            var result = new ToolStripMenuItem(template.Name)
+            var result = new ToolStripMenuItem(template.DisplayName)
             {
                 Tag = template.Index,
                 Checked = template.Index == current
