@@ -55,6 +55,10 @@ namespace logviewer.core
                 this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
 
                 this.templateList = this.settings.ReadParsingTemplateList();
+                if (this.parsingTemplateIndex > templateList.Count - 1)
+                {
+                    this.parsingTemplateIndex = 0;
+                }
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
                 this.formData.Colors = new Dictionary<LogLevel, Color>();
                 foreach (var logLevel in SelectLevels(l => l != LogLevel.None))
@@ -206,6 +210,12 @@ namespace logviewer.core
         public void UpdateMessageFilter(string value)
         {
             this.template.Filter = value;
+            this.view.EnableSave(true);
+        }
+        
+        public void UpdateCompiled(bool value)
+        {
+            this.template.Compiled = value;
             this.view.EnableSave(true);
         }
         

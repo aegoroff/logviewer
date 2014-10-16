@@ -72,6 +72,8 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.messageCompiledBox = new System.Windows.Forms.CheckBox();
+            this.newMessageCompiledBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -253,6 +255,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.newMessageCompiledBox);
             this.groupBox2.Controls.Add(this.newTemplateMessageFilterBox);
             this.groupBox2.Controls.Add(this.newTemplateFilterLabel);
             this.groupBox2.Controls.Add(this.newTemplateNameLabel);
@@ -331,6 +334,7 @@
             // 
             // commonTemplatesBox
             // 
+            this.commonTemplatesBox.Controls.Add(this.messageCompiledBox);
             this.commonTemplatesBox.Controls.Add(this.messageFilterBox);
             this.commonTemplatesBox.Controls.Add(this.messageFilterLabel);
             this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
@@ -393,6 +397,19 @@
             // 
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
+            // 
+            // messageCompiledBox
+            // 
+            resources.ApplyResources(this.messageCompiledBox, "messageCompiledBox");
+            this.messageCompiledBox.Name = "messageCompiledBox";
+            this.messageCompiledBox.UseVisualStyleBackColor = true;
+            this.messageCompiledBox.CheckedChanged += new System.EventHandler(this.OnSetCompiled);
+            // 
+            // newMessageCompiledBox
+            // 
+            resources.ApplyResources(this.newMessageCompiledBox, "newMessageCompiledBox");
+            this.newMessageCompiledBox.Name = "newMessageCompiledBox";
+            this.newMessageCompiledBox.UseVisualStyleBackColor = true;
             // 
             // SettingsDlg
             // 
@@ -468,5 +485,7 @@
         private System.Windows.Forms.TextBox messageFilterBox;
         private System.Windows.Forms.Label newTemplateFilterLabel;
         private System.Windows.Forms.TextBox newTemplateMessageFilterBox;
+        private System.Windows.Forms.CheckBox newMessageCompiledBox;
+        private System.Windows.Forms.CheckBox messageCompiledBox;
     }
 }
