@@ -78,13 +78,13 @@ namespace logviewer.core
         private void SetCurrentParsingTemplate()
         {
             var template = this.settings.ReadParsingTemplate();
-            this.CreateMessageHead(template.StartMessage);
+            this.CreateMessageHead(template.StartMessage, template.Compiled);
             this.CreateMessageFilter(template.Filter);
         }
 
-        private void CreateMessageHead(string startMessagePattern)
+        private void CreateMessageHead(string startMessagePattern, bool compiled)
         {
-            this.matcher = new GrokMatcher(startMessagePattern, this.options);
+            this.matcher = new GrokMatcher(startMessagePattern, compiled ? options | RegexOptions.Compiled : options);
         }
         
         private void CreateMessageFilter(string messageFilter)
@@ -813,7 +813,7 @@ namespace logviewer.core
             var template = this.settings.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
-                this.CreateMessageHead(template.StartMessage);
+                this.CreateMessageHead(template.StartMessage, template.Compiled);
             }
             var value = this.settings.PageSize;
             if (this.pageSize != value)
