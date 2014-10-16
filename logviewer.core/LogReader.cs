@@ -40,6 +40,7 @@ namespace logviewer.core
         public event EventHandler EncodingDetectionStarted;
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
         public event EventHandler CompilationStarted;
+        public event EventHandler CompilationFinished;
 
         public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
         {
@@ -116,6 +117,15 @@ namespace logviewer.core
                     }
 
                     var properties = this.matcher.Parse(line);
+
+                    // Occured only after first row
+                    if (!compiled)
+                    {
+                        if (this.CompilationFinished != null)
+                        {
+                            this.CompilationFinished(this, new EventArgs());
+                        }
+                    }
 
                     compiled = true;
 

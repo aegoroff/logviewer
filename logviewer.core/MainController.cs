@@ -507,6 +507,7 @@ namespace logviewer.core
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
             reader.CompilationStarted += OnCompilationStarted;
+            reader.CompilationFinished += this.OnCompilationFinished;
             reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
             Encoding inputEncoding;
@@ -544,11 +545,17 @@ namespace logviewer.core
                 this.store.FinishAddMessages();
                 reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 reader.CompilationStarted -= this.OnCompilationStarted;
+                reader.CompilationFinished -= this.OnCompilationFinished;
                 reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             }
 
             this.ReadLogFromInternalStore(false);
+        }
+
+        private void OnCompilationFinished(object sender, EventArgs eventArgs)
+        {
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.PatternCompilationFinished));
         }
 
         private void OnCompilationStarted(object sender, EventArgs eventArgs)

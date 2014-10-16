@@ -205,11 +205,20 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pattern compilation in progress ....
+        ///   Looks up a localized string similar to Template compilation in progress ....
         /// </summary>
         internal static string PatternCompilation {
             get {
                 return ResourceManager.GetString("PatternCompilation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Template compilation finished. Log reading in progress ....
+        /// </summary>
+        internal static string PatternCompilationFinished {
+            get {
+                return ResourceManager.GetString("PatternCompilationFinished", resourceCulture);
             }
         }
         

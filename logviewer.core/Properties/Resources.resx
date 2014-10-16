@@ -166,7 +166,10 @@
     <value>munute</value>
   </data>
   <data name="PatternCompilation" xml:space="preserve">
-    <value>Pattern compilation in progress ...</value>
+    <value>Template compilation in progress ...</value>
+  </data>
+  <data name="PatternCompilationFinished" xml:space="preserve">
+    <value>Template compilation finished. Log reading in progress ...</value>
   </data>
   <data name="ReadCompletedTemplate" xml:space="preserve">
     <value>Read completed.  Taken {0}</value>

@@ -168,6 +168,9 @@
   <data name="PatternCompilation" xml:space="preserve">
     <value>Идет компиляция шаблона ...</value>
   </data>
+  <data name="PatternCompilationFinished" xml:space="preserve">
+    <value>Компиляция шаблона закончена. Идет чтение журнала ...</value>
+  </data>
   <data name="ReadCompletedTemplate" xml:space="preserve">
     <value>Чтение завершено.  за {0}</value>
   </data>
