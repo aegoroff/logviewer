@@ -20,6 +20,10 @@ namespace logviewer.tests
         [TestCase("str%{ID}str%{DAT}str")]
         [TestCase("%{ID}\"%{DAT}")]
         [TestCase("%{ID}'%{DAT}")]
+        [TestCase("%{ID}\" %{DAT}")]
+        [TestCase("%{ID}' %{DAT}")]
+        [TestCase("%{ID} \"%{DAT}")]
+        [TestCase("%{ID} '%{DAT}")]
         public void PositiveCompileTestsNotChangingString(string pattern)
         {
             this.PositiveCompileTestsThatChangeString(pattern, pattern);
@@ -139,7 +143,7 @@ namespace logviewer.tests
         [TestCase("%{SYSLOGPROG}", 2)]
         [TestCase("%{SYSLOGFACILITY}", 2)]
         [TestCase("%{SYSLOGBASE}", 6)]
-        [TestCase("%{NGINXACCESS}", 15)]
+        [TestCase("%{NGINXACCESS}", 16)]
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
             var matcher = new GrokMatcher(pattern);

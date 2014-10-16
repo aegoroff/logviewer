@@ -75,6 +75,7 @@ namespace logviewer.core
             this.upgrades.Add(Upgrade2);
             this.upgrades.Add(Upgrade3);
             this.upgrades.Add(Upgrade4);
+            this.upgrades.Add(Upgrade5);
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -312,7 +313,15 @@ namespace logviewer.core
                 foreach (var column in parsingTemplateProperties)
                 {
                     var attr = GetColumnAttribute(column);
-                    column.SetValue(result, rdr[attr.Name] as string, null);
+                    if (column.PropertyType == typeof(bool))
+                    {
+                        var v = rdr[attr.Name];
+                        column.SetValue(result, (bool)v, null);
+                    }
+                    else
+                    {
+                        column.SetValue(result, rdr[attr.Name] as string, null);
+                    }
                 }
             };
 
@@ -454,7 +463,7 @@ namespace logviewer.core
         private string ParsingTeplateCreateCmd()
         {
             var propertiesCreate = string.Join(",",
-                from ColumnAttribute member in this.parsingTemplatePropertiesColumns select string.Format("{0} TEXT {1} NULL", member.Name, member.Nullable ? string.Empty : "NOT"));
+                from ColumnAttribute member in this.parsingTemplatePropertiesColumns select string.Format("{0} {2} {1} NULL", member.Name, member.Nullable ? string.Empty : "NOT", member.Name == "Compiled" ? "BOOLEAN" : "TEXT"));
             const string parsingTemplates = @"
                         CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
@@ -569,6 +578,20 @@ namespace logviewer.core
             connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
             connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
             connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Filter TEXT NULL");
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
+        }
+        
+        void Upgrade5(DatabaseConnection connection)
+        {
+            var properties = string.Join(",",
+                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Compiled", StringComparison.Ordinal)) select member);
+
+            properties = "Ix," + properties;
+            
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
+            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Compiled BOOLEAN NOT NULL");
             connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
             connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
         }

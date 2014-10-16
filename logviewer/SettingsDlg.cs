@@ -44,6 +44,7 @@ namespace logviewer
         {
             this.messageStartPatternBox.Text = template.StartMessage;
             this.messageFilterBox.Text = template.Filter;
+            this.messageCompiledBox.Checked = template.Compiled;
         }
 
         public void AddTemplateName(string name)
@@ -149,6 +150,7 @@ namespace logviewer
             this.parsingTemplateSelector.Enabled = enabled;
             this.messageStartPatternBox.Enabled = enabled;
             this.messageFilterBox.Enabled = enabled;
+            this.messageCompiledBox.Enabled = enabled;
             this.resetColorsBtn.Enabled = enabled;
         }
 
@@ -169,7 +171,8 @@ namespace logviewer
                 cancelAddNewTemplateBtn,
                 newTemplateFilterLabel,
                 newTemplateMessageFilterBox,
-                groupBox2
+                groupBox2,
+                newMessageCompiledBox
             };
 
             foreach (var control in controls)
@@ -194,6 +197,7 @@ namespace logviewer
                     Name = this.newTemplateNameBox.Text,
                     StartMessage = this.newTemplateMessageStartBox.Text,
                     Filter = this.newTemplateMessageFilterBox.Text,
+                    Compiled = this.newMessageCompiledBox.Checked,
                 };
             }
         }
@@ -221,6 +225,11 @@ namespace logviewer
         private void OnSetMessageFilter(object sender, EventArgs e)
         {
             this.controller.UpdateMessageFilter(this.messageFilterBox.Text);
+        }
+        
+        private void OnSetCompiled(object sender, EventArgs e)
+        {
+            this.controller.UpdateCompiled(this.messageCompiledBox.Checked);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)

@@ -13,6 +13,19 @@ namespace logviewer.core
 {
     public class GrokVisitor : GrokBaseVisitor<string>
     {
+        private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
+        private readonly List<Semantic> schema = new List<Semantic>();
+        private readonly List<string> agregattor = new List<string>();
+        private readonly List<int> recompileIndexes = new List<int>();
+        private readonly Dictionary<int, string> recompileProperties = new Dictionary<int, string>();
+        private string compiledPattern;
+        private string property;
+        private bool doNotWrapCurrentIntoNamedMatchGroup;
+
+        private const string PatternStart = "%{";
+        private const string PatternStop = "}";
+        private const string NamedPattern = @"(?<{0}>{1})";
+        
         public GrokVisitor()
         {
             const string pattern = "*.patterns";
@@ -46,28 +59,33 @@ namespace logviewer.core
             }
         }
 
-        private readonly StringBuilder stringBuilder = new StringBuilder();
-
-        private const string PatternStart = "%{";
-        private const string PatternStop = "}";
-        const string NamedPattern = @"(?<{0}>{1})";
-
-        readonly Dictionary<string, string> templates = new Dictionary<string, string>();
-
-        readonly List<Semantic> schema = new List<Semantic>();
-        string regexp;
-        string property;
-
         public string Template
         {
-            get { return this.stringBuilder.ToString(); }
+            get { return string.Join(string.Empty, this.agregattor); }
         }
 
-        public bool RecompilationNeeded { get;private set ;}
+        public bool RecompilationNeeded { get; private set; }
 
         public ICollection<Semantic> Schema
         {
             get { return this.schema; }
+        }
+
+        internal IList<int> RecompileIndexes
+        {
+            get { return this.recompileIndexes; }
+        }
+
+        internal string GetRecompile(int ix)
+        {
+            return this.agregattor[ix];
+        }
+
+        internal void SetRecompiled(int ix, string recompiled)
+        {
+            this.agregattor[ix] = this.recompileProperties.ContainsKey(ix)
+                ? string.Format(NamedPattern, this.recompileProperties[ix], recompiled)
+                : recompiled;
         }
 
         private void AddSemantic(Rule rule)
@@ -79,8 +97,26 @@ namespace logviewer.core
         private void AddSemantic(Semantic s)
         {
             this.schema.Add(s);
-            this.regexp = string.Format(NamedPattern, this.property, this.regexp);
-            this.stringBuilder.Append(this.regexp);
+
+            this.compiledPattern = this.doNotWrapCurrentIntoNamedMatchGroup
+                ? this.compiledPattern
+                : string.Format(NamedPattern, this.property, this.compiledPattern);
+            this.agregattor.Add(this.compiledPattern);
+            if (!this.doNotWrapCurrentIntoNamedMatchGroup)
+            {
+                return;
+            }
+            this.AddRecompileIndex(this.property);
+        }
+
+        private void AddRecompileIndex(string prop = null)
+        {
+            var recompileIx = this.agregattor.Count - 1;
+            this.recompileIndexes.Add(recompileIx);
+            if (prop != null)
+            {
+                this.recompileProperties.Add(recompileIx, prop);
+            }
         }
 
         public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
@@ -107,7 +143,7 @@ namespace logviewer.core
 
         public override string VisitOnSemantic(GrokParser.OnSemanticContext context)
         {
-            if (this.regexp == null)
+            if (this.compiledPattern == null)
             {
                 return this.VisitChildren(context);
             }
@@ -122,80 +158,84 @@ namespace logviewer.core
 
         public override string VisitOnDefinition(GrokParser.OnDefinitionContext context)
         {
-            string node = context.PATTERN().Symbol.Text;
+            var node = context.PATTERN().Symbol.Text;
 
-            Log.Instance.TraceFormatted(node);
             if (templates.ContainsKey(node))
             {
-                this.regexp = templates[node];
+                this.compiledPattern = templates[node];
 
                 bool continueMatch;
                 bool matchFound;
                 do
                 {
                     matchFound = false;
-                    foreach (string k in templates.Keys)
+                    foreach (var k in templates.Keys)
                     {
-                        string link = PatternStart + k + PatternStop;
-                        if (!this.regexp.Contains(link))
+                        var link = PatternStart + k + PatternStop;
+                        if (!this.compiledPattern.Contains(link))
                         {
                             continue;
                         }
-                        this.regexp = this.regexp.Replace(link, templates[k]);
+                        this.compiledPattern = this.compiledPattern.Replace(link, templates[k]);
                         matchFound = true;
                     }
-                    continueMatch = this.regexp.Contains(PatternStart);
+                    continueMatch = this.compiledPattern.Contains(PatternStart);
                 } while (continueMatch && matchFound);
 
-                if (!this.RecompilationNeeded)
-                {
-                    var r = new Regex(@"(%\{[^:]+?:\S+?\})");
-                    var m = r.Match(this.regexp);
-                    this.RecompilationNeeded = m.Success;
 
-                    if (this.RecompilationNeeded)
-                    {
-                        var ix = 0;
-                        var sb = new StringBuilder();
-                        do
-                        {
-                            var capture = m.Groups[1];
-                            if (capture.Index > 0)
-                            {
-                                var substr = this.regexp.Substring(ix, capture.Index - ix);
-                                Escape(sb, substr);
-                            }
-                            ix = capture.Index + capture.Length;
-                            sb.Append(capture.Value);
-                            m = m.NextMatch();
-                            if (m.Success)
-                            {
-                                continue;
-                            }
-                            var tailLength = this.regexp.Length - ix;
-                            if (tailLength <= 0)
-                            {
-                                continue;
-                            }
-                            var tail = this.regexp.Substring(ix, tailLength);
-                            Escape(sb, tail);
-                        } while (m.Success);
-                        this.regexp = sb.ToString();
-                    }
-                }
+                var r = new Regex(@"(%\{[^:]+?:\S+?\})");
+                var m = r.Match(this.compiledPattern);
+
+                this.doNotWrapCurrentIntoNamedMatchGroup = m.Success;
+                this.RecompilationNeeded |= this.doNotWrapCurrentIntoNamedMatchGroup;
+
                 
+                if (this.doNotWrapCurrentIntoNamedMatchGroup)
+                {
+                    var ix = 0;
+                    var sb = new StringBuilder();
+                    do
+                    {
+                        var capture = m.Groups[1];
+                        if (capture.Index > 0)
+                        {
+                            var substr = this.compiledPattern.Substring(ix, capture.Index - ix);
+                            Escape(sb, substr);
+                        }
+                        ix = capture.Index + capture.Length;
+                        sb.Append(capture.Value);
+                        m = m.NextMatch();
+                        if (m.Success)
+                        {
+                            continue;
+                        }
+                        var tailLength = this.compiledPattern.Length - ix;
+                        if (tailLength <= 0)
+                        {
+                            continue;
+                        }
+                        var tail = this.compiledPattern.Substring(ix, tailLength);
+                        Escape(sb, tail);
+                    } while (m.Success);
+                    this.compiledPattern = sb.ToString();
+                }
+
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
                 {
-                    this.stringBuilder.Append(this.regexp);
+                    this.agregattor.Add(this.compiledPattern);
+                    if (this.RecompilationNeeded)
+                    {
+                        this.AddRecompileIndex();
+                    }
                 }
             }
             else
             {
-                this.regexp = null;
-                this.stringBuilder.Append(PatternStart);
-                this.stringBuilder.Append(node);
-                this.stringBuilder.Append(PatternStop);
+                this.compiledPattern = null;
+                this.agregattor.Add(PatternStart);
+                this.agregattor.Add(node);
+                this.agregattor.Add(PatternStop);
             }
             return this.VisitChildren(context);
         }
@@ -210,7 +250,7 @@ namespace logviewer.core
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
             var raw = context.GetText();
-            this.stringBuilder.Append(raw.UnescapeString());
+            this.agregattor.Add(raw.UnescapeString());
             return this.VisitChildren(context);
         }
     }

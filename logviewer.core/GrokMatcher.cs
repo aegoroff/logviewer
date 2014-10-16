@@ -17,48 +17,52 @@ namespace logviewer.core
 
         public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
         {
-            this.Compile(grok, options);
+            this.CreateRegexp(grok, options);
         }
 
-        private void Compile(string grok, RegexOptions options)
+        private void CreateRegexp(string grok, RegexOptions options)
         {
             try
             {
-                ICharStream inputStream = new AntlrInputStream(grok);
-                var lexer = new GrokLexer(inputStream);
-                var tokenStream = new CommonTokenStream(lexer);
-                var parser = new GrokParser(tokenStream);
-                var tree = parser.parse();
-
-                this.CompilationFailed = parser.NumberOfSyntaxErrors > 0;
-
-                if (this.CompilationFailed)
-                {
-                    this.Template = grok;
-                }
-                else
-                {
-                    var grokVisitor = new GrokVisitor();
-                    grokVisitor.Visit(tree);
-
-                    if (grokVisitor.RecompilationNeeded)
-                    {
-                        messageSchema.AddRange(grokVisitor.Schema);
-                        this.Compile(grokVisitor.Template, options);
-                        return;
-                    }
-
-                    this.Template = grokVisitor.Template;
-                    this.messageSchema.AddRange(grokVisitor.Schema);
-                }
+                this.Template = this.Compile(grok);
                 this.regex = new Regex(this.Template, options);
             }
             catch (Exception e)
             {
                 Log.Instance.Debug(e);
-                this.Template = grok;
                 this.CompilationFailed = true;
+                this.Template = grok;
             }
+        }
+
+        private string Compile(string grok)
+        {
+            ICharStream inputStream = new AntlrInputStream(grok);
+            var lexer = new GrokLexer(inputStream);
+            var tokenStream = new CommonTokenStream(lexer);
+            var parser = new GrokParser(tokenStream);
+            var tree = parser.parse();
+
+            this.CompilationFailed = parser.NumberOfSyntaxErrors > 0;
+
+            if (this.CompilationFailed)
+            {
+                throw new ArgumentException("Invalid pattern: " + grok, "grok");
+            }
+            var grokVisitor = new GrokVisitor();
+            grokVisitor.Visit(tree);
+
+            this.messageSchema.AddRange(grokVisitor.Schema);
+            if (!grokVisitor.RecompilationNeeded)
+            {
+                return grokVisitor.Template;
+            }
+            foreach (var ix in grokVisitor.RecompileIndexes)
+            {
+                var recompiled = this.Compile(grokVisitor.GetRecompile(ix));
+                grokVisitor.SetRecompiled(ix, recompiled);
+            }
+            return grokVisitor.Template;
         }
 
         public string Template { get; private set; }
@@ -72,7 +76,7 @@ namespace logviewer.core
 
         public bool Match(string s)
         {
-            return this.regex.IsMatch(s);
+            return this.regex != null && this.regex.IsMatch(s);
         }
 
         public IDictionary<string, string> Parse(string s)

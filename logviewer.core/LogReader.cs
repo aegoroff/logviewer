@@ -39,6 +39,8 @@ namespace logviewer.core
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler EncodingDetectionStarted;
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
+        public event EventHandler CompilationStarted;
+        public event EventHandler CompilationFinished;
 
         public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
         {
@@ -88,6 +90,7 @@ namespace logviewer.core
                 stopWatch.Start();
                 var measureStart = 0L;
                 var message = LogMessage.Create();
+                var compiled = false;
                 while (!sr.EndOfStream && canContinue())
                 {
                     var line = sr.ReadLine();
@@ -103,7 +106,29 @@ namespace logviewer.core
                     {
                         continue;
                     }
+
+                    // Occured on first row
+                    if (!compiled)
+                    {
+                        if (this.CompilationStarted != null)
+                        {
+                            this.CompilationStarted(this, new EventArgs());
+                        }
+                    }
+
                     var properties = this.matcher.Parse(line);
+
+                    // Occured only after first row
+                    if (!compiled)
+                    {
+                        if (this.CompilationFinished != null)
+                        {
+                            this.CompilationFinished(this, new EventArgs());
+                        }
+                    }
+
+                    compiled = true;
+
                     if (properties != null)
                     {
                         if (message.HasHeader)

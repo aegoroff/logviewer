@@ -16,6 +16,9 @@ namespace logviewer.core
 
         [Column("Filter", Nullable = true)]
         public string Filter { get; set; }
+        
+        [Column("Compiled")]
+        public bool Compiled { get; set; }
 
         public bool IsEmpty
         {
