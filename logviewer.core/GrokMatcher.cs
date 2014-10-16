@@ -43,7 +43,7 @@ namespace logviewer.core
 
                     if (grokVisitor.RecompilationNeeded)
                     {
-                        messageSchema.AddRange(grokVisitor.Schema);
+                        this.messageSchema.AddRange(grokVisitor.Schema);
                         this.Compile(grokVisitor.Template, options);
                         return;
                     }
