@@ -165,6 +165,9 @@
   <data name="MinutesNominative" xml:space="preserve">
     <value>munute</value>
   </data>
+  <data name="PatternCompilation" xml:space="preserve">
+    <value>Pattern compilation in progress ...</value>
+  </data>
   <data name="ReadCompletedTemplate" xml:space="preserve">
     <value>Read completed.  Taken {0}</value>
   </data>
