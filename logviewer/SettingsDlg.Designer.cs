@@ -51,6 +51,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.newMessageCompiledBox = new System.Windows.Forms.CheckBox();
             this.newTemplateMessageFilterBox = new System.Windows.Forms.TextBox();
             this.newTemplateFilterLabel = new System.Windows.Forms.Label();
             this.newTemplateNameLabel = new System.Windows.Forms.Label();
@@ -63,6 +64,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
+            this.messageCompiledBox = new System.Windows.Forms.CheckBox();
             this.messageFilterBox = new System.Windows.Forms.TextBox();
             this.messageFilterLabel = new System.Windows.Forms.Label();
             this.messageStartPatternBox = new System.Windows.Forms.TextBox();
@@ -72,8 +74,6 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.messageCompiledBox = new System.Windows.Forms.CheckBox();
-            this.newMessageCompiledBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -268,6 +268,12 @@
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 
+            // newMessageCompiledBox
+            // 
+            resources.ApplyResources(this.newMessageCompiledBox, "newMessageCompiledBox");
+            this.newMessageCompiledBox.Name = "newMessageCompiledBox";
+            this.newMessageCompiledBox.UseVisualStyleBackColor = true;
+            // 
             // newTemplateMessageFilterBox
             // 
             resources.ApplyResources(this.newTemplateMessageFilterBox, "newTemplateMessageFilterBox");
@@ -343,6 +349,13 @@
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
             // 
+            // messageCompiledBox
+            // 
+            resources.ApplyResources(this.messageCompiledBox, "messageCompiledBox");
+            this.messageCompiledBox.Name = "messageCompiledBox";
+            this.messageCompiledBox.UseVisualStyleBackColor = true;
+            this.messageCompiledBox.CheckedChanged += new System.EventHandler(this.OnSetCompiled);
+            // 
             // messageFilterBox
             // 
             resources.ApplyResources(this.messageFilterBox, "messageFilterBox");
@@ -397,19 +410,6 @@
             // 
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
-            // 
-            // messageCompiledBox
-            // 
-            resources.ApplyResources(this.messageCompiledBox, "messageCompiledBox");
-            this.messageCompiledBox.Name = "messageCompiledBox";
-            this.messageCompiledBox.UseVisualStyleBackColor = true;
-            this.messageCompiledBox.CheckedChanged += new System.EventHandler(this.OnSetCompiled);
-            // 
-            // newMessageCompiledBox
-            // 
-            resources.ApplyResources(this.newMessageCompiledBox, "newMessageCompiledBox");
-            this.newMessageCompiledBox.Name = "newMessageCompiledBox";
-            this.newMessageCompiledBox.UseVisualStyleBackColor = true;
             // 
             // SettingsDlg
             // 

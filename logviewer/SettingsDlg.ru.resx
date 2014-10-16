@@ -119,7 +119,7 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 426</value>
+    <value>546, 442</value>
   </data>
   <data name="tabPage1.Text" xml:space="preserve">
     <value>Общие настройки</value>
@@ -187,6 +187,12 @@
   <data name="groupBox2.Text" xml:space="preserve">
     <value>Параметры нового шаблона</value>
   </data>
+  <data name="newMessageCompiledBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 17</value>
+  </data>
+  <data name="newMessageCompiledBox.Text" xml:space="preserve">
+    <value>Компилировать</value>
+  </data>
   <data name="newTemplateFilterLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 13</value>
   </data>
@@ -228,6 +234,12 @@
   </data>
   <data name="commonTemplatesBox.Text" xml:space="preserve">
     <value>Общие</value>
+  </data>
+  <data name="messageCompiledBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 17</value>
+  </data>
+  <data name="messageCompiledBox.Text" xml:space="preserve">
+    <value>Компилировать</value>
   </data>
   <data name="messageFilterLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 13</value>
