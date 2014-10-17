@@ -4,3 +4,7 @@ NGINXACCESS %{IPORHOST:clientip} %{NGUSER:ident} %{NGUSER:auth} \[%{HTTPDATE:tim
 
 # IIS 7.5
 IIS %{TIMESTAMP_ISO8601} %{IPORHOST} %{WORD} %{URIPATH} %{NOTSPACE} %{NUMBER} %{NOTSPACE} %{IPORHOST} %{NOTSPACE} %{NUMBER:Response,'20'->LogLevel.Info,'40'->LogLevel.Error,'50'->LogLevel.Fatal,'*'->LogLevel.Warn} %{NUMBER} %{NUMBER} %{NUMBER}
+
+# Apache server
+
+APACHE_SERVER %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}%{DATA}%{LOGLEVEL:Level,'error'->LogLevel.Error,'warn'->LogLevel.Warn,'notice'->LogLevel.Info,'*'->LogLevel.Info}%{DATA}
