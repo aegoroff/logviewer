@@ -150,6 +150,9 @@
   <data name="HoursNominative" xml:space="preserve">
     <value>час</value>
   </data>
+  <data name="InvalidTemplate" xml:space="preserve">
+    <value>Шаблон,который вы ввели неверный. Исправьте это.</value>
+  </data>
   <data name="LogInfoFormatString" xml:space="preserve">
     <value>Всего: {1} Для показа: {8} Показано: {0}   На странице T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
   </data>

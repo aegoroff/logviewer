@@ -20,6 +20,7 @@ namespace logviewer
             this.InitializeComponent();
             this.controller = new SettingsController(this, settings);
             this.controller.Load();
+            this.invalidTemplateTooltip.SetToolTip(this.messageStartPatternBox, string.Empty);
         }
 
         public void SetApplyAction(Action<bool> action)
@@ -200,6 +201,22 @@ namespace logviewer
                     Compiled = this.newMessageCompiledBox.Checked,
                 };
             }
+        }
+
+        public void ShowInvalidTemplateError(string message)
+        {
+            this.invalidTemplateTooltip.Show(message, this.messageStartPatternBox);
+            this.messageStartPatternBox.ForeColor = Color.Red;
+        }
+
+        public void OnFixTemplate()
+        {
+            this.messageStartPatternBox.ForeColor = Color.Black;
+        }
+
+        public void HideInvalidTemplateError()
+        {
+            this.invalidTemplateTooltip.Hide(this.messageStartPatternBox);
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)

@@ -45,5 +45,11 @@ namespace logviewer.core
         void ShowNewParsingTemplateForm(bool show);
 
         ParsingTemplate NewParsingTemplateData { get; }
+
+        void ShowInvalidTemplateError(string message);
+
+        void OnFixTemplate();
+        
+        void HideInvalidTemplateError();
     }
 }

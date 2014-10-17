@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -21,6 +23,7 @@ namespace logviewer.core
         private IList<string> templateList;
         private int parsingTemplateIndex;
         private readonly Dictionary<LogLevel, Action<Color>> updateColorActions;
+
 
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
@@ -197,14 +200,20 @@ namespace logviewer.core
         {
             if (new GrokMatcher(value).CompilationFailed)
             {
+                this.view.ShowInvalidTemplateError(Resources.InvalidTemplate);
+                this.view.EnableSave(false);
+                Task.Factory.StartNew(delegate
+                {
+                    Thread.Sleep(2 * 1000);
+                    this.RunOnGuiThread(() => this.view.HideInvalidTemplateError());
+                });
                 return;
             }
-            if (this.template.StartMessage.Equals(value, StringComparison.Ordinal))
-            {
-                return;
-            }
+            this.view.OnFixTemplate();
+            this.view.HideInvalidTemplateError();
+            this.view.EnableSave(!this.template.StartMessage.Equals(value, StringComparison.Ordinal));
             this.template.StartMessage = value;
-            this.view.EnableSave(true);
+            
         }
         
         public void UpdateMessageFilter(string value)
