@@ -13,6 +13,7 @@ namespace logviewer
         {
             this.InitializeComponent();
             this.invalidTemplateTooltip.SetToolTip(this.messageStartPatternBox, string.Empty);
+            this.invalidTemplateTooltip.SetToolTip(this.messageFilterBox, string.Empty);
             this.controller = new LogParseTemplateController(this);
         }
 
