@@ -123,6 +123,9 @@
   <data name="CurrentPageTemplate" xml:space="preserve">
     <value>{0} / {1}</value>
   </data>
+  <data name="DatabaseSize" xml:space="preserve">
+    <value>Размер базы</value>
+  </data>
   <data name="Debug" xml:space="preserve">
     <value>Debug</value>
   </data>
