@@ -25,30 +25,12 @@ namespace logviewer.core
 
         public void UpdateStartPattern(string value)
         {
-            if (this.Template == null)
-            {
-                return;
-            }
-            var valid = this.ValidatePattern(value, this.view.ShowInvalidTemplateError,
-                this.view.HideInvalidTemplateError, this.view.OnFixTemplate, this.view.MessageStartControl);
-            if (valid)
-            {
-                this.Template.StartMessage = value;
-            }
+            this.UpdatePattern(value, this.view.MessageStartControl, s => this.Template.StartMessage = s);
         }
 
         public void UpdateFilter(string value)
         {
-            if (this.Template == null)
-            {
-                return;
-            }
-            var valid = this.ValidatePattern(value, this.view.ShowInvalidTemplateError,
-                this.view.HideInvalidTemplateError, this.view.OnFixTemplate, this.view.FilterControl);
-            if (valid)
-            {
-                this.Template.Filter = value;
-            }
+            this.UpdatePattern(value, this.view.FilterControl, s => this.Template.Filter = s);
         }
 
         public void UpdateCompiled(bool value)
@@ -69,26 +51,33 @@ namespace logviewer.core
             }
         }
 
-        private bool ValidatePattern(string value, Action<string, object> showError, Action<object> hideTooltip, Action<object> fixAction, object control)
+        private void UpdatePattern(string value, object control, Action<string> assignAction)
         {
+            if (this.Template == null)
+            {
+                return;
+            }
+            const int millisecondsToShowTooltip = 1500;
+
             if (new GrokMatcher(value).CompilationFailed)
             {
-                showError(Resources.InvalidTemplate, control);
+                this.view.ShowInvalidTemplateError(Resources.InvalidTemplate, control);
                 if (this.TemplateChangeFailure != null)
                 {
                     this.TemplateChangeFailure(this, new EventArgs());
                 }
                 Task.Factory.StartNew(delegate
                 {
-                    Thread.Sleep(2 * 1000);
-                    this.RunOnGuiThread(() => hideTooltip(control));
+                    Thread.Sleep(millisecondsToShowTooltip);
+                    this.RunOnGuiThread(() => this.view.HideInvalidTemplateError(control));
                 });
-                return false;
+                return;
             }
-            fixAction(control);
-            hideTooltip(control);
+            assignAction(value);
+            this.view.OnFixTemplate(control);
+            this.view.HideInvalidTemplateError(control);
             this.OnTemplateChangeSuccess();
-            return true;
+
         }
     }
 }
