@@ -151,7 +151,7 @@ namespace logviewer.core
 
             if (context.casting() == null)
             {
-                this.AddSemantic(new Semantic(this.property));
+                this.AddSemantic(new Semantic(this.property, new Rule("string")));
             }
             return this.VisitChildren(context);
         }
