@@ -79,6 +79,7 @@
     <Compile Include="FormData.cs" />
     <Compile Include="GrokVisitor.cs" />
     <Compile Include="ILogView.cs" />
+    <Compile Include="IParsingTemplateView.cs" />
     <Compile Include="ISettingsProvider.cs" />
     <Compile Include="ISettingsView.cs" />
     <Compile Include="IUpdatable.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="IVersionsReader.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
+    <Compile Include="LogParseTemplateController.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />

@@ -60,6 +60,12 @@
     <Compile Include="AboutDlg.Designer.cs">
       <DependentUpon>AboutDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="LogParseTemplateControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LogParseTemplateControl.Designer.cs">
+      <DependentUpon>LogParseTemplateControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="LogviewerModule.cs" />
     <Compile Include="MainDlg.cs">
       <SubType>Form</SubType>
@@ -96,6 +102,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AboutDlg.ru.resx">
       <DependentUpon>AboutDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogParseTemplateControl.resx">
+      <DependentUpon>LogParseTemplateControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogParseTemplateControl.ru.resx">
+      <DependentUpon>LogParseTemplateControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainDlg.resx">
       <DependentUpon>MainDlg.cs</DependentUpon>

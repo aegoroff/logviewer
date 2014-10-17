@@ -607,7 +607,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 442</value>
+    <value>546, 457</value>
   </data>
   <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -631,7 +631,7 @@
     <value>True</value>
   </data>
   <data name="removeParsingTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 179</value>
+    <value>153, 193</value>
   </data>
   <data name="removeParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -654,89 +654,35 @@
   <data name="&gt;&gt;removeParsingTemplateBtn.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="newMessageCompiledBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="newTemplateControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 57</value>
   </data>
-  <data name="newMessageCompiledBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 171</value>
+  <data name="newTemplateControl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
   </data>
-  <data name="newMessageCompiledBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>63, 17</value>
+  <data name="newTemplateControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>519, 130</value>
   </data>
-  <data name="newMessageCompiledBox.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="newMessageCompiledBox.Text" xml:space="preserve">
-    <value>Compile</value>
-  </data>
-  <data name="&gt;&gt;newMessageCompiledBox.Name" xml:space="preserve">
-    <value>newMessageCompiledBox</value>
-  </data>
-  <data name="&gt;&gt;newMessageCompiledBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newMessageCompiledBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;newMessageCompiledBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="newTemplateMessageFilterBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="newTemplateMessageFilterBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 145</value>
-  </data>
-  <data name="newTemplateMessageFilterBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 20</value>
-  </data>
-  <data name="newTemplateMessageFilterBox.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageFilterBox.Name" xml:space="preserve">
-    <value>newTemplateMessageFilterBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageFilterBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageFilterBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageFilterBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="newTemplateFilterLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="newTemplateFilterLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 129</value>
-  </data>
-  <data name="newTemplateFilterLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 13</value>
-  </data>
-  <data name="newTemplateFilterLabel.TabIndex" type="System.Int32, mscorlib">
+  <data name="newTemplateControl.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
-  <data name="newTemplateFilterLabel.Text" xml:space="preserve">
-    <value>Exclude rows that match filter:</value>
+  <data name="&gt;&gt;newTemplateControl.Name" xml:space="preserve">
+    <value>newTemplateControl</value>
   </data>
-  <data name="&gt;&gt;newTemplateFilterLabel.Name" xml:space="preserve">
-    <value>newTemplateFilterLabel</value>
+  <data name="&gt;&gt;newTemplateControl.Type" xml:space="preserve">
+    <value>logviewer.LogParseTemplateControl, logviewer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;newTemplateFilterLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newTemplateFilterLabel.Parent" xml:space="preserve">
+  <data name="&gt;&gt;newTemplateControl.Parent" xml:space="preserve">
     <value>groupBox2</value>
   </data>
-  <data name="&gt;&gt;newTemplateFilterLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;newTemplateControl.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="newTemplateNameLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="newTemplateNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 30</value>
+    <value>5, 19</value>
   </data>
   <data name="newTemplateNameLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>35, 13</value>
@@ -757,10 +703,10 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;newTemplateNameLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>1</value>
   </data>
   <data name="addNewTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>366, 189</value>
+    <value>366, 187</value>
   </data>
   <data name="addNewTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -781,16 +727,16 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;addNewTemplateBtn.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>2</value>
   </data>
   <data name="newTemplateNameBox.Font" type="System.Drawing.Font, System.Drawing">
     <value>Courier New, 8.25pt</value>
   </data>
   <data name="newTemplateNameBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 46</value>
+    <value>6, 35</value>
   </data>
   <data name="newTemplateNameBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 20</value>
+    <value>513, 20</value>
   </data>
   <data name="newTemplateNameBox.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -805,10 +751,10 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;newTemplateNameBox.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>3</value>
   </data>
   <data name="cancelAddNewTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>447, 189</value>
+    <value>447, 187</value>
   </data>
   <data name="cancelAddNewTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -829,61 +775,10 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;cancelAddNewTemplateBtn.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="newPatternMessageStartLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="newPatternMessageStartLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 79</value>
-  </data>
-  <data name="newPatternMessageStartLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 13</value>
-  </data>
-  <data name="newPatternMessageStartLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="newPatternMessageStartLabel.Text" xml:space="preserve">
-    <value>Message start pattern</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.Name" xml:space="preserve">
-    <value>newPatternMessageStartLabel</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;newPatternMessageStartLabel.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="newTemplateMessageStartBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="newTemplateMessageStartBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 95</value>
-  </data>
-  <data name="newTemplateMessageStartBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 20</value>
-  </data>
-  <data name="newTemplateMessageStartBox.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.Name" xml:space="preserve">
-    <value>newTemplateMessageStartBox</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;newTemplateMessageStartBox.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>4</value>
   </data>
   <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 216</value>
+    <value>8, 231</value>
   </data>
   <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
     <value>531, 218</value>
@@ -910,7 +805,7 @@
     <value>True</value>
   </data>
   <data name="addNewParsingTemplateBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 179</value>
+    <value>8, 193</value>
   </data>
   <data name="addNewParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>139, 23</value>
@@ -987,143 +882,35 @@
   <data name="&gt;&gt;parsingTemplateSelector.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="messageCompiledBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="selectedTemplateControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 20</value>
   </data>
-  <data name="messageCompiledBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 113</value>
+  <data name="selectedTemplateControl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
   </data>
-  <data name="messageCompiledBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>63, 17</value>
+  <data name="selectedTemplateControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>515, 120</value>
   </data>
-  <data name="messageCompiledBox.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="messageCompiledBox.Text" xml:space="preserve">
-    <value>Compile</value>
-  </data>
-  <data name="&gt;&gt;messageCompiledBox.Name" xml:space="preserve">
-    <value>messageCompiledBox</value>
-  </data>
-  <data name="&gt;&gt;messageCompiledBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageCompiledBox.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;messageCompiledBox.ZOrder" xml:space="preserve">
+  <data name="selectedTemplateControl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="messageFilterBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
+  <data name="&gt;&gt;selectedTemplateControl.Name" xml:space="preserve">
+    <value>selectedTemplateControl</value>
   </data>
-  <data name="messageFilterBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 87</value>
+  <data name="&gt;&gt;selectedTemplateControl.Type" xml:space="preserve">
+    <value>logviewer.LogParseTemplateControl, logviewer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="messageFilterBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>519, 20</value>
-  </data>
-  <data name="messageFilterBox.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;messageFilterBox.Name" xml:space="preserve">
-    <value>messageFilterBox</value>
-  </data>
-  <data name="&gt;&gt;messageFilterBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageFilterBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;selectedTemplateControl.Parent" xml:space="preserve">
     <value>commonTemplatesBox</value>
   </data>
-  <data name="&gt;&gt;messageFilterBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="messageFilterLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="messageFilterLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 69</value>
-  </data>
-  <data name="messageFilterLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 13</value>
-  </data>
-  <data name="messageFilterLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="messageFilterLabel.Text" xml:space="preserve">
-    <value>Exclude rows that match filter:</value>
-  </data>
-  <data name="&gt;&gt;messageFilterLabel.Name" xml:space="preserve">
-    <value>messageFilterLabel</value>
-  </data>
-  <data name="&gt;&gt;messageFilterLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageFilterLabel.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;messageFilterLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="messageStartPatternBox.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Courier New, 8.25pt</value>
-  </data>
-  <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 38</value>
-  </data>
-  <data name="messageStartPatternBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>519, 20</value>
-  </data>
-  <data name="messageStartPatternBox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.Name" xml:space="preserve">
-    <value>messageStartPatternBox</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="messageStartPatternLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 22</value>
-  </data>
-  <data name="messageStartPatternLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>112, 13</value>
-  </data>
-  <data name="messageStartPatternLabel.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;selectedTemplateControl.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="messageStartPatternLabel.Text" xml:space="preserve">
-    <value>Message start pattern:</value>
-  </data>
-  <data name="messageStartPatternLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.Name" xml:space="preserve">
-    <value>messageStartPatternLabel</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.Parent" xml:space="preserve">
-    <value>commonTemplatesBox</value>
-  </data>
-  <data name="&gt;&gt;messageStartPatternLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
   </data>
   <data name="commonTemplatesBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 33</value>
   </data>
   <data name="commonTemplatesBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>531, 140</value>
+    <value>531, 154</value>
   </data>
   <data name="commonTemplatesBox.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1150,7 +937,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 442</value>
+    <value>546, 457</value>
   </data>
   <data name="tabPage2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1177,7 +964,7 @@
     <value>3, 3</value>
   </data>
   <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>554, 468</value>
+    <value>554, 483</value>
   </data>
   <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1252,7 +1039,7 @@
     <value>RightToLeft</value>
   </data>
   <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 477</value>
+    <value>3, 492</value>
   </data>
   <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>554, 29</value>
@@ -1282,7 +1069,7 @@
     <value>2</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>560, 509</value>
+    <value>560, 524</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1305,9 +1092,6 @@
   <metadata name="colorDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="invalidTemplateTooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>138, 17</value>
-  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -1315,7 +1099,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>560, 509</value>
+    <value>560, 524</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -1896,12 +1680,6 @@
   </data>
   <data name="&gt;&gt;colorDialog1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;invalidTemplateTooltip.Name" xml:space="preserve">
-    <value>invalidTemplateTooltip</value>
-  </data>
-  <data name="&gt;&gt;invalidTemplateTooltip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SettingsDlg</value>

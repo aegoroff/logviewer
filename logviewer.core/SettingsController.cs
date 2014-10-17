@@ -8,9 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -31,6 +29,30 @@ namespace logviewer.core
             this.settings = settings;
             this.parsingTemplateIndex = settings.SelectedParsingTemplate;
             this.updateColorActions = new Dictionary<LogLevel, Action<Color>>(this.InitializeUpdateActions());
+            this.view.SelectedTemplateController.TemplateChangeSuccess += SelectedTemplateControllerOnTemplateChangeSuccess;
+            this.view.SelectedTemplateController.TemplateChangeFailure += SelectedTemplateControllerOnTemplateChangeFailure;
+            this.view.NewTemplateController.TemplateChangeSuccess += NewTemplateControllerOnTemplateChangeSuccess;
+            this.view.NewTemplateController.TemplateChangeFailure += NewTemplateControllerOnTemplateChangeFailure;
+        }
+
+        private void NewTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableAddNewTemplate(true);
+        }
+        
+        private void NewTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableAddNewTemplate(false);
+        }
+
+        private void SelectedTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableSave(true);
+        }
+
+        private void SelectedTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableSave(false);
         }
 
         private Dictionary<LogLevel, Action<Color>> InitializeUpdateActions()
@@ -193,53 +215,6 @@ namespace logviewer.core
         public void UpdatePageSize(string value)
         {
             this.formData.PageSize = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateMessageStartPattern(string value)
-        {
-            var  result = this.ValidateMessageStartPattern(value, this.view.ShowInvalidTemplateError, this.view.EnableSave,
-                this.view.HideInvalidTemplateError, this.view.OnFixTemplate);
-            if (result)
-            {
-                this.template.StartMessage = value;
-            }
-        }
-
-        public void ValidateMessageStartPattern(string value)
-        {
-            this.ValidateMessageStartPattern(value, this.view.ShowInvalidNewTemplateError, this.view.EnableAddNewTemplate,
-                this.view.HideInvalidNewTemplateError, this.view.OnFixNewTemplate);
-        }
-        
-        private bool ValidateMessageStartPattern(string value, Action<string> showError, Action<bool> enableButton, Action hideTooltip, Action fixAction)
-        {
-            if (new GrokMatcher(value).CompilationFailed)
-            {
-                showError(Resources.InvalidTemplate);
-                enableButton(false);
-                Task.Factory.StartNew(delegate
-                {
-                    Thread.Sleep(2 * 1000);
-                    this.RunOnGuiThread(hideTooltip);
-                });
-                return false;
-            }
-            fixAction();
-            hideTooltip();
-            enableButton(true);
-            return true;
-        }
-        
-        public void UpdateMessageFilter(string value)
-        {
-            this.template.Filter = value;
-            this.view.EnableSave(true);
-        }
-        
-        public void UpdateCompiled(bool value)
-        {
-            this.template.Compiled = value;
             this.view.EnableSave(true);
         }
         
