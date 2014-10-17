@@ -24,5 +24,18 @@ namespace logviewer.core
         {
             get { return this.StartMessage == null; }
         }
+
+        public string DisplayName
+        {
+            get
+            {
+                var gm = new GrokMatcher(StartMessage);
+                if (string.IsNullOrWhiteSpace(gm.Template))
+                {
+                    return Name;
+                }
+                return Name + " (" + new FileSize(gm.Template.Length, true) + ")";
+            }
+        }
     }
 }

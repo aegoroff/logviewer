@@ -51,24 +51,16 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.newMessageCompiledBox = new System.Windows.Forms.CheckBox();
-            this.newTemplateMessageFilterBox = new System.Windows.Forms.TextBox();
-            this.newTemplateFilterLabel = new System.Windows.Forms.Label();
+            this.newTemplateControl = new logviewer.LogParseTemplateControl();
             this.newTemplateNameLabel = new System.Windows.Forms.Label();
             this.addNewTemplateBtn = new System.Windows.Forms.Button();
             this.newTemplateNameBox = new System.Windows.Forms.TextBox();
             this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
-            this.newPatternMessageStartLabel = new System.Windows.Forms.Label();
-            this.newTemplateMessageStartBox = new System.Windows.Forms.TextBox();
             this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
-            this.messageCompiledBox = new System.Windows.Forms.CheckBox();
-            this.messageFilterBox = new System.Windows.Forms.TextBox();
-            this.messageFilterLabel = new System.Windows.Forms.Label();
-            this.messageStartPatternBox = new System.Windows.Forms.TextBox();
-            this.messageStartPatternLabel = new System.Windows.Forms.Label();
+            this.selectedTemplateControl = new logviewer.LogParseTemplateControl();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new System.Windows.Forms.Button();
@@ -255,34 +247,19 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.newMessageCompiledBox);
-            this.groupBox2.Controls.Add(this.newTemplateMessageFilterBox);
-            this.groupBox2.Controls.Add(this.newTemplateFilterLabel);
+            this.groupBox2.Controls.Add(this.newTemplateControl);
             this.groupBox2.Controls.Add(this.newTemplateNameLabel);
             this.groupBox2.Controls.Add(this.addNewTemplateBtn);
             this.groupBox2.Controls.Add(this.newTemplateNameBox);
             this.groupBox2.Controls.Add(this.cancelAddNewTemplateBtn);
-            this.groupBox2.Controls.Add(this.newPatternMessageStartLabel);
-            this.groupBox2.Controls.Add(this.newTemplateMessageStartBox);
             resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 
-            // newMessageCompiledBox
+            // newTemplateControl
             // 
-            resources.ApplyResources(this.newMessageCompiledBox, "newMessageCompiledBox");
-            this.newMessageCompiledBox.Name = "newMessageCompiledBox";
-            this.newMessageCompiledBox.UseVisualStyleBackColor = true;
-            // 
-            // newTemplateMessageFilterBox
-            // 
-            resources.ApplyResources(this.newTemplateMessageFilterBox, "newTemplateMessageFilterBox");
-            this.newTemplateMessageFilterBox.Name = "newTemplateMessageFilterBox";
-            // 
-            // newTemplateFilterLabel
-            // 
-            resources.ApplyResources(this.newTemplateFilterLabel, "newTemplateFilterLabel");
-            this.newTemplateFilterLabel.Name = "newTemplateFilterLabel";
+            resources.ApplyResources(this.newTemplateControl, "newTemplateControl");
+            this.newTemplateControl.Name = "newTemplateControl";
             // 
             // newTemplateNameLabel
             // 
@@ -308,16 +285,6 @@
             this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
             this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
             // 
-            // newPatternMessageStartLabel
-            // 
-            resources.ApplyResources(this.newPatternMessageStartLabel, "newPatternMessageStartLabel");
-            this.newPatternMessageStartLabel.Name = "newPatternMessageStartLabel";
-            // 
-            // newTemplateMessageStartBox
-            // 
-            resources.ApplyResources(this.newTemplateMessageStartBox, "newTemplateMessageStartBox");
-            this.newTemplateMessageStartBox.Name = "newTemplateMessageStartBox";
-            // 
             // addNewParsingTemplateBtn
             // 
             resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
@@ -340,43 +307,15 @@
             // 
             // commonTemplatesBox
             // 
-            this.commonTemplatesBox.Controls.Add(this.messageCompiledBox);
-            this.commonTemplatesBox.Controls.Add(this.messageFilterBox);
-            this.commonTemplatesBox.Controls.Add(this.messageFilterLabel);
-            this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
-            this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
+            this.commonTemplatesBox.Controls.Add(this.selectedTemplateControl);
             resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
             // 
-            // messageCompiledBox
+            // selectedTemplateControl
             // 
-            resources.ApplyResources(this.messageCompiledBox, "messageCompiledBox");
-            this.messageCompiledBox.Name = "messageCompiledBox";
-            this.messageCompiledBox.UseVisualStyleBackColor = true;
-            this.messageCompiledBox.CheckedChanged += new System.EventHandler(this.OnSetCompiled);
-            // 
-            // messageFilterBox
-            // 
-            resources.ApplyResources(this.messageFilterBox, "messageFilterBox");
-            this.messageFilterBox.Name = "messageFilterBox";
-            this.messageFilterBox.TextChanged += new System.EventHandler(this.OnSetMessageFilter);
-            // 
-            // messageFilterLabel
-            // 
-            resources.ApplyResources(this.messageFilterLabel, "messageFilterLabel");
-            this.messageFilterLabel.Name = "messageFilterLabel";
-            // 
-            // messageStartPatternBox
-            // 
-            resources.ApplyResources(this.messageStartPatternBox, "messageStartPatternBox");
-            this.messageStartPatternBox.Name = "messageStartPatternBox";
-            this.messageStartPatternBox.TextChanged += new System.EventHandler(this.OnSetMessageStartPattern);
-            // 
-            // messageStartPatternLabel
-            // 
-            resources.ApplyResources(this.messageStartPatternLabel, "messageStartPatternLabel");
-            this.messageStartPatternLabel.Name = "messageStartPatternLabel";
+            resources.ApplyResources(this.selectedTemplateControl, "selectedTemplateControl");
+            this.selectedTemplateControl.Name = "selectedTemplateControl";
             // 
             // tableLayoutPanel1
             // 
@@ -433,7 +372,6 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.commonTemplatesBox.ResumeLayout(false);
-            this.commonTemplatesBox.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -451,8 +389,6 @@
         private System.Windows.Forms.Label pageSizeLabel;
         private System.Windows.Forms.TextBox pageSizeBox;
         private System.Windows.Forms.GroupBox commonTemplatesBox;
-        private System.Windows.Forms.Label messageStartPatternLabel;
-        private System.Windows.Forms.TextBox messageStartPatternBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox keepLastNFilesBox;
         private System.Windows.Forms.Label label1;
@@ -475,17 +411,11 @@
         private System.Windows.Forms.Button addNewParsingTemplateBtn;
         private System.Windows.Forms.Label newTemplateNameLabel;
         private System.Windows.Forms.TextBox newTemplateNameBox;
-        private System.Windows.Forms.Label newPatternMessageStartLabel;
-        private System.Windows.Forms.TextBox newTemplateMessageStartBox;
         private System.Windows.Forms.Button cancelAddNewTemplateBtn;
         private System.Windows.Forms.Button addNewTemplateBtn;
         private System.Windows.Forms.Button removeParsingTemplateBtn;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label messageFilterLabel;
-        private System.Windows.Forms.TextBox messageFilterBox;
-        private System.Windows.Forms.Label newTemplateFilterLabel;
-        private System.Windows.Forms.TextBox newTemplateMessageFilterBox;
-        private System.Windows.Forms.CheckBox newMessageCompiledBox;
-        private System.Windows.Forms.CheckBox messageCompiledBox;
+        private LogParseTemplateControl selectedTemplateControl;
+        private LogParseTemplateControl newTemplateControl;
     }
 }

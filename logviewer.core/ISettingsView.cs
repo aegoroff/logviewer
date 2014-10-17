@@ -45,5 +45,11 @@ namespace logviewer.core
         void ShowNewParsingTemplateForm(bool show);
 
         ParsingTemplate NewParsingTemplateData { get; }
+
+        void EnableAddNewTemplate(bool enabled);
+
+        LogParseTemplateController SelectedTemplateController { get; }
+        
+        LogParseTemplateController NewTemplateController { get; }
     }
 }

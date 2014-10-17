@@ -22,12 +22,37 @@ namespace logviewer.core
         private int parsingTemplateIndex;
         private readonly Dictionary<LogLevel, Action<Color>> updateColorActions;
 
+
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
             this.view = view;
             this.settings = settings;
             this.parsingTemplateIndex = settings.SelectedParsingTemplate;
             this.updateColorActions = new Dictionary<LogLevel, Action<Color>>(this.InitializeUpdateActions());
+            this.view.SelectedTemplateController.TemplateChangeSuccess += SelectedTemplateControllerOnTemplateChangeSuccess;
+            this.view.SelectedTemplateController.TemplateChangeFailure += SelectedTemplateControllerOnTemplateChangeFailure;
+            this.view.NewTemplateController.TemplateChangeSuccess += NewTemplateControllerOnTemplateChangeSuccess;
+            this.view.NewTemplateController.TemplateChangeFailure += NewTemplateControllerOnTemplateChangeFailure;
+        }
+
+        private void NewTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableAddNewTemplate(true);
+        }
+        
+        private void NewTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableAddNewTemplate(false);
+        }
+
+        private void SelectedTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableSave(true);
+        }
+
+        private void SelectedTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
+        {
+            this.view.EnableSave(false);
         }
 
         private Dictionary<LogLevel, Action<Color>> InitializeUpdateActions()
@@ -190,32 +215,6 @@ namespace logviewer.core
         public void UpdatePageSize(string value)
         {
             this.formData.PageSize = value;
-            this.view.EnableSave(true);
-        }
-
-        public void UpdateMessageStartPattern(string value)
-        {
-            if (new GrokMatcher(value).CompilationFailed)
-            {
-                return;
-            }
-            if (this.template.StartMessage.Equals(value, StringComparison.Ordinal))
-            {
-                return;
-            }
-            this.template.StartMessage = value;
-            this.view.EnableSave(true);
-        }
-        
-        public void UpdateMessageFilter(string value)
-        {
-            this.template.Filter = value;
-            this.view.EnableSave(true);
-        }
-        
-        public void UpdateCompiled(bool value)
-        {
-            this.template.Compiled = value;
             this.view.EnableSave(true);
         }
         

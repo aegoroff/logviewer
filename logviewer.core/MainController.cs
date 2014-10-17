@@ -710,6 +710,7 @@ namespace logviewer.core
         public void ClearCache()
         {
             this.currentPath = null;
+            this.SetCurrentParsingTemplate();
         }
 
         public void MinFilter(int value)
@@ -828,6 +829,7 @@ namespace logviewer.core
             if (!template.IsEmpty)
             {
                 this.CreateMessageHead(template.StartMessage, template.Compiled);
+                this.CreateMessageFilter(template.Filter);
             }
             var value = this.settings.PageSize;
             if (this.pageSize != value)
