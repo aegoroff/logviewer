@@ -21,6 +21,7 @@ namespace logviewer
             this.controller = new SettingsController(this, settings);
             this.controller.Load();
             this.invalidTemplateTooltip.SetToolTip(this.messageStartPatternBox, string.Empty);
+            this.invalidTemplateTooltip.SetToolTip(this.newTemplateMessageStartBox, string.Empty);
         }
 
         public void SetApplyAction(Action<bool> action)
@@ -208,15 +209,36 @@ namespace logviewer
             this.invalidTemplateTooltip.Show(message, this.messageStartPatternBox);
             this.messageStartPatternBox.ForeColor = Color.Red;
         }
+        
+        public void ShowInvalidNewTemplateError(string message)
+        {
+            this.invalidTemplateTooltip.Show(message, this.newTemplateMessageStartBox);
+            this.newTemplateMessageStartBox.ForeColor = Color.Red;
+        }
 
         public void OnFixTemplate()
         {
             this.messageStartPatternBox.ForeColor = Color.Black;
         }
 
+        public void OnFixNewTemplate()
+        {
+            this.newTemplateMessageStartBox.ForeColor = Color.Black;
+        }
+
         public void HideInvalidTemplateError()
         {
             this.invalidTemplateTooltip.Hide(this.messageStartPatternBox);
+        }
+
+        public void HideInvalidNewTemplateError()
+        {
+            this.invalidTemplateTooltip.Hide(this.newTemplateMessageStartBox);
+        }
+
+        public void EnableAddNewTemplate(bool enabled)
+        {
+            this.addNewTemplateBtn.Enabled = enabled;
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
@@ -333,6 +355,11 @@ namespace logviewer
         private void OnRemoveSelectedParsingTemplate(object sender, EventArgs e)
         {
             this.controller.RemoveSelectedParsingTemplate();
+        }
+
+        private void OnNewTemplateMessageStartChange(object sender, EventArgs e)
+        {
+            this.controller.ValidateMessageStartPattern(this.newTemplateMessageStartBox.Text);
         }
     }
 }

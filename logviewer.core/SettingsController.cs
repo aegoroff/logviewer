@@ -198,22 +198,37 @@ namespace logviewer.core
 
         public void UpdateMessageStartPattern(string value)
         {
+            var  result = this.ValidateMessageStartPattern(value, this.view.ShowInvalidTemplateError, this.view.EnableSave,
+                this.view.HideInvalidTemplateError, this.view.OnFixTemplate);
+            if (result)
+            {
+                this.template.StartMessage = value;
+            }
+        }
+
+        public void ValidateMessageStartPattern(string value)
+        {
+            this.ValidateMessageStartPattern(value, this.view.ShowInvalidNewTemplateError, this.view.EnableAddNewTemplate,
+                this.view.HideInvalidNewTemplateError, this.view.OnFixNewTemplate);
+        }
+        
+        private bool ValidateMessageStartPattern(string value, Action<string> showError, Action<bool> enableButton, Action hideTooltip, Action fixAction)
+        {
             if (new GrokMatcher(value).CompilationFailed)
             {
-                this.view.ShowInvalidTemplateError(Resources.InvalidTemplate);
-                this.view.EnableSave(false);
+                showError(Resources.InvalidTemplate);
+                enableButton(false);
                 Task.Factory.StartNew(delegate
                 {
                     Thread.Sleep(2 * 1000);
-                    this.RunOnGuiThread(() => this.view.HideInvalidTemplateError());
+                    this.RunOnGuiThread(hideTooltip);
                 });
-                return;
+                return false;
             }
-            this.view.OnFixTemplate();
-            this.view.HideInvalidTemplateError();
-            this.view.EnableSave(!this.template.StartMessage.Equals(value, StringComparison.Ordinal));
-            this.template.StartMessage = value;
-            
+            fixAction();
+            hideTooltip();
+            enableButton(true);
+            return true;
         }
         
         public void UpdateMessageFilter(string value)

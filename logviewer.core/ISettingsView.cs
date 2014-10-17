@@ -48,8 +48,16 @@ namespace logviewer.core
 
         void ShowInvalidTemplateError(string message);
 
+        void ShowInvalidNewTemplateError(string message);
+
         void OnFixTemplate();
         
+        void OnFixNewTemplate();
+        
         void HideInvalidTemplateError();
+        
+        void HideInvalidNewTemplateError();
+
+        void EnableAddNewTemplate(bool enabled);
     }
 }
