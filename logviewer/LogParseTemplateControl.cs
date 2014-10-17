@@ -22,20 +22,23 @@ namespace logviewer
             get { return this.controller; }
         }
 
-        public void ShowInvalidTemplateError(string message)
+        public void ShowInvalidTemplateError(string message, object control)
         {
-            this.invalidTemplateTooltip.Show(message, this.messageStartPatternBox);
-            this.messageStartPatternBox.ForeColor = Color.Red;
+            var box = (Control) control;
+            this.invalidTemplateTooltip.Show(message, box);
+            box.ForeColor = Color.Red;
         }
 
-        public void HideInvalidTemplateError()
+        public void HideInvalidTemplateError(object control)
         {
-            this.invalidTemplateTooltip.Hide(this.messageStartPatternBox);
+            var box = (Control)control;
+            this.invalidTemplateTooltip.Hide(box);
         }
 
-        public void OnFixTemplate()
+        public void OnFixTemplate(object control)
         {
-            this.messageStartPatternBox.ForeColor = Color.Black;
+            var box = (Control)control;
+            box.ForeColor = Color.Black;
         }
 
         public void LoadTemplate(ParsingTemplate template)
@@ -44,6 +47,16 @@ namespace logviewer
             this.messageFilterBox.Text = template.Filter;
             this.messageCompiledBox.Checked = template.Compiled;
             this.Controller.Template = template;
+        }
+
+        public object MessageStartControl
+        {
+            get { return this.messageStartPatternBox; }
+        }
+
+        public object FilterControl
+        {
+            get { return this.messageFilterBox; }
         }
 
         private void OnSetMessageStartPattern(object sender, EventArgs e)

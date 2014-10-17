@@ -29,7 +29,8 @@ namespace logviewer.core
             {
                 return;
             }
-            var valid = this.ValidatePattern(value, this.view.ShowInvalidTemplateError, this.view.HideInvalidTemplateError, this.view.OnFixTemplate);
+            var valid = this.ValidatePattern(value, this.view.ShowInvalidTemplateError,
+                this.view.HideInvalidTemplateError, this.view.OnFixTemplate, this.view.MessageStartControl);
             if (valid)
             {
                 this.Template.StartMessage = value;
@@ -42,8 +43,12 @@ namespace logviewer.core
             {
                 return;
             }
-            this.Template.Filter = value;
-            this.OnTemplateChangeSuccess();
+            var valid = this.ValidatePattern(value, this.view.ShowInvalidTemplateError,
+                this.view.HideInvalidTemplateError, this.view.OnFixTemplate, this.view.FilterControl);
+            if (valid)
+            {
+                this.Template.Filter = value;
+            }
         }
 
         public void UpdateCompiled(bool value)
@@ -64,11 +69,11 @@ namespace logviewer.core
             }
         }
 
-        private bool ValidatePattern(string value, Action<string> showError, Action hideTooltip, Action fixAction)
+        private bool ValidatePattern(string value, Action<string, object> showError, Action<object> hideTooltip, Action<object> fixAction, object control)
         {
             if (new GrokMatcher(value).CompilationFailed)
             {
-                showError(Resources.InvalidTemplate);
+                showError(Resources.InvalidTemplate, control);
                 if (this.TemplateChangeFailure != null)
                 {
                     this.TemplateChangeFailure(this, new EventArgs());
@@ -76,12 +81,12 @@ namespace logviewer.core
                 Task.Factory.StartNew(delegate
                 {
                     Thread.Sleep(2 * 1000);
-                    this.RunOnGuiThread(hideTooltip);
+                    this.RunOnGuiThread(() => hideTooltip(control));
                 });
                 return false;
             }
-            fixAction();
-            hideTooltip();
+            fixAction(control);
+            hideTooltip(control);
             this.OnTemplateChangeSuccess();
             return true;
         }
