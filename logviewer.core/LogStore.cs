@@ -29,23 +29,23 @@ namespace logviewer.core
         private readonly ICollection<Semantic> schema;
         private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
 
-        private readonly IDictionary<string, PropertyInfo> typesStorage = new Dictionary<string, PropertyInfo>
+        private readonly IDictionary<string, ParserType> typesStorage = new Dictionary<string, ParserType>
         {
-            { "LogLevel", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.None", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.Trace", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.Debug", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.Info", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.Warn", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.Error", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "LogLevel.Fatal", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
-            { "DateTime", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Datetime } },
-            { "int", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
-            { "Int32", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
-            { "long", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
-            { "Int64", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
-            { "string", new PropertyInfo { Storage = PropertyType.String, Parser = ParserType.String } },
-            { "String", new PropertyInfo { Storage = PropertyType.String, Parser = ParserType.String } },
+            { "LogLevel", ParserType.LogLevel },
+            { "LogLevel.None", ParserType.LogLevel },
+            { "LogLevel.Trace", ParserType.LogLevel },
+            { "LogLevel.Debug", ParserType.LogLevel },
+            { "LogLevel.Info", ParserType.LogLevel },
+            { "LogLevel.Warn", ParserType.LogLevel },
+            { "LogLevel.Error", ParserType.LogLevel },
+            { "LogLevel.Fatal", ParserType.LogLevel },
+            { "DateTime", ParserType.Datetime },
+            { "int", ParserType.Interger },
+            { "Int32", ParserType.Interger },
+            { "long", ParserType.Interger },
+            { "Int64", ParserType.Interger },
+            { "string", ParserType.String },
+            { "String", ParserType.String },
         };
 
         #endregion
@@ -81,12 +81,12 @@ namespace logviewer.core
         {
             foreach (var rule in castingRules)
             {
-                PropertyInfo info;
-                if (!this.typesStorage.TryGetValue(rule.Type, out info))
+                ParserType parserType;
+                if (!this.typesStorage.TryGetValue(rule.Type, out parserType))
                 {
                     continue;
                 }
-                return new SemanticProperty(name, info.Parser);
+                return new SemanticProperty(name, parserType);
             }
             return new SemanticProperty(name, ParserType.String);
         }
@@ -276,10 +276,12 @@ namespace logviewer.core
 
         private PropertyType DefinePropertyType(string param)
         {
-            var ruleSet = this.rules[param];
-            PropertyInfo result;
-            this.typesStorage.TryGetValue(ruleSet.First().Type, out result);
-            return result.Storage;
+            ParserType result;
+            if (!this.typesStorage.TryGetValue(this.rules[param].First().Type, out result))
+            {
+                return PropertyType.String;
+            }
+            return result == ParserType.String ? PropertyType.String : PropertyType.Integer;
         }
 
         public long CountMessages(
