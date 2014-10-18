@@ -8,7 +8,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -40,7 +39,7 @@ namespace logviewer.core
         private readonly string settingsDatabaseFilePath;
         private readonly IEnumerable<string> parsingTemplatePropertiesNames;
         private readonly IEnumerable<ColumnAttribute> parsingTemplatePropertiesColumns;
-        private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
+        private readonly IEnumerable<System.Reflection.PropertyInfo> parsingTemplateProperties;
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
         private readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
@@ -237,7 +236,7 @@ namespace logviewer.core
             this.ExecuteNonQuery(string.Format(cmd, propertiesSet), command => AddParsingTemplateIntoCommand(command, template));
         }
 
-        private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
+        private static IEnumerable<System.Reflection.PropertyInfo> ReadParsingTemplateProperties()
         {
             return 
                 from info in typeof(ParsingTemplate).GetProperties()
@@ -333,7 +332,7 @@ namespace logviewer.core
             return result;
         }
 
-        private static ColumnAttribute GetColumnAttribute(PropertyInfo column)
+        private static ColumnAttribute GetColumnAttribute(System.Reflection.PropertyInfo column)
         {
             return (ColumnAttribute) column.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
         }

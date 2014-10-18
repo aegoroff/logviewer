@@ -27,24 +27,25 @@ namespace logviewer.core
         private readonly bool hasLogLevelProperty;
         private readonly string logLevelProperty;
         private readonly ICollection<Semantic> schema;
-        private readonly IDictionary<string, ISet<Rule>> rules;
-        private readonly IDictionary<string, PropertyType> typesStorage = new Dictionary<string, PropertyType>
+        private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
+
+        private readonly IDictionary<string, PropertyInfo> typesStorage = new Dictionary<string, PropertyInfo>
         {
-            { "LogLevel", PropertyType.Integer },
-            { "LogLevel.None", PropertyType.Integer },
-            { "LogLevel.Trace", PropertyType.Integer },
-            { "LogLevel.Debug", PropertyType.Integer },
-            { "LogLevel.Info", PropertyType.Integer },
-            { "LogLevel.Warn", PropertyType.Integer },
-            { "LogLevel.Error", PropertyType.Integer },
-            { "LogLevel.Fatal", PropertyType.Integer },
-            { "DateTime", PropertyType.Integer },
-            { "int", PropertyType.Integer },
-            { "Int32", PropertyType.Integer },
-            { "long", PropertyType.Integer },
-            { "Int64", PropertyType.Integer },
-            { "string", PropertyType.String },
-            { "String", PropertyType.String },
+            { "LogLevel", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.None", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.Trace", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.Debug", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.Info", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.Warn", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.Error", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "LogLevel.Fatal", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.LogLevel } },
+            { "DateTime", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Datetime } },
+            { "int", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
+            { "Int32", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
+            { "long", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
+            { "Int64", new PropertyInfo { Storage = PropertyType.Integer, Parser = ParserType.Interger } },
+            { "string", new PropertyInfo { Storage = PropertyType.String, Parser = ParserType.String } },
+            { "String", new PropertyInfo { Storage = PropertyType.String, Parser = ParserType.String } },
         };
 
         #endregion
@@ -54,17 +55,17 @@ namespace logviewer.core
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
             this.schema = schema;
-            var dictionary = new Dictionary<string, ISet<Rule>>();
+            var dictionary = new Dictionary<SemanticProperty, ISet<Rule>>();
             if (this.schema == null)
             {
-                this.rules = new Dictionary<string, ISet<Rule>>();
+                this.rules = new Dictionary<SemanticProperty, ISet<Rule>>();
             }
             else
             {
                 foreach (var semantic in this.schema)
                 {
                     var k = dictionary.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
-                    dictionary.Add(k, semantic.CastingRules);
+                    dictionary.Add(this.Create(k, semantic.CastingRules), semantic.CastingRules);
                 }
                 this.rules = dictionary;
             }
@@ -74,6 +75,20 @@ namespace logviewer.core
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
             this.CreateTables(dbSize);
+        }
+
+        private SemanticProperty Create(string name, IEnumerable<Rule> castingRules)
+        {
+            foreach (var rule in castingRules)
+            {
+                PropertyInfo info;
+                if (!this.typesStorage.TryGetValue(rule.Type, out info))
+                {
+                    continue;
+                }
+                return new SemanticProperty(name, info.Parser);
+            }
+            return new SemanticProperty(name, ParserType.String);
         }
 
         private bool HasProperty(string type)
@@ -103,7 +118,7 @@ namespace logviewer.core
 
         private IEnumerable<string> ReadAdditionalColumns()
         {
-            return this.rules.Keys;
+            return this.rules.Keys.Select(r=>r.Name);
         }
         
         
@@ -207,13 +222,13 @@ namespace logviewer.core
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
                 foreach (var param in this.rules.Keys)
                 {
-                    if (this.DefinePropertyType(param) == PropertyType.Integer)
+                    if (this.DefinePropertyType(param.Name) == PropertyType.Integer)
                     {
-                        DatabaseConnection.AddParameter(command, "@" + param, message.IntegerProperty(param));
+                        DatabaseConnection.AddParameter(command, "@" + param.Name, message.IntegerProperty(param.Name));
                     }
                     else
                     {
-                        DatabaseConnection.AddParameter(command, "@" + param, message.StringProperty(param));
+                        DatabaseConnection.AddParameter(command, "@" + param.Name, message.StringProperty(param.Name));
                     }
                 }
             };
@@ -244,13 +259,13 @@ namespace logviewer.core
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
                 foreach (var param in this.rules.Keys)
                 {
-                    if (this.DefinePropertyType(param) == PropertyType.Integer)
+                    if (this.DefinePropertyType(param.Name) == PropertyType.Integer)
                     {
-                        msg.UpdateIntegerProperty(param, (long)rdr[param]);
+                        msg.UpdateIntegerProperty(param.Name, (long)rdr[param.Name]);
                     }
                     else
                     {
-                        msg.UpdateStringProperty(param, rdr[param] as string);
+                        msg.UpdateStringProperty(param.Name, rdr[param.Name] as string);
                     }
                 }
 
@@ -262,9 +277,9 @@ namespace logviewer.core
         private PropertyType DefinePropertyType(string param)
         {
             var ruleSet = this.rules[param];
-            PropertyType result;
+            PropertyInfo result;
             this.typesStorage.TryGetValue(ruleSet.First().Type, out result);
-            return result;
+            return result.Storage;
         }
 
         public long CountMessages(

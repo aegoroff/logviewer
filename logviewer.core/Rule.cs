@@ -55,14 +55,14 @@ namespace logviewer.core
             return this.pattern != null ? this.pattern.GetHashCode() : 0;
         }
 
-        public static bool operator ==(Rule s1, Rule s2)
+        public static bool operator ==(Rule r1, Rule r2)
         {
-            return s1.Equals(s2);
+            return r1.Equals(r2);
         }
 
-        public static bool operator !=(Rule s1, Rule s2)
+        public static bool operator !=(Rule r1, Rule s2)
         {
-            return !(s1 == s2);
+            return !(r1 == s2);
         }
     }
 }

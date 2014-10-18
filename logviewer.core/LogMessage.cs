@@ -138,6 +138,10 @@ namespace logviewer.core
         {
             DateTime r;
             var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out r);
+            if (!success)
+            {
+                success = DateTime.TryParse(s, out r);
+            }
             return new ParseResult<DateTime> { Result = success, Value = r };
         }
         
@@ -148,34 +152,31 @@ namespace logviewer.core
             return new ParseResult<long> { Result = success, Value = r };
         }
 
-        bool ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
+        void ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
             if (result.Result)
             {
                 this.integerProperties[property] = (int)result.Value;
             }
-            return result.Result;
         }
 
-        bool ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
+        void ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
             if (result.Result)
             {
                 this.integerProperties[property] = result.Value.ToFileTime();
             }
-            return result.Result;
         }
 
-        bool ParseInteger(string dataToParse, ISet<Rule> rules, string property)
+        void ParseInteger(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(integerParsers, dataToParse, rules);
             if (result.Result)
             {
                 this.integerProperties[property] = result.Value;
             }
-            return result.Result;
         }
 
         private void ParseString(string dataToParse, ISet<Rule> rules, string property)
@@ -187,7 +188,7 @@ namespace logviewer.core
             }
         }
 
-        private void ApplySemanticRules(IDictionary<string, ISet<Rule>> schema)
+        private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.properties == null || schema == null)
             {
@@ -199,13 +200,25 @@ namespace logviewer.core
                 {
                     continue;
                 }
+                var sp = schema.First(p => p.Key == property.Key).Key;
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
-                if (this.ParseLogLevel(matchedData, rules, property.Key) || this.ParseDateTime(matchedData, rules, property.Key) || this.ParseInteger(matchedData, rules, property.Key))
+
+                switch (sp.Parser)
                 {
-                    continue;
+                    case ParserType.LogLevel:
+                        this.ParseLogLevel(matchedData, rules, property.Key);
+                        break;
+                    case ParserType.Datetime:
+                        this.ParseDateTime(matchedData, rules, property.Key);
+                        break;
+                    case ParserType.Interger:
+                        this.ParseInteger(matchedData, rules, property.Key);
+                        break;
+                    default:
+                        this.ParseString(matchedData, rules, property.Key);
+                        break;
                 }
-                this.ParseString(matchedData, rules, property.Key);
             }
         }
 
@@ -253,7 +266,7 @@ namespace logviewer.core
             this.stringProperties[property] = value;
         }
 
-        public void Cache(IDictionary<string, ISet<Rule>> schema)
+        public void Cache(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.head != null && this.body != null)
             {
