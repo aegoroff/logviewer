@@ -4,3 +4,10 @@ NGINXACCESS %{IPORHOST:clientip} %{NGUSER:ident} %{NGUSER:auth} \[%{HTTPDATE:tim
 
 # IIS 7.5
 IIS %{TIMESTAMP_ISO8601} %{IPORHOST} %{WORD} %{URIPATH} %{NOTSPACE} %{NUMBER} %{NOTSPACE} %{IPORHOST} %{NOTSPACE} %{NUMBER:Response,'20'->LogLevel.Info,'40'->LogLevel.Error,'50'->LogLevel.Fatal,'*'->LogLevel.Warn} %{NUMBER} %{NUMBER} %{NUMBER}
+
+# Apache server
+APACHE_SERVER %{SYSLOGTIMESTAMP:timestamp} %{YEAR}%{DATA}%{LOGLEVEL:Level,'error'->LogLevel.Error,'warn'->LogLevel.Warn,'notice'->LogLevel.Info,'*'->LogLevel.Info}%{DATA}
+
+# Apache with level
+COMMONAPACHELOG_LEVELED %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})" %{NUMBER:response,'20'->LogLevel.Info,'40'->LogLevel.Error,'50'->LogLevel.Fatal,'*'->LogLevel.Warn} (?:%{NUMBER:bytes}|-)
+COMBINEDAPACHELOG_LEVELED %{COMMONAPACHELOG_LEVELED} %{QS:referrer} %{QS:agent}

@@ -96,6 +96,7 @@
     <Compile Include="LogMessage.cs" />
     <Compile Include="GrokMatcher.cs" />
     <Compile Include="ParseResult.cs" />
+    <Compile Include="ParserType.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Rule.cs" />
     <Compile Include="SafeRunner.cs" />
     <Compile Include="Semantic.cs" />
+    <Compile Include="SemanticProperty.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SqliteSettingsProvider.cs" />
     <Compile Include="SizeUnit.cs" />
