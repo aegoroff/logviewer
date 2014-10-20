@@ -40,7 +40,7 @@ namespace logviewer.tests
             this.settings.Expects.Any.Method(_ => _.FormatBody(new LogLevel())).WithAnyArguments().WillReturn(new RtfCharFormat());
             this.settings.Expects.Any.Method(_ => _.FormatHead(new LogLevel())).WithAnyArguments().WillReturn(new RtfCharFormat());
 
-            var template = ParsingTemplate();
+            var template = ParsingTemplate(core.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
 
             this.controller = new MainController(this.settings.MockObject);
@@ -50,7 +50,7 @@ namespace logviewer.tests
             this.controller.SetView(this.view.MockObject);
         }
 
-        private static ParsingTemplate ParsingTemplate(string startMessage = MessageStart)
+        private static ParsingTemplate ParsingTemplate(string startMessage)
         {
             return new ParsingTemplate
             {
@@ -123,7 +123,7 @@ namespace logviewer.tests
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        internal const string MessageStart = @"^%{TIMESTAMP_ISO8601:Occured,DateTime}%{DATA}%{LOGLEVEL:Level,LogLevel}%{DATA}";
+        internal static string MessageStart = core.ParsingTemplate.Defaults.First().StartMessage;
 
         [Test]
         public void AllFilters()

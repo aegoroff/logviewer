@@ -168,6 +168,30 @@
   <data name="MinutesNominative" xml:space="preserve">
     <value>минута</value>
   </data>
+  <data name="ParsingTemplateApacheCombined" xml:space="preserve">
+    <value>Комбинированный журнал доступа Apache</value>
+  </data>
+  <data name="ParsingTemplateApacheCommon" xml:space="preserve">
+    <value>Общий журнал доступа Apache</value>
+  </data>
+  <data name="ParsingTemplateApacheServer" xml:space="preserve">
+    <value>Сервер Apache</value>
+  </data>
+  <data name="ParsingTemplateIis" xml:space="preserve">
+    <value>IIS</value>
+  </data>
+  <data name="ParsingTemplateNlog" xml:space="preserve">
+    <value>Типичный NLog или log4j шаблон</value>
+  </data>
+  <data name="ParsingTemplatePlainText" xml:space="preserve">
+    <value>Простой текст</value>
+  </data>
+  <data name="ParsingTemplateTeamcityBuildLog" xml:space="preserve">
+    <value>Журнал сборки на JetBrains TeamCity</value>
+  </data>
+  <data name="ParsingTemplateWixBurn" xml:space="preserve">
+    <value>Журнал WiX Burn</value>
+  </data>
   <data name="PatternCompilation" xml:space="preserve">
     <value>Идет компиляция шаблона ...</value>
   </data>

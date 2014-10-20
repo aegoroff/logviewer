@@ -2,6 +2,9 @@
 // Created at: 24.09.2013
 // © 2012-2014 Alexander Egorov
 
+using System.Collections.Generic;
+using logviewer.core.Properties;
+
 namespace logviewer.core
 {
     public class ParsingTemplate
@@ -35,6 +38,22 @@ namespace logviewer.core
                     return Name;
                 }
                 return Name + " (" + new FileSize(gm.Template.Length, true) + ")";
+            }
+        }
+
+        public static IEnumerable<ParsingTemplate> Defaults
+        {
+            get
+            {
+                yield return new ParsingTemplate { Index = 0, StartMessage = @"^\[?%{TIMESTAMP_ISO8601}\]?%{DATA}%{LOGLEVEL:Level,LogLevel}%{DATA}", Name = Resources.ParsingTemplateNlog };
+                yield return new ParsingTemplate { Index = 1, StartMessage = @"%{IIS}", Name = Resources.ParsingTemplateIis, Filter = "^#%{DATA}" };
+                yield return new ParsingTemplate { Index = 2, StartMessage = @"%{DATA}", Name = Resources.ParsingTemplatePlainText, Compiled = true };
+                yield return new ParsingTemplate { Index = 3, StartMessage = @"%{APACHE_SERVER}", Name = Resources.ParsingTemplateApacheServer };
+                yield return new ParsingTemplate { Index = 4, StartMessage = @"%{COMMONAPACHELOG_LEVELED}", Name = Resources.ParsingTemplateApacheCommon };
+                yield return new ParsingTemplate { Index = 5, StartMessage = @"%{COMBINEDAPACHELOG_LEVELED}", Name = Resources.ParsingTemplateApacheCombined };
+                yield return new ParsingTemplate { Index = 6, StartMessage = @"%{SYSLOGTIMESTAMP:Timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGPROG}:%{DATA:message}", Name = Resources.ParsingTemplateSyslog };
+                yield return new ParsingTemplate { Index = 7, StartMessage = "^\\[%{DATA}\\]\\[%{TIMESTAMP_ISO8601}\\]%{DATA:Level,'i'->LogLevel.Info,'w'->LogLevel.Warn,'e'->LogLevel.Error}\"\\d{3}:\"%{SPACE}%{DATA}", Name = Resources.ParsingTemplateWixBurn };
+                yield return new ParsingTemplate { Index = 8, StartMessage = "^\\[%{TIME}\\](%{WORD:Level,'W'->LogLevel.Warn,'E'->LogLevel.Error,'*'->LogLevel.Info}|%{SPACE})[:]%{DATA}", Name = Resources.ParsingTemplateTeamcityBuildLog, Filter = @"^[^\\[\\s].*" };
             }
         }
     }

@@ -214,6 +214,87 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apache combined access log.
+        /// </summary>
+        internal static string ParsingTemplateApacheCombined {
+            get {
+                return ResourceManager.GetString("ParsingTemplateApacheCombined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apache common access log.
+        /// </summary>
+        internal static string ParsingTemplateApacheCommon {
+            get {
+                return ResourceManager.GetString("ParsingTemplateApacheCommon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apache server.
+        /// </summary>
+        internal static string ParsingTemplateApacheServer {
+            get {
+                return ResourceManager.GetString("ParsingTemplateApacheServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IIS.
+        /// </summary>
+        internal static string ParsingTemplateIis {
+            get {
+                return ResourceManager.GetString("ParsingTemplateIis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Typical NLog or log4j layout.
+        /// </summary>
+        internal static string ParsingTemplateNlog {
+            get {
+                return ResourceManager.GetString("ParsingTemplateNlog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plain text.
+        /// </summary>
+        internal static string ParsingTemplatePlainText {
+            get {
+                return ResourceManager.GetString("ParsingTemplatePlainText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syslog.
+        /// </summary>
+        internal static string ParsingTemplateSyslog {
+            get {
+                return ResourceManager.GetString("ParsingTemplateSyslog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JetBrains TeamCity build log.
+        /// </summary>
+        internal static string ParsingTemplateTeamcityBuildLog {
+            get {
+                return ResourceManager.GetString("ParsingTemplateTeamcityBuildLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WiX burn log.
+        /// </summary>
+        internal static string ParsingTemplateWixBurn {
+            get {
+                return ResourceManager.GetString("ParsingTemplateWixBurn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Template compilation in progress ....
         /// </summary>
         internal static string PatternCompilation {

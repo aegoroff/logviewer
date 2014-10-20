@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using logviewer.core.Properties;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -31,7 +32,6 @@ namespace logviewer.core
         private const string UseRegexpParameterName = @"UseRegexp";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
-        private const string DefaultParsingProfileName = "default";
         private const string ApplicationOptionsFolder = "logviewer";
         private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
@@ -60,7 +60,6 @@ namespace logviewer.core
         };
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
-            string defaultStartMessageTemplate,
             int defaultPageSize,
             int defaultKeepLastNFiles)
         {
@@ -86,14 +85,11 @@ namespace logviewer.core
             {
                 return;
             }
-            var defaultTemplate = new ParsingTemplate
-            {
-                Index = DefaultParsingProfileIndex,
-                StartMessage = defaultStartMessageTemplate,
-                Name = DefaultParsingProfileName
-            };
 
-            this.InsertParsingTemplate(defaultTemplate);
+            foreach (var t in ParsingTemplate.Defaults)
+            {
+                this.InsertParsingTemplate(t);
+            }
         }
 
         private void CacheFormats()
@@ -561,7 +557,7 @@ namespace logviewer.core
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Ix", DefaultParsingProfileIndex);
-                DatabaseConnection.AddParameter(command, "@Name", DefaultParsingProfileName);
+                DatabaseConnection.AddParameter(command, "@Name", Resources.ParsingTemplateNlog);
             };
 
             connection.ExecuteNonQuery(cmd, action);
