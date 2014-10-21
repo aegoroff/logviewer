@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
 
@@ -274,6 +275,7 @@ namespace logviewer.core
             this.view.EnableChangeOrClose(false);
             Task.Factory.StartNew(delegate
             {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
                 var lastIx = settings.ReadAllParsingTemplates().Count - 1;
 
                 for (int i = lastIx; i >= 0; i--)
@@ -293,6 +295,7 @@ namespace logviewer.core
                 this.RunOnGuiThread(delegate
                 {
                     this.view.SelectParsingTemplate(0);
+                    this.view.LoadParsingTemplate(this.template);
                     this.view.EnableChangeOrClose(true);
                     this.view.EnableRemoveTemplateControl(false);
                     this.view.EnableSave(false);
