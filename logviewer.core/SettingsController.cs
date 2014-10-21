@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using logviewer.core.Properties;
 
 namespace logviewer.core
 {
@@ -262,6 +263,42 @@ namespace logviewer.core
                     this.view.SelectParsingTemplate(this.parsingTemplateIndex - 1);
                 });
             });
+        }
+
+        public void RestoreDefaultTemplates()
+        {
+            if (!view.ShowWarning(Resources.RestoreDefaultTemplateCaption, Resources.RestoreDefaultTemplateText))
+            {
+                return;
+            }
+            this.view.EnableChangeOrClose(false);
+            Task.Factory.StartNew(delegate
+            {
+                var lastIx = settings.ReadAllParsingTemplates().Count - 1;
+
+                for (int i = lastIx; i >= 0; i--)
+                {
+                    this.settings.DeleteParsingTemplate(i);
+                }
+                
+                foreach (var t in ParsingTemplate.Defaults)
+                {
+                    this.settings.InsertParsingTemplate(t);
+                }
+                this.parsingTemplateIndex = 0;
+                this.templateList = this.settings.ReadParsingTemplateList();
+                this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
+                this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
+
+                this.RunOnGuiThread(delegate
+                {
+                    this.view.SelectParsingTemplate(0);
+                    this.view.EnableChangeOrClose(true);
+                    this.view.EnableRemoveTemplateControl(false);
+                    this.view.EnableSave(false);
+                });
+            });
+
         }
 
         public void StartAddNewParsingTemplate()

@@ -181,6 +181,12 @@ namespace logviewer
             }
         }
 
+        public bool ShowWarning(string caption, string text)
+        {
+            return  MessageBox.Show(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes;
+        }
+
         public ParsingTemplate NewParsingTemplateData
         {
             get
@@ -309,6 +315,11 @@ namespace logviewer
         private void OnRemoveSelectedParsingTemplate(object sender, EventArgs e)
         {
             this.controller.RemoveSelectedParsingTemplate();
+        }
+
+        private void OnResetTemplateSettings(object sender, EventArgs e)
+        {
+            this.controller.RestoreDefaultTemplates();
         }
     }
 }
