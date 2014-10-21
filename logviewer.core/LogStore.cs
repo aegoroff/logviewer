@@ -288,8 +288,14 @@ namespace logviewer.core
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
             string filter = null,
-            bool useRegexp = true)
+            bool useRegexp = true,
+            bool excludeNoLevel = false)
         {
+            if (excludeNoLevel && !this.hasLogLevelProperty)
+            {
+                return 0;
+            }
+            
             var where = Where(min, max, filter, useRegexp);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
             Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
@@ -297,12 +303,13 @@ namespace logviewer.core
             return result;
         }
 
-        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp)
+        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, bool excludeNoLevel = false)
         {
             var clauses = new[]
             {
                 LevelClause(min, max),
-                FilterClause(filter, useRegexp)
+                FilterClause(filter, useRegexp),
+                ExcludeNoLevelClause(excludeNoLevel)
             };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
             if (!notEmpty.Any())
@@ -331,6 +338,11 @@ namespace logviewer.core
             var comparer = useRegexp ? "REGEXP" : "LIKE";
             var func = string.Format("(Header || Body) {0} @Filter", comparer);
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
+        }
+
+        private string ExcludeNoLevelClause(bool excludeNoLevel)
+        {
+            return excludeNoLevel && this.hasLogLevelProperty ? this.logLevelProperty + " > " + (int)LogLevel.None : string.Empty;
         }
 
         private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
