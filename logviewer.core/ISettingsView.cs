@@ -44,6 +44,8 @@ namespace logviewer.core
         
         void ShowNewParsingTemplateForm(bool show);
 
+        bool ShowWarning(string caption, string text);
+
         ParsingTemplate NewParsingTemplateData { get; }
 
         void EnableAddNewTemplate(bool enabled);

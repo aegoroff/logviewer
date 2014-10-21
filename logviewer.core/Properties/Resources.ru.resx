@@ -204,6 +204,12 @@
   <data name="RemainingLessThenSecond" xml:space="preserve">
     <value>меньше секунды</value>
   </data>
+  <data name="RestoreDefaultTemplateCaption" xml:space="preserve">
+    <value>Восстановление настроек шаблонов по умолчанию</value>
+  </data>
+  <data name="RestoreDefaultTemplateText" xml:space="preserve">
+    <value>Это действие удалит все ваши изменения. Уверены?</value>
+  </data>
   <data name="SecondsGenitivePlural" xml:space="preserve">
     <value>секунд</value>
   </data>

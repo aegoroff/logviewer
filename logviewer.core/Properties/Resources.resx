@@ -219,6 +219,12 @@
   <data name="RemainingWithMinutes" xml:space="preserve">
     <value>{0} {2} {1} {3}</value>
   </data>
+  <data name="RestoreDefaultTemplateCaption" xml:space="preserve">
+    <value>Restore default template settings</value>
+  </data>
+  <data name="RestoreDefaultTemplateText" xml:space="preserve">
+    <value>This wil delete all your template changes and customizations. Are you sure?</value>
+  </data>
   <data name="SecondsGenitivePlural" xml:space="preserve">
     <value>seconds</value>
   </data>
