@@ -298,6 +298,11 @@ namespace logviewer.core
 
                 this.RunOnGuiThread(delegate
                 {
+                    this.view.RemoveAllParsingTemplateNames();
+                    foreach (var name in this.templateList)
+                    {
+                        this.view.AddTemplateName(name);
+                    }
                     this.view.SelectParsingTemplate(0);
                     this.view.LoadParsingTemplate(this.template);
                     this.view.EnableChangeOrClose(true);

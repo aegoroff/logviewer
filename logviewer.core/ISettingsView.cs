@@ -21,6 +21,8 @@ namespace logviewer.core
         void SelectParsingTemplate(int ix);
 
         void RemoveParsingTemplateName(int ix);
+        
+        void RemoveAllParsingTemplateNames();
 
         void EnableRemoveTemplateControl(bool enabled);
 
