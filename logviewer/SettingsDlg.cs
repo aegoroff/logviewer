@@ -20,6 +20,7 @@ namespace logviewer
             this.InitializeComponent();
             this.controller = new SettingsController(this, settings);
             this.controller.Load();
+            this.newTemplateControl.LoadTemplate(new ParsingTemplate());
         }
 
         public void SetApplyAction(Action<bool> action)
@@ -42,7 +43,7 @@ namespace logviewer
 
         public void LoadParsingTemplate(ParsingTemplate template)
         {
-            this.messageStartPatternBox.Text = template.StartMessage;
+            this.selectedTemplateControl.LoadTemplate(template);
         }
 
         public void AddTemplateName(string name)
@@ -55,10 +56,30 @@ namespace logviewer
             this.parsingTemplateSelector.SelectedItem = name;
         }
 
+        public void SelectParsingTemplate(int ix)
+        {
+            this.parsingTemplateSelector.SelectedIndex = ix;
+        }
+
+        public void RemoveParsingTemplateName(int ix)
+        {
+            this.parsingTemplateSelector.Items.RemoveAt(ix);
+        }
+
+        public void RemoveAllParsingTemplateNames()
+        {
+            this.parsingTemplateSelector.Items.Clear();
+        }
+
+        public void EnableRemoveTemplateControl(bool enabled)
+        {
+            this.removeParsingTemplateBtn.Enabled = enabled;
+        }
+
         public ColorPickResult PickColor(Color startColor)
         {
             this.colorDialog1.Color = startColor;
-            ColorPickResult result = new ColorPickResult();
+            var result = new ColorPickResult();
             result.Result = this.colorDialog1.ShowDialog() == DialogResult.OK;
             result.SelectedColor = this.colorDialog1.Color;
             return result;
@@ -131,13 +152,73 @@ namespace logviewer
             this.openLastFile.Enabled = enabled;
             this.autoRefreshCheckBox.Enabled = enabled;
             this.parsingTemplateSelector.Enabled = enabled;
-            this.messageStartPatternBox.Enabled = enabled;
+            this.selectedTemplateControl.Enabled = enabled;
             this.resetColorsBtn.Enabled = enabled;
         }
 
         public void EnableResetColors(bool enabled)
         {
             this.resetColorsBtn.Enabled = enabled;
+        }
+
+        public void ShowNewParsingTemplateForm(bool show)
+        {
+            var controls = new Control[]
+            {
+                newTemplateNameLabel,
+                newTemplateNameBox,
+                addNewTemplateBtn,
+                cancelAddNewTemplateBtn,
+                groupBox2,
+                newTemplateControl
+            };
+
+            foreach (var control in controls)
+            {
+                if (show)
+                {
+                    control.Show();
+                }
+                else
+                {
+                    control.Hide();
+                }
+            }
+        }
+
+        public bool ShowWarning(string caption, string text)
+        {
+            return  MessageBox.Show(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes;
+        }
+
+        public ParsingTemplate NewParsingTemplateData
+        {
+            get
+            {
+                return new ParsingTemplate
+                {
+                    Name = this.newTemplateNameBox.Text,
+                    StartMessage = this.newTemplateControl.Controller.Template.StartMessage,
+                    Filter = this.newTemplateControl.Controller.Template.Filter,
+                    Compiled = this.newTemplateControl.Controller.Template.Compiled,
+                };
+            }
+        }
+
+        public void EnableAddNewTemplate(bool enabled)
+        {
+            this.addNewTemplateBtn.Enabled = enabled;
+        }
+
+        public LogParseTemplateController SelectedTemplateController
+        {
+            get { return selectedTemplateControl.Controller; }
+        }
+
+        public LogParseTemplateController NewTemplateController
+        {
+            get { return newTemplateControl.Controller; }
         }
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
@@ -153,11 +234,6 @@ namespace logviewer
         private void OnKeyPressInNumberOnlyBox(object sender, KeyPressEventArgs e)
         {
             e.Handled = !char.IsNumber(e.KeyChar) && !char.IsControl(e.KeyChar);
-        }
-
-        private void OnSetMessageStartPattern(object sender, EventArgs e)
-        {
-            this.controller.UpdateMessageStartPattern(this.messageStartPatternBox.Text);
         }
 
         private void OnKeepLastNFilesChange(object sender, EventArgs e)
@@ -219,6 +295,36 @@ namespace logviewer
         private void OnResetToDefault(object sender, EventArgs e)
         {
             this.controller.ResetColorsToDefault();
+        }
+
+        private void OnChangeParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.LoadParsingTemplate(this.parsingTemplateSelector.SelectedIndex);
+        }
+
+        private void OnStartAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.StartAddNewParsingTemplate();
+        }
+
+        private void OnCancelAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.CancelNewParsingTemplate();
+        }
+
+        private void OnAddNewParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.AddNewParsingTemplate();
+        }
+
+        private void OnRemoveSelectedParsingTemplate(object sender, EventArgs e)
+        {
+            this.controller.RemoveSelectedParsingTemplate();
+        }
+
+        private void OnResetTemplateSettings(object sender, EventArgs e)
+        {
+            this.controller.RestoreDefaultTemplates();
         }
     }
 }

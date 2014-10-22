@@ -39,6 +39,7 @@
             this.refreshButton = new System.Windows.Forms.ToolStripButton();
             this.settingsButton = new System.Windows.Forms.ToolStripButton();
             this.statButton = new System.Windows.Forms.ToolStripButton();
+            this.templateSelectButton = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.minLevelBox = new System.Windows.Forms.ToolStripComboBox();
@@ -196,6 +197,7 @@
             this.refreshButton,
             this.settingsButton,
             this.statButton,
+            this.templateSelectButton,
             this.toolStripSeparator3,
             this.toolStripLabel1,
             this.minLevelBox,
@@ -235,6 +237,12 @@
             this.statButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.statButton.Name = "statButton";
             this.statButton.Click += new System.EventHandler(this.OnOpenStatistic);
+            // 
+            // templateSelectButton
+            // 
+            resources.ApplyResources(this.templateSelectButton, "templateSelectButton");
+            this.templateSelectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.templateSelectButton.Name = "templateSelectButton";
             // 
             // toolStripSeparator3
             // 
@@ -487,6 +495,7 @@
         private System.Windows.Forms.ToolStripButton statButton;
         private System.Windows.Forms.ToolStripStatusLabel encodingLabel;
         private System.Windows.Forms.ToolStripMenuItem checkUpdatesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSplitButton templateSelectButton;
     }
 }
 

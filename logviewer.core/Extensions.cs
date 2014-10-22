@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using logviewer.core.Properties;
@@ -53,6 +55,15 @@ namespace logviewer.core
                 builder.Append('#');
             }
             return builder.ToString();
+        }
+
+        public static string UnescapeString(this string escaped)
+        {
+            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
+            {
+                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
+            }
+            return escaped;
         }
 
         public static int ToSafePercent(this int value, int min, int max)
@@ -188,6 +199,17 @@ namespace logviewer.core
                  return nominative;
              }
              return genitiveSingular ?? genitivePlural;
+         }
+
+         public static string AssemblyDirectory
+         {
+             get
+             {
+                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                 var uri = new UriBuilder(codeBase);
+                 string path = Uri.UnescapeDataString(uri.Path);
+                 return Path.GetDirectoryName(path);
+             }
          }
     }
 }

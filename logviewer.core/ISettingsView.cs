@@ -17,6 +17,14 @@ namespace logviewer.core
         void AddTemplateName(string name);
         
         void SelectParsingTemplateByName(string name);
+        
+        void SelectParsingTemplate(int ix);
+
+        void RemoveParsingTemplateName(int ix);
+        
+        void RemoveAllParsingTemplateNames();
+
+        void EnableRemoveTemplateControl(bool enabled);
 
         ColorPickResult PickColor(Color startColor);
         
@@ -35,5 +43,17 @@ namespace logviewer.core
         void EnableChangeOrClose(bool enabled);
         
         void EnableResetColors(bool enabled);
+        
+        void ShowNewParsingTemplateForm(bool show);
+
+        bool ShowWarning(string caption, string text);
+
+        ParsingTemplate NewParsingTemplateData { get; }
+
+        void EnableAddNewTemplate(bool enabled);
+
+        LogParseTemplateController SelectedTemplateController { get; }
+        
+        LogParseTemplateController NewTemplateController { get; }
     }
 }

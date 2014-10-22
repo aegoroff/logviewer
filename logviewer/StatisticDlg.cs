@@ -4,6 +4,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,6 +49,7 @@ namespace logviewer
 
             var filter = textBox1.Text;
             var regexp = this.useRegexp.Checked;
+            var dbSize = 0L;
 
             Action action = delegate
             {
@@ -55,8 +57,10 @@ namespace logviewer
                 for (var i = 0; i < byLevel.Length; i++)
                 {
                     var level = (LogLevel)i;
-                    byLevel[i] = (ulong)this.store.CountMessages(level, level, filter, regexp);
+                    byLevel[i] = (ulong)this.store.CountMessages(level, level, filter, regexp, true);
                 }
+                var fi = new FileInfo(this.store.DatabasePath);
+                dbSize = fi.Length;
             };
             var job = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
@@ -71,10 +75,11 @@ namespace logviewer
 
                 var sizeItem = new ListViewItem(new[] { Resources.Size, this.size });
                 var encodingItem = new ListViewItem(new[] { Resources.Encoding, this.encoding });
+                var databaseSize = new ListViewItem(new[] { Resources.DatabaseSize, new FileSize(dbSize).ToString() });
                 var totalItem =
                     new ListViewItem(new[] { Resources.TotalMessages, total.ToString(total.FormatString(), CultureInfo.CurrentCulture) });
 
-                items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem, encodingItem });
+                items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem, encodingItem, databaseSize });
 
                 this.listView1.Items.AddRange(items.ToArray());
             };

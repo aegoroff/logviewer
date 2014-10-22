@@ -16,7 +16,7 @@ namespace logviewer.tests
         [SetUp]
         public void Setup()
         {
-            this.provider = new SqliteSettingsProvider(dbPath, TstMainController.MessageStart, 100, 5);
+            this.provider = new SqliteSettingsProvider(dbPath, 100, 5);
         }
 
         [TearDown]
@@ -56,25 +56,45 @@ namespace logviewer.tests
         {
             ParsingTemplate template = this.provider.ReadParsingTemplate();
             template.StartMessage += "1";
-            this.provider.UpdateParsingProfile(template);
+            this.provider.UpdateParsingTemplate(template);
             ParsingTemplate template1 = this.provider.ReadParsingTemplate();
             Assert.That(template1.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
+        }
+        
+        [Test]
+        public void UpdateParsingTemplateWithFilter()
+        {
+            const string filter = "^#%{DATA}";
+            ParsingTemplate template = this.provider.ReadParsingTemplate();
+            template.StartMessage += "1";
+            template.Filter = filter;
+            this.provider.UpdateParsingTemplate(template);
+            ParsingTemplate template1 = this.provider.ReadParsingTemplate();
+            Assert.That(template1.StartMessage, Is.EqualTo(TstMainController.MessageStart + "1"));
+            Assert.That(template1.Filter, Is.EqualTo(filter));
         }
 
         [Test]
         public void SecondSettingsObjectOnTheSameFile()
         {
-            var secondProvider = new SqliteSettingsProvider(dbPath, TstMainController.MessageStart, 100, 5);
+            var secondProvider = new SqliteSettingsProvider(dbPath, 100, 5);
             Assert.That(secondProvider.PageSize, Is.EqualTo(100));
             ParsingTemplate template = secondProvider.ReadParsingTemplate();
-            Assert.That(template.Name, Is.EqualTo("default"));
+            Assert.That(template.Name, Is.EqualTo(ParsingTemplate.Defaults.First().Name));
         }
 
         [Test]
         public void ReadParsingTemplateList()
         {
             var list = this.provider.ReadParsingTemplateList();
-            Assert.That(list.Count(), Is.EqualTo(1));
+            Assert.That(list.Count(), Is.EqualTo(9));
+        }
+        
+        [Test]
+        public void ReadAllParsingTemplates()
+        {
+            var list = this.provider.ReadAllParsingTemplates();
+            Assert.That(list.Count(), Is.EqualTo(9));
         }
 
         [Test]
@@ -92,6 +112,65 @@ namespace logviewer.tests
             var newValue = new DateTime(2014, 1, 10).ToUniversalTime();
             this.provider.LastUpdateCheckTime = newValue;
             Assert.That(this.provider.LastUpdateCheckTime, Is.EqualTo(newValue));
+        }
+
+        [Test]
+        public void InsertParsingTemplate()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(9));
+            var newTemplate = new ParsingTemplate
+            {
+                Index = templates.Count, 
+                Name = "second", 
+                StartMessage = "%{DATA}"
+            };
+            this.provider.InsertParsingTemplate(newTemplate);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(10));
+            var template = this.provider.ReadParsingTemplate(newTemplate.Index);
+            Assert.That(template.Index, Is.EqualTo(newTemplate.Index));
+            Assert.That(template.Name, Is.EqualTo("second"));
+            Assert.That(template.StartMessage, Is.EqualTo("%{DATA}"));
+        }
+        
+        [Test]
+        public void RemoveParsingTemplate()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(9));
+            this.provider.DeleteParsingTemplate(8);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(8));
+        }
+        
+        [Test]
+        public void RemoveParsingTemplateFromMiddle()
+        {
+            var templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(9));
+            var newTemplate = new ParsingTemplate
+            {
+                Index = templates.Count, 
+                Name = "second", 
+                StartMessage = "^.+?$"
+            };
+            
+            var newTemplate1 = new ParsingTemplate
+            {
+                Index = templates.Count + 1, 
+                Name = "third", 
+                StartMessage = "^.+?$"
+            };
+            this.provider.InsertParsingTemplate(newTemplate);
+            this.provider.InsertParsingTemplate(newTemplate1);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(11));
+            this.provider.DeleteParsingTemplate(newTemplate.Index);
+            templates = this.provider.ReadParsingTemplateList();
+            Assert.That(templates.Count, Is.EqualTo(10));
+            ParsingTemplate template = this.provider.ReadParsingTemplate(templates.Count - 1);
+            Assert.That(template.Name, Is.EqualTo(newTemplate1.Name));
         }
     }
 }

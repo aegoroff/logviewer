@@ -79,6 +79,15 @@ namespace logviewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Database size.
+        /// </summary>
+        internal static string DatabaseSize {
+            get {
+                return ResourceManager.GetString("DatabaseSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debug.
         /// </summary>
         internal static string Debug {

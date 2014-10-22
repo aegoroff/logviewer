@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Linq;
 using logviewer.core;
 using NUnit.Framework;
 
@@ -11,197 +12,173 @@ namespace logviewer.tests
     [TestFixture]
     public class TstGrokMatcher
     {
-        [Test]
-        public void MatchesUnexist()
+        [TestCase("%{ID}")]
+        [TestCase("%{ID}%{DAT}")]
+        [TestCase("%{ID} %{DAT}")]
+        [TestCase("%{ID},%{DAT}")]
+        [TestCase("%{ID}str%{DAT}")]
+        [TestCase("str%{ID}str%{DAT}str")]
+        [TestCase("%{ID}\"%{DAT}")]
+        [TestCase("%{ID}'%{DAT}")]
+        [TestCase("%{ID}\" %{DAT}")]
+        [TestCase("%{ID}' %{DAT}")]
+        [TestCase("%{ID} \"%{DAT}")]
+        [TestCase("%{ID} '%{DAT}")]
+        public void PositiveCompileTestsNotChangingString(string pattern)
         {
-            var matcher = new GrokMatcher("%{ID}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID}"));
+            this.PositiveCompileTestsThatChangeString(pattern, pattern);
         }
 
-        [Test]
-        public void MatchesSeveraUnexistlWithoutLiteral()
+        [TestCase("%{WORD}", @"\b\w+\b")]
+        [TestCase("%{ID}' %{} '%{DAT}", "%{ID} %{} %{DAT}")]
+        [TestCase("%{ID}\" %{} \"%{DAT}", "%{ID} %{} %{DAT}")]
+        [TestCase("%{ID}\"\\\" %{} \\\"\"%{DAT}", "%{ID}\" %{} \"%{DAT}")]
+        [TestCase("%{ID}\"\\' %{} \\'\"%{DAT}", "%{ID}' %{} '%{DAT}")]
+        [TestCase("%{ID}\"' %{} '\"%{DAT}", "%{ID}' %{} '%{DAT}")]
+        [TestCase("%{ID}\"\\' \\\"%{}\\\" \\'\"%{DAT}", "%{ID}' \"%{}\" '%{DAT}")]
+        [TestCase("%{ID}\"\\' \\'%{}\\' \\'\"%{DAT}", "%{ID}' '%{}' '%{DAT}")]
+        [TestCase("%{ID}'\\\" %{} \\\"'%{DAT}", "%{ID}\" %{} \"%{DAT}")]
+        [TestCase("%{ID}'\\' %{} \\''%{DAT}", "%{ID}' %{} '%{DAT}")]
+        [TestCase("%{ID}'\" %{} \"'%{DAT}", "%{ID}\" %{} \"%{DAT}")]
+        [TestCase("%{ID}\" %{} \"%{DAT}\" %{} \"", "%{ID} %{} %{DAT} %{} ")]
+        [TestCase("\" %{} \"%{ID}\" %{} \"%{DAT}\" %{} \"", " %{} %{ID} %{} %{DAT} %{} ")]
+        [TestCase("%{ID}''%{DAT}", "%{ID}%{DAT}")]
+        [TestCase("%{ID}\"\"%{DAT}", "%{ID}%{DAT}")]
+        [TestCase("%{WORD}%{ID}", @"\b\w+\b%{ID}")]
+        [TestCase("%{WORD}%{INT}", @"\b\w+\b(?:[+-]?(?:[0-9]+))")]
+        [TestCase("%{WORD} %{INT}", @"\b\w+\b (?:[+-]?(?:[0-9]+))")]
+        [TestCase("%{WORD} %{INT} ", @"\b\w+\b (?:[+-]?(?:[0-9]+)) ")]
+        [TestCase("%{WORD} %{INT}1234", @"\b\w+\b (?:[+-]?(?:[0-9]+))1234")]
+        [TestCase("%{WORD} %{INT}str", @"\b\w+\b (?:[+-]?(?:[0-9]+))str")]
+        [TestCase("%{WORD}str%{INT}trs", @"\b\w+\bstr(?:[+-]?(?:[0-9]+))trs")]
+        [TestCase("%{TIME}", @"(?!<[0-9])(?:2[0123]|[01]?[0-9]):(?:[0-5][0-9])(?::(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))(?![0-9])")]
+        [TestCase("%{TIMESTAMP_ISO8601}", @"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?")]
+        [TestCase("%{S1:s}%{S2:s}", @"%{S1}%{S2}")]
+        [TestCase("%{LOGLEVEL:level}", @"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))")]
+        [TestCase("%{POSINT:num,int}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [TestCase("%{INT:Id,'0'->LogLevel.Trace}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'1'->LogLevel.Debug}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'2'->LogLevel.Info}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'3'->LogLevel.Warn}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'4'->LogLevel.Error}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [TestCase("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
+        public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
-            var matcher = new GrokMatcher("%{ID}%{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID}%{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralUnexist()
-        {
-            var matcher = new GrokMatcher("%{ID} %{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID} %{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralUnexistNotEmptyLiteral()
-        {
-            var matcher = new GrokMatcher("%{ID},%{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID},%{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralUnexistNotEmptyLiteralWithSeveralChars()
-        {
-            var matcher = new GrokMatcher("%{ID}str%{DATE}");
-            Assert.That(matcher.Template, Is.EqualTo("%{ID}str%{DATE}"));
-        }
-        
-        [Test]
-        public void MatchesSeveralLiteralsEverywhere()
-        {
-            var matcher = new GrokMatcher("str%{ID}str%{DATE}str");
-            Assert.That(matcher.Template, Is.EqualTo("str%{ID}str%{DATE}str"));
-        }
-        
-        [Test]
-        public void NotMatches()
-        {
-            var matcher = new GrokMatcher("%{id}");
-            Assert.That(matcher.Template, Is.EqualTo("%{id}"));
-        }
-
-        [Test]
-        public void MatchesExist()
-        {
-            var matcher = new GrokMatcher("%{WORD}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b"));
-        }
-        
-        [Test]
-        public void MatchesExistWithSemantic()
-        {
-            var matcher = new GrokMatcher("%{LOGLEVEL:level}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))"));
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(matcher.Template, Is.EqualTo(result));
         }
 
-        [Test]
-        public void MatchesExistWithSemanticAndCasting()
+        [TestCase("%{POSINT:num,int,int}")]
+        [TestCase("%{POSINT:num,int_number}")]
+        [TestCase("%{POSINT:_num}")]
+        [TestCase("%{POSINT:num1,num1}")]
+        [TestCase("%{POSINT:N1}")]
+        [TestCase("%{POSINT:1N}")]
+        [TestCase("%{POSINT:1n}")]
+        [TestCase("%{id}")]
+        [TestCase("%{POSINT}%%{POSINT}")]
+        [TestCase("%{POSINT}}%{POSINT}")]
+        [TestCase("%{POSINT:num,small}")]
+        [TestCase("%{INT:Id,'0'->LogLevel.T}")]
+        [TestCase("%{INT:Id,'0'->LogLevel.None}")]
+        [TestCase("%{ID:Id,'0'->LogLevel.Trace}")]
+        public void NegativeCompileTests(string pattern)
         {
-            var matcher = new GrokMatcher("%{POSINT:num:int}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?<num>\b(?:[1-9][0-9]*)\b)"));
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.Template, Is.EqualTo(pattern));
+            Assert.That(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
         }
 
-        [Test]
-        public void MatchesExistAndUnexist()
+        [TestCase(",")]
+        [TestCase(":")]
+        [TestCase("->")]
+        [TestCase(".")]
+        [TestCase("_")]
+        [TestCase(", ")]
+        public void PositiveCompileExistWithSpecialChars(string special)
         {
-            var matcher = new GrokMatcher("%{WORD}%{ID}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b%{ID}"));
+            this.PositiveCompileTestsThatChangeString("%{WORD}" + special + "%{POSINT}", @"\b\w+\b" + special + @"\b(?:[1-9][0-9]*)\b");
         }
 
-        [Test]
-        public void MatchesSeveralExistWithoutLiteral()
+        [TestCase("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}", "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1")]
+        [TestCase("%{MAC}", "00:15:F2:1E:D2:68")]
+        [TestCase("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}", "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1")]
+        public void PositiveMatch(string pattern, string message)
         {
-            var matcher = new GrokMatcher("%{WORD}%{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b(?:[+-]?(?:[0-9]+))"));
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.Match(message));
         }
         
         [Test]
-        public void MatchesSeveralExist()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistLiteralEnd()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT} ");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+)) "));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistLiteralEndManyChars()
-        {
-            var matcher = new GrokMatcher("%{WORD} %{INT}str");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b (?:[+-]?(?:[0-9]+))str"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistNotEmptyLiteral()
-        {
-            var matcher = new GrokMatcher("%{WORD}, %{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\b, (?:[+-]?(?:[0-9]+))"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistNotEmptyLiteralWithoutSpace()
-        {
-            var matcher = new GrokMatcher("%{WORD}str%{INT}");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\bstr(?:[+-]?(?:[0-9]+))"));
-        }
-        
-        [Test]
-        public void MatchesSeveralExistNotEmptyLiteralWithoutSpaceWithTrail()
-        {
-            var matcher = new GrokMatcher("%{WORD}str%{INT}trs");
-            Assert.That(matcher.Template, Is.EqualTo(@"\b\w+\bstr(?:[+-]?(?:[0-9]+))trs"));
-        }
-
-        [Test]
-        public void MatchesExistComplex()
-        {
-            var matcher = new GrokMatcher("%{TIME}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?!<[0-9])(?:2[0123]|[01]?[0-9]):(?:[0-5][0-9])(?::(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))(?![0-9])"));
-        }
-        
-        [Test]
-        public void MatchesExistComplexSeveralLevels()
-        {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601}");
-            Assert.That(matcher.Template, Is.EqualTo(@"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?"));
-        }
-        
-        [Test]
-        public void CheckRealMessage()
-        {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
-            Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"));
-        }
-        
-        [Test]
-        public void CheckRealMessageSyntaxErrorInTemplate()
+        public void NegativeMatch()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601 %{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
             Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"), Is.False);
         }
-        
-        [Test]
-        public void CompatibilityMatch()
-        {
-            var matcher = new GrokMatcher("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}");
-            Assert.That(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"));
-        }
 
         [TestCase("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}")]
-        [TestCase("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}")]
+        [TestCase("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}")]
         public void ParseRealMessage(string pattern)
         {
             var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(4));
+            Assert.That(matcher.CompilationFailed, Is.False);
+            
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
-            Assert.That(result.ContainsKey(new Semantic("datetime")));
-            Assert.That(result.ContainsKey(new Semantic("meta")));
-            Assert.That(result.ContainsKey(new Semantic("level")));
-            Assert.That(result.ContainsKey(new Semantic("head")));
+            Assert.That(result.ContainsKey("datetime"));
+            Assert.That(result.ContainsKey("meta"));
+            Assert.That(result.ContainsKey("level"));
+            Assert.That(result.ContainsKey("head"));
+        }
+
+        [TestCase("%{IIS}", 1)]
+        [TestCase("%{COMMONAPACHELOG}", 10)]
+        [TestCase("%{COMBINEDAPACHELOG}", 12)]
+        [TestCase("%{SYSLOGPROG}", 2)]
+        [TestCase("%{SYSLOGFACILITY}", 2)]
+        [TestCase("%{SYSLOGBASE}", 6)]
+        [TestCase("%{NGINXACCESS}", 16)]
+        public void ParsePatternWithCastingInside(string pattern, int semanticCount)
+        {
+            var matcher = new GrokMatcher(pattern);
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(semanticCount));
+            Assert.That(matcher.CompilationFailed, Is.False);
+            Assert.That(matcher.Template, Is.Not.EqualTo(pattern));
+        }
+
+        [Test]
+        public void ParseRealMessageNonDefaultCasting()
+        {
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}");
+            Assert.That(matcher.MessageSchema.Count, Is.EqualTo(1));
+            Assert.That(matcher.CompilationFailed, Is.False);
+            
+            var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
+            Assert.That(result.ContainsKey("datetime"));
+            Assert.That(result.Keys.Count, Is.EqualTo(1));
+            Assert.That(matcher.MessageSchema.First().CastingRules.Contains(new Rule("*")));
+            var rule = new Rule("*");
+            Assert.That(matcher.MessageSchema.First().Contains(rule));
+            Assert.That(matcher.MessageSchema.First().CastingRules.First(r => r == rule).Type, Is.EqualTo("DateTime"));
         }
         
         [Test]
         public void ParseRealMessageWithDatatypesFailure()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}");
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}");
             var result = matcher.Parse(" [4688] INFO \nmessage body 1");
             Assert.That(result, Is.Null);
         }
 
         [Test]
-        public void SemanticWithTheSameName()
-        {
-            var matcher = new GrokMatcher("%{S1:s}%{S2:s}");
-            Assert.That(matcher.Template, Is.EqualTo(@"%{S1}%{S2}"));
-        }
-
-        [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void SemanticWithTheSameNameParse()
+        public void ParseSemanticWithTheSameName()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:dt}%{DATA:meta}%{LOGLEVEL:dt}%{DATA:head}");
             matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO Head");

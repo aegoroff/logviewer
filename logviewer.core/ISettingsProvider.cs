@@ -24,13 +24,16 @@ namespace logviewer.core
         bool UseRegexp { get; set; }
         ParsingTemplate ReadParsingTemplate();
         IList<string> ReadParsingTemplateList();
+        IList<ParsingTemplate> ReadAllParsingTemplates();
         ParsingTemplate ReadParsingTemplate(int index);
-        void UpdateParsingProfile(ParsingTemplate template);
-        void InsertParsingProfile(ParsingTemplate template);
+        void UpdateParsingTemplate(ParsingTemplate template);
+        void InsertParsingTemplate(ParsingTemplate template);
+        void DeleteParsingTemplate(int ix);
         RtfCharFormat FormatHead(LogLevel level);
         RtfCharFormat FormatBody(LogLevel level);
         void UpdateColor(LogLevel level, Color color);
         Color ReadColor(LogLevel level);
         IDictionary<LogLevel, Color> DefaultColors { get; }
+        int SelectedParsingTemplate { get; set; }
     }
 }

@@ -57,6 +57,11 @@ namespace logviewer.core
         {
             this.ExecuteInCreationContext(() => this.transaction.Commit());
         }
+        
+        internal void RollbackTran()
+        {
+            this.ExecuteInCreationContext(() => this.transaction.Rollback());
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)

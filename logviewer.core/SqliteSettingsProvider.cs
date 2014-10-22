@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using logviewer.core.Properties;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -27,10 +28,10 @@ namespace logviewer.core
         private const string MaxLevelParameterName = @"MaxLevel";
         private const string SortingParameterName = @"Sorting";
         private const string PageSizeParameterName = @"PageSize";
+        private const string SelectedTemplateParameterName = @"SelectedTemplate";
         private const string UseRegexpParameterName = @"UseRegexp";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
-        private const string DefaultParsingProfileName = "default";
         private const string ApplicationOptionsFolder = "logviewer";
         private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
@@ -38,10 +39,14 @@ namespace logviewer.core
         private readonly int defaultPageSize;
         private readonly string settingsDatabaseFilePath;
         private readonly IEnumerable<string> parsingTemplatePropertiesNames;
+        private readonly IEnumerable<ColumnAttribute> parsingTemplatePropertiesColumns;
         private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
         private readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
+
+        private const int HeaderFontSize = 10;
+        private const int BodyFontSize = 9;
 
         private static readonly Dictionary<LogLevel, Color> defaultColors = new Dictionary<LogLevel, Color>
         {
@@ -55,7 +60,6 @@ namespace logviewer.core
         };
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
-            string defaultStartMessageTemplate,
             int defaultPageSize,
             int defaultKeepLastNFiles)
         {
@@ -63,10 +67,14 @@ namespace logviewer.core
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
-            this.parsingTemplatePropertiesNames = this.parsingTemplateProperties.Select(info => GetColumnAttribute(info).Name).ToArray();
+            this.parsingTemplatePropertiesColumns = this.parsingTemplateProperties.Select(GetColumnAttribute).ToArray();
+            this.parsingTemplatePropertiesNames = this.parsingTemplatePropertiesColumns.Select(c => c.Name).ToArray();
 
             this.upgrades.Add(Upgrade1);
             this.upgrades.Add(Upgrade2);
+            this.upgrades.Add(Upgrade3);
+            this.upgrades.Add(Upgrade4);
+            this.upgrades.Add(Upgrade5);
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -77,14 +85,11 @@ namespace logviewer.core
             {
                 return;
             }
-            var defaultTemplate = new ParsingTemplate
-            {
-                Index = DefaultParsingProfileIndex,
-                StartMessage = defaultStartMessageTemplate,
-                Name = DefaultParsingProfileName
-            };
 
-            this.InsertParsingProfile(defaultTemplate);
+            foreach (var t in ParsingTemplate.Defaults)
+            {
+                this.InsertParsingTemplate(t);
+            }
         }
 
         private void CacheFormats()
@@ -94,7 +99,7 @@ namespace logviewer.core
             {
                 var color = this.ReadColor(logLevel);
                 this.headerFormatsMap.Add(logLevel, FormatChar(color, true));
-                this.bodyFormatsMap.Add(logLevel, FormatChar(color, false));
+                this.bodyFormatsMap.Add(logLevel, FormatChar(color, false, BodyFontSize));
             }
         }
 
@@ -109,6 +114,12 @@ namespace logviewer.core
             get { return defaultColors; }
         }
 
+        public int SelectedParsingTemplate
+        {
+            get { return this.ReadIntegerOption(SelectedTemplateParameterName); }
+            set { this.UpdateIntegerOption(SelectedTemplateParameterName, value); }
+        }
+
         public void UpdateColor(LogLevel level, Color color)
         {
             if (!defaultColors.ContainsKey(level))
@@ -116,7 +127,7 @@ namespace logviewer.core
                 return;
             }
             this.headerFormatsMap[level] = FormatChar(color, true);
-            this.bodyFormatsMap[level] = FormatChar(color, false);
+            this.bodyFormatsMap[level] = FormatChar(color, false, BodyFontSize);
             this.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
@@ -207,7 +218,7 @@ namespace logviewer.core
             get { return this.settingsDatabaseFilePath; }
         }
 
-        public void UpdateParsingProfile(ParsingTemplate template)
+        public void UpdateParsingTemplate(ParsingTemplate template)
         {
             var propertiesSet = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
 
@@ -232,7 +243,7 @@ namespace logviewer.core
 
         public ParsingTemplate ReadParsingTemplate()
         {
-            return this.ReadParsingTemplate(DefaultParsingProfileIndex);
+            return this.ReadParsingTemplate(this.SelectedParsingTemplate);
         }
 
         public IList<string> ReadParsingTemplateList()
@@ -248,6 +259,28 @@ namespace logviewer.core
             var result = new List<string>();
 
             Action<IDataReader> onRead = rdr => result.Add(rdr[0] as string);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
+
+            ExecuteQuery(action);
+
+            return result;
+        }
+
+        public IList<ParsingTemplate> ReadAllParsingTemplates()
+        {
+            const string cmd = @"
+                    SELECT
+                        Ix,                        
+                        Name,
+                        StartMessage
+                    FROM
+                        ParsingTemplates
+                    ORDER BY Ix
+                    ";
+
+            var result = new List<ParsingTemplate>();
+
+            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string, StartMessage = rdr[2] as string });
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
 
             ExecuteQuery(action);
@@ -277,7 +310,15 @@ namespace logviewer.core
                 foreach (var column in parsingTemplateProperties)
                 {
                     var attr = GetColumnAttribute(column);
-                    column.SetValue(result, rdr[attr.Name], null);
+                    if (column.PropertyType == typeof(bool))
+                    {
+                        var v = rdr[attr.Name];
+                        column.SetValue(result, (bool)v, null);
+                    }
+                    else
+                    {
+                        column.SetValue(result, rdr[attr.Name] as string, null);
+                    }
                 }
             };
 
@@ -293,7 +334,7 @@ namespace logviewer.core
             return (ColumnAttribute) column.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
         }
 
-        public void InsertParsingProfile(ParsingTemplate template)
+        public void InsertParsingTemplate(ParsingTemplate template)
         {
             var propertiesColumns = string.Join(",", from level in parsingTemplatePropertiesNames select level);
             var propertiesParams = string.Join(",", from level in parsingTemplatePropertiesNames select "@" + level);
@@ -310,6 +351,67 @@ namespace logviewer.core
             var query = string.Format(cmd, propertiesColumns, propertiesParams);
             this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
         }
+        
+        public void DeleteParsingTemplate(int ix)
+        {
+            var query = string.Format(@"DELETE FROM ParsingTemplates WHERE Ix = {0}", ix);
+
+            const string selectIndexesCmd = @"
+                    SELECT
+                        Ix
+                    FROM
+                        ParsingTemplates
+                    WHERE Ix > @Ix
+                    ORDER BY Ix
+                    ";
+            
+            const string updateIndexesCmd = @"
+                    UPDATE
+                        ParsingTemplates
+                    SET
+                        Ix = @NewIx
+                    WHERE
+                        Ix = @Ix
+                    ";
+
+            var indexesToUpdate = new List<long>();
+
+            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Ix", ix);
+
+            Action<IDataReader> onRead = delegate(IDataReader rdr)
+            {
+                if (rdr[0] is DBNull)
+                {
+                    return;
+                }
+                indexesToUpdate.Add((long)rdr[0]);
+            };
+
+            ExecuteQuery(delegate(DatabaseConnection connection)
+            {
+                connection.BeginTran();
+                try
+                {
+                    connection.ExecuteNonQuery(query);
+                    connection.ExecuteReader(onRead, selectIndexesCmd, beforeRead);
+
+                    foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>)delegate(IDbCommand command)
+                    {
+                        DatabaseConnection.AddParameter(command, "@Ix", index);
+                        DatabaseConnection.AddParameter(command, "@NewIx", index - 1);
+                    }))
+                    {
+                        connection.ExecuteNonQuery(updateIndexesCmd, beforeUpdate);
+                    }
+                }
+                catch (Exception)
+                {
+                    connection.RollbackTran();
+                    throw;
+                }
+                connection.CommitTran();
+            });
+        }
 
         public RtfCharFormat FormatHead(LogLevel level)
         {
@@ -321,13 +423,13 @@ namespace logviewer.core
             return bodyFormatsMap[level];
         }
 
-        private static RtfCharFormat FormatChar(Color color, bool bold)
+        private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {
             return new RtfCharFormat
             {
                 Color = color,
                 Font = "Courier New",
-                Size = 10,
+                Size = size,
                 Bold = bold
             };
         }
@@ -345,14 +447,6 @@ namespace logviewer.core
             var integerOptions = string.Format(optionsTableTemplate, "IntegerOptions", "INTEGER");
             var booleanOptions = string.Format(optionsTableTemplate, "BooleanOptions", "BOOLEAN");
 
-            var propertiesCreate = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} TEXT NOT NULL", member));
-            const string parsingTemplates = @"
-                        CREATE TABLE IF NOT EXISTS ParsingTemplates (
-                                 Ix INTEGER PRIMARY KEY,
-                                 {0}
-                        );
-                    ";
-
             const string databaseConfigurationTable = @"
                         CREATE TABLE IF NOT EXISTS DatabaseConfiguration (
                                  Version INTEGER PRIMARY KEY,
@@ -360,7 +454,36 @@ namespace logviewer.core
                         );
                     ";
 
-            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, string.Format(parsingTemplates, propertiesCreate), databaseConfigurationTable);
+            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, this.ParsingTeplateCreateCmd(), databaseConfigurationTable);
+        }
+
+        private string ParsingTeplateCreateCmd()
+        {
+            var propertiesCreate = string.Join(", ", ParsingTemplateColumnsDefinition());
+            const string parsingTemplates = @"
+                        CREATE TABLE IF NOT EXISTS ParsingTemplates (
+                                 Ix INTEGER PRIMARY KEY,
+                                 {0}
+                        );
+                    ";
+            return string.Format(parsingTemplates, propertiesCreate);
+        }
+
+        IEnumerable<string> ParsingTemplateColumnsDefinition()
+        {
+            var q = from ColumnAttribute member in this.parsingTemplatePropertiesColumns select member;
+            foreach (var c in q)
+            {
+                if (c.Name == "Compiled")
+                {
+                    yield return c.Name + " BOOLEAN NULL DEFAULT FALSE";
+                }
+                else
+                {
+                    var n = c.Nullable ? string.Empty : "NOT";
+                    yield return c.Name + " TEXT " + n +" NULL";
+                }
+            }
         }
 
         private void RunUpgrade()
@@ -370,10 +493,18 @@ namespace logviewer.core
             ExecuteQuery(delegate(DatabaseConnection connection)
             {
                 connection.BeginTran();
-                for (var i = since; i < this.upgrades.Count; i++)
+                try
                 {
-                    this.upgrades[i](connection);
-                    InsertSchemaVersion(i + 1, connection);
+                    for (var i = since; i < this.upgrades.Count; i++)
+                    {
+                        this.upgrades[i](connection);
+                        InsertSchemaVersion(i + 1, connection);
+                    }
+                }
+                catch (Exception)
+                {
+                    connection.RollbackTran();
+                    throw;
                 }
                 connection.CommitTran();
             });
@@ -426,7 +557,7 @@ namespace logviewer.core
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Ix", DefaultParsingProfileIndex);
-                DatabaseConnection.AddParameter(command, "@Name", DefaultParsingProfileName);
+                DatabaseConnection.AddParameter(command, "@Name", Resources.ParsingTemplateNlog);
             };
 
             connection.ExecuteNonQuery(cmd, action);
@@ -435,6 +566,45 @@ namespace logviewer.core
         static void Upgrade2(DatabaseConnection connection)
         {
             connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
+        }
+        
+        void Upgrade3(DatabaseConnection connection)
+        {
+            var properties = string.Join(",",
+                from string member in this.parsingTemplatePropertiesNames select member);
+
+            properties = "Ix," + properties;
+            
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
+            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
+        }
+        
+        void Upgrade4(DatabaseConnection connection)
+        {
+            var properties = string.Join(",",
+                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Filter", StringComparison.Ordinal)) select member);
+
+            properties = "Ix," + properties;
+            
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
+            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
+        }
+        
+        void Upgrade5(DatabaseConnection connection)
+        {
+            var properties = string.Join(",",
+                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Compiled", StringComparison.Ordinal)) select member);
+
+            properties = "Ix," + properties;
+            
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesU5");
+            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesU5");
+            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesU5");
         }
 
         private void ExecuteNonQuery(params string[] queries)
@@ -499,7 +669,7 @@ namespace logviewer.core
                 StartMessage = GetStringValue("StartMessageTemplate")
             };
 
-            this.InsertParsingProfile(template);
+            this.InsertParsingTemplate(template);
 
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
         }

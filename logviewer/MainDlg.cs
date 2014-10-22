@@ -78,6 +78,7 @@ namespace logviewer
             this.applicationInitialized = true;
             this.Controller.LoadLastOpenedFile();
             this.Controller.UpdateRecentFilters();
+            this.Controller.ReadTemplates();
             this.Controller.CheckUpdates();
         }
 
@@ -214,12 +215,25 @@ namespace logviewer
             this.last.Enabled = enabled;
             this.first.Enabled = enabled;
             this.useRegexp.Enabled = enabled;
+            this.templateSelectButton.Enabled = enabled;
         }
 
         private void OnOpenRecentLogFile(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem)sender;
             this.StartLoadingLog(item.Tag as string);
+        }
+        
+        private void OnChangeTemplate(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem t in this.templateSelectButton.DropDownItems)
+            {
+                t.Checked = false;
+            }
+            var item = (ToolStripMenuItem)sender;
+            item.Checked  = true;
+            this.Controller.ChangeParsingTemplate((int)item.Tag);
+            this.StartLoadingLog(this.LogPath);
         }
 
         public void StartLoadingLog(string path)
@@ -270,6 +284,26 @@ namespace logviewer
         {
             this.filterBox.AutoCompleteCustomSource.Clear();
             this.filterBox.AutoCompleteCustomSource.AddRange(items);
+        }
+
+        public void ClearTemplatesList()
+        {
+            foreach (ToolStripMenuItem item in this.templateSelectButton.DropDownItems)
+            {
+                item.Click -= this.OnChangeTemplate;
+            }
+            this.templateSelectButton.DropDownItems.Clear();
+        }
+
+        public void CreateTemplateSelectionItem(ParsingTemplate template, int current)
+        {
+            var result = new ToolStripMenuItem(template.DisplayName)
+            {
+                Tag = template.Index,
+                Checked = template.Index == current
+            };
+            result.Click += this.OnChangeTemplate;
+            this.templateSelectButton.DropDownItems.Add(result);
         }
 
         public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri)
@@ -407,6 +441,7 @@ namespace logviewer
                 dlg.SetApplyAction(refresh => this.controller.UpdateSettings(refresh));
                 dlg.ShowDialog();
             }
+            this.Controller.ReadTemplates();
         }
 
         /// <summary>

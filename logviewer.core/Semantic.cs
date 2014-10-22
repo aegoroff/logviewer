@@ -3,36 +3,46 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace logviewer.core
 {
-    [DebuggerDisplay("{Name}")]
+    [DebuggerDisplay("{Property}")]
     public struct Semantic
     {
-        private readonly string name;
-        private string type;
+        private readonly string property;
+        private readonly HashSet<Rule> castingRules;
 
-        public Semantic(string name, string type = "string")
+        public Semantic(string property)
         {
-            this.name = name;
-            this.type = type;
+            this.property = property;
+            this.castingRules = new HashSet<Rule>();
+        }
+        
+        public Semantic(string property, Rule rule) : this(property)
+        {
+            this.castingRules.Add(rule);
         }
 
-        public string Type
+        public string Property
         {
-            get { return this.type; }
-            set { this.type = value; }
+            get { return this.property; }
         }
 
-        public string Name
+        public ISet<Rule> CastingRules
         {
-            get { return this.name; }
+            get { return this.castingRules; }
+        }
+
+        public bool Contains(Rule rule)
+        {
+            return this.castingRules.Contains(rule);
         }
 
         public bool Equals(Semantic other)
         {
-            return string.Equals(this.name, other.name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(this.property, other.property, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)
@@ -46,7 +56,7 @@ namespace logviewer.core
 
         public override int GetHashCode()
         {
-            return this.name != null ? this.name.GetHashCode() : 0;
+            return this.property != null ? this.property.GetHashCode() : 0;
         }
 
         public static bool operator ==(Semantic s1, Semantic s2)

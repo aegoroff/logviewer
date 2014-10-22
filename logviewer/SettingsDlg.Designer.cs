@@ -49,11 +49,19 @@
             this.label1 = new System.Windows.Forms.Label();
             this.openLastFile = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.restoreDefaultTemplatesBtn = new System.Windows.Forms.Button();
+            this.removeParsingTemplateBtn = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.newTemplateControl = new logviewer.LogParseTemplateControl();
+            this.newTemplateNameLabel = new System.Windows.Forms.Label();
+            this.addNewTemplateBtn = new System.Windows.Forms.Button();
+            this.newTemplateNameBox = new System.Windows.Forms.TextBox();
+            this.cancelAddNewTemplateBtn = new System.Windows.Forms.Button();
+            this.addNewParsingTemplateBtn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.parsingTemplateSelector = new System.Windows.Forms.ComboBox();
             this.commonTemplatesBox = new System.Windows.Forms.GroupBox();
-            this.messageStartPatternBox = new System.Windows.Forms.TextBox();
-            this.messageStartPatternLabel = new System.Windows.Forms.Label();
+            this.selectedTemplateControl = new logviewer.LogParseTemplateControl();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new System.Windows.Forms.Button();
@@ -65,6 +73,7 @@
             this.viewSettingsBox.SuspendLayout();
             this.fileSettingsBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.commonTemplatesBox.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -221,11 +230,76 @@
             // tabPage2
             // 
             resources.ApplyResources(this.tabPage2, "tabPage2");
+            this.tabPage2.Controls.Add(this.restoreDefaultTemplatesBtn);
+            this.tabPage2.Controls.Add(this.removeParsingTemplateBtn);
+            this.tabPage2.Controls.Add(this.groupBox2);
+            this.tabPage2.Controls.Add(this.addNewParsingTemplateBtn);
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.parsingTemplateSelector);
             this.tabPage2.Controls.Add(this.commonTemplatesBox);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // restoreDefaultTemplatesBtn
+            // 
+            resources.ApplyResources(this.restoreDefaultTemplatesBtn, "restoreDefaultTemplatesBtn");
+            this.restoreDefaultTemplatesBtn.Name = "restoreDefaultTemplatesBtn";
+            this.restoreDefaultTemplatesBtn.UseVisualStyleBackColor = true;
+            this.restoreDefaultTemplatesBtn.Click += new System.EventHandler(this.OnResetTemplateSettings);
+            // 
+            // removeParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.removeParsingTemplateBtn, "removeParsingTemplateBtn");
+            this.removeParsingTemplateBtn.Name = "removeParsingTemplateBtn";
+            this.removeParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.removeParsingTemplateBtn.Click += new System.EventHandler(this.OnRemoveSelectedParsingTemplate);
+            // 
+            // groupBox2
+            // 
+            resources.ApplyResources(this.groupBox2, "groupBox2");
+            this.groupBox2.Controls.Add(this.newTemplateControl);
+            this.groupBox2.Controls.Add(this.newTemplateNameLabel);
+            this.groupBox2.Controls.Add(this.addNewTemplateBtn);
+            this.groupBox2.Controls.Add(this.newTemplateNameBox);
+            this.groupBox2.Controls.Add(this.cancelAddNewTemplateBtn);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.TabStop = false;
+            // 
+            // newTemplateControl
+            // 
+            resources.ApplyResources(this.newTemplateControl, "newTemplateControl");
+            this.newTemplateControl.Name = "newTemplateControl";
+            // 
+            // newTemplateNameLabel
+            // 
+            resources.ApplyResources(this.newTemplateNameLabel, "newTemplateNameLabel");
+            this.newTemplateNameLabel.Name = "newTemplateNameLabel";
+            // 
+            // addNewTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewTemplateBtn, "addNewTemplateBtn");
+            this.addNewTemplateBtn.Name = "addNewTemplateBtn";
+            this.addNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewTemplateBtn.Click += new System.EventHandler(this.OnAddNewParsingTemplate);
+            // 
+            // newTemplateNameBox
+            // 
+            resources.ApplyResources(this.newTemplateNameBox, "newTemplateNameBox");
+            this.newTemplateNameBox.Name = "newTemplateNameBox";
+            // 
+            // cancelAddNewTemplateBtn
+            // 
+            resources.ApplyResources(this.cancelAddNewTemplateBtn, "cancelAddNewTemplateBtn");
+            this.cancelAddNewTemplateBtn.Name = "cancelAddNewTemplateBtn";
+            this.cancelAddNewTemplateBtn.UseVisualStyleBackColor = true;
+            this.cancelAddNewTemplateBtn.Click += new System.EventHandler(this.OnCancelAddNewParsingTemplate);
+            // 
+            // addNewParsingTemplateBtn
+            // 
+            resources.ApplyResources(this.addNewParsingTemplateBtn, "addNewParsingTemplateBtn");
+            this.addNewParsingTemplateBtn.Name = "addNewParsingTemplateBtn";
+            this.addNewParsingTemplateBtn.UseVisualStyleBackColor = true;
+            this.addNewParsingTemplateBtn.Click += new System.EventHandler(this.OnStartAddNewParsingTemplate);
             // 
             // label3
             // 
@@ -237,26 +311,20 @@
             resources.ApplyResources(this.parsingTemplateSelector, "parsingTemplateSelector");
             this.parsingTemplateSelector.FormattingEnabled = true;
             this.parsingTemplateSelector.Name = "parsingTemplateSelector";
+            this.parsingTemplateSelector.SelectedIndexChanged += new System.EventHandler(this.OnChangeParsingTemplate);
             this.parsingTemplateSelector.TextUpdate += new System.EventHandler(this.OnSetParsingTemplateName);
             // 
             // commonTemplatesBox
             // 
             resources.ApplyResources(this.commonTemplatesBox, "commonTemplatesBox");
-            this.commonTemplatesBox.Controls.Add(this.messageStartPatternBox);
-            this.commonTemplatesBox.Controls.Add(this.messageStartPatternLabel);
+            this.commonTemplatesBox.Controls.Add(this.selectedTemplateControl);
             this.commonTemplatesBox.Name = "commonTemplatesBox";
             this.commonTemplatesBox.TabStop = false;
             // 
-            // messageStartPatternBox
+            // selectedTemplateControl
             // 
-            resources.ApplyResources(this.messageStartPatternBox, "messageStartPatternBox");
-            this.messageStartPatternBox.Name = "messageStartPatternBox";
-            this.messageStartPatternBox.TextChanged += new System.EventHandler(this.OnSetMessageStartPattern);
-            // 
-            // messageStartPatternLabel
-            // 
-            resources.ApplyResources(this.messageStartPatternLabel, "messageStartPatternLabel");
-            this.messageStartPatternLabel.Name = "messageStartPatternLabel";
+            resources.ApplyResources(this.selectedTemplateControl, "selectedTemplateControl");
+            this.selectedTemplateControl.Name = "selectedTemplateControl";
             // 
             // tableLayoutPanel1
             // 
@@ -310,8 +378,9 @@
             this.fileSettingsBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.commonTemplatesBox.ResumeLayout(false);
-            this.commonTemplatesBox.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -329,8 +398,6 @@
         private System.Windows.Forms.Label pageSizeLabel;
         private System.Windows.Forms.TextBox pageSizeBox;
         private System.Windows.Forms.GroupBox commonTemplatesBox;
-        private System.Windows.Forms.Label messageStartPatternLabel;
-        private System.Windows.Forms.TextBox messageStartPatternBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox keepLastNFilesBox;
         private System.Windows.Forms.Label label1;
@@ -350,5 +417,15 @@
         private System.Windows.Forms.Button errorBtn;
         private System.Windows.Forms.Button fatalBtn;
         private System.Windows.Forms.Button resetColorsBtn;
+        private System.Windows.Forms.Button addNewParsingTemplateBtn;
+        private System.Windows.Forms.Label newTemplateNameLabel;
+        private System.Windows.Forms.TextBox newTemplateNameBox;
+        private System.Windows.Forms.Button cancelAddNewTemplateBtn;
+        private System.Windows.Forms.Button addNewTemplateBtn;
+        private System.Windows.Forms.Button removeParsingTemplateBtn;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private LogParseTemplateControl selectedTemplateControl;
+        private LogParseTemplateControl newTemplateControl;
+        private System.Windows.Forms.Button restoreDefaultTemplatesBtn;
     }
 }

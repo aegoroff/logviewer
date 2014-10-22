@@ -120,16 +120,13 @@
   <data name="tabPage1.Text" xml:space="preserve">
     <value>Общие настройки</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 282</value>
-  </data>
   <data name="tabPage2.Text" xml:space="preserve">
     <value>Шаблоны</value>
   </data>
   <data name="groupBox1.Text" xml:space="preserve">
     <value>Цвета уровней лога</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="resetColorsBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>230, 23</value>
   </data>
@@ -178,6 +175,42 @@
   <data name="openLastFile.Text" xml:space="preserve">
     <value>Открывать последний файл</value>
   </data>
+  <data name="restoreDefaultTemplatesBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>280, 193</value>
+  </data>
+  <data name="restoreDefaultTemplatesBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>151, 23</value>
+  </data>
+  <data name="restoreDefaultTemplatesBtn.Text" xml:space="preserve">
+    <value>Сброс настроек шаблонов</value>
+  </data>
+  <data name="removeParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 23</value>
+  </data>
+  <data name="removeParsingTemplateBtn.Text" xml:space="preserve">
+    <value>Удалить выбранный</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>Параметры нового шаблона</value>
+  </data>
+  <data name="newTemplateNameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>29, 13</value>
+  </data>
+  <data name="newTemplateNameLabel.Text" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="addNewTemplateBtn.Text" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="cancelAddNewTemplateBtn.Text" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>143, 23</value>
+  </data>
+  <data name="addNewParsingTemplateBtn.Text" xml:space="preserve">
+    <value>Добавить новый шаблон</value>
+  </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
     <value>36, 10</value>
   </data>
@@ -189,18 +222,6 @@
   </data>
   <data name="commonTemplatesBox.Text" xml:space="preserve">
     <value>Общие</value>
-  </data>
-  <data name="messageStartPatternBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 44</value>
-  </data>
-  <data name="messageStartPatternLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 28</value>
-  </data>
-  <data name="messageStartPatternLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>147, 13</value>
-  </data>
-  <data name="messageStartPatternLabel.Text" xml:space="preserve">
-    <value>Шаблон начала сообщения:</value>
   </data>
   <data name="closeButton.Text" xml:space="preserve">
     <value>Закрыть</value>
@@ -778,6 +799,10 @@
         x5Iuf8iSLn/Iki5/yJIuf8iSLn/Iki5/xI8sf8CMK3+/iyp/vYssbLSIOQEAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 </value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Настройки</value>

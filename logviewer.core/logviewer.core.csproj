@@ -79,6 +79,7 @@
     <Compile Include="FormData.cs" />
     <Compile Include="GrokVisitor.cs" />
     <Compile Include="ILogView.cs" />
+    <Compile Include="IParsingTemplateView.cs" />
     <Compile Include="ISettingsProvider.cs" />
     <Compile Include="ISettingsView.cs" />
     <Compile Include="IUpdatable.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="IVersionsReader.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
+    <Compile Include="LogParseTemplateController.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="GrokMatcher.cs" />
+    <Compile Include="ParseResult.cs" />
+    <Compile Include="ParserType.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -101,9 +105,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyType.cs" />
     <Compile Include="RecentItemsStore.cs" />
+    <Compile Include="Rule.cs" />
     <Compile Include="SafeRunner.cs" />
     <Compile Include="Semantic.cs" />
+    <Compile Include="SemanticProperty.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SqliteSettingsProvider.cs" />
     <Compile Include="SizeUnit.cs" />
@@ -127,8 +134,14 @@
       <Listener>False</Listener>
       <Visitor>True</Visitor>
     </Antlr4>
+    <None Include="grok.patterns">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="webservers.patterns">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

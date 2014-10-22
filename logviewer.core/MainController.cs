@@ -39,6 +39,7 @@ namespace logviewer.core
 
         private LogLevel maxFilter = LogLevel.Fatal;
         private GrokMatcher matcher;
+        private GrokMatcher filter;
         private LogLevel minFilter = LogLevel.Trace;
         private int pageSize;
         private bool reverseChronological;
@@ -63,21 +64,32 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture | RegexOptions.Compiled)
+        public MainController(ISettingsProvider settings, RegexOptions options = RegexOptions.ExplicitCapture)
         {
             this.CurrentPage = 1;
             this.settings = settings;
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
-            var template = this.settings.ReadParsingTemplate();
             this.options = options;
-            this.CreateMessageHead(template.StartMessage);
+            this.SetCurrentParsingTemplate();
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
-        private void CreateMessageHead(string startMessagePattern)
+        private void SetCurrentParsingTemplate()
         {
-            this.matcher = new GrokMatcher(startMessagePattern, this.options);
+            var template = this.settings.ReadParsingTemplate();
+            this.CreateMessageHead(template.StartMessage, template.Compiled);
+            this.CreateMessageFilter(template.Filter);
+        }
+
+        private void CreateMessageHead(string startMessagePattern, bool compiled)
+        {
+            this.matcher = new GrokMatcher(startMessagePattern, compiled ? options | RegexOptions.Compiled : options);
+        }
+        
+        private void CreateMessageFilter(string messageFilter)
+        {
+            this.filter = string.IsNullOrWhiteSpace(messageFilter) ? null : new GrokMatcher(messageFilter);
         }
 
         #endregion
@@ -189,14 +201,14 @@ namespace logviewer.core
 
         public bool PendingStart { get; private set; }
 
-        public void StartReading(string filter, bool regexp)
+        public void StartReading(string messageFilter, bool regexp)
         {
-            if (!IsValidFilter(filter, regexp))
+            if (!IsValidFilter(messageFilter, regexp))
             {
                 return;
             }
 
-            this.UpdateMessageFilter(filter);
+            this.UpdateMessageFilter(messageFilter);
 
             this.prevInput = DateTime.Now;
 
@@ -217,7 +229,7 @@ namespace logviewer.core
                     });
                     this.RunOnGuiThread(() =>
                     {
-                        this.UpdateRecentFilters(filter);
+                        this.UpdateRecentFilters(messageFilter);
                         this.view.StartReading();
                     });
                 }
@@ -250,7 +262,7 @@ namespace logviewer.core
             }
         }
 
-        public void BeginLogReading(int min, int max, string filter, bool reverse, bool regexp)
+        public void BeginLogReading(int min, int max, string messageFilter, bool reverse, bool regexp)
         {
             this.settings.MinLevel = min;
             this.settings.MaxLevel = max;
@@ -258,7 +270,7 @@ namespace logviewer.core
             this.CancelPreviousTask();
             this.MinFilter(min);
             this.MaxFilter(max);
-            this.TextFilter(filter);
+            this.TextFilter(messageFilter);
             this.UserRegexp(regexp);
             this.Ordering(reverse);
             this.BeginLogReading();
@@ -450,7 +462,7 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.view.LogPath, this.matcher);
+            var reader = new LogReader(this.view.LogPath, this.matcher, this.filter);
 
             var append = reader.Length > this.logSize && this.CurrentPathCached;
 
@@ -485,7 +497,7 @@ namespace logviewer.core
             }
             if (!append || this.store == null)
             {
-                this.store = new LogStore(dbSize);
+                this.store = new LogStore(dbSize, null, this.matcher.MessageSchema);
             }
             GC.Collect();
             this.store.StartAddMessages();
@@ -494,6 +506,8 @@ namespace logviewer.core
                 this.totalMessages = 0;
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
+            reader.CompilationStarted += OnCompilationStarted;
+            reader.CompilationFinished += this.OnCompilationFinished;
             reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
             Encoding inputEncoding;
@@ -530,11 +544,23 @@ namespace logviewer.core
             {
                 this.store.FinishAddMessages();
                 reader.ProgressChanged -= this.OnReadLogProgressChanged;
+                reader.CompilationStarted -= this.OnCompilationStarted;
+                reader.CompilationFinished -= this.OnCompilationFinished;
                 reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             }
 
             this.ReadLogFromInternalStore(false);
+        }
+
+        private void OnCompilationFinished(object sender, EventArgs eventArgs)
+        {
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.PatternCompilationFinished));
+        }
+
+        private void OnCompilationStarted(object sender, EventArgs eventArgs)
+        {
+            this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.PatternCompilation));
         }
 
         /// <remarks>
@@ -554,8 +580,6 @@ namespace logviewer.core
             {
                 try
                 {
-                    message.ApplySemantic(this.DetectLevel);
-                    message.Cache();
                     this.store.AddMessage(message);
                 }
                 finally
@@ -686,6 +710,7 @@ namespace logviewer.core
         public void ClearCache()
         {
             this.currentPath = null;
+            this.SetCurrentParsingTemplate();
         }
 
         public void MinFilter(int value)
@@ -762,6 +787,26 @@ namespace logviewer.core
             this.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
         }
 
+        public void ReadTemplates()
+        {
+            this.view.ClearTemplatesList();
+            Task.Factory.StartNew(delegate
+            {
+                var templates = settings.ReadAllParsingTemplates();
+                var current = settings.SelectedParsingTemplate;
+                foreach (var template in templates)
+                {
+                    this.RunOnGuiThread(() => this.view.CreateTemplateSelectionItem(template, current));
+                }
+            });
+        }
+
+        public void ChangeParsingTemplate(int index)
+        {
+            this.settings.SelectedParsingTemplate = index;
+            this.SetCurrentParsingTemplate();
+        }
+
         private void UseRecentFilesStore(Action<RecentItemsStore> action)
         {
             using (var filesStore = new RecentItemsStore(this.settings, "RecentFiles"))
@@ -783,7 +828,8 @@ namespace logviewer.core
             var template = this.settings.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
-                this.CreateMessageHead(template.StartMessage);
+                this.CreateMessageHead(template.StartMessage, template.Compiled);
+                this.CreateMessageFilter(template.Filter);
             }
             var value = this.settings.PageSize;
             if (this.pageSize != value)
@@ -931,16 +977,21 @@ namespace logviewer.core
 
         private void AddMessage(RtfDocument doc, LogMessage message)
         {
-            if (this.byLevel.ContainsKey(message.Level))
+            var logLvel = LogLevel.None;
+            if (this.store.HasLogLevelProperty)
             {
-                this.byLevel[message.Level] = this.byLevel[message.Level] + 1;
+                logLvel = (LogLevel)message.IntegerProperty(this.store.LogLevelProperty);
+            }
+            if (this.byLevel.ContainsKey(logLvel))
+            {
+                this.byLevel[logLvel] = this.byLevel[logLvel] + 1;
             }
             else
             {
-                this.byLevel.Add(message.Level, 1);
+                this.byLevel.Add(logLvel, 1);
             }
 
-            doc.AddText(message.Header.Trim(), this.settings.FormatHead(message.Level));
+            doc.AddText(message.Header.Trim(), this.settings.FormatHead(logLvel));
             doc.AddNewLine();
 
             var txt = message.Body;
@@ -949,25 +1000,8 @@ namespace logviewer.core
                 doc.AddNewLine();
                 return;
             }
-            doc.AddText(txt.Trim(), this.settings.FormatBody(message.Level));
+            doc.AddText(txt.Trim(), this.settings.FormatBody(logLvel));
             doc.AddNewLine(3);
-        }
-
-        private readonly Semantic levelSemantic = new Semantic("level");
-
-        private LogLevel DetectLevel(IDictionary<Semantic, string> match)
-        {
-            if (match == null)
-            {
-                return LogLevel.None;
-            }
-            string level;
-            if (!match.TryGetValue(this.levelSemantic, out level))
-            {
-                return LogLevel.None;
-            }
-            LogLevel result;
-            return Enum.TryParse(level, true, out result) ? result : LogLevel.None;
         }
 
         #endregion

@@ -135,6 +135,12 @@
   <data name="DefaultParsingTemplateName" xml:space="preserve">
     <value>Шаблон по умолчанию</value>
   </data>
+  <data name="DeleteCurrentTemplateCaption" xml:space="preserve">
+    <value>Удаление шаблона</value>
+  </data>
+  <data name="DeleteCurrentTemplateMessage" xml:space="preserve">
+    <value>Эту операцию нельзя отменить. Вы уверены?</value>
+  </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Определение кодировки файла ...</value>
   </data>
@@ -149,6 +155,9 @@
   </data>
   <data name="HoursNominative" xml:space="preserve">
     <value>час</value>
+  </data>
+  <data name="InvalidTemplate" xml:space="preserve">
+    <value>Шаблон,который вы ввели неверный. Исправьте это.</value>
   </data>
   <data name="LogInfoFormatString" xml:space="preserve">
     <value>Всего: {1} Для показа: {8} Показано: {0}   На странице T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
@@ -165,11 +174,47 @@
   <data name="MinutesNominative" xml:space="preserve">
     <value>минута</value>
   </data>
+  <data name="ParsingTemplateApacheCombined" xml:space="preserve">
+    <value>Комбинированный журнал доступа Apache</value>
+  </data>
+  <data name="ParsingTemplateApacheCommon" xml:space="preserve">
+    <value>Общий журнал доступа Apache</value>
+  </data>
+  <data name="ParsingTemplateApacheServer" xml:space="preserve">
+    <value>Сервер Apache</value>
+  </data>
+  <data name="ParsingTemplateIis" xml:space="preserve">
+    <value>IIS</value>
+  </data>
+  <data name="ParsingTemplateNlog" xml:space="preserve">
+    <value>Типичный NLog или log4j шаблон</value>
+  </data>
+  <data name="ParsingTemplatePlainText" xml:space="preserve">
+    <value>Простой текст</value>
+  </data>
+  <data name="ParsingTemplateTeamcityBuildLog" xml:space="preserve">
+    <value>Журнал сборки на JetBrains TeamCity</value>
+  </data>
+  <data name="ParsingTemplateWixBurn" xml:space="preserve">
+    <value>Журнал WiX Burn</value>
+  </data>
+  <data name="PatternCompilation" xml:space="preserve">
+    <value>Идет компиляция шаблона ...</value>
+  </data>
+  <data name="PatternCompilationFinished" xml:space="preserve">
+    <value>Компиляция шаблона закончена. Идет чтение журнала ...</value>
+  </data>
   <data name="ReadCompletedTemplate" xml:space="preserve">
     <value>Чтение завершено.  за {0}</value>
   </data>
   <data name="RemainingLessThenSecond" xml:space="preserve">
     <value>меньше секунды</value>
+  </data>
+  <data name="RestoreDefaultTemplateCaption" xml:space="preserve">
+    <value>Восстановление настроек шаблонов по умолчанию</value>
+  </data>
+  <data name="RestoreDefaultTemplateText" xml:space="preserve">
+    <value>Это действие удалит все ваши изменения. Уверены?</value>
   </data>
   <data name="SecondsGenitivePlural" xml:space="preserve">
     <value>секунд</value>

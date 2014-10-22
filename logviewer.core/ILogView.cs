@@ -2,8 +2,6 @@
 // Created at: 19.09.2012
 // © 2012-2014 Alexander Egorov
 
-using System;
-
 namespace logviewer.core
 {
     public interface ILogView : IUpdatable
@@ -30,5 +28,7 @@ namespace logviewer.core
         void SetFileEncoding(string encoding);
         void StartReading();
         void AddFilterItems(string[] items);
+        void ClearTemplatesList();
+        void CreateTemplateSelectionItem(ParsingTemplate template, int current);
     }
 }

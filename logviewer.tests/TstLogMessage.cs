@@ -35,7 +35,7 @@ namespace logviewer.tests
         {
             this.m.AddLine(H);
             this.m.AddLine(B);
-            this.m.Cache();
+            this.m.Cache(null);
             Assert.That(this.m.IsEmpty, Is.False);
             Assert.That(this.m.Header, Is.EqualTo(H));
             Assert.That(this.m.Body, Is.EqualTo(B));
@@ -73,7 +73,7 @@ namespace logviewer.tests
         public void OnlyHeadCached()
         {
             this.m.AddLine(H);
-            this.m.Cache();
+            this.m.Cache(null);
             Assert.That(this.m.IsEmpty, Is.False);
             Assert.That(this.m.Header, Is.EqualTo(H));
             Assert.That(this.m.Body, Is.Empty);
