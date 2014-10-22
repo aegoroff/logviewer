@@ -66,6 +66,11 @@ namespace logviewer
             this.parsingTemplateSelector.Items.RemoveAt(ix);
         }
 
+        public void RemoveAllParsingTemplateNames()
+        {
+            this.parsingTemplateSelector.Items.Clear();
+        }
+
         public void EnableRemoveTemplateControl(bool enabled)
         {
             this.removeParsingTemplateBtn.Enabled = enabled;

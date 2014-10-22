@@ -135,6 +135,12 @@
   <data name="DefaultParsingTemplateName" xml:space="preserve">
     <value>Default template</value>
   </data>
+  <data name="DeleteCurrentTemplateCaption" xml:space="preserve">
+    <value>Delete template</value>
+  </data>
+  <data name="DeleteCurrentTemplateMessage" xml:space="preserve">
+    <value>This operation cannot be reverted. Are you sure?</value>
+  </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Encoding detection in progress ...</value>
   </data>

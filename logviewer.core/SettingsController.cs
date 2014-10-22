@@ -254,6 +254,10 @@ namespace logviewer.core
 
         public void RemoveSelectedParsingTemplate()
         {
+            if (!view.ShowWarning(Resources.DeleteCurrentTemplateCaption, Resources.DeleteCurrentTemplateMessage))
+            {
+                return;
+            }
             Task.Factory.StartNew(delegate
             {
                 this.settings.DeleteParsingTemplate(this.parsingTemplateIndex);
@@ -294,6 +298,11 @@ namespace logviewer.core
 
                 this.RunOnGuiThread(delegate
                 {
+                    this.view.RemoveAllParsingTemplateNames();
+                    foreach (var name in this.templateList)
+                    {
+                        this.view.AddTemplateName(name);
+                    }
                     this.view.SelectParsingTemplate(0);
                     this.view.LoadParsingTemplate(this.template);
                     this.view.EnableChangeOrClose(true);

@@ -115,6 +115,24 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete template.
+        /// </summary>
+        internal static string DeleteCurrentTemplateCaption {
+            get {
+                return ResourceManager.GetString("DeleteCurrentTemplateCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This operation cannot be reverted. Are you sure?.
+        /// </summary>
+        internal static string DeleteCurrentTemplateMessage {
+            get {
+                return ResourceManager.GetString("DeleteCurrentTemplateMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding detection in progress ....
         /// </summary>
         internal static string EncodingDetectionInProgress {
