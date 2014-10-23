@@ -97,7 +97,7 @@ namespace logviewer.core
         /// </remarks>
         public void Trace(Exception exception)
         {
-            SafeRunner.Run(this.log.TraceException, exception.Message, exception);
+            SafeRunner.Run(this.log.Trace, exception.Message, exception);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace logviewer.core
         /// <param name="exception"> The exception object to log. </param>
         public void Trace(object message, Exception exception)
         {
-            SafeRunner.Run(this.log.TraceException, message.ToString(), exception);
+            SafeRunner.Run(this.log.Trace, message.ToString(), exception);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace logviewer.core
         /// </remarks>
         public void Debug(Exception exception)
         {
-            SafeRunner.Run(this.log.DebugException, exception.Message, exception);
+            SafeRunner.Run(this.log.Debug, exception.Message, exception);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace logviewer.core
         /// </remarks>
         public void Debug(object message, Exception exception)
         {
-            SafeRunner.Run(this.log.DebugException, message.ToString(), exception);
+            SafeRunner.Run(this.log.Debug, message.ToString(), exception);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace logviewer.core
         /// <param name="exception"> The exception object to log. </param>
         public void Info(object message, Exception exception)
         {
-            SafeRunner.Run(this.log.InfoException, message.ToString(), exception);
+            SafeRunner.Run(this.log.Info, message.ToString(), exception);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace logviewer.core
         /// <param name="exception"> The exception to log, including its stack trace. </param>
         public void Warn(object message, Exception exception)
         {
-            SafeRunner.Run(this.log.WarnException, message.ToString(), exception);
+            SafeRunner.Run(this.log.Warn, message.ToString(), exception);
         }
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace logviewer.core
         /// <param name="exception"> The exception to log, including its stack trace. </param>
         public void Error(object message, Exception exception)
         {
-            SafeRunner.Run(this.log.ErrorException, message.ToString(), exception);
+            SafeRunner.Run(this.log.Error, message.ToString(), exception);
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace logviewer.core
         /// <param name="exception"> The exception to log, including its stack trace. </param>
         public void Fatal(object message, Exception exception)
         {
-            SafeRunner.Run(this.log.FatalException, message.ToString(), exception);
+            SafeRunner.Run(this.log.Fatal, message.ToString(), exception);
         }
 
         /// <summary>
