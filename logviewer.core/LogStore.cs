@@ -103,17 +103,22 @@ namespace logviewer.core
 
         private IEnumerable<string> CreateAdditionalColumns()
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(CreateColumnTemplate, column));
+            return this.DdlHelper(CreateColumnTemplate);
         }
 
         private IEnumerable<string> CreateAdditionalIndexes()
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(CreateIndexTemplate, column));
+            return this.DdlHelper(CreateIndexTemplate);
         }
         
         private IEnumerable<string> DropAdditionalIndexes()
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(DropIndexTemplate, column));
+            return this.DdlHelper(DropIndexTemplate);
+        }
+        
+        private IEnumerable<string> DdlHelper(string template)
+        {
+            return this.ReadAdditionalColumns().Select(column => string.Format(template, column));
         }
 
         private IEnumerable<string> ReadAdditionalColumns()
