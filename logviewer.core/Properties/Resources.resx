@@ -159,6 +159,9 @@
   <data name="InvalidTemplate" xml:space="preserve">
     <value>The template you entered is invalid. Fix it.</value>
   </data>
+  <data name="LogIndexing" xml:space="preserve">
+    <value>All log items read. Indexing log in progress ...</value>
+  </data>
   <data name="LogInfoFormatString" xml:space="preserve">
     <value>Total: {1} To display: {8} Displayed: {0}   On the page T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
   </data>
