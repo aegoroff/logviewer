@@ -9,5 +9,5 @@ IIS %{TIMESTAMP_ISO8601} %{IPORHOST} %{WORD} %{URIPATH} %{NOTSPACE} %{NUMBER} %{
 APACHE_SERVER %{SYSLOGTIMESTAMP:timestamp} %{YEAR}%{DATA}%{LOGLEVEL:Level,'error'->LogLevel.Error,'warn'->LogLevel.Warn,'notice'->LogLevel.Info,'*'->LogLevel.Info}%{DATA}
 
 # Apache with level
-COMMONAPACHELOG_LEVELED %{IPORHOST} %{USER} %{USER} \[%{HTTPDATE:timestamp}\] "(?:%{WORD} %{NOTSPACE}(?: HTTP/%{NUMBER})?|%{DATA})" %{NUMBER:response,'20'->LogLevel.Info,'40'->LogLevel.Error,'50'->LogLevel.Fatal,'*'->LogLevel.Warn} (?:%{NUMBER}|-)
+COMMONAPACHELOG_LEVELED %{IPORHOST} %{USER} %{USER} \[%{HTTPDATE:timestamp,DateTime}\] "(?:%{WORD} %{NOTSPACE}(?: HTTP/%{NUMBER})?|%{DATA})" %{NUMBER:response,'20'->LogLevel.Info,'40'->LogLevel.Error,'50'->LogLevel.Fatal,'*'->LogLevel.Warn} (?:%{NUMBER}|-)
 COMBINEDAPACHELOG_LEVELED %{COMMONAPACHELOG_LEVELED} %{QS} %{QS}

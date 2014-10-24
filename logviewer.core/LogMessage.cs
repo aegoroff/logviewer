@@ -23,7 +23,11 @@ namespace logviewer.core
                         "yyyy-MM-dd HH:mm", 
                         "yyyy-MM-dd HH:mm:ss", 
                         "yyyy-MM-ddTHH:mm:ss,FFFK",
-                        "yyyy-MM-ddTHH:mm:ss.FFFK"
+                        "yyyy-MM-ddTHH:mm:ss.FFFK",
+                        "dd/MMM/yyyy:HH:mm:ssK",
+                        "dd/MMM/yyyy:HH:mm:ss K",
+                        "dd/MMM/yyyy:HH:mm:sszzz",
+                        "dd/MMM/yyyy:HH:mm:ss zzz",
                     };
 
         public LogMessage(string header, string body)
