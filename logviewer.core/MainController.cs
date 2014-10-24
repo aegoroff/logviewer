@@ -542,6 +542,8 @@ namespace logviewer.core
             }
             finally
             {
+                this.RunOnGuiThread(
+                        () => this.view.SetLogProgressCustomText(Resources.LogIndexing));
                 this.store.FinishAddMessages();
                 reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 reader.CompilationStarted -= this.OnCompilationStarted;
