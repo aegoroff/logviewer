@@ -140,17 +140,35 @@ namespace logviewer.tests
             Assert.That(this.m.StringProperty("str"), Is.EqualTo(result));
         }
 
+        [TestCase("a", LogLevel.Debug)]
+        [TestCase("100", LogLevel.Debug)]
+        [TestCase("200", LogLevel.Info)]
+        [TestCase("301", LogLevel.Warn)]
+        [TestCase("404", LogLevel.Error)]
+        [TestCase("500", LogLevel.Fatal)]
+        public void ParseLogLevelCustomRules(string input, LogLevel result)
+        {
+            this.ParseTest("Level", ParserType.LogLevel, input, 
+                new Rule("LogLevel.Info", "20"), 
+                new Rule("LogLevel.Warn", "30"),
+                new Rule("LogLevel.Error", "40"), 
+                new Rule("LogLevel.Fatal", "50"), 
+                new Rule("LogLevel.Debug"));
+            Assert.That((LogLevel)this.m.IntegerProperty("Level"), Is.EqualTo(result));
+        }
+        
         private void ParseTest(string prop, string type, ParserType parser, string input)
+        {
+            this.ParseTest(prop, parser, input, new Rule(type));
+        }
+
+        private void ParseTest(string prop, ParserType parser, string input, params Rule[] rules)
         {
             this.m.AddLine(H);
             IDictionary<SemanticProperty, ISet<Rule>> schema = new Dictionary<SemanticProperty, ISet<Rule>>
             {
                 {
-                    new SemanticProperty(prop, parser),
-                    new HashSet<Rule>
-                    {
-                        new Rule(type)
-                    }
+                    new SemanticProperty(prop, parser), new HashSet<Rule>(rules)
                 }
             };
             IDictionary<string, string> props = new Dictionary<string, string>
