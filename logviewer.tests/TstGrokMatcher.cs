@@ -137,7 +137,7 @@ namespace logviewer.tests
             Assert.That(result.ContainsKey("head"));
         }
 
-        [TestCase("%{IIS}", 1)]
+        [TestCase("%{IIS}", 2)]
         [TestCase("%{COMMONAPACHELOG}", 10)]
         [TestCase("%{COMBINEDAPACHELOG}", 12)]
         [TestCase("%{SYSLOGPROG}", 2)]
