@@ -101,6 +101,7 @@ namespace logviewer.tests
         }
 
         [TestCase("2014-10-23 20:00:51,790", 2014, 10, 23, 20, 0, 51, 790)]
+        [TestCase("2014-10-23 20:00:51.790", 2014, 10, 23, 20, 0, 51, 790)]
         [TestCase("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
         [TestCase("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
         [TestCase("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 13, 34, 30, 0)]
@@ -108,6 +109,26 @@ namespace logviewer.tests
         {
             this.ParseIntegerTest("dt", "DateTime", ParserType.Datetime, input);
             Assert.That(DateTime.FromFileTime(this.m.IntegerProperty("dt")), Is.EqualTo(new DateTime(y, month, d, h, min, sec, millisecond)));
+        }
+
+        [TestCase("1", 1, "long")]
+        [TestCase("-1", -1, "long")]
+        [TestCase("0", 0, "long")]
+        [TestCase("a", 0, "long")]
+        [TestCase("1", 1, "int")]
+        [TestCase("1", 1, "Int32")]
+        [TestCase("1", 1, "Int64")]
+        [TestCase("9223372036854775807", long.MaxValue, "long")]
+        [TestCase("9223372036854775807", long.MaxValue, "int")]
+        [TestCase("9223372036854775807", long.MaxValue, "Int32")]
+        [TestCase("9223372036854775807", long.MaxValue, "Int64")]
+        [TestCase("-9223372036854775808", long.MinValue, "long")]
+        [TestCase("-9223372036854775810", 0, "long")]
+        [TestCase("9223372036854775810", 0, "long")]
+        public void ParseInteger(string input, long result, string type)
+        {
+            this.ParseIntegerTest("integer", type, ParserType.Interger, input);
+            Assert.That(this.m.IntegerProperty("integer"), Is.EqualTo(result));
         }
 
         private void ParseIntegerTest(string prop, string type, ParserType parser, string input)
