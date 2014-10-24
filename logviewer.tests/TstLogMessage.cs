@@ -100,41 +100,21 @@ namespace logviewer.tests
             Assert.That((LogLevel)this.m.IntegerProperty("level"), Is.EqualTo(result));
         }
 
-        [Test]
-        public void ParseDateTimeIso8601()
-        {
-            this.ParseDateTime("2014-10-23 20:00:51,790", new DateTime(2014, 10, 23, 20, 0, 51, 790));
-        }
-        
-        [Test]
-        public void ParseDateTimeIso8601NoMilliseconds()
-        {
-            this.ParseDateTime("2014-10-23 20:00:51", new DateTime(2014, 10, 23, 20, 0, 51));
-        }
-        
-        [Test]
-        public void ParseDateTimeHttpDate()
-        {
-            this.ParseDateTime("24/Oct/2014:09:34:30 +0400", new DateTime(2014, 10, 24, 9, 34, 30));
-        }
-        
-        [Test]
-        public void ParseDateTimeHttpDateUtc()
-        {
-            this.ParseDateTime("24/Oct/2014:09:34:30 +0000", new DateTime(2014, 10, 24, 13, 34, 30));
-        }
-
-        private void ParseDateTime(string input, DateTime result)
+        [TestCase("2014-10-23 20:00:51,790", 2014, 10, 23, 20, 0, 51, 790)]
+        [TestCase("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
+        [TestCase("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
+        [TestCase("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 13, 34, 30, 0)]
+        public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
             this.ParseIntegerTest("dt", "DateTime", ParserType.Datetime, input);
-            Assert.That(DateTime.FromFileTime(this.m.IntegerProperty("dt")), Is.EqualTo(result));
+            Assert.That(DateTime.FromFileTime(this.m.IntegerProperty("dt")), Is.EqualTo(new DateTime(y, month, d, h, min, sec, millisecond)));
         }
 
         private void ParseIntegerTest(string prop, string type, ParserType parser, string input)
         {
             this.m.AddLine(H);
-            SemanticProperty s = new SemanticProperty(prop, parser);
-            Rule r = new Rule(type);
+            var s = new SemanticProperty(prop, parser);
+            var r = new Rule(type);
             ISet<Rule> rules = new HashSet<Rule>();
             rules.Add(r);
             IDictionary<SemanticProperty, ISet<Rule>> schema = new Dictionary<SemanticProperty, ISet<Rule>>();
