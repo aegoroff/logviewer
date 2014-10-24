@@ -105,6 +105,7 @@ namespace logviewer.tests
         [TestCase("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
         [TestCase("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
         [TestCase("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 13, 34, 30, 0)]
+        [TestCase("24/Oct/2014 09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
             this.ParseIntegerTest("dt", "DateTime", ParserType.Datetime, input);
