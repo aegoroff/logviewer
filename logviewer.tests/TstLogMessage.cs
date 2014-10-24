@@ -96,7 +96,7 @@ namespace logviewer.tests
         [TestCase("FATAL", LogLevel.Fatal)]
         public void ParseLogLevel(string input, LogLevel result)
         {
-            this.ParseIntegerTest("level", "LogLevel", ParserType.LogLevel, input);
+            this.ParseTest("level", "LogLevel", ParserType.LogLevel, input);
             Assert.That((LogLevel)this.m.IntegerProperty("level"), Is.EqualTo(result));
         }
 
@@ -108,7 +108,7 @@ namespace logviewer.tests
         [TestCase("24/Oct/2014 09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
-            this.ParseIntegerTest("dt", "DateTime", ParserType.Datetime, input);
+            this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
             Assert.That(DateTime.FromFileTime(this.m.IntegerProperty("dt")), Is.EqualTo(new DateTime(y, month, d, h, min, sec, millisecond)));
         }
 
@@ -128,11 +128,19 @@ namespace logviewer.tests
         [TestCase("9223372036854775810", 0, "long")]
         public void ParseInteger(string input, long result, string type)
         {
-            this.ParseIntegerTest("integer", type, ParserType.Interger, input);
+            this.ParseTest("integer", type, ParserType.Interger, input);
             Assert.That(this.m.IntegerProperty("integer"), Is.EqualTo(result));
         }
 
-        private void ParseIntegerTest(string prop, string type, ParserType parser, string input)
+        [TestCase("s", "s", "string")]
+        [TestCase("s", "s", "String")]
+        public void ParseString(string input, string result, string type)
+        {
+            this.ParseTest("str", type, ParserType.String, input);
+            Assert.That(this.m.StringProperty("str"), Is.EqualTo(result));
+        }
+
+        private void ParseTest(string prop, string type, ParserType parser, string input)
         {
             this.m.AddLine(H);
             var s = new SemanticProperty(prop, parser);
