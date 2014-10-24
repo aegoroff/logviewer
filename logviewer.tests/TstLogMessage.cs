@@ -143,14 +143,22 @@ namespace logviewer.tests
         private void ParseTest(string prop, string type, ParserType parser, string input)
         {
             this.m.AddLine(H);
-            var s = new SemanticProperty(prop, parser);
-            var r = new Rule(type);
-            ISet<Rule> rules = new HashSet<Rule>();
-            rules.Add(r);
-            IDictionary<SemanticProperty, ISet<Rule>> schema = new Dictionary<SemanticProperty, ISet<Rule>>();
-            schema.Add(s, rules);
-            IDictionary<string, string> props = new Dictionary<string, string>();
-            props.Add(prop, input);
+            IDictionary<SemanticProperty, ISet<Rule>> schema = new Dictionary<SemanticProperty, ISet<Rule>>
+            {
+                {
+                    new SemanticProperty(prop, parser),
+                    new HashSet<Rule>
+                    {
+                        new Rule(type)
+                    }
+                }
+            };
+            IDictionary<string, string> props = new Dictionary<string, string>
+            {
+                {
+                    prop, input
+                }
+            };
             this.m.AddProperties(props);
             this.m.Cache(schema);
         }
