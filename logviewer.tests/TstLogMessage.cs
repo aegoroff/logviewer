@@ -2,7 +2,7 @@
 // Created at: 02.01.2013
 // © 2012-2014 Alexander Egorov
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using logviewer.core;
 using NUnit.Framework;
@@ -96,19 +96,53 @@ namespace logviewer.tests
         [TestCase("FATAL", LogLevel.Fatal)]
         public void ParseLogLevel(string input, LogLevel result)
         {
+            this.ParseIntegerTest("level", "LogLevel", ParserType.LogLevel, input);
+            Assert.That((LogLevel)this.m.IntegerProperty("level"), Is.EqualTo(result));
+        }
+
+        [Test]
+        public void ParseDateTimeIso8601()
+        {
+            this.ParseDateTime("2014-10-23 20:00:51,790", new DateTime(2014, 10, 23, 20, 0, 51, 790));
+        }
+        
+        [Test]
+        public void ParseDateTimeIso8601NoMilliseconds()
+        {
+            this.ParseDateTime("2014-10-23 20:00:51", new DateTime(2014, 10, 23, 20, 0, 51));
+        }
+        
+        [Test]
+        public void ParseDateTimeHttpDate()
+        {
+            this.ParseDateTime("24/Oct/2014:09:34:30 +0400", new DateTime(2014, 10, 24, 9, 34, 30));
+        }
+        
+        [Test]
+        public void ParseDateTimeHttpDateUtc()
+        {
+            this.ParseDateTime("24/Oct/2014:09:34:30 +0000", new DateTime(2014, 10, 24, 13, 34, 30));
+        }
+
+        private void ParseDateTime(string input, DateTime result)
+        {
+            this.ParseIntegerTest("dt", "DateTime", ParserType.Datetime, input);
+            Assert.That(DateTime.FromFileTime(this.m.IntegerProperty("dt")), Is.EqualTo(result));
+        }
+
+        private void ParseIntegerTest(string prop, string type, ParserType parser, string input)
+        {
             this.m.AddLine(H);
-            SemanticProperty s = new SemanticProperty("level", ParserType.LogLevel);
-            Rule r = new Rule("LogLevel");
+            SemanticProperty s = new SemanticProperty(prop, parser);
+            Rule r = new Rule(type);
             ISet<Rule> rules = new HashSet<Rule>();
             rules.Add(r);
             IDictionary<SemanticProperty, ISet<Rule>> schema = new Dictionary<SemanticProperty, ISet<Rule>>();
             schema.Add(s, rules);
             IDictionary<string, string> props = new Dictionary<string, string>();
-            props.Add(s.Name, input);
+            props.Add(prop, input);
             this.m.AddProperties(props);
             this.m.Cache(schema);
-
-            Assert.That((LogLevel)this.m.IntegerProperty(s.Name), Is.EqualTo(result));
         }
     }
 }
