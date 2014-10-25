@@ -86,6 +86,7 @@ namespace logviewer.tests
         [TestCase("Debug", LogLevel.Debug)]
         [TestCase("DEBUG", LogLevel.Debug)]
         [TestCase("Info", LogLevel.Info)]
+        [TestCase("Information", LogLevel.Trace)]
         [TestCase("INFO", LogLevel.Info)]
         [TestCase("Warn", LogLevel.Warn)]
         [TestCase("WARN", LogLevel.Warn)]
@@ -94,6 +95,8 @@ namespace logviewer.tests
         [TestCase("ERROR", LogLevel.Error)]
         [TestCase("Fatal", LogLevel.Fatal)]
         [TestCase("FATAL", LogLevel.Fatal)]
+        [TestCase("FaTaL", LogLevel.Fatal)]
+        [TestCase("FaTa", LogLevel.Trace)]
         public void ParseLogLevel(string input, LogLevel result)
         {
             this.ParseTest("level", "LogLevel", ParserType.LogLevel, input);

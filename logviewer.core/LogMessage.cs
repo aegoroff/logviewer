@@ -28,7 +28,7 @@ namespace logviewer.core
                         "dd/MMM/yyyy:HH:mm:ssK",
                         "dd/MMM/yyyy:HH:mm:ss K",
                         "dd/MMM/yyyy:HH:mm:sszzz",
-                        "dd/MMM/yyyy:HH:mm:ss zzz",
+                        "dd/MMM/yyyy:HH:mm:ss zzz"
                     };
 
         public LogMessage(string header, string body)
@@ -136,7 +136,7 @@ namespace logviewer.core
         private static ParseResult<LogLevel> ParseLogLevel(string s)
         {
             LogLevel r;
-            var success = Enum.TryParse(s, true, out r) && Enum.IsDefined(typeof(LogLevel), r);
+            var success = Enum.TryParse(s, true, out r);
             return new ParseResult<LogLevel> { Result = success, Value = r };
         }
 
