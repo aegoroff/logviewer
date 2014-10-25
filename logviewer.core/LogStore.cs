@@ -118,18 +118,18 @@ namespace logviewer.core
         
         private IEnumerable<string> DdlHelper(string template)
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(template, column));
+            return this.ReadAdditionalColumns(column => string.Format(template, column));
         }
 
-        private IEnumerable<string> ReadAdditionalColumns()
+        private IEnumerable<string> ReadAdditionalColumns(Func<string, string> selector)
         {
-            return this.rules.Keys.Select(r=>r.Name);
+            return this.rules.Keys.Select(r => selector(r.Name));
         }
         
         
         private string CreateAdditionalColumnsList(string prefix = null)
         {
-            var colums = string.Join(",", this.ReadAdditionalColumns().Select(s => prefix + s));
+            var colums = string.Join(",", this.ReadAdditionalColumns(s => prefix + s));
             return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
         }
 
