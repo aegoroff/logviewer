@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace logviewer.core
@@ -131,13 +132,15 @@ namespace logviewer.core
             {"String", s => new ParseResult<string> {Result = true, Value = s}}
         };
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<LogLevel> ParseLogLevel(string s)
         {
             LogLevel r;
             var success = Enum.TryParse(s, true, out r) && Enum.IsDefined(typeof(LogLevel), r);
             return new ParseResult<LogLevel> { Result = success, Value = r };
         }
-        
+
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<DateTime> ParseDateTime(string s)
         {
             DateTime r;
@@ -148,7 +151,8 @@ namespace logviewer.core
             }
             return new ParseResult<DateTime> { Result = success, Value = r };
         }
-        
+
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<long> ParseInteger(string s)
         {
             long r;
@@ -156,6 +160,7 @@ namespace logviewer.core
             return new ParseResult<long> { Result = success, Value = r };
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         void ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
@@ -165,6 +170,7 @@ namespace logviewer.core
             }
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         void ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
@@ -174,6 +180,7 @@ namespace logviewer.core
             }
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         void ParseInteger(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(integerParsers, dataToParse, rules);
@@ -183,6 +190,7 @@ namespace logviewer.core
             }
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private void ParseString(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(stringParsers, dataToParse, rules);
@@ -192,6 +200,7 @@ namespace logviewer.core
             }
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.properties == null || schema == null)
@@ -226,6 +235,7 @@ namespace logviewer.core
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<T> RunSemanticAction<T>(IDictionary<string, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<Rule> rules)
         {
             var defaultRule = new Rule(rules.First().Type);
@@ -240,7 +250,7 @@ namespace logviewer.core
             return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
-
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
             return parsers.ContainsKey(rule.Type) ? parsers[rule.Type](matchedData) : new ParseResult<T>();
