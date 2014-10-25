@@ -132,11 +132,24 @@ namespace logviewer.core
             {"String", s => new ParseResult<string> {Result = true, Value = s}}
         };
 
+        static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
+
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        static IDictionary<string, LogLevel> Levels()
+        {
+            var r = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
+            foreach (var n in Enum.GetNames(typeof(LogLevel)))
+            {
+                r.Add(n, (LogLevel)Enum.Parse(typeof(LogLevel), n));
+            }
+            return r;
+        }
+            
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<LogLevel> ParseLogLevel(string s)
         {
             LogLevel r;
-            var success = Enum.TryParse(s, true, out r);
+            var success = levels.TryGetValue(s, out r);
             return new ParseResult<LogLevel> { Result = success, Value = r };
         }
 
