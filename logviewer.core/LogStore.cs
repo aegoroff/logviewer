@@ -13,8 +13,6 @@ namespace logviewer.core
 {
     public sealed class LogStore : IDisposable
     {
-        
-
         #region Constants and Fields
 
         private const string CreateColumnTemplate = @"{0} INTEGER NOT NULL";
@@ -22,12 +20,14 @@ namespace logviewer.core
         private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
-        private string additionalColumnList;
-        private string additionalParametersList;
+        private string additionalColumnsString;
+        private string[] additionalColumns;
+        private string additionalParametersString;
         private readonly bool hasLogLevelProperty;
         private readonly string logLevelProperty;
         private readonly ICollection<Semantic> schema;
         private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
+        private IDictionary<string, PropertyType> propertyTypesCache;
 
         private readonly IDictionary<string, ParserType> typesStorage = new Dictionary<string, ParserType>
         {
@@ -103,28 +103,33 @@ namespace logviewer.core
 
         private IEnumerable<string> CreateAdditionalColumns()
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(CreateColumnTemplate, column));
+            return this.DdlHelper(CreateColumnTemplate);
         }
 
         private IEnumerable<string> CreateAdditionalIndexes()
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(CreateIndexTemplate, column));
+            return this.DdlHelper(CreateIndexTemplate);
         }
         
         private IEnumerable<string> DropAdditionalIndexes()
         {
-            return this.ReadAdditionalColumns().Select(column => string.Format(DropIndexTemplate, column));
+            return this.DdlHelper(DropIndexTemplate);
+        }
+        
+        private IEnumerable<string> DdlHelper(string template)
+        {
+            return this.ReadAdditionalColumns(column => string.Format(template, column));
         }
 
-        private IEnumerable<string> ReadAdditionalColumns()
+        private IEnumerable<string> ReadAdditionalColumns(Func<string, string> selector)
         {
-            return this.rules.Keys.Select(r=>r.Name);
+            return this.rules.Keys.Select(r => selector(r.Name));
         }
         
         
         private string CreateAdditionalColumnsList(string prefix = null)
         {
-            var colums = string.Join(",", this.ReadAdditionalColumns().Select(s => prefix + s));
+            var colums = string.Join(",", this.ReadAdditionalColumns(s => prefix + s));
             return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
         }
 
@@ -176,8 +181,14 @@ namespace logviewer.core
             var createTable = string.Format(createTableTemplate, additionalCreate);
             this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable);
             this.Index();
-            this.additionalColumnList = this.CreateAdditionalColumnsList();
-            this.additionalParametersList = this.CreateAdditionalColumnsList("@");
+            this.additionalColumns = this.ReadAdditionalColumns(c => c).ToArray();
+            this.additionalColumnsString = this.CreateAdditionalColumnsList();
+            this.additionalParametersString = this.CreateAdditionalColumnsList("@");
+            this.propertyTypesCache = new Dictionary<string, PropertyType>();
+            foreach (var column in this.additionalColumns)
+            {
+                this.propertyTypesCache.Add(column, this.DefinePropertyType(column));
+            }
         }
 
         #endregion
@@ -215,20 +226,22 @@ namespace logviewer.core
         {
             message.Cache(this.rules);
             // ugly but very fast
-            var cmd = @"INSERT INTO Log(Ix, Header, Body" + additionalColumnList + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersList + ")";
+            var cmd = @"INSERT INTO Log(Ix, Header, Body" + this.additionalColumnsString + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersString + ")";
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
                 DatabaseConnection.AddParameter(command, "@Body", message.Body);
-                foreach (var param in this.rules.Keys)
+// ReSharper disable once ForCanBeConvertedToForeach
+                for (var i = 0; i < this.additionalColumns.Length; i++)
                 {
-                    if (this.DefinePropertyType(param.Name) == PropertyType.Integer)
+                    var column = this.additionalColumns[i];
+                    if (this.propertyTypesCache[column] == PropertyType.Integer)
                     {
-                        DatabaseConnection.AddParameter(command, "@" + param.Name, message.IntegerProperty(param.Name));
+                        DatabaseConnection.AddParameter(command, "@" + column, message.IntegerProperty(column));
                     }
                     else
                     {
-                        DatabaseConnection.AddParameter(command, "@" + param.Name, message.StringProperty(param.Name));
+                        DatabaseConnection.AddParameter(command, "@" + column, message.StringProperty(column));
                     }
                 }
             };
@@ -252,20 +265,20 @@ namespace logviewer.core
             
             var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,
-                where, additionalColumnList);
+                where, this.additionalColumnsString);
             Action<IDbCommand> beforeRead = command => AddParameters(command, min, max, filter, useRegexp);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
-                foreach (var param in this.rules.Keys)
+                foreach (var column in this.additionalColumns)
                 {
-                    if (this.DefinePropertyType(param.Name) == PropertyType.Integer)
+                    if (this.propertyTypesCache[column] == PropertyType.Integer)
                     {
-                        msg.UpdateIntegerProperty(param.Name, (long)rdr[param.Name]);
+                        msg.UpdateIntegerProperty(column, (long)rdr[column]);
                     }
                     else
                     {
-                        msg.UpdateStringProperty(param.Name, rdr[param.Name] as string);
+                        msg.UpdateStringProperty(column, rdr[column] as string);
                     }
                 }
 

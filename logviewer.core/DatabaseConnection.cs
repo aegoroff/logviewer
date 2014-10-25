@@ -6,6 +6,7 @@ using System;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace logviewer.core
@@ -122,6 +123,7 @@ namespace logviewer.core
             this.creationContext.Send(o => method(), null);
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         internal static void AddParameter<T>(IDbCommand cmd, string name, T value)
         {
             var parameter = SQLiteFactory.Instance.CreateParameter();

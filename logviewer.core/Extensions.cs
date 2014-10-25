@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using logviewer.core.Properties;
@@ -22,6 +23,7 @@ namespace logviewer.core
         /// <param name="srcEncoding"> Source string encoding </param>
         /// <param name="dstEncoding"> Destination encoding </param>
         /// <returns>Decoded string</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         internal static string Convert(this string line, Encoding srcEncoding, Encoding dstEncoding)
         {
             byte[] srcBytes = srcEncoding.GetBytes(line);
@@ -57,6 +59,7 @@ namespace logviewer.core
             return builder.ToString();
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         public static string UnescapeString(this string escaped)
         {
             if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
@@ -75,17 +78,20 @@ namespace logviewer.core
             return value < min ? min : value;
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         public static int PercentOf(this ulong value, ulong total)
         {
             return (int)((value / (double)total) * 100);
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         public static int PercentOf(this long value, long total)
         {
             var v = value > 0 ? (ulong)value : 0;
             return total == 0 ? 0 : v.PercentOf((ulong)total);
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         public static int PercentOf(this FileSize value, FileSize total)
         {
             return value.Bytes.PercentOf(total.Bytes);

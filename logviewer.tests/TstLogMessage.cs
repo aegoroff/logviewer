@@ -145,6 +145,8 @@ namespace logviewer.tests
         [TestCase("200", LogLevel.Info)]
         [TestCase("301", LogLevel.Warn)]
         [TestCase("404", LogLevel.Error)]
+        [TestCase("410", LogLevel.Error)]
+        [TestCase("416", LogLevel.Error)]
         [TestCase("500", LogLevel.Fatal)]
         public void ParseLogLevelCustomRules(string input, LogLevel result)
         {
@@ -152,6 +154,7 @@ namespace logviewer.tests
                 new Rule("LogLevel.Info", "20"), 
                 new Rule("LogLevel.Warn", "30"),
                 new Rule("LogLevel.Error", "40"), 
+                new Rule("LogLevel.Error", "41"), 
                 new Rule("LogLevel.Fatal", "50"), 
                 new Rule("LogLevel.Debug"));
             Assert.That((LogLevel)this.m.IntegerProperty("Level"), Is.EqualTo(result));
