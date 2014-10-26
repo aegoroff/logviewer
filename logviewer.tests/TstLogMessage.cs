@@ -90,13 +90,19 @@ namespace logviewer.tests
         [TestCase("INFO", LogLevel.Info)]
         [TestCase("Warn", LogLevel.Warn)]
         [TestCase("WARN", LogLevel.Warn)]
-        [TestCase("Warning", LogLevel.Trace)]
+        [TestCase("Warning", LogLevel.Warn)]
         [TestCase("Error", LogLevel.Error)]
         [TestCase("ERROR", LogLevel.Error)]
         [TestCase("Fatal", LogLevel.Fatal)]
         [TestCase("FATAL", LogLevel.Fatal)]
         [TestCase("FaTaL", LogLevel.Fatal)]
         [TestCase("FaTa", LogLevel.Trace)]
+        [TestCase("alert", LogLevel.Trace)]
+        [TestCase("notice", LogLevel.Info)]
+        [TestCase("severe", LogLevel.Fatal)]
+        [TestCase("critical", LogLevel.Error)]
+        [TestCase("emerg", LogLevel.Fatal)]
+        [TestCase("emergency", LogLevel.Fatal)]
         public void ParseLogLevel(string input, LogLevel result)
         {
             this.ParseTest("level", "LogLevel", ParserType.LogLevel, input);
