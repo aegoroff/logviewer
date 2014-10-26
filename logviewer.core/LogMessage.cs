@@ -142,6 +142,13 @@ namespace logviewer.core
             {
                 r.Add(n, (LogLevel)Enum.Parse(typeof(LogLevel), n));
             }
+            r.Add("alert", LogLevel.Trace);
+            r.Add("notice", LogLevel.Info);
+            r.Add("critical", LogLevel.Error);
+            r.Add("severe", LogLevel.Fatal);
+            r.Add("emerg", LogLevel.Fatal);
+            r.Add("emergency", LogLevel.Fatal);
+            r.Add("warning", LogLevel.Warn);
             return r;
         }
             
