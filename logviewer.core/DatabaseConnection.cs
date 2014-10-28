@@ -64,6 +64,7 @@ namespace logviewer.core
             this.ExecuteInCreationContext(() => this.transaction.Rollback());
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
@@ -118,6 +119,7 @@ namespace logviewer.core
             }, query);
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         private void ExecuteInCreationContext(Action method)
         {
             this.creationContext.Send(o => method(), null);
