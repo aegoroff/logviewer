@@ -273,7 +273,8 @@ namespace logviewer.core
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
-            return parsers.ContainsKey(rule.Type) ? parsers[rule.Type](matchedData) : new ParseResult<T>();
+            Func<string, ParseResult<T>> func;
+            return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
         }
 
         public long IntegerProperty(string property)
