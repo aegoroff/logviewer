@@ -270,7 +270,7 @@ namespace logviewer.core
             return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
             return parsers.ContainsKey(rule.Type) ? parsers[rule.Type](matchedData) : new ParseResult<T>();
@@ -320,6 +320,7 @@ namespace logviewer.core
             this.bodyBuilder.Clear();
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         public static LogMessage Create()
         {
             return new LogMessage
