@@ -279,15 +279,19 @@ namespace logviewer.core
 
         public long IntegerProperty(string property)
         {
-            long result;
-            this.integerProperties.TryGetValue(property, out result);
-            return result;
+            return GetProperty(this.integerProperties, property);
         }
         
         public string StringProperty(string property)
         {
-            string result;
-            this.stringProperties.TryGetValue(property, out result);
+            return GetProperty(this.stringProperties, property);
+        }
+
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        private static T GetProperty<T>(IDictionary<string, T> dict, string property)
+        {
+            T result;
+            dict.TryGetValue(property, out result);
             return result;
         }
         
