@@ -24,14 +24,14 @@ namespace logviewer.core
 
         private void CreateTables()
         {
-            const string CreateTable = @"
+            const string createTable = @"
                         CREATE TABLE IF NOT EXISTS {0} (
                                  Item TEXT PRIMARY KEY,
                                  UsedAt INTEGER  NOT NULL
                         );
                     ";
             string createItemIndex = string.Format("CREATE INDEX IF NOT EXISTS IX_Item ON {0} (Item)", tableName);
-            this.connection.ExecuteNonQuery(string.Format(CreateTable, tableName), createItemIndex);
+            this.connection.ExecuteNonQuery(string.Format(createTable, tableName), createItemIndex);
         }
 
         public void Add(string item)
@@ -58,12 +58,12 @@ namespace logviewer.core
             {
                 return;
             }
-            const string DeleteTemplate =
+            const string deleteTemplate =
                 @"DELETE FROM {1} 
                     WHERE UsedAt IN (
                         SELECT UsedAt FROM {1} ORDER BY UsedAt ASC LIMIT {0}
                 )";
-            var cmdDelete = string.Format(DeleteTemplate, result - this.maxItems, tableName);
+            var cmdDelete = string.Format(deleteTemplate, result - this.maxItems, tableName);
             this.connection.ExecuteNonQuery(cmdDelete);
         }
 

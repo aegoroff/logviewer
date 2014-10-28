@@ -8,7 +8,7 @@ namespace logviewer.core
 {
     public interface IUpdatable
     {
-        void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri); 
+        void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress); 
         void ShowNoUpdateAvaliable(); 
     }
 }

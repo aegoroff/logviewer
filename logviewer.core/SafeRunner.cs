@@ -3,6 +3,7 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace logviewer.core
 {
@@ -15,6 +16,7 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         internal static void Run(Action method)
         {
             try
@@ -31,6 +33,7 @@ namespace logviewer.core
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         internal static T Run<T>(Func<T> method)
         {
             try
@@ -50,6 +53,7 @@ namespace logviewer.core
         /// <typeparam name="T"> Argument type </typeparam>
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         internal static void Run<T>(Action<T> method, T argument)
         {
             try
@@ -70,6 +74,7 @@ namespace logviewer.core
         /// <param name="method"> Method to run </param>
         /// <param name="argument1"> Argument 1 value </param>
         /// <param name="argument2"> Argument 2 value </param>
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         internal static void Run<T1, T2>(Action<T1, T2> method, T1 argument1, T2 argument2)
         {
             try
@@ -92,6 +97,7 @@ namespace logviewer.core
         /// <param name="argument1"> Argument 1 value </param>
         /// <param name="argument2"> Argument 2 value </param>
         /// <param name="argument3"> Argument 3 value </param>
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
         internal static void Run<T1, T2, T3>(Action<T1, T2, T3> method, T1 argument1, T2 argument2, T3 argument3)
         {
             try

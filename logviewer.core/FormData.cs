@@ -9,10 +9,15 @@ namespace logviewer.core
 {
     public class FormData
     {
+        public FormData()
+        {
+            this.Colors = new Dictionary<LogLevel, Color>();
+        }
+
         public string KeepLastNFiles { get; set; }
         public bool OpenLastFile { get; set; }
         public bool AutoRefreshOnFileChange { get; set; }
         public string PageSize { get; set; }
-        public IDictionary<LogLevel, Color> Colors { get; set; }
+        public IDictionary<LogLevel, Color> Colors { get; private set; }
     }
 }

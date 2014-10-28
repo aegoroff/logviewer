@@ -270,23 +270,28 @@ namespace logviewer.core
             return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
-            return parsers.ContainsKey(rule.Type) ? parsers[rule.Type](matchedData) : new ParseResult<T>();
+            Func<string, ParseResult<T>> func;
+            return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
         }
 
         public long IntegerProperty(string property)
         {
-            long result;
-            this.integerProperties.TryGetValue(property, out result);
-            return result;
+            return GetProperty(this.integerProperties, property);
         }
         
         public string StringProperty(string property)
         {
-            string result;
-            this.stringProperties.TryGetValue(property, out result);
+            return GetProperty(this.stringProperties, property);
+        }
+
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        private static T GetProperty<T>(IDictionary<string, T> dict, string property)
+        {
+            T result;
+            dict.TryGetValue(property, out result);
             return result;
         }
         
@@ -320,6 +325,7 @@ namespace logviewer.core
             this.bodyBuilder.Clear();
         }
 
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         public static LogMessage Create()
         {
             return new LogMessage
