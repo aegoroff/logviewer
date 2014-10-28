@@ -87,7 +87,6 @@ namespace logviewer.core
                     this.parsingTemplateIndex = 0;
                 }
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
-                this.formData.Colors = new Dictionary<LogLevel, Color>();
                 foreach (var logLevel in SelectLevels(l => l != LogLevel.None))
                 {
                     this.formData.Colors.Add(logLevel, this.settings.ReadColor(logLevel));

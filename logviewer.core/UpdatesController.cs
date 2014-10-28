@@ -13,14 +13,14 @@ namespace logviewer.core
 {
     public class UpdatesController : BaseGuiController
     {
-        private readonly string uri;
+        private readonly string targetAddress;
         private readonly IUpdateView view;
         private string target;
 
-        public UpdatesController(IUpdateView view, string uri)
+        public UpdatesController(IUpdateView view, string targetAddress)
         {
             this.view = view;
-            this.uri = uri;
+            this.targetAddress = targetAddress;
             this.view.EnableUpdateStartControl(false);
         }
 
@@ -33,7 +33,7 @@ namespace logviewer.core
             client.DownloadFileCompleted += this.OnDownloadFileCompleted;
             try
             {
-                var source = new Uri(this.uri);
+                var source = new Uri(this.targetAddress);
                 this.target = Path.Combine(SqliteSettingsProvider.ApplicationFolder, Path.GetFileName(source.LocalPath));
                 client.DownloadFileAsync(source, this.target);
             }

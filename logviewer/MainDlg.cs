@@ -306,10 +306,10 @@ namespace logviewer
             this.templateSelectButton.DropDownItems.Add(result);
         }
 
-        public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string uri)
+        public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress)
         {
             var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
-            var update = new UpdateDlg(m, uri);
+            var update = new UpdateDlg(m, targetAddress);
             update.Show(this);
         }
 
