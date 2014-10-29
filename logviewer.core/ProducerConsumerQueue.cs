@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace logviewer.core
 {
-    public class ProducerConsumerQueue
+    internal class ProducerConsumerQueue
     {
         private readonly object locker = new object();
         private readonly Thread[] workers;

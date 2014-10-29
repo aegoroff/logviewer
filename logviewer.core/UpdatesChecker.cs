@@ -11,10 +11,6 @@ namespace logviewer.core
     public class UpdatesChecker
     {
         private readonly IVersionsReader reader;
-
-        public UpdatesChecker() : this(new VersionsReader())
-        {
-        }
         
         public UpdatesChecker(IVersionsReader reader)
         {
