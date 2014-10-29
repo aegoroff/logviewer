@@ -50,6 +50,8 @@ namespace logviewer
             var filter = textBox1.Text;
             var regexp = this.useRegexp.Checked;
             var dbSize = 0L;
+            DateTime minDateTime = DateTime.MinValue;
+            DateTime maxDateTime = DateTime.MinValue;
 
             Action action = delegate
             {
@@ -61,6 +63,8 @@ namespace logviewer
                 }
                 var fi = new FileInfo(this.store.DatabasePath);
                 dbSize = fi.Length;
+                minDateTime = this.store.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, filter, regexp);
+                maxDateTime = this.store.SelectDateUsingFunc("max", LogLevel.Trace, LogLevel.Fatal, filter, regexp);
             };
             var job = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
@@ -76,6 +80,15 @@ namespace logviewer
                 var sizeItem = new ListViewItem(new[] { Resources.Size, this.size });
                 var encodingItem = new ListViewItem(new[] { Resources.Encoding, this.encoding });
                 var databaseSize = new ListViewItem(new[] { Resources.DatabaseSize, new FileSize(dbSize).ToString() });
+                var minDate = new ListViewItem(new[] { Resources.MinMessageDate, minDateTime.ToString("f") });
+                var maxDate = new ListViewItem(new[] { Resources.MaxMessageDate, maxDateTime.ToString("f") });
+
+                if (minDateTime != maxDateTime || minDateTime != DateTime.MinValue)
+                {
+                    items.Add(minDate);
+                    items.Add(maxDate);
+                }
+
                 var totalItem =
                     new ListViewItem(new[] { Resources.TotalMessages, total.ToString(total.FormatString(), CultureInfo.CurrentCulture) });
 
