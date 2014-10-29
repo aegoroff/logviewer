@@ -25,6 +25,8 @@ namespace logviewer.core
         private string additionalParametersString;
         private readonly bool hasLogLevelProperty;
         private readonly string logLevelProperty;
+        private readonly bool hasDateTimeProperty;
+        private readonly string dateTimeProperty;
         private readonly ICollection<Semantic> schema;
         private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
         private IDictionary<string, PropertyType> propertyTypesCache;
@@ -71,6 +73,8 @@ namespace logviewer.core
             }
             this.hasLogLevelProperty = this.HasProperty("LogLevel");
             this.logLevelProperty = this.PropertyName("LogLevel");
+            this.hasDateTimeProperty = this.HasProperty("DateTime");
+            this.dateTimeProperty = this.PropertyName("DateTime");
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
@@ -314,6 +318,23 @@ namespace logviewer.core
             Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
+        }
+        
+        public DateTime SelectDateUsingFunc(string func, LogLevel min = LogLevel.Trace,
+            LogLevel max = LogLevel.Fatal,
+            string filter = null,
+            bool useRegexp = true)
+        {
+            if (!this.hasDateTimeProperty)
+            {
+                return DateTime.MinValue;
+            }
+            
+            var where = Where(min, max, filter, useRegexp);
+            var query = string.Format(@"SELECT {2}({0}) FROM Log {1}", this.dateTimeProperty, where, func);
+            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
+            var result = this.connection.ExecuteScalar<long>(query, addParameters);
+            return DateTime.FromFileTime(result);
         }
 
         private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, bool excludeNoLevel = false)

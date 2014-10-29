@@ -147,6 +147,12 @@
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="MaxMessageDate" xml:space="preserve">
+    <value>Последнее</value>
+  </data>
+  <data name="MinMessageDate" xml:space="preserve">
+    <value>Первое</value>
+  </data>
   <data name="NewVersion" xml:space="preserve">
     <value>Доступна новая версия</value>
   </data>
