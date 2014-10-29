@@ -45,7 +45,7 @@ namespace logviewer.core
         {
             get
             {
-                yield return new ParsingTemplate { Index = 0, StartMessage = @"^\[?%{TIMESTAMP_ISO8601}\]?%{DATA}%{LOGLEVEL:Level,LogLevel}%{DATA}", Name = Resources.ParsingTemplateNlog };
+                yield return new ParsingTemplate { Index = 0, StartMessage = @"^\[?%{TIMESTAMP_ISO8601:Occured,DateTime}\]?%{DATA}%{LOGLEVEL:Level,LogLevel}%{DATA}", Name = Resources.ParsingTemplateNlog };
                 yield return new ParsingTemplate { Index = 1, StartMessage = @"%{IIS}", Name = Resources.ParsingTemplateIis, Filter = "^#%{DATA}" };
                 yield return new ParsingTemplate { Index = 2, StartMessage = @"%{DATA}", Name = Resources.ParsingTemplatePlainText, Compiled = true };
                 yield return new ParsingTemplate { Index = 3, StartMessage = @"%{APACHE_SERVER}", Name = Resources.ParsingTemplateApacheServer };
