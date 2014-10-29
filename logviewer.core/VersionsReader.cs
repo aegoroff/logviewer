@@ -9,22 +9,16 @@ using Octokit;
 
 namespace logviewer.core
 {
-    public class VersionsReader : IVersionsReader
+    internal class VersionsReader : IVersionsReader
     {
         private readonly string account;
         private readonly string project;
-        const string Account = "aegoroff";
-        const string Project = "logviewer";
         readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private const string DownloadUrlTemplate = "http://github.com/{0}/{1}/releases/download/{2}/{3}";
 
         public event EventHandler ReadCompleted;
         public event EventHandler<VersionEventArgs> VersionRead;
-
-        public VersionsReader() : this(Account, Project)
-        {
-        }
         
         public VersionsReader(string account, string project)
         {

@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
 using Net.Sgoliver.NRtfTree.Util;
+using Ninject;
 using NLog.Targets;
 
 namespace logviewer.core
@@ -59,6 +60,7 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
+        private readonly IKernel kernel;
 
         #endregion
 
@@ -71,6 +73,7 @@ namespace logviewer.core
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
             this.options = options;
+            this.kernel = new StandardKernel(new CoreModule());
             this.SetCurrentParsingTemplate();
             SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
@@ -430,7 +433,7 @@ namespace logviewer.core
                     return;
                 }
             }
-            var checker = new UpdatesChecker();
+            var checker = this.kernel.Get<UpdatesChecker>();
             this.settings.LastUpdateCheckTime = DateTime.UtcNow;
             Task.Factory.StartNew(delegate
             {
@@ -1025,6 +1028,7 @@ namespace logviewer.core
                 {
                     SafeRunner.Run(this.store.Dispose);
                 }
+                this.kernel.Dispose();
             }
         }
     }
