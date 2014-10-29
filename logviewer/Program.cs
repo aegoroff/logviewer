@@ -21,12 +21,17 @@ namespace logviewer
         private static void Main()
         {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
+#if !DEBUG
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+#endif
             Kernel = new StandardKernel(new LogviewerModule());
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(Kernel.Get<MainDlg>());
+            using (Kernel)
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(Kernel.Get<MainDlg>());
+            }
         }
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
