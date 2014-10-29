@@ -21,8 +21,10 @@ namespace logviewer
         private static void Main()
         {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
+#if !DEBUG
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+#endif
             Kernel = new StandardKernel(new LogviewerModule());
             using (Kernel)
             {
