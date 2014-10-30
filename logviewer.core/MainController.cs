@@ -579,7 +579,7 @@ namespace logviewer.core
             }
             // Interlocked is a must because other threads can change this
             Interlocked.Increment(ref this.queuedMessages);
-            message.Ix = ++this.totalMessages;
+            message.Ix = Interlocked.Increment(ref this.totalMessages);
 
             this.queue.EnqueueItem(delegate
             {
