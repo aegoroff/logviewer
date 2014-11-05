@@ -60,6 +60,12 @@
     </ItemGroup>
     <Exec Condition="Exists('@(MsiFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.verisign.com/scripts/timstamp.dll /v &quot;%(MsiFile.Identity)&quot;" />
   </Target>
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <MsiFile Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.exe" />
+    </ItemGroup>
+    <Exec Condition="Exists('@(MsiFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.verisign.com/scripts/timstamp.dll /v &quot;%(MsiFile.Identity)&quot;" />
+  </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.
