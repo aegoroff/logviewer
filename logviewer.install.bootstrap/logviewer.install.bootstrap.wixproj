@@ -42,6 +42,24 @@
     <None Include="Theme.wxl" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
+  <Target Name="SignBundleEngine">
+    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.verisign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignBundleEngine)&quot;" />
+  </Target>
+  <Target Name="SignBundle">
+    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.verisign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignBundle)&quot;" />
+  </Target>
+  <Target Name="SignMsi">
+    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.verisign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignMsi)&quot;" />
+  </Target>
+  <Target Name="SignCabs">
+    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.verisign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignCabs)&quot;" />
+  </Target>
+  <Target Name="BeforeBuild">
+    <ItemGroup>
+      <MsiFile Include="$(MSBuildProjectDirectory)\..\logviewer.install\bin\$(Configuration)\*.msi" />
+    </ItemGroup>
+    <Exec Condition="Exists('@(MsiFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.verisign.com/scripts/timstamp.dll /v &quot;%(MsiFile.Identity)&quot;" />
+  </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.
