@@ -41,7 +41,7 @@
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
     <ItemGroup>
-      <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" />
+      <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe"/>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
     <Exec 
