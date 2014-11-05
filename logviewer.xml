@@ -58,7 +58,7 @@
 		<MSBuild
 			StopOnFirstFailure="true"
 			Projects="logviewer.sln"
-			Properties="Configuration=$(Configuration)" 
+			Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword)" 
 		/>
 		<Copy
 			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi"
