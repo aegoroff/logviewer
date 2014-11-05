@@ -16,6 +16,9 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>fa391614</NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup Condition=" $(SnkPath) != '' ">
+	<AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
