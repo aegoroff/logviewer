@@ -36,6 +36,16 @@ namespace logviewer.core
             return level.ToString("G") + "Color";
         }
 
+        internal static  bool HasProperty(this ICollection<Semantic> schema, string type)
+        {
+            return schema.SelectMany(s => s.CastingRules).Any(r => r.Type.Contains(type));
+        }
+
+        internal static string PropertyNameOf(this ICollection<Semantic> schema, string type)
+        {
+            return (from s in schema from rule in s.CastingRules where rule.Type.Contains(type) select s.Property).FirstOrDefault();
+        }
+
         public static string FormatString(this ulong value)
         {
             if (value == 0)

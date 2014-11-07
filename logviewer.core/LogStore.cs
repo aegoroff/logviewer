@@ -71,10 +71,10 @@ namespace logviewer.core
                 }
                 this.rules = dictionary;
             }
-            this.hasLogLevelProperty = this.HasProperty("LogLevel");
-            this.logLevelProperty = this.PropertyName("LogLevel");
-            this.hasDateTimeProperty = this.HasProperty("DateTime");
-            this.dateTimeProperty = this.PropertyName("DateTime");
+            this.hasLogLevelProperty = this.schema.HasProperty("LogLevel");
+            this.logLevelProperty = this.schema.PropertyNameOf("LogLevel");
+            this.hasDateTimeProperty = this.schema.HasProperty("DateTime");
+            this.dateTimeProperty = this.schema.PropertyNameOf("DateTime");
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
@@ -93,16 +93,6 @@ namespace logviewer.core
                 return new SemanticProperty(name, parserType);
             }
             return new SemanticProperty(name, ParserType.String);
-        }
-
-        private bool HasProperty(string type)
-        {
-            return this.schema.SelectMany(s => s.CastingRules).Any(r => r.Type.Contains(type));
-        }
-        
-        private string PropertyName(string type)
-        {
-            return (from s in this.schema from rule in s.CastingRules where rule.Type.Contains(type) select s.Property).FirstOrDefault();
         }
 
         private IEnumerable<string> CreateAdditionalColumns()
