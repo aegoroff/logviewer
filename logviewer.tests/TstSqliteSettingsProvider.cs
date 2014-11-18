@@ -105,7 +105,13 @@ namespace logviewer.tests
         [Fact]
         public void LastChekingUpdateTest()
         {
-            Assert.Equal(DateTime.UtcNow, this.provider.LastUpdateCheckTime);
+            var now = DateTime.UtcNow;
+            var last = this.provider.LastUpdateCheckTime;
+            Assert.Equal(now.Year, last.Year);
+            Assert.Equal(now.Month, last.Month);
+            Assert.Equal(now.Day, last.Day);
+            Assert.Equal(now.Hour, last.Hour);
+            Assert.Equal(now.Minute, last.Minute);
             var newValue = new DateTime(2014, 1, 10).ToUniversalTime();
             this.provider.LastUpdateCheckTime = newValue;
             Assert.Equal(newValue, this.provider.LastUpdateCheckTime);
