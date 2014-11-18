@@ -3,16 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core;
 using NMock;
-using NUnit.Framework;
-using Is = NUnit.Framework.Is;
+using Xunit;
 
 namespace logviewer.tests
 {
-    [TestFixture]
     public class TstUpdatesChecker
     {
-        [SetUp]
-        public void Setup()
+        public TstUpdatesChecker()
         {
             this.mockery = new MockFactory();
             this.reader = this.mockery.CreateMock<IVersionsReader>();
@@ -37,64 +34,64 @@ namespace logviewer.tests
 
         private MockFactory mockery;
         private Mock<IVersionsReader> reader;
-        private UpdatesChecker checker;
-        private EventInvoker<VersionEventArgs> invokeRead;
-        private EventInvoker invokeComplete;
+        private readonly UpdatesChecker checker;
+        private readonly EventInvoker<VersionEventArgs> invokeRead;
+        private readonly EventInvoker invokeComplete;
         private readonly Version v1 = new Version(1, 2, 104, 0);
         private readonly Version v2 = new Version(1, 0);
 
-        [Test]
+        [Fact]
         public void EqualSingle()
         {
             this.Invoke(this.v1);
-            Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
-            Assert.That(this.checker.LatestVersion, Is.EqualTo(this.v1));
+            Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
+            Assert.Equal(this.v1, this.checker.LatestVersion);
         }
         
-        [Test]
+        [Fact]
         public void EqualFirstLess()
         {
             this.Invoke(this.v2, this.v1);
-            Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
-            Assert.That(this.checker.LatestVersion, Is.EqualTo(this.v1));
+            Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
+            Assert.Equal(this.v1, this.checker.LatestVersion);
         }
         
-        [Test]
+        [Fact]
         public void EqualLastLess()
         {
             this.Invoke(this.v1, this.v2);
-            Assert.That(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)), Is.False);
-            Assert.That(this.checker.LatestVersion, Is.EqualTo(this.v1));
+            Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
+            Assert.Equal(this.v1, this.checker.LatestVersion);
         }
 
-        [Test]
+        [Fact]
         public void Greater()
         {
             var v = new Version(2, 0);
             this.Invoke(this.v1);
-            Assert.That(this.checker.IsUpdatesAvaliable(v), Is.False);
-            Assert.That(this.checker.LatestVersion, Is.EqualTo(v));
+            Assert.False(this.checker.IsUpdatesAvaliable(v));
+            Assert.Equal(v, this.checker.LatestVersion);
         }
 
-        [Test]
+        [Fact]
         public void Less()
         {
             this.Invoke(this.v1);
-            Assert.That(this.checker.IsUpdatesAvaliable(this.v2), Is.True);
+            Assert.True(this.checker.IsUpdatesAvaliable(this.v2));
         }
         
-        [Test]
+        [Fact]
         public void LessFirstLess()
         {
             this.Invoke(this.v2, this.v1);
-            Assert.That(this.checker.IsUpdatesAvaliable(this.v2), Is.True);
+            Assert.True(this.checker.IsUpdatesAvaliable(this.v2));
         }
         
-        [Test]
+        [Fact]
         public void LessLastLess()
         {
             this.Invoke(this.v1, this.v2);
-            Assert.That(this.checker.IsUpdatesAvaliable(this.v2), Is.True);
+            Assert.True(this.checker.IsUpdatesAvaliable(this.v2));
         }
     }
 }
