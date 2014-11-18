@@ -814,24 +814,31 @@ namespace logviewer.core
 
         private void UseRecentFilesStore(Action<RecentItemsStore> action)
         {
-            using (var filesStore = new RecentItemsStore(this.settings, "RecentFiles"))
+            try
             {
-                action(filesStore);
+                using (var filesStore = new RecentItemsStore(this.settings, "RecentFiles"))
+                {
+                    action(filesStore);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Debug(e);
             }
         }
         
         private void UseRecentFiltersStore(Action<RecentItemsStore> action)
         {
-            using (var filesStore = new RecentItemsStore(this.settings, "RecentFilters", KeepLastFilters))
+            try
             {
-                try
+                using (var filesStore = new RecentItemsStore(this.settings, "RecentFilters", KeepLastFilters))
                 {
                     action(filesStore);
                 }
-                catch (Exception e)
-                {
-                    Log.Instance.Debug(e);
-                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Debug(e);
             }
         }
 
