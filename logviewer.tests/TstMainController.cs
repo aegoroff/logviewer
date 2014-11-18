@@ -500,6 +500,7 @@ namespace logviewer.tests
             this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
             this.view.Expects.Any.Method(v => v.SetLoadedFileCapltion(null)).WithAnyArguments();
             this.view.Expects.Any.Method(v => v.StartReading());
+            this.view.Expects.Any.Method(v => v.SetProgress(new LoadProgress())).WithAnyArguments();
             this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.No.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
@@ -514,6 +515,7 @@ namespace logviewer.tests
             this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
             this.view.Expects.Any.Method(v => v.SetLoadedFileCapltion(null)).WithAnyArguments();
             this.view.Expects.Any.Method(v => v.StartReading());
+            this.view.Expects.Any.Method(v => v.SetProgress(new LoadProgress())).WithAnyArguments();
             this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
