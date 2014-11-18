@@ -496,6 +496,10 @@ namespace logviewer.tests
         public void StartReadingWithinDelay()
         {
             this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
+            this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
+            this.view.Expects.Any.Method(v => v.SetLoadedFileCapltion(null)).WithAnyArguments();
+            this.view.Expects.Any.Method(v => v.StartReading());
             this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.No.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
@@ -506,6 +510,10 @@ namespace logviewer.tests
         public void StartReadingOutsideDelay()
         {
             this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
+            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
+            this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
+            this.view.Expects.Any.Method(v => v.SetLoadedFileCapltion(null)).WithAnyArguments();
+            this.view.Expects.Any.Method(v => v.StartReading());
             this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             this.view.Expects.One.Method(v => v.StartReading());
             this.controller.StartReading("f", false);
