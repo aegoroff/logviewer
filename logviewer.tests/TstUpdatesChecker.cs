@@ -1,9 +1,15 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 29.03.2014
+// © 2012-2014 Alexander Egorov
+
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core;
 using NMock;
 using Xunit;
+using Xunit.Extensions;
 
 namespace logviewer.tests
 {
@@ -11,12 +17,12 @@ namespace logviewer.tests
     {
         public TstUpdatesChecker()
         {
-            this.mockery = new MockFactory();
-            this.reader = this.mockery.CreateMock<IVersionsReader>();
-            this.checker = new UpdatesChecker(this.reader.MockObject);
-            this.invokeRead = this.reader.Expects.One.EventBinding<VersionEventArgs>(_ => _.VersionRead += null);
-            this.invokeComplete = this.reader.Expects.One.EventBinding(_ => _.ReadCompleted += null);
-            this.reader.Expects.One.Method(_ => _.ReadReleases());
+            var mockery = new MockFactory();
+            var reader = mockery.CreateMock<IVersionsReader>();
+            this.checker = new UpdatesChecker(reader.MockObject);
+            this.invokeRead = reader.Expects.One.EventBinding<VersionEventArgs>(_ => _.VersionRead += null);
+            this.invokeComplete = reader.Expects.One.EventBinding(_ => _.ReadCompleted += null);
+            reader.Expects.One.Method(_ => _.ReadReleases());
         }
 
         private void Invoke(params Version[] versions)
@@ -32,66 +38,48 @@ namespace logviewer.tests
             });
         }
 
-        private MockFactory mockery;
-        private Mock<IVersionsReader> reader;
         private readonly UpdatesChecker checker;
         private readonly EventInvoker<VersionEventArgs> invokeRead;
         private readonly EventInvoker invokeComplete;
-        private readonly Version v1 = new Version(1, 2, 104, 0);
-        private readonly Version v2 = new Version(1, 0);
+        private static readonly Version v1 = new Version(1, 2, 104, 0);
+        private static readonly Version v2 = new Version(1, 0);
 
-        [Fact]
-        public void EqualSingle()
+        [Theory, PropertyData("Versions")]
+        public void EqualLess(Version[] versions)
         {
-            this.Invoke(this.v1);
+            this.Invoke(versions);
             Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
-            Assert.Equal(this.v1, this.checker.LatestVersion);
-        }
-        
-        [Fact]
-        public void EqualFirstLess()
-        {
-            this.Invoke(this.v2, this.v1);
-            Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
-            Assert.Equal(this.v1, this.checker.LatestVersion);
-        }
-        
-        [Fact]
-        public void EqualLastLess()
-        {
-            this.Invoke(this.v1, this.v2);
-            Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
-            Assert.Equal(this.v1, this.checker.LatestVersion);
+            Assert.Equal(v1, this.checker.LatestVersion);
         }
 
         [Fact]
         public void Greater()
         {
             var v = new Version(2, 0);
-            this.Invoke(this.v1);
+            this.Invoke(v1);
             Assert.False(this.checker.IsUpdatesAvaliable(v));
             Assert.Equal(v, this.checker.LatestVersion);
         }
 
-        [Fact]
-        public void Less()
+        [Theory, PropertyData("Versions")]
+        public void Less(Version[] versions)
         {
-            this.Invoke(this.v1);
-            Assert.True(this.checker.IsUpdatesAvaliable(this.v2));
+            this.Invoke(versions);
+            Assert.True(this.checker.IsUpdatesAvaliable(v2));
         }
-        
-        [Fact]
-        public void LessFirstLess()
+
+        public static IEnumerable<object[]> Versions
         {
-            this.Invoke(this.v2, this.v1);
-            Assert.True(this.checker.IsUpdatesAvaliable(this.v2));
-        }
-        
-        [Fact]
-        public void LessLastLess()
-        {
-            this.Invoke(this.v1, this.v2);
-            Assert.True(this.checker.IsUpdatesAvaliable(this.v2));
+            get
+            {
+                return new []
+                {
+                    new object[] { new [] { v1 } },
+                    new object[] { new [] { v2, v1 } },
+                    new object[] { new [] { v1, v2 } }
+
+                };
+            }
         }
     }
 }
