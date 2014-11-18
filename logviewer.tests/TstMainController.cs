@@ -62,6 +62,7 @@ namespace logviewer.tests
         {
             Cleanup(TestPath, RecentPath, FullPathToTestDb);
             CleanupTestFiles();
+            this.controller.ReadCompleted -= this.OnReadCompleted;
             this.controller.Dispose();
         }
 

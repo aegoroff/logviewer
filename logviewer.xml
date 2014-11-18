@@ -67,7 +67,7 @@
     <!-- Run unit tests task -->
     <Target Name="UnitTesting" DependsOnTargets="Compile">
         <!-- Managed tests -->
-        <xunit Assembly="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll" TeamCity="true" />
+        <xunit Assembly="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll" TeamCity="true" ShadowCopy="false" />
     </Target>
     <ItemGroup>
 		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi => installer" />
