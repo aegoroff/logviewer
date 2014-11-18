@@ -338,24 +338,12 @@ namespace logviewer.tests
             Assert.Equal(1, this.controller.MessagesCount);
         }
         
-        [Fact]
-        public void NoLogLevelParsing()
+        [Theory]
+        [InlineData(MessageExamples)]
+        [InlineData("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27T19:40:11,906Z+03 [5272] ERROR \nmessage body 2")]
+        public void LogLevelParsing(string examples)
         {
             this.ReadLogExpectations();
-
-            File.WriteAllText(TestPath, MessageExamples);
-            this.controller.MinFilter((int)LogLevel.Info);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            Assert.Equal(2, this.controller.MessagesCount);
-        }
-        
-        [Fact]
-        public void AllSemanticsParsing()
-        {
-            this.ReadLogExpectations();
-
-            const string examples = "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27T19:40:11,906Z+03 [5272] ERROR \nmessage body 2";
 
             File.WriteAllText(TestPath, examples);
             this.controller.MinFilter((int)LogLevel.Info);
