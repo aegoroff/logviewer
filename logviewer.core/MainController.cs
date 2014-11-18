@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using logviewer.core.Properties;
 using Net.Sgoliver.NRtfTree.Util;
 using Ninject;
+using NLog;
 using NLog.Targets;
 
 namespace logviewer.core
@@ -142,21 +143,33 @@ namespace logviewer.core
 
         public void InitializeLogger()
         {
-            var target = new RichTextBoxTarget
+            var config = new NLog.Config.LoggingConfiguration();
+            LogManager.Configuration = config;
+            const string layout =
+                @"${date:format=yyyy-MM-dd HH\:mm\:ss,fff} ${level:upperCase=True} ${logger} ${message}${newline}${onexception:Process\: ${processname}${newline}Process time\: ${processtime}${newline}Process ID\: ${processid}${newline}Thread ID\: ${threadid}${newline}Details\:${newline}${exception:format=ToString}}";
+            var boxTarget = new RichTextBoxTarget
             {
-                Layout =
-                    @"${date:format=yyyy-MM-dd HH\:mm\:ss,fff} ${level:upperCase=True} ${logger} ${message}${newline}${onexception:Process\: ${processname}${newline}Process time\: ${processtime}${newline}Process ID\: ${processid}${newline}Thread ID\: ${threadid}${newline}Details\:${newline}${exception:format=ToString}}",
+                Layout = layout,
                 ControlName = "syntaxRichTextBox1",
                 FormName = "MainDlg",
                 UseDefaultRowColoringRules = false
             };
-            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Warn", "Orange", "White",
+            boxTarget.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Warn", "Orange", "White",
                 FontStyle.Regular));
-            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Error", "Red", "White",
+            boxTarget.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Error", "Red", "White",
                 FontStyle.Regular));
-            target.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White",
+            boxTarget.RowColoringRules.Add(new RichTextBoxRowColoringRule("level == LogLevel.Fatal", "DarkViolet", "White",
                 FontStyle.Regular));
-            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Warn);
+
+            var traceTarget = new TraceTarget { Layout = layout };
+
+            config.AddTarget("box", boxTarget);
+            config.AddTarget("trace", traceTarget);
+            var r1 = new NLog.Config.LoggingRule("*", NLog.LogLevel.Warn, boxTarget);
+            var r2 = new NLog.Config.LoggingRule("*", NLog.LogLevel.Trace, traceTarget);
+            config.LoggingRules.Add(r1);
+            config.LoggingRules.Add(r2);
+            LogManager.Configuration = config;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
