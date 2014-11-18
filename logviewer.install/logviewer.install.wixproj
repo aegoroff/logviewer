@@ -46,7 +46,7 @@
     </ItemGroup>
     <Exec 
         Condition="Exists('@(BinFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
-        Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.verisign.com/scripts/timstamp.dll /v &quot;%(BinFile.Identity)&quot;" 
+        Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://www.startssl.com/timestamp /v &quot;%(BinFile.Identity)&quot;" 
     />
   </Target>
   <!--
