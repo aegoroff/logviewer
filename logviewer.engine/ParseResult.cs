@@ -4,9 +4,9 @@
 
 namespace logviewer.engine
 {
-    public struct ParseResult<T>
+    internal struct ParseResult<T>
     {
-        public bool Result { get; set; }
-        public T Value { get; set; }
+        internal bool Result { get; set; }
+        internal T Value { get; set; }
     }
 }
