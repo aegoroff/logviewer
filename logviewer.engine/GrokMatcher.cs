@@ -29,7 +29,7 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                Log.Instance.Debug(e);
+                System.Diagnostics.Trace.WriteLine(e.ToString());
                 this.CompilationFailed = true;
                 this.Template = grok;
             }

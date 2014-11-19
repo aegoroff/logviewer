@@ -25,7 +25,7 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                Log.Instance.Trace(e);
+                System.Diagnostics.Trace.WriteLine(e.ToString());
             }
         }
         
@@ -42,7 +42,7 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                Log.Instance.Trace(e);
+                System.Diagnostics.Trace.WriteLine(e.ToString());
             }
             return default(T);
         }
@@ -62,7 +62,7 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                Log.Instance.Trace(e);
+                System.Diagnostics.Trace.WriteLine(e.ToString());
             }
         }
 
@@ -83,7 +83,7 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                Log.Instance.Trace(e);
+                System.Diagnostics.Trace.WriteLine(e.ToString());
             }
         }
 
@@ -106,7 +106,7 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                Log.Instance.Trace(e);
+                System.Diagnostics.Trace.WriteLine(e.ToString());
             }
         }
     }

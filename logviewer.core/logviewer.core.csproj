@@ -88,6 +88,7 @@
     <Compile Include="IUpdatable.cs" />
     <Compile Include="IUpdateView.cs" />
     <Compile Include="IVersionsReader.cs" />
+    <Compile Include="LoggingService.cs" />
     <Compile Include="LogParseTemplateController.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogStore.cs" />

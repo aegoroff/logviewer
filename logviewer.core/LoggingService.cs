@@ -4,9 +4,10 @@
 
 using System;
 using System.Threading;
+using logviewer.engine;
 using NLog;
 
-namespace logviewer.engine
+namespace logviewer.core
 {
     public class Log : LoggingService
     {

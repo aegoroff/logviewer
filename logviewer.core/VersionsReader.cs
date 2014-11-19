@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using logviewer.engine;
 using Octokit;
 
 namespace logviewer.core
