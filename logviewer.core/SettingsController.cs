@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
+using logviewer.engine;
 
 namespace logviewer.core
 {

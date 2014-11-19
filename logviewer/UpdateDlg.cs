@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using logviewer.core;
+using logviewer.engine;
 using logviewer.Properties;
 
 namespace logviewer
@@ -27,7 +28,7 @@ namespace logviewer
 
         public void OnProgress(int percent, FileSize totalBytes, FileSize readBytes)
         {
-            this.label2.Text = string.Format(Resources.UpdateDownloadProgressFormat, readBytes, totalBytes, percent);
+            this.label2.Text = string.Format(Resources.UpdateDownloadProgressFormat, readBytes.Format(), totalBytes.Format(), percent);
             this.progressBar1.Value = percent;
         }
 

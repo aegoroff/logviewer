@@ -80,6 +80,16 @@
 								Name="logviewer.core.pdb"
 								Source="$(var.SourcePath)\logviewer.core.pdb"
 								DiskId="1"/>
+                            <File
+								Id="logviewer.engine.dll"
+								Name="logviewer.engine.dll"
+								Source="$(var.SourcePath)\logviewer.engine.dll"
+								DiskId="1"/>
+                            <File
+								Id="logviewer.engine.pdb"
+								Name="logviewer.engine.pdb"
+								Source="$(var.SourcePath)\logviewer.engine.pdb"
+								DiskId="1"/>
 							<File
 								Id="nrtftree_library.dll"
 								Name="nrtftree-library.dll"

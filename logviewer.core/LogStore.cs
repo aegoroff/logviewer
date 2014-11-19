@@ -7,7 +7,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using logviewer.engine;
 using Microsoft.VisualBasic.Devices;
+using Rule = logviewer.engine.Rule;
+
+//using Rule = System.Data.Rule;
 
 namespace logviewer.core
 {

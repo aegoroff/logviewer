@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Net.Sgoliver.NRtfTree.Util;
+using logviewer.engine;
 
 namespace logviewer.core
 {

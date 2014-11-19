@@ -4,6 +4,7 @@
 
 using System.Text.RegularExpressions;
 using logviewer.core;
+using logviewer.engine;
 using Xunit;
 using Xunit.Extensions;
 
@@ -68,7 +69,7 @@ namespace logviewer.tests
             Assert.Equal(size, sz.Bytes);
             Assert.Equal(unit, sz.Unit);
             Assert.Equal(value, sz.Value);
-            Assert.True(Regex.IsMatch(sz.ToString(), str));
+            Assert.True(Regex.IsMatch(sz.Format(), str));
         }
 
         [Theory]

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     [DebuggerDisplay("{Property}")]
     public struct Semantic

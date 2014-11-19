@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using logviewer.core;
+using logviewer.engine;
 using Net.Sgoliver.NRtfTree.Util;
 using NMock;
 using NMock.Matchers;

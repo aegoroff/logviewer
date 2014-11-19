@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public class GrokMatcher
     {

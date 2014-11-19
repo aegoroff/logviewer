@@ -12,6 +12,7 @@ using System.Reflection;
 using logviewer.core.Properties;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
+using logviewer.engine;
 
 namespace logviewer.core
 {

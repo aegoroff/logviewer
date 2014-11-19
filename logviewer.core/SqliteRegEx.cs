@@ -5,6 +5,7 @@
 using System;
 using System.Data.SQLite;
 using System.Text.RegularExpressions;
+using logviewer.engine;
 
 namespace logviewer.core
 {

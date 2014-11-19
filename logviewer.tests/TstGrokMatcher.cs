@@ -4,7 +4,7 @@
 
 using System;
 using System.Linq;
-using logviewer.core;
+using logviewer.engine;
 using Xunit;
 using Xunit.Extensions;
 

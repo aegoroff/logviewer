@@ -2,7 +2,7 @@
 // Created at: 19.09.2012
 // © 2012-2014 Alexander Egorov
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     /// <summary>
     /// Represents size unit tag bytes, Kbytes, Mbytes etc.
