@@ -14,6 +14,10 @@
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>f8f83baf</NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup Condition=" $(SnkPath) != '' ">
+    <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
