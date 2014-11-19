@@ -68,7 +68,7 @@ namespace logviewer.engine
                 {
                     using (var s = mmf.CreateViewStream(0, this.Length, MemoryMappedFileAccess.Read))
                     {
-                        srcEncoding = detector.Detect(s);
+                        srcEncoding = this.detector.Detect(s);
                     }
                 }
             }
