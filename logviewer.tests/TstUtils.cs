@@ -86,5 +86,12 @@ namespace logviewer.tests
         {
             Assert.Equal(percent, value.PercentOf(total));
         }
+
+        [Fact]
+        public void EnsureNoAsyncVoidMethods()
+        {
+            Helpers.AssertNoAsyncVoidMethods(GetType().Assembly);
+            Helpers.AssertNoAsyncVoidMethods(typeof(MainController).Assembly);
+        }
     }
 }

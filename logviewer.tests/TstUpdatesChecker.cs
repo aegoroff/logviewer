@@ -29,7 +29,7 @@ namespace logviewer.tests
         {
             Task.Factory.StartNew(delegate
             {
-                Thread.Sleep(100);
+                Thread.Sleep(30);
                 foreach (var version in versions)
                 {
                     this.invokeRead.Invoke(new VersionEventArgs(version, string.Empty));
