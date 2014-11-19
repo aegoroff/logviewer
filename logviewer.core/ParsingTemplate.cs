@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using logviewer.core.Properties;
+using logviewer.engine;
 
 namespace logviewer.core
 {
@@ -37,7 +38,7 @@ namespace logviewer.core
                 {
                     return Name;
                 }
-                return Name + " (" + new FileSize(gm.Template.Length, true) + ")";
+                return Name + " (" + new FileSize(gm.Template.Length, true).Format() + ")";
             }
         }
 

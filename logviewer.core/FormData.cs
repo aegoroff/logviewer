@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using logviewer.engine;
 
 namespace logviewer.core
 {

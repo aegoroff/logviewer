@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using logviewer.engine;
 
 namespace logviewer.core
 {

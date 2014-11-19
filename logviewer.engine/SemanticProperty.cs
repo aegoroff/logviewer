@@ -4,7 +4,7 @@
 
 using System;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public struct SemanticProperty
     {

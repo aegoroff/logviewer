@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     [DebuggerDisplay("{Pattern}")]
     public struct Rule

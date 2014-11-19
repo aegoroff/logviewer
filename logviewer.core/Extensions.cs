@@ -4,33 +4,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using logviewer.core.Properties;
+using logviewer.engine;
 
 namespace logviewer.core
 {
     public static class Extensions
     {
-        /// <summary>
-        ///     Decodes string into encoding specified
-        /// </summary>
-        /// <param name="line"> Source string </param>
-        /// <param name="srcEncoding"> Source string encoding </param>
-        /// <param name="dstEncoding"> Destination encoding </param>
-        /// <returns>Decoded string</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        internal static string Convert(this string line, Encoding srcEncoding, Encoding dstEncoding)
-        {
-            byte[] srcBytes = srcEncoding.GetBytes(line);
-            byte[] dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
-            return dstEncoding.GetString(dstBytes);
-        }
-
         internal static string ToParameterName(this LogLevel level)
         {
             return level.ToString("G") + "Color";
@@ -69,16 +53,6 @@ namespace logviewer.core
             return builder.ToString();
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static string UnescapeString(this string escaped)
-        {
-            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
-            {
-                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
-            }
-            return escaped;
-        }
-
         public static int ToSafePercent(this int value, int min, int max)
         {
             if (value > max)
@@ -86,25 +60,6 @@ namespace logviewer.core
                 return max;
             }
             return value < min ? min : value;
-        }
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static int PercentOf(this ulong value, ulong total)
-        {
-            return (int)((value / (double)total) * 100);
-        }
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static int PercentOf(this long value, long total)
-        {
-            var v = value > 0 ? (ulong)value : 0;
-            return total == 0 ? 0 : v.PercentOf((ulong)total);
-        }
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static int PercentOf(this FileSize value, FileSize total)
-        {
-            return value.Bytes.PercentOf(total.Bytes);
         }
 
         private static string WithDays(TimeSpan input)
@@ -163,6 +118,45 @@ namespace logviewer.core
             return Resources.RemainingLessThenSecond;
         }
 
+        public static string Format(this LoadProgress progress)
+        {
+            return progress.Speed.Bytes == 0
+                ? string.Format(Resources.SpeedPercent, progress.Percent)
+                : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(), progress.Remainig.TimespanToHumanString());
+        
+        }
+
+        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
+        private const string BigFileFormatNoBytes = "{0:F2} {1}";
+        private const string SmallFileFormat = "{0} {1}";
+
+        private static readonly string[] sizes =
+        {
+            Resources.SizeBytes,
+            Resources.SizeKBytes,
+            Resources.SizeMBytes,
+            Resources.SizeGBytes,
+            Resources.SizeTBytes,
+            Resources.SizePBytes,
+            Resources.SizeEBytes
+        };
+
+        public static string Format(this FileSize fileSize)
+        {
+            if (fileSize.Unit == SizeUnit.Bytes)
+            {
+                return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, fileSize.Bytes,
+                    sizes[(int)fileSize.Unit]);
+            }
+            if (fileSize.BigWithoutBytes)
+            {
+                return string.Format(CultureInfo.CurrentCulture, BigFileFormatNoBytes, fileSize.Value, sizes[(int)fileSize.Unit]);
+            }
+            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, fileSize.Value,
+                sizes[(int)fileSize.Unit], fileSize.Bytes.ToString(fileSize.Bytes.FormatString(), CultureInfo.CurrentCulture),
+                sizes[(int)SizeUnit.Bytes]);
+        }
+
         private static readonly IDictionary<int, Func<int, string, string, string, string>> declensions = new Dictionary
             <int, Func<int, string, string, string, string>>
         {
@@ -215,17 +209,6 @@ namespace logviewer.core
                  return nominative;
              }
              return genitiveSingular ?? genitivePlural;
-         }
-
-         public static string AssemblyDirectory
-         {
-             get
-             {
-                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                 var uri = new UriBuilder(codeBase);
-                 string path = Uri.UnescapeDataString(uri.Path);
-                 return Path.GetDirectoryName(path);
-             }
          }
     }
 }

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public struct LogMessage
     {
@@ -134,7 +134,7 @@ namespace logviewer.core
 
         static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         static IDictionary<string, LogLevel> Levels()
         {
             var r = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
@@ -152,7 +152,7 @@ namespace logviewer.core
             return r;
         }
             
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<LogLevel> ParseLogLevel(string s)
         {
             LogLevel r;
@@ -160,7 +160,7 @@ namespace logviewer.core
             return new ParseResult<LogLevel> { Result = success, Value = r };
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<DateTime> ParseDateTime(string s)
         {
             DateTime r;
@@ -172,7 +172,7 @@ namespace logviewer.core
             return new ParseResult<DateTime> { Result = success, Value = r };
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<long> ParseInteger(string s)
         {
             long r;
@@ -180,7 +180,7 @@ namespace logviewer.core
             return new ParseResult<long> { Result = success, Value = r };
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
@@ -190,7 +190,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
@@ -200,7 +200,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseInteger(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(integerParsers, dataToParse, rules);
@@ -210,7 +210,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private void ParseString(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(stringParsers, dataToParse, rules);
@@ -220,7 +220,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.properties == null || schema == null)
@@ -270,7 +270,7 @@ namespace logviewer.core
             return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
             Func<string, ParseResult<T>> func;
@@ -287,7 +287,7 @@ namespace logviewer.core
             return GetProperty(this.stringProperties, property);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetProperty<T>(IDictionary<string, T> dict, string property)
         {
             T result;
@@ -325,7 +325,7 @@ namespace logviewer.core
             this.bodyBuilder.Clear();
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static LogMessage Create()
         {
             return new LogMessage

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public class GrokVisitor : GrokBaseVisitor<string>
     {
@@ -160,23 +160,23 @@ namespace logviewer.core
         {
             var node = context.PATTERN().Symbol.Text;
 
-            if (templates.ContainsKey(node))
+            if (this.templates.ContainsKey(node))
             {
-                this.compiledPattern = templates[node];
+                this.compiledPattern = this.templates[node];
 
                 bool continueMatch;
                 bool matchFound;
                 do
                 {
                     matchFound = false;
-                    foreach (var k in templates.Keys)
+                    foreach (var k in this.templates.Keys)
                     {
                         var link = PatternStart + k + PatternStop;
                         if (!this.compiledPattern.Contains(link))
                         {
                             continue;
                         }
-                        this.compiledPattern = this.compiledPattern.Replace(link, templates[k]);
+                        this.compiledPattern = this.compiledPattern.Replace(link, this.templates[k]);
                         matchFound = true;
                     }
                     continueMatch = this.compiledPattern.Contains(PatternStart);

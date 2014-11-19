@@ -2,7 +2,7 @@
 // Created at: 10.10.2013
 // © 2012-2014 Alexander Egorov
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public struct ParseResult<T>
     {

@@ -3,10 +3,8 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
-using System.Globalization;
-using logviewer.core.Properties;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     /// <summary>
     ///     Represents file size normalization code
@@ -15,21 +13,6 @@ namespace logviewer.core
     {
         private const int Int64BitsCount = 64;
         private const int BinaryThousand = 1024;
-
-        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
-        private const string BigFileFormatNoBytes = "{0:F2} {1}";
-        private const string SmallFileFormat = "{0} {1}";
-
-        private static readonly string[] sizes =
-        {
-            Resources.SizeBytes,
-            Resources.SizeKBytes,
-            Resources.SizeMBytes,
-            Resources.SizeGBytes,
-            Resources.SizeTBytes,
-            Resources.SizePBytes,
-            Resources.SizeEBytes
-        };
 
         private readonly bool bigWithoutBytes;
         private readonly ulong bytes;
@@ -85,6 +68,11 @@ namespace logviewer.core
             get { return this.value; }
         }
 
+        public bool BigWithoutBytes
+        {
+            get { return this.bigWithoutBytes; }
+        }
+
         private static ulong IntegerLogarithm(ulong x)
         {
             ulong n = Int64BitsCount;
@@ -102,22 +90,6 @@ namespace logviewer.core
             } while (c != 0);
             n -= x >> (Int64BitsCount - 1);
             return (Int64BitsCount - 1) - (n - x);
-        }
-
-        public override string ToString()
-        {
-            if (this.Unit == SizeUnit.Bytes)
-            {
-                return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, this.Bytes,
-                    sizes[(int)this.Unit]);
-            }
-            if (this.bigWithoutBytes)
-            {
-                return string.Format(CultureInfo.CurrentCulture, BigFileFormatNoBytes, this.Value, sizes[(int)this.Unit]);
-            }
-            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, this.Value,
-                sizes[(int)this.Unit], this.Bytes.ToString(this.Bytes.FormatString(), CultureInfo.CurrentCulture),
-                sizes[(int)SizeUnit.Bytes]);
         }
     }
 }

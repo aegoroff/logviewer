@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using logviewer.core;
+using logviewer.engine;
 using logviewer.Properties;
 
 namespace logviewer
@@ -79,7 +80,7 @@ namespace logviewer
 
                 var sizeItem = new ListViewItem(new[] { Resources.Size, this.size });
                 var encodingItem = new ListViewItem(new[] { Resources.Encoding, this.encoding });
-                var databaseSize = new ListViewItem(new[] { Resources.DatabaseSize, new FileSize(dbSize).ToString() });
+                var databaseSize = new ListViewItem(new[] { Resources.DatabaseSize, new FileSize(dbSize).Format() });
                 var minDate = new ListViewItem(new[] { Resources.MinMessageDate, minDateTime.ToString("f") });
                 var maxDate = new ListViewItem(new[] { Resources.MaxMessageDate, maxDateTime.ToString("f") });
 

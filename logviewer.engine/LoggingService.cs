@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using NLog;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public class Log : LoggingService
     {

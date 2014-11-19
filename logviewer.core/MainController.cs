@@ -17,10 +17,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
+using logviewer.engine;
 using Net.Sgoliver.NRtfTree.Util;
 using Ninject;
 using NLog;
 using NLog.Targets;
+using LogLevel = logviewer.engine.LogLevel;
+
 
 namespace logviewer.core
 {
@@ -703,7 +706,7 @@ namespace logviewer.core
         private void SetLogSize()
         {
             this.view.SetLoadedFileCapltion(this.currentPath);
-            this.view.HumanReadableLogSize = new FileSize(this.logSize, true).ToString();
+            this.view.HumanReadableLogSize = new FileSize(this.logSize, true).Format();
         }
 
         public void ResetLogStatistic()
@@ -722,7 +725,7 @@ namespace logviewer.core
 
         public string GetLogSize(bool showBytes)
         {
-            return new FileSize(this.logSize, !showBytes).ToString();
+            return new FileSize(this.logSize, !showBytes).Format();
         }
 
         public void ClearCache()

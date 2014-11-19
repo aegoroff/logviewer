@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Antlr4.4.3.0\build\Antlr4.props" Condition="Exists('..\packages\Antlr4.4.3.0\build\Antlr4.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,11 +13,11 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>fa391614</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>c7e40d18</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SnkPath) != '' ">
-	<AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
-	<SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,9 +41,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr4.Runtime.net45">
-      <HintPath>..\packages\Antlr4.Runtime.4.3.0\lib\net45\Antlr4.Runtime.net45.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
@@ -71,10 +67,6 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="Ude, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UDE.CSharp.1.1.0\lib\Ude.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseGuiController.cs" />
@@ -82,11 +74,8 @@
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="CoreModule.cs" />
     <Compile Include="DatabaseConnection.cs" />
-    <Compile Include="EncodingDetectedEventArgs.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FileSize.cs" />
     <Compile Include="FormData.cs" />
-    <Compile Include="GrokVisitor.cs" />
     <Compile Include="ILogView.cs" />
     <Compile Include="IParsingTemplateView.cs" />
     <Compile Include="ISettingsProvider.cs" />
@@ -94,18 +83,10 @@
     <Compile Include="IUpdatable.cs" />
     <Compile Include="IUpdateView.cs" />
     <Compile Include="IVersionsReader.cs" />
-    <Compile Include="LoadProgress.cs" />
-    <Compile Include="LogLevel.cs" />
     <Compile Include="LogParseTemplateController.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
-    <Compile Include="LogReader.cs" />
     <Compile Include="LogStore.cs" />
     <Compile Include="MainController.cs" />
-    <Compile Include="LoggingService.cs" />
-    <Compile Include="LogMessage.cs" />
-    <Compile Include="GrokMatcher.cs" />
-    <Compile Include="ParseResult.cs" />
-    <Compile Include="ParserType.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -116,13 +97,8 @@
     </Compile>
     <Compile Include="PropertyType.cs" />
     <Compile Include="RecentItemsStore.cs" />
-    <Compile Include="Rule.cs" />
-    <Compile Include="SafeRunner.cs" />
-    <Compile Include="Semantic.cs" />
-    <Compile Include="SemanticProperty.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SqliteSettingsProvider.cs" />
-    <Compile Include="SizeUnit.cs" />
     <Compile Include="SqliteRegEx.cs" />
     <Compile Include="UpdatesChecker.cs" />
     <Compile Include="UpdatesController.cs" />
@@ -137,21 +113,15 @@
     <EmbeddedResource Include="Properties\Resources.ru.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Antlr4 Include="Grok.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>logviewer.core</CustomToolNamespace>
-      <Listener>False</Listener>
-      <Visitor>True</Visitor>
-    </Antlr4>
-    <None Include="grok.patterns">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="webservers.patterns">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
+      <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>
+      <Name>logviewer.engine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -162,12 +132,4 @@
   </Target>
   -->
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.94.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.94.0\build\net45\System.Data.SQLite.Core.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Antlr4.4.3.0\build\Antlr4.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.3.0\build\Antlr4.props'))" />
-    <Error Condition="!Exists('..\packages\Antlr4.4.3.0\build\Antlr4.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.3.0\build\Antlr4.targets'))" />
-  </Target>
-  <Import Project="..\packages\Antlr4.4.3.0\build\Antlr4.targets" Condition="Exists('..\packages\Antlr4.4.3.0\build\Antlr4.targets')" />
 </Project>

@@ -10,7 +10,7 @@ using System.IO.MemoryMappedFiles;
 using System.Text;
 using Ude;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public sealed class LogReader
     {

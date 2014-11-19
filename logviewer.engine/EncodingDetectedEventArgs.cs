@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
     public sealed class EncodingDetectedEventArgs : EventArgs
     {
