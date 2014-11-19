@@ -69,7 +69,7 @@ namespace logviewer.tests
             Assert.Equal(size, sz.Bytes);
             Assert.Equal(unit, sz.Unit);
             Assert.Equal(value, sz.Value);
-            Assert.True(Regex.IsMatch(sz.ToString(), str));
+            Assert.True(Regex.IsMatch(sz.Format(), str));
         }
 
         [Theory]
