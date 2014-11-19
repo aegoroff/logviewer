@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace logviewer.engine
 {
-    public class GrokVisitor : GrokBaseVisitor<string>
+    internal class GrokVisitor : GrokBaseVisitor<string>
     {
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
         private readonly List<Semantic> schema = new List<Semantic>();
@@ -25,8 +25,8 @@ namespace logviewer.engine
         private const string PatternStart = "%{";
         private const string PatternStop = "}";
         private const string NamedPattern = @"(?<{0}>{1})";
-        
-        public GrokVisitor()
+
+        internal GrokVisitor()
         {
             const string pattern = "*.patterns";
             var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
@@ -59,14 +59,14 @@ namespace logviewer.engine
             }
         }
 
-        public string Template
+        internal string Template
         {
             get { return string.Join(string.Empty, this.agregattor); }
         }
 
-        public bool RecompilationNeeded { get; private set; }
+        internal bool RecompilationNeeded { get; private set; }
 
-        public ICollection<Semantic> Schema
+        internal ICollection<Semantic> Schema
         {
             get { return this.schema; }
         }
