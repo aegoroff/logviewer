@@ -102,6 +102,11 @@ namespace logviewer.core
             return input.Days.Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
         }
 
+        private static string BytesToString(this ulong bytes)
+        {
+            return ((int)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
+        }
+
         internal static string TimespanToHumanString(this TimeSpan timeSpan)
         {
             Func<TimeSpan, string>[] funcs =
@@ -146,7 +151,7 @@ namespace logviewer.core
             if (fileSize.Unit == SizeUnit.Bytes)
             {
                 return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, fileSize.Bytes,
-                    sizes[(int)fileSize.Unit]);
+                    fileSize.Bytes.BytesToString());
             }
             if (fileSize.BigWithoutBytes)
             {
@@ -154,7 +159,7 @@ namespace logviewer.core
             }
             return string.Format(CultureInfo.CurrentCulture, BigFileFormat, fileSize.Value,
                 sizes[(int)fileSize.Unit], fileSize.Bytes.ToString(fileSize.Bytes.FormatString(), CultureInfo.CurrentCulture),
-                sizes[(int)SizeUnit.Bytes]);
+                fileSize.Bytes.BytesToString());
         }
 
         private static readonly IDictionary<int, Func<int, string, string, string, string>> declensions = new Dictionary
