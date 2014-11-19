@@ -8,19 +8,20 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Text;
-using Ude;
 
 namespace logviewer.engine
 {
     public sealed class LogReader
     {
         private const int BufferSize = 0xFFFFFF;
+        private readonly ICharsetDetector detector;
         private readonly GrokMatcher matcher;
         private readonly GrokMatcher filter;
 
-        public LogReader(string logPath, GrokMatcher matcher, GrokMatcher filter = null)
+        public LogReader(string logPath, ICharsetDetector detector, GrokMatcher matcher, GrokMatcher filter = null)
         {
             this.LogPath = logPath;
+            this.detector = detector;
             this.matcher = matcher;
             this.filter = filter;
             this.Length = new FileInfo(logPath).Length;
@@ -67,7 +68,7 @@ namespace logviewer.engine
                 {
                     using (var s = mmf.CreateViewStream(0, this.Length, MemoryMappedFileAccess.Read))
                     {
-                        srcEncoding = SrcEncoding(s);
+                        srcEncoding = detector.Detect(s);
                     }
                 }
             }
@@ -168,19 +169,6 @@ namespace logviewer.engine
                 onRead(message);
             }
 
-            return srcEncoding;
-        }
-
-        private static Encoding SrcEncoding(Stream stream)
-        {
-            Encoding srcEncoding = null;
-            var detector = new CharsetDetector();
-            detector.Feed(stream);
-            detector.DataEnd();
-            if (detector.Charset != null)
-            {
-                srcEncoding = Encoding.GetEncoding(detector.Charset);
-            }
             return srcEncoding;
         }
 

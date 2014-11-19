@@ -46,9 +46,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Ude">
-      <HintPath>..\packages\UDE.CSharp.1.1.0\lib\Ude.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EncodingDetectedEventArgs.cs" />
@@ -56,6 +53,7 @@
     <Compile Include="FileSize.cs" />
     <Compile Include="GrokMatcher.cs" />
     <Compile Include="GrokVisitor.cs" />
+    <Compile Include="ICharsetDetector.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogLevel.cs" />
@@ -79,7 +77,9 @@
     <None Include="grok.patterns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="webservers.patterns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

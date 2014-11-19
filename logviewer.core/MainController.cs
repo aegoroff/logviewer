@@ -39,6 +39,7 @@ namespace logviewer.core
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
+        private readonly LogCharsetDetector charsetDetector = new LogCharsetDetector();
 
         private string currentPath;
 
@@ -481,7 +482,7 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.view.LogPath, this.matcher, this.filter);
+            var reader = new LogReader(this.view.LogPath, this.charsetDetector, this.matcher, this.filter);
 
             var append = reader.Length > this.logSize && this.CurrentPathCached;
 
