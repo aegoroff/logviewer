@@ -573,12 +573,7 @@ namespace logviewer.core
             var properties = string.Join(",",
                 from string member in this.parsingTemplatePropertiesNames select member);
 
-            properties = "Ix," + properties;
-            
-            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
-            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
-            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
-            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
+            this.UpgradeParsingTemplatesTable(connection, properties);
         }
         
         void Upgrade4(DatabaseConnection connection)
@@ -586,12 +581,7 @@ namespace logviewer.core
             var properties = string.Join(",",
                 from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Filter", StringComparison.Ordinal)) select member);
 
-            properties = "Ix," + properties;
-            
-            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
-            connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
-            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesOld");
-            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
+            this.UpgradeParsingTemplatesTable(connection, properties);
         }
         
         void Upgrade5(DatabaseConnection connection)
@@ -599,12 +589,18 @@ namespace logviewer.core
             var properties = string.Join(",",
                 from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Compiled", StringComparison.Ordinal)) select member);
 
+            this.UpgradeParsingTemplatesTable(connection, properties);
+        }
+
+        private void UpgradeParsingTemplatesTable(DatabaseConnection connection, string properties)
+        {
             properties = "Ix," + properties;
-            
-            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesU5");
+
+            connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
             connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
-            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties + " FROM ParsingTemplatesU5");
-            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesU5");
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties +
+                                       " FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
         }
 
         private void ExecuteNonQuery(params string[] queries)
