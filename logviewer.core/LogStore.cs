@@ -11,8 +11,6 @@ using logviewer.engine;
 using Microsoft.VisualBasic.Devices;
 using Rule = logviewer.engine.Rule;
 
-//using Rule = System.Data.Rule;
-
 namespace logviewer.core
 {
     public sealed class LogStore : IDisposable
@@ -31,28 +29,9 @@ namespace logviewer.core
         private readonly string logLevelProperty;
         private readonly bool hasDateTimeProperty;
         private readonly string dateTimeProperty;
-        private readonly ICollection<Semantic> schema;
         private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
         private IDictionary<string, PropertyType> propertyTypesCache;
-
-        private readonly IDictionary<string, ParserType> typesStorage = new Dictionary<string, ParserType>
-        {
-            { "LogLevel", ParserType.LogLevel },
-            { "LogLevel.None", ParserType.LogLevel },
-            { "LogLevel.Trace", ParserType.LogLevel },
-            { "LogLevel.Debug", ParserType.LogLevel },
-            { "LogLevel.Info", ParserType.LogLevel },
-            { "LogLevel.Warn", ParserType.LogLevel },
-            { "LogLevel.Error", ParserType.LogLevel },
-            { "LogLevel.Fatal", ParserType.LogLevel },
-            { "DateTime", ParserType.Datetime },
-            { "int", ParserType.Interger },
-            { "Int32", ParserType.Interger },
-            { "long", ParserType.Interger },
-            { "Int64", ParserType.Interger },
-            { "string", ParserType.String },
-            { "String", ParserType.String },
-        };
+        private readonly RulesBuilder builder;
 
         #endregion
 
@@ -60,43 +39,16 @@ namespace logviewer.core
 
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
-            this.schema = schema;
-            var dictionary = new Dictionary<SemanticProperty, ISet<Rule>>();
-            if (this.schema == null)
-            {
-                this.rules = new Dictionary<SemanticProperty, ISet<Rule>>();
-            }
-            else
-            {
-                foreach (var semantic in this.schema)
-                {
-                    var k = dictionary.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
-                    dictionary.Add(this.Create(k, semantic.CastingRules), semantic.CastingRules);
-                }
-                this.rules = dictionary;
-            }
-            this.hasLogLevelProperty = this.schema.HasProperty("LogLevel");
-            this.logLevelProperty = this.schema.PropertyNameOf("LogLevel");
-            this.hasDateTimeProperty = this.schema.HasProperty("DateTime");
-            this.dateTimeProperty = this.schema.PropertyNameOf("DateTime");
+            this.builder = new RulesBuilder(schema);
+            this.rules = this.builder.Rules;
+            this.hasLogLevelProperty = schema.HasProperty("LogLevel");
+            this.logLevelProperty = schema.PropertyNameOf("LogLevel");
+            this.hasDateTimeProperty = schema.HasProperty("DateTime");
+            this.dateTimeProperty = schema.PropertyNameOf("DateTime");
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);
             this.CreateTables(dbSize);
-        }
-
-        private SemanticProperty Create(string name, IEnumerable<Rule> castingRules)
-        {
-            foreach (var rule in castingRules)
-            {
-                ParserType parserType;
-                if (!this.typesStorage.TryGetValue(rule.Type, out parserType))
-                {
-                    continue;
-                }
-                return new SemanticProperty(name, parserType);
-            }
-            return new SemanticProperty(name, ParserType.String);
         }
 
         private IEnumerable<string> CreateAdditionalColumns()
@@ -287,11 +239,7 @@ namespace logviewer.core
 
         private PropertyType DefinePropertyType(string param)
         {
-            ParserType result;
-            if (!this.typesStorage.TryGetValue(this.rules[param].First().Type, out result))
-            {
-                return PropertyType.String;
-            }
+            var result = this.builder.DefineParserType(param);
             return result == ParserType.String ? PropertyType.String : PropertyType.Integer;
         }
 
