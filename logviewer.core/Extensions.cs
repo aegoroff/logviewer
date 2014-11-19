@@ -84,27 +84,27 @@ namespace logviewer.core
 
         private static string SecondsToString(this TimeSpan input)
         {
-            return input.Seconds.Declension(Resources.SecondsNominative, Resources.SecondsGenitiveSingular, Resources.SecondsGenitivePlural);
+            return ((long)input.Seconds).Declension(Resources.SecondsNominative, Resources.SecondsGenitiveSingular, Resources.SecondsGenitivePlural);
         }
         
         private static string MinutesToString(this TimeSpan input)
         {
-            return input.Minutes.Declension(Resources.MinutesNominative, Resources.MinutesGenitiveSingular, Resources.MinutesGenitivePlural);
+            return ((long)input.Minutes).Declension(Resources.MinutesNominative, Resources.MinutesGenitiveSingular, Resources.MinutesGenitivePlural);
         }
         
         private static string HoursToString(this TimeSpan input)
         {
-            return input.Hours.Declension(Resources.HoursNominative, Resources.HoursGenitiveSingular, Resources.HoursGenitivePlural);
+            return ((long)input.Hours).Declension(Resources.HoursNominative, Resources.HoursGenitiveSingular, Resources.HoursGenitivePlural);
         }
         
         private static string DaysToString(this TimeSpan input)
         {
-            return input.Days.Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
+            return ((long)input.Days).Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
         }
 
         private static string BytesToString(this ulong bytes)
         {
-            return ((int)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
+            return ((long)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
         }
 
         internal static string TimespanToHumanString(this TimeSpan timeSpan)
@@ -162,13 +162,13 @@ namespace logviewer.core
                 fileSize.Bytes.BytesToString());
         }
 
-        private static readonly IDictionary<int, Func<int, string, string, string, string>> declensions = new Dictionary
-            <int, Func<int, string, string, string, string>>
+        private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary
+            <int, Func<long, string, string, string, string>>
         {
             { 1049, DeclensionRu }
         };
 
-        private static string Declension(this int number, string nominative, string genitiveSingular,
+        private static string Declension(this long number, string nominative, string genitiveSingular,
             string genitivePlural)
         {
             return declensions.ContainsKey(Thread.CurrentThread.CurrentUICulture.LCID)
@@ -184,7 +184,7 @@ namespace logviewer.core
          /// <param name="genitiveSingular"></param>
          /// <param name="genitivePlural"></param>
          /// <returns></returns>
-         private static string DeclensionRu(int number, string nominative, string genitiveSingular, string genitivePlural)
+         private static string DeclensionRu(long number, string nominative, string genitiveSingular, string genitivePlural)
          {
              var lastDigit = number % 10;
              var lastTwoDigits = number % 100;
@@ -207,7 +207,7 @@ namespace logviewer.core
          /// <param name="genitiveSingular"></param>
          /// <param name="genitivePlural"></param>
          /// <returns></returns>
-         private static string DeclensionEn(int number, string nominative, string genitiveSingular, string genitivePlural)
+         private static string DeclensionEn(long number, string nominative, string genitiveSingular, string genitivePlural)
          {
              if (number == 1 || number == -1)
              {
