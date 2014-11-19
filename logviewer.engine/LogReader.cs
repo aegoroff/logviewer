@@ -18,24 +18,12 @@ namespace logviewer.engine
         private readonly GrokMatcher matcher;
         private readonly GrokMatcher filter;
 
-        public LogReader(string logPath, ICharsetDetector detector, GrokMatcher matcher, GrokMatcher filter = null)
+        public LogReader(ICharsetDetector detector, GrokMatcher matcher, GrokMatcher filter = null)
         {
-            this.LogPath = logPath;
             this.detector = detector;
             this.matcher = matcher;
             this.filter = filter;
-            this.Length = new FileInfo(logPath).Length;
         }
-
-        /// <summary>
-        ///     Gets log file length in bytes
-        /// </summary>
-        public long Length { get; private set; }
-
-        /// <summary>
-        ///     Gets full path to log file
-        /// </summary>
-        public string LogPath { get; private set; }
 
         public event ProgressChangedEventHandler ProgressChanged;
         public event EventHandler EncodingDetectionStarted;
@@ -43,9 +31,19 @@ namespace logviewer.engine
         public event EventHandler CompilationStarted;
         public event EventHandler CompilationFinished;
 
-        public Encoding Read(Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
+        /// <summary>
+        /// Reads log from file
+        /// </summary>
+        /// <param name="logPath">Full path to file</param>
+        /// <param name="onRead">On message complete action</param>
+        /// <param name="canContinue">Continue validator</param>
+        /// <param name="encoding">File encoding</param>
+        /// <param name="offset">file offset</param>
+        /// <returns>Detected file encoding</returns>
+        public Encoding Read(string logPath, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
         {
-            if (this.Length == 0)
+            var length = new FileInfo(logPath).Length;
+            if (length == 0)
             {
                 return null;
             }
@@ -63,10 +61,10 @@ namespace logviewer.engine
                 }
                 var mapName = Guid.NewGuid().ToString();
                 using (
-                    var mmf = MemoryMappedFile.CreateFromFile(this.LogPath, FileMode.Open, mapName, 0,
+                    var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
                         MemoryMappedFileAccess.Read))
                 {
-                    using (var s = mmf.CreateViewStream(0, this.Length, MemoryMappedFileAccess.Read))
+                    using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                     {
                         srcEncoding = this.detector.Detect(s);
                     }
@@ -76,15 +74,32 @@ namespace logviewer.engine
             {
                 this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
             }
-            var decode = DecodeNeeded(srcEncoding);
-            var fs = new FileStream(this.LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
+
+            var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
             fs.Seek(offset, SeekOrigin.Begin);
             var stream = new BufferedStream(fs, BufferSize);
-            var sr = new StreamReader(stream, srcEncoding ?? Encoding.UTF8);
+            this.Read(stream, length, onRead, canContinue, srcEncoding);
+
+            return srcEncoding;
+        }
+
+        /// <summary>
+        /// Reads log from stream
+        /// </summary>
+        /// <param name="stream">Stream to read log from</param>
+        /// <param name="length">Stream lendgh if applicable</param>
+        /// <param name="onRead">On message complete action</param>
+        /// <param name="canContinue">Continue validator</param>
+        /// <param name="encoding">Stream encoding</param>
+        public void Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
+        {
+            var decode = DecodeNeeded(encoding);
+            var canSeek = stream.CanSeek;
+            var sr = new StreamReader(stream, encoding ?? Encoding.UTF8);
             using (sr)
             {
-                var total = this.Length;
-                var fraction = total / 20L;
+                var total = length;
+                var fraction = total/20L;
                 var signalCounter = 1;
 
                 var stopWatch = new Stopwatch();
@@ -97,7 +112,7 @@ namespace logviewer.engine
                     var line = sr.ReadLine();
                     if (decode)
                     {
-                        line = line.Convert(srcEncoding, Encoding.UTF8);
+                        line = line.Convert(encoding, Encoding.UTF8);
                     }
                     if (line == null)
                     {
@@ -146,20 +161,20 @@ namespace logviewer.engine
                     }
                     message.AddLine(line);
 
-                    if (stream.Position < signalCounter*fraction || this.ProgressChanged == null)
+                    if (!canSeek || stream.Position < signalCounter * fraction || this.ProgressChanged == null)
                     {
                         continue;
                     }
                     var elapsed = stopWatch.Elapsed;
                     var read = stream.Position - measureStart;
                     measureStart = stream.Position;
-                    var speed = read / elapsed.TotalSeconds;
+                    var speed = read/elapsed.TotalSeconds;
                     stopWatch.Restart();
                     ++signalCounter;
-                    var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position) / speed;
+                    var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position)/speed;
                     var progress = new LoadProgress
                     {
-                        Speed = new FileSize((ulong)speed, true),
+                        Speed = new FileSize((ulong) speed, true),
                         Remainig = TimeSpan.FromSeconds(remain),
                         Percent = stream.Position.PercentOf(total)
                     };
@@ -168,8 +183,6 @@ namespace logviewer.engine
                 // Add last message
                 onRead(message);
             }
-
-            return srcEncoding;
         }
 
         private static bool DecodeNeeded(Encoding srcEncoding)

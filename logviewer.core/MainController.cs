@@ -482,13 +482,16 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.view.LogPath, this.charsetDetector, this.matcher, this.filter);
+            var reader = new LogReader(this.charsetDetector, this.matcher, this.filter);
+            var logPath = this.view.LogPath;
+            
+            var length = new FileInfo(logPath).Length;
 
-            var append = reader.Length > this.logSize && this.CurrentPathCached;
+            var append = length > this.logSize && this.CurrentPathCached;
 
             var offset = append ? this.logSize : 0L;
 
-            this.logSize = reader.Length;
+            this.logSize = length;
 
             if (this.logSize == 0)
             {
@@ -501,7 +504,7 @@ namespace logviewer.core
                 return;
             }
 
-            this.currentPath = reader.LogPath;
+            this.currentPath = logPath;
             if (this.currentPath == null)
             {
                 return;
@@ -535,7 +538,7 @@ namespace logviewer.core
             try
             {
                 this.queuedMessages = 0;
-                var encoding = reader.Read(this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+                var encoding = reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
                 this.probeWatch.Stop();
                 var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
