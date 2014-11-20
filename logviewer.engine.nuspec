@@ -17,6 +17,6 @@
         <file src="logviewer.engine\webservers.patterns" target="content\webservers.patterns" />
         <file src="logviewer.engine\bin\Release\logviewer.engine.dll" target="lib\net45\logviewer.engine.dll" />
         <file src="logviewer.engine\bin\Release\logviewer.engine.XML" target="lib\net45\logviewer.engine.XML" />
-        <file src="logviewer.engine\Install.ps1" target="lib\net45\Install.ps1" />
+        <file src="logviewer.engine\Install.ps1" target="tools\net45\Install.ps1" />
     </files>
 </package>
