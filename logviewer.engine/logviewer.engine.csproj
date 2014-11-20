@@ -74,6 +74,7 @@
     <None Include="grok.patterns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Install.ps1" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
