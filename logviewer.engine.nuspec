@@ -14,5 +14,6 @@
     </metadata>
     <files>
         <file src="logviewer.engine\bin\Release\logviewer.engine.dll" target="lib\net45\logviewer.engine.dll" />
+        <file src="logviewer.engine\bin\Release\logviewer.engine.XML" target="lib\net45\logviewer.engine.XML" />
     </files>
 </package>
