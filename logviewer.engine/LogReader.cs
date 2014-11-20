@@ -11,6 +11,9 @@ using System.Text;
 
 namespace logviewer.engine
 {
+    /// <summary>
+    /// Reads log from file or stream
+    /// </summary>
     public sealed class LogReader
     {
         private const int BufferSize = 0xFFFFFF;
@@ -18,6 +21,12 @@ namespace logviewer.engine
         private readonly GrokMatcher matcher;
         private readonly GrokMatcher filter;
 
+        /// <summary>
+        /// Initializes reader
+        /// </summary>
+        /// <param name="detector">Charset detector</param>
+        /// <param name="matcher">Message matcher</param>
+        /// <param name="filter">Message filter if applicable</param>
         public LogReader(ICharsetDetector detector, GrokMatcher matcher, GrokMatcher filter = null)
         {
             this.detector = detector;
@@ -25,10 +34,29 @@ namespace logviewer.engine
             this.filter = filter;
         }
 
+        /// <summary>
+        /// Occurs every 5% of log progress
+        /// </summary>
         public event ProgressChangedEventHandler ProgressChanged;
+        
+        /// <summary>
+        /// Occurs on starting log file encoding detection
+        /// </summary>
         public event EventHandler EncodingDetectionStarted;
+        
+        /// <summary>
+        /// Occurs on finish log file encoding detection
+        /// </summary>
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
+        
+        /// <summary>
+        /// Occurs on starting template compilation (template compilation may take a long time)
+        /// </summary>
         public event EventHandler CompilationStarted;
+        
+        /// <summary>
+        /// Occurs on finish template compilation (template compilation may take a long time)
+        /// </summary>
         public event EventHandler CompilationFinished;
 
         /// <summary>

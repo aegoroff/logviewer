@@ -10,6 +10,9 @@ using System.Text;
 
 namespace logviewer.engine
 {
+    /// <summary>
+    /// Useful engine extensions
+    /// </summary>
     public static class Extensions
     {
         internal static string AssemblyDirectory
@@ -48,12 +51,24 @@ namespace logviewer.engine
             return dstEncoding.GetString(dstBytes);
         }
 
+        /// <summary>
+        /// Returns percent of value specified from total
+        /// </summary>
+        /// <param name="value">Value to calculate percent</param>
+        /// <param name="total">Value upper boundary</param>
+        /// <returns>Percent of value from total parameter</returns>
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this ulong value, ulong total)
         {
             return (int)((value / (double)total) * 100);
         }
 
+        /// <summary>
+        /// Returns percent of value specified from total
+        /// </summary>
+        /// <param name="value">Value to calculate percent</param>
+        /// <param name="total">Value upper boundary</param>
+        /// <returns>Percent of value from total parameter</returns>
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this long value, long total)
         {
@@ -61,6 +76,12 @@ namespace logviewer.engine
             return total == 0 ? 0 : v.PercentOf((ulong)total);
         }
 
+        /// <summary>
+        /// Returns percent of file size specified from total
+        /// </summary>
+        /// <param name="value">Value to calculate percent</param>
+        /// <param name="total">Value upper boundary</param>
+        /// <returns>Percent of value from total parameter</returns>
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this FileSize value, FileSize total)
         {

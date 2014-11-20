@@ -11,6 +11,9 @@ using System.Text;
 
 namespace logviewer.engine
 {
+    /// <summary>
+    /// Represents parsed message structure with header, body and metadata if any
+    /// </summary>
     public struct LogMessage
     {
         private const char NewLine = '\n';
@@ -31,6 +34,11 @@ namespace logviewer.engine
                         "dd/MMM/yyyy:HH:mm:ss zzz"
                     };
 
+        /// <summary>
+        /// Initializes new message instance using header and body specified
+        /// </summary>
+        /// <param name="header">Message header</param>
+        /// <param name="body">Message body</param>
         public LogMessage(string header, string body)
         {
             this.head = header;
@@ -42,6 +50,9 @@ namespace logviewer.engine
             this.stringProperties = new Dictionary<string, string>();
         }
 
+        /// <summary>
+        /// Gets whether the message empty or not.
+        /// </summary>
         public bool IsEmpty
         {
             get
@@ -51,17 +62,26 @@ namespace logviewer.engine
             }
         }
 
+        /// <summary>
+        /// Gets or sets message unique index to store it into database for example
+        /// </summary>
         public long Ix
         {
             get { return this.ix; }
             set { this.ix = value; }
         }
 
+        /// <summary>
+        /// Gets message's head
+        /// </summary>
         public string Header
         {
             get { return this.head ?? string.Empty; }
         }
 
+        /// <summary>
+        /// Gets message's body (without header)
+        /// </summary>
         public string Body
         {
             get
@@ -73,11 +93,18 @@ namespace logviewer.engine
             }
         }
 
+        /// <summary>
+        /// Gets whether the message has header
+        /// </summary>
         public bool HasHeader
         {
             get { return this.properties != null; }
         }
 
+        /// <summary>
+        /// Add line to the message (the first line will be header the others will be considered as body)
+        /// </summary>
+        /// <param name="line">Line to add</param>
         public void AddLine(string line)
         {
             if (this.head == null)
@@ -91,6 +118,10 @@ namespace logviewer.engine
             }
         }
 
+        /// <summary>
+        /// Adds metadata into message
+        /// </summary>
+        /// <param name="parsedProperties">Metadata</param>
         public void AddProperties(IDictionary<string, string> parsedProperties)
         {
             this.properties = parsedProperties;
@@ -277,11 +308,21 @@ namespace logviewer.engine
             return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
         }
 
+        /// <summary>
+        /// Gets message's integer metadata using property name specified
+        /// </summary>
+        /// <param name="property">Property to get data of</param>
+        /// <returns>Property value</returns>
         public long IntegerProperty(string property)
         {
             return GetProperty(this.integerProperties, property);
         }
-        
+
+        /// <summary>
+        /// Gets message's string metadata using property name specified
+        /// </summary>
+        /// <param name="property">Property to get data of</param>
+        /// <returns>Property value</returns>
         public string StringProperty(string property)
         {
             return GetProperty(this.stringProperties, property);
@@ -295,16 +336,30 @@ namespace logviewer.engine
             return result;
         }
         
+        /// <summary>
+        /// Updates or add integer property
+        /// </summary>
+        /// <param name="property">Property name</param>
+        /// <param name="value">Property value</param>
         public void UpdateIntegerProperty(string property, long value)
         {
             this.integerProperties[property] = value;
         }
 
+        /// <summary>
+        /// Updates or add string property
+        /// </summary>
+        /// <param name="property">Property name</param>
+        /// <param name="value">Property value</param>
         public void UpdateStringProperty(string property, string value)
         {
             this.stringProperties[property] = value;
         }
 
+        /// <summary>
+        /// Builds message from lines array. All metadata will be extracted using schema specified
+        /// </summary>
+        /// <param name="schema">Message schema to extract metadata by</param>
         public void Cache(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.head != null && this.body != null)
@@ -320,11 +375,18 @@ namespace logviewer.engine
             this.Clear();
         }
 
+        /// <summary>
+        /// Clears message's builder
+        /// </summary>
         public void Clear()
         {
             this.bodyBuilder.Clear();
         }
 
+        /// <summary>
+        /// Creates new <see cref="LogMessage"/> instance
+        /// </summary>
+        /// <returns>new <see cref="LogMessage"/> instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static LogMessage Create()
         {

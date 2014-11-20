@@ -33,6 +33,10 @@ namespace logviewer.engine
             { "String", ParserType.String },
         };
 
+        /// <summary>
+        /// Initialize new builder instance
+        /// </summary>
+        /// <param name="schema">Message schema</param>
         public RulesBuilder(IEnumerable<Semantic> schema)
         {
             if (schema == null)
@@ -49,11 +53,19 @@ namespace logviewer.engine
             this.rules = dictionary;
         }
 
+        /// <summary>
+        /// Gets rules dictionary that has been built from the schema
+        /// </summary>
         public IDictionary<SemanticProperty, ISet<Rule>> Rules
         {
             get { return this.rules; }
         }
 
+        /// <summary>
+        /// Defines parser type of the property specified
+        /// </summary>
+        /// <param name="property">Property to define parser type for</param>
+        /// <returns>Parser type info</returns>
         public ParserType DefineParserType(SemanticProperty property)
         {
             ParserType result;

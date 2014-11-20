@@ -68,6 +68,9 @@ namespace logviewer.engine
             get { return this.value; }
         }
 
+        /// <summary>
+        /// Whether to output big values (> 1Kb) without bytes info
+        /// </summary>
         public bool BigWithoutBytes
         {
             get { return this.bigWithoutBytes; }
