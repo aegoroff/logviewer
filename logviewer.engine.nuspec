@@ -13,6 +13,8 @@
 		</dependencies>
     </metadata>
     <files>
+        <file src="logviewer.engine\grok.patterns" target="content\grok.patterns" />
+        <file src="logviewer.engine\webservers.patterns" target="content\webservers.patterns" />
         <file src="logviewer.engine\bin\Release\logviewer.engine.dll" target="lib\net45\logviewer.engine.dll" />
         <file src="logviewer.engine\bin\Release\logviewer.engine.XML" target="lib\net45\logviewer.engine.XML" />
     </files>
