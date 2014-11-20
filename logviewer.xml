@@ -67,7 +67,7 @@
         </ItemGroup>
         <MSBuild
                 Projects="@(EngineProject)"
-                Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(SnkPath)" />
+                Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(LogviewerSnkPath)" />
 	</Target>
 
     <!-- Run unit tests task -->
