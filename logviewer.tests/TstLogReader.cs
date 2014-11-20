@@ -65,8 +65,13 @@ namespace logviewer.tests
                 count++;
                 Assert.False(message.IsEmpty);
                 message.Cache(this.builder.Rules);
-                Assert.True(message.IntegerProperty("Level") > 0);
-                Assert.True(message.IntegerProperty("Occured") > 0);
+                var level = (LogLevel)message.IntegerProperty("Level");
+                var date = DateTime.FromFileTime(message.IntegerProperty("Occured"));
+                Assert.InRange(level, LogLevel.Info, LogLevel.Error);
+                Assert.Equal(2008, date.Year);
+                Assert.Equal(12, date.Month);
+                Assert.Equal(27, date.Day);
+                Assert.Equal(19, date.Hour);
             };
 
             this.reader.Read(this.stream, 0, onRead, () => true);
