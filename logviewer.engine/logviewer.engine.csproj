@@ -91,6 +91,12 @@
     <Error Condition="!Exists('..\packages\Antlr4.4.3.0\build\Antlr4.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.3.0\build\Antlr4.targets'))" />
   </Target>
   <Import Project="..\packages\Antlr4.4.3.0\build\Antlr4.targets" Condition="Exists('..\packages\Antlr4.4.3.0\build\Antlr4.targets')" />
+  <Target Name="AfterBuild">
+    <Exec 
+        Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
+        Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.globalsign.com/scripts/timstamp.dll /v &quot;$(OutputPath)$(AssemblyName).dll&quot;" 
+    />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
