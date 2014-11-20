@@ -52,7 +52,7 @@
 		<MSBuild
 			StopOnFirstFailure="true"
 			Projects="logviewer.sln"
-			Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(SnkPath)" 
+			Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword)" 
 		/>
 		<Copy
 			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi"
@@ -62,6 +62,12 @@
 			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe"
 			DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe"
 		/>
+        <ItemGroup>
+            <EngineProject Include="$(MSBuildProjectDirectory)\logviewer.engine\logviewer.engine.csproj" />
+        </ItemGroup>
+        <MSBuild
+                Projects="@(EngineProject)"
+                Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(SnkPath)" />
 	</Target>
 
     <!-- Run unit tests task -->
