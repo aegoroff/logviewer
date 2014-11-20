@@ -67,6 +67,7 @@
         </ItemGroup>
         <MSBuild
                 Projects="@(EngineProject)"
+				Targets="Rebuild"
                 Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(LogviewerSnkPath)" />
 	</Target>
 
