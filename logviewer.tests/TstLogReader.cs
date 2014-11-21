@@ -97,8 +97,9 @@ namespace logviewer.tests
                 Assert.Equal(2008, date.Year);
                 Assert.Equal(12, date.Month);
                 Assert.Equal(27, date.Day);
-                Assert.Equal(19, date.Hour);
             };
+
+            
 
             this.reader.Read(this.stream, 0, onRead, () => true);
             Assert.Equal(2, count);
