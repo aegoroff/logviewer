@@ -119,11 +119,13 @@ namespace logviewer.engine
         /// <param name="onRead">On message complete action</param>
         /// <param name="canContinue">Continue validator</param>
         /// <param name="encoding">Stream encoding</param>
-        public void Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
+        /// <returns>Current stream position</returns>
+        public long Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
             var sr = new StreamReader(stream, encoding ?? Encoding.UTF8);
+            var result = 0L;
             using (sr)
             {
                 var total = length;
@@ -208,9 +210,14 @@ namespace logviewer.engine
                     };
                     this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
                 }
+                if (canSeek)
+                {
+                    result = stream.Position;
+                }
                 // Add last message
                 onRead(message);
             }
+            return result;
         }
 
         private static bool DecodeNeeded(Encoding srcEncoding)

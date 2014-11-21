@@ -22,15 +22,16 @@ namespace logviewer.tests
         private readonly LogReader reader;
         private readonly MemoryStream stream;
         private readonly RulesBuilder builder;
+        private readonly byte[] buffer;
 
         public TstLogReader()
         {
-            MockFactory mockery = new MockFactory();
-            Mock<ICharsetDetector> detector = mockery.CreateMock<ICharsetDetector>();
+            var mockery = new MockFactory();
+            var detector = mockery.CreateMock<ICharsetDetector>();
             this.stream = new MemoryStream();
-            var buffer = Encoding.UTF8.GetBytes(MessageExamples);
-            this.stream.Write(buffer, 0, buffer.Length);
-            GrokMatcher grokMatcher = new GrokMatcher(NlogGrok);
+            this.buffer = Encoding.UTF8.GetBytes(MessageExamples);
+            this.stream.Write(this.buffer, 0, this.buffer.Length);
+            var grokMatcher = new GrokMatcher(NlogGrok);
             this.reader = new LogReader(detector.MockObject, grokMatcher);
             this.builder = new RulesBuilder(grokMatcher.MessageSchema);
         }
@@ -51,8 +52,9 @@ namespace logviewer.tests
                 Assert.False(message.IsEmpty);
             };
 
-            this.reader.Read(this.stream, 0, onRead, () => true);
+            var position = this.reader.Read(this.stream, 0, onRead, () => true);
             Assert.Equal(2, count);
+            Assert.Equal(this.buffer.LongLength, position);
         }
 
         [Fact]
