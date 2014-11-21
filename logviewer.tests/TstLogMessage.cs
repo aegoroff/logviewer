@@ -119,7 +119,7 @@ namespace logviewer.tests
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
             this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
-            Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond), DateTime.FromFileTime(this.m.IntegerProperty("dt")));
+            Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTime(this.m.IntegerProperty("dt")));
         }
 
         [Theory]
