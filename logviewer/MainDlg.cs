@@ -335,7 +335,6 @@ namespace logviewer
         private void OnClose(object sender, EventArgs e)
         {
             this.logWatch.Filter = string.Empty;
-            this.logWatch.Path = string.Empty;
             this.Controller.CancelReading();
             this.Text = this.originalCapion;
             this.toolStripStatusLabel1.Text = null;
