@@ -107,7 +107,7 @@ namespace logviewer.engine
                 var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName1, 0,
                     MemoryMappedFileAccess.Read))
             {
-                using (var s = mmf.CreateViewStream(offset, length, MemoryMappedFileAccess.Read))
+                using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
                     this.Read(s, length, onRead, canContinue, srcEncoding);
                 }
