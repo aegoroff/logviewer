@@ -445,6 +445,7 @@ namespace logviewer.tests
         [Fact]
         public void TotalPagesNoMessages()
         {
+            // TODO: fix System.IO.IOException:
             this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
             Assert.Equal(1, this.controller.TotalPages);
         }
@@ -499,6 +500,7 @@ namespace logviewer.tests
         [Fact]
         public void StartReadingOutsideDelay()
         {
+            // TODO: fix System.IO.IOException:
             this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
             this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
             this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
