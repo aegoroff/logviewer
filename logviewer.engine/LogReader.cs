@@ -210,9 +210,13 @@ namespace logviewer.engine
                     };
                     this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
                 }
-                if (canSeek)
+                try
                 {
                     result = stream.Position;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
                 }
                 // Add last message
                 onRead(message);
