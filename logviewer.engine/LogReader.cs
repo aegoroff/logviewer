@@ -77,41 +77,37 @@ namespace logviewer.engine
 
             var mapName = Guid.NewGuid().ToString();
             Encoding srcEncoding;
-            if (encoding != null)
+            using (
+                var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
+                    MemoryMappedFileAccess.Read))
             {
-                srcEncoding = encoding;
-            }
-            else
-            {
-                if (this.EncodingDetectionStarted != null)
+                
+                if (encoding != null)
                 {
-                    this.EncodingDetectionStarted(this, new EventArgs());
+                    srcEncoding = encoding;
                 }
-                using (
-                    var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
-                        MemoryMappedFileAccess.Read))
+                else
                 {
+                    if (this.EncodingDetectionStarted != null)
+                    {
+                        this.EncodingDetectionStarted(this, new EventArgs());
+                    }
+
                     using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                     {
                         srcEncoding = this.detector.Detect(s);
                     }
                 }
-            }
-            if (this.EncodingDetectionFinished != null)
-            {
-                this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
-            }
+                if (this.EncodingDetectionFinished != null)
+                {
+                    this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
+                }
 
-            using (
-                var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
-                    MemoryMappedFileAccess.Read))
-            {
                 using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
                     this.Read(s, length, onRead, canContinue, srcEncoding);
                 }
             }
-
 
             return srcEncoding;
         }
