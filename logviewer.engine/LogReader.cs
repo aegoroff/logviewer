@@ -16,7 +16,6 @@ namespace logviewer.engine
     /// </summary>
     public sealed class LogReader
     {
-        private const int BufferSize = 0xFFFFFF;
         private readonly ICharsetDetector detector;
         private readonly GrokMatcher matcher;
         private readonly GrokMatcher filter;
@@ -103,10 +102,17 @@ namespace logviewer.engine
                 this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
             }
 
-            var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
-            fs.Seek(offset, SeekOrigin.Begin);
-            var stream = new BufferedStream(fs, BufferSize);
-            this.Read(stream, length, onRead, canContinue, srcEncoding);
+            var mapName1 = Guid.NewGuid().ToString();
+            using (
+                var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName1, 0,
+                    MemoryMappedFileAccess.Read))
+            {
+                using (var s = mmf.CreateViewStream(offset, length, MemoryMappedFileAccess.Read))
+                {
+                    this.Read(s, length, onRead, canContinue, srcEncoding);
+                }
+            }
+
 
             return srcEncoding;
         }
