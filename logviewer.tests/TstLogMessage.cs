@@ -113,13 +113,19 @@ namespace logviewer.tests
         [InlineData("2014-10-23 20:00:51,790", 2014, 10, 23, 20, 0, 51, 790)]
         [InlineData("2014-10-23 20:00:51.790", 2014, 10, 23, 20, 0, 51, 790)]
         [InlineData("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
-        [InlineData("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
-        [InlineData("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 13, 34, 30, 0)]
-        [InlineData("24/Oct/2014 09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
             this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
-            Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTime(this.m.IntegerProperty("dt")));
+            Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")));
+        }
+        
+        [Theory]
+        [InlineData("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0, -4)]
+        [InlineData("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 9, 34, 30, 0, 0)]
+        public void ParseDateTimeTimezone(string input, int y, int month, int d, int h, int min, int sec, int millisecond, int offset)
+        {
+            this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
+            Assert.Equal(new DateTime(y, month, d, h + offset, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")));
         }
 
         [Theory]
