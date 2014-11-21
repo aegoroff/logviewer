@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using logviewer.engine;
 
 namespace logviewer.core
 {

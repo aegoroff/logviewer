@@ -26,7 +26,7 @@ namespace logviewer.core
             this.project = project;
         }
 
-        public async void ReadReleases()
+        public void ReadReleases()
         {
             try
             {
@@ -35,13 +35,15 @@ namespace logviewer.core
                     return;
                 }
                 var github = new GitHubClient(new ProductHeaderValue(this.project));
-                var releases = await github.Release.GetAll(this.account, this.project);
-                foreach (var release in releases)
+                var releases = github.Release.GetAll(this.account, this.project);
+                releases.Wait();
+                foreach (var release in releases.Result)
                 {
                     try
                     {
-                        var assets = await github.Release.GetAssets(this.account, this.project, release.Id);
-                        foreach (var m in from releaseAsset in assets
+                        var assets = github.Release.GetAssets(this.account, this.project, release.Id);
+                        assets.Wait();
+                        foreach (var m in from releaseAsset in assets.Result
                             select this.versionRegexp.Match(releaseAsset.Name)
                             into match
                             where match.Success

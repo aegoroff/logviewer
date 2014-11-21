@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using logviewer.core;
+using logviewer.engine;
 using logviewer.Properties;
 using Ninject;
 
@@ -93,7 +94,7 @@ namespace logviewer
         public void SetProgress(LoadProgress progress)
         {
             this.logLoadProgress.Value = progress.Percent.ToSafePercent(this.logLoadProgress.Minimum, this.logLoadProgress.Maximum);
-            this.SetLogProgressCustomText(progress.ToString());
+            this.SetLogProgressCustomText(progress.Format());
         }
 
         public void SetLogProgressCustomText(string text)
@@ -366,7 +367,10 @@ namespace logviewer
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
-            this.Controller.UpdateLog(e.FullPath);
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                this.Controller.UpdateLog(e.FullPath);
+            }
         }
 
         private void OnExport(object sender, EventArgs e)

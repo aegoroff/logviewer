@@ -9,8 +9,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
+    /// <summary>
+    /// Represents parsed message structure with header, body and metadata if any
+    /// </summary>
     public struct LogMessage
     {
         private const char NewLine = '\n';
@@ -31,6 +34,11 @@ namespace logviewer.core
                         "dd/MMM/yyyy:HH:mm:ss zzz"
                     };
 
+        /// <summary>
+        /// Initializes new message instance using header and body specified
+        /// </summary>
+        /// <param name="header">Message header</param>
+        /// <param name="body">Message body</param>
         public LogMessage(string header, string body)
         {
             this.head = header;
@@ -42,6 +50,9 @@ namespace logviewer.core
             this.stringProperties = new Dictionary<string, string>();
         }
 
+        /// <summary>
+        /// Gets whether the message empty or not.
+        /// </summary>
         public bool IsEmpty
         {
             get
@@ -51,17 +62,26 @@ namespace logviewer.core
             }
         }
 
+        /// <summary>
+        /// Gets or sets message unique index to store it into database for example
+        /// </summary>
         public long Ix
         {
             get { return this.ix; }
             set { this.ix = value; }
         }
 
+        /// <summary>
+        /// Gets message's head
+        /// </summary>
         public string Header
         {
             get { return this.head ?? string.Empty; }
         }
 
+        /// <summary>
+        /// Gets message's body (without header)
+        /// </summary>
         public string Body
         {
             get
@@ -73,11 +93,18 @@ namespace logviewer.core
             }
         }
 
+        /// <summary>
+        /// Gets whether the message has header
+        /// </summary>
         public bool HasHeader
         {
             get { return this.properties != null; }
         }
 
+        /// <summary>
+        /// Add line to the message (the first line will be header the others will be considered as body)
+        /// </summary>
+        /// <param name="line">Line to add</param>
         public void AddLine(string line)
         {
             if (this.head == null)
@@ -91,6 +118,10 @@ namespace logviewer.core
             }
         }
 
+        /// <summary>
+        /// Adds metadata into message
+        /// </summary>
+        /// <param name="parsedProperties">Metadata</param>
         public void AddProperties(IDictionary<string, string> parsedProperties)
         {
             this.properties = parsedProperties;
@@ -134,7 +165,7 @@ namespace logviewer.core
 
         static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         static IDictionary<string, LogLevel> Levels()
         {
             var r = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
@@ -152,7 +183,7 @@ namespace logviewer.core
             return r;
         }
             
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<LogLevel> ParseLogLevel(string s)
         {
             LogLevel r;
@@ -160,7 +191,7 @@ namespace logviewer.core
             return new ParseResult<LogLevel> { Result = success, Value = r };
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<DateTime> ParseDateTime(string s)
         {
             DateTime r;
@@ -172,7 +203,7 @@ namespace logviewer.core
             return new ParseResult<DateTime> { Result = success, Value = r };
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<long> ParseInteger(string s)
         {
             long r;
@@ -180,7 +211,7 @@ namespace logviewer.core
             return new ParseResult<long> { Result = success, Value = r };
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
@@ -190,7 +221,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
@@ -200,7 +231,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseInteger(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(integerParsers, dataToParse, rules);
@@ -210,7 +241,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private void ParseString(string dataToParse, ISet<Rule> rules, string property)
         {
             var result = RunSemanticAction(stringParsers, dataToParse, rules);
@@ -220,7 +251,7 @@ namespace logviewer.core
             }
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.properties == null || schema == null)
@@ -270,24 +301,34 @@ namespace logviewer.core
             return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
             Func<string, ParseResult<T>> func;
             return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
         }
 
+        /// <summary>
+        /// Gets message's integer metadata using property name specified
+        /// </summary>
+        /// <param name="property">Property to get data of</param>
+        /// <returns>Property value</returns>
         public long IntegerProperty(string property)
         {
             return GetProperty(this.integerProperties, property);
         }
-        
+
+        /// <summary>
+        /// Gets message's string metadata using property name specified
+        /// </summary>
+        /// <param name="property">Property to get data of</param>
+        /// <returns>Property value</returns>
         public string StringProperty(string property)
         {
             return GetProperty(this.stringProperties, property);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetProperty<T>(IDictionary<string, T> dict, string property)
         {
             T result;
@@ -295,16 +336,30 @@ namespace logviewer.core
             return result;
         }
         
+        /// <summary>
+        /// Updates or add integer property
+        /// </summary>
+        /// <param name="property">Property name</param>
+        /// <param name="value">Property value</param>
         public void UpdateIntegerProperty(string property, long value)
         {
             this.integerProperties[property] = value;
         }
 
+        /// <summary>
+        /// Updates or add string property
+        /// </summary>
+        /// <param name="property">Property name</param>
+        /// <param name="value">Property value</param>
         public void UpdateStringProperty(string property, string value)
         {
             this.stringProperties[property] = value;
         }
 
+        /// <summary>
+        /// Builds message from lines array. All metadata will be extracted using schema specified
+        /// </summary>
+        /// <param name="schema">Message schema to extract metadata by</param>
         public void Cache(IDictionary<SemanticProperty, ISet<Rule>> schema)
         {
             if (this.head != null && this.body != null)
@@ -320,12 +375,19 @@ namespace logviewer.core
             this.Clear();
         }
 
+        /// <summary>
+        /// Clears message's builder
+        /// </summary>
         public void Clear()
         {
             this.bodyBuilder.Clear();
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Creates new <see cref="LogMessage"/> instance
+        /// </summary>
+        /// <returns>new <see cref="LogMessage"/> instance</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static LogMessage Create()
         {
             return new LogMessage

@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace logviewer.core
+namespace logviewer.engine
 {
-    public class GrokVisitor : GrokBaseVisitor<string>
+    internal class GrokVisitor : GrokBaseVisitor<string>
     {
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
         private readonly List<Semantic> schema = new List<Semantic>();
@@ -25,8 +25,8 @@ namespace logviewer.core
         private const string PatternStart = "%{";
         private const string PatternStop = "}";
         private const string NamedPattern = @"(?<{0}>{1})";
-        
-        public GrokVisitor()
+
+        internal GrokVisitor()
         {
             const string pattern = "*.patterns";
             var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
@@ -59,14 +59,14 @@ namespace logviewer.core
             }
         }
 
-        public string Template
+        internal string Template
         {
             get { return string.Join(string.Empty, this.agregattor); }
         }
 
-        public bool RecompilationNeeded { get; private set; }
+        internal bool RecompilationNeeded { get; private set; }
 
-        public ICollection<Semantic> Schema
+        internal ICollection<Semantic> Schema
         {
             get { return this.schema; }
         }
@@ -160,23 +160,23 @@ namespace logviewer.core
         {
             var node = context.PATTERN().Symbol.Text;
 
-            if (templates.ContainsKey(node))
+            if (this.templates.ContainsKey(node))
             {
-                this.compiledPattern = templates[node];
+                this.compiledPattern = this.templates[node];
 
                 bool continueMatch;
                 bool matchFound;
                 do
                 {
                     matchFound = false;
-                    foreach (var k in templates.Keys)
+                    foreach (var k in this.templates.Keys)
                     {
                         var link = PatternStart + k + PatternStop;
                         if (!this.compiledPattern.Contains(link))
                         {
                             continue;
                         }
-                        this.compiledPattern = this.compiledPattern.Replace(link, templates[k]);
+                        this.compiledPattern = this.compiledPattern.Replace(link, this.templates[k]);
                         matchFound = true;
                     }
                     continueMatch = this.compiledPattern.Contains(PatternStart);

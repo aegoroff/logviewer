@@ -15,8 +15,8 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" $(SnkPath) != '' ">
-	<AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
-	<SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,15 +46,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\nrtftree-library.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="xunit">
+      <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.extensions">
+      <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TstGrokMatcher.cs" />
+    <Compile Include="TstLogReader.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />
     <Compile Include="TstMainController.cs" />
@@ -65,6 +70,10 @@
     <ProjectReference Include="..\logviewer.core\logviewer.core.csproj">
       <Project>{383c08fc-9cac-42e5-9b02-471561479a74}</Project>
       <Name>logviewer.core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
+      <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>
+      <Name>logviewer.engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

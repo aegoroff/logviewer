@@ -2,6 +2,8 @@
 // Created at: 04.10.2014
 // © 2012-2014 Alexander Egorov
 
+using logviewer.engine;
+
 namespace logviewer.core
 {
     public interface IUpdateView

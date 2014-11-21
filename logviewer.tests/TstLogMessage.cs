@@ -4,16 +4,15 @@
 
 using System;
 using System.Collections.Generic;
-using logviewer.core;
-using NUnit.Framework;
+using logviewer.engine;
+using Xunit;
+using Xunit.Extensions;
 
 namespace logviewer.tests
 {
-    [TestFixture]
     public class TstLogMessage
     {
-        [SetUp]
-        public void Setup()
+        public TstLogMessage()
         {
             this.m = LogMessage.Create();
         }
@@ -22,141 +21,146 @@ namespace logviewer.tests
         private const string H = "h";
         private const string B = "b";
 
-        [Test]
+        [Fact]
         public void Full()
         {
             this.m.AddLine(H);
             this.m.AddLine(B);
-            Assert.That(this.m.IsEmpty, Is.False);
-            Assert.That(this.m.Header, Is.EqualTo(H));
-            Assert.That(this.m.Body, Is.EqualTo(B + "\n"));
+            Assert.False(this.m.IsEmpty);
+            Assert.Equal(H, this.m.Header);
+            Assert.Equal(B + "\n", this.m.Body);
         }
 
-        [Test]
+        [Fact]
         public void FullCached()
         {
             this.m.AddLine(H);
             this.m.AddLine(B);
             this.m.Cache(null);
-            Assert.That(this.m.IsEmpty, Is.False);
-            Assert.That(this.m.Header, Is.EqualTo(H));
-            Assert.That(this.m.Body, Is.EqualTo(B));
+            Assert.False(this.m.IsEmpty);
+            Assert.Equal(H, this.m.Header);
+            Assert.Equal(B, this.m.Body);
         }
 
-        [Test]
+        [Fact]
         public void IsEmpty()
         {
-            Assert.That(this.m.IsEmpty);
-            Assert.That(this.m.Body, Is.Empty);
-            Assert.That(this.m.Header, Is.Empty);
+            Assert.True(this.m.IsEmpty);
+            Assert.Empty(this.m.Body);
+            Assert.Empty(this.m.Header);
         }
         
-        [Test]
+        [Fact]
         public void IsEmptyAllStringsEmpty()
         {
             this.m.AddLine(string.Empty);
             this.m.AddLine(string.Empty);
-            Assert.That(this.m.IsEmpty, Is.False);
-            Assert.That(this.m.Header, Is.Empty);
-            Assert.That(this.m.Body, Is.Empty);
+            Assert.False(this.m.IsEmpty);
+            Assert.Empty(this.m.Header);
+            Assert.Empty(this.m.Body);
             
         }
 
-        [Test]
+        [Fact]
         public void OnlyHead()
         {
             this.m.AddLine(H);
-            Assert.That(this.m.IsEmpty, Is.False);
-            Assert.That(this.m.Header, Is.EqualTo(H));
-            Assert.That(this.m.Body, Is.Empty);
+            Assert.False(this.m.IsEmpty);
+            Assert.Equal(H, this.m.Header);
+            Assert.Empty(this.m.Body);
         }
 
-        [Test]
+        [Fact]
         public void OnlyHeadCached()
         {
             this.m.AddLine(H);
             this.m.Cache(null);
-            Assert.That(this.m.IsEmpty, Is.False);
-            Assert.That(this.m.Header, Is.EqualTo(H));
-            Assert.That(this.m.Body, Is.Empty);
+            Assert.False(this.m.IsEmpty);
+            Assert.Equal(H, this.m.Header);
+            Assert.Empty(this.m.Body);
         }
         
-        [TestCase("Trace", LogLevel.Trace)]
-        [TestCase("TRACE", LogLevel.Trace)]
-        [TestCase("Debug", LogLevel.Debug)]
-        [TestCase("DEBUG", LogLevel.Debug)]
-        [TestCase("Info", LogLevel.Info)]
-        [TestCase("Information", LogLevel.Trace)]
-        [TestCase("INFO", LogLevel.Info)]
-        [TestCase("Warn", LogLevel.Warn)]
-        [TestCase("WARN", LogLevel.Warn)]
-        [TestCase("Warning", LogLevel.Warn)]
-        [TestCase("Error", LogLevel.Error)]
-        [TestCase("ERROR", LogLevel.Error)]
-        [TestCase("Fatal", LogLevel.Fatal)]
-        [TestCase("FATAL", LogLevel.Fatal)]
-        [TestCase("FaTaL", LogLevel.Fatal)]
-        [TestCase("FaTa", LogLevel.Trace)]
-        [TestCase("alert", LogLevel.Trace)]
-        [TestCase("notice", LogLevel.Info)]
-        [TestCase("severe", LogLevel.Fatal)]
-        [TestCase("critical", LogLevel.Error)]
-        [TestCase("emerg", LogLevel.Fatal)]
-        [TestCase("emergency", LogLevel.Fatal)]
+        [Theory]
+        [InlineData("Trace", LogLevel.Trace)]
+        [InlineData("TRACE", LogLevel.Trace)]
+        [InlineData("Debug", LogLevel.Debug)]
+        [InlineData("DEBUG", LogLevel.Debug)]
+        [InlineData("Info", LogLevel.Info)]
+        [InlineData("Information", LogLevel.Trace)]
+        [InlineData("INFO", LogLevel.Info)]
+        [InlineData("Warn", LogLevel.Warn)]
+        [InlineData("WARN", LogLevel.Warn)]
+        [InlineData("Warning", LogLevel.Warn)]
+        [InlineData("Error", LogLevel.Error)]
+        [InlineData("ERROR", LogLevel.Error)]
+        [InlineData("Fatal", LogLevel.Fatal)]
+        [InlineData("FATAL", LogLevel.Fatal)]
+        [InlineData("FaTaL", LogLevel.Fatal)]
+        [InlineData("FaTa", LogLevel.Trace)]
+        [InlineData("alert", LogLevel.Trace)]
+        [InlineData("notice", LogLevel.Info)]
+        [InlineData("severe", LogLevel.Fatal)]
+        [InlineData("critical", LogLevel.Error)]
+        [InlineData("emerg", LogLevel.Fatal)]
+        [InlineData("emergency", LogLevel.Fatal)]
         public void ParseLogLevel(string input, LogLevel result)
         {
             this.ParseTest("level", "LogLevel", ParserType.LogLevel, input);
-            Assert.That((LogLevel)this.m.IntegerProperty("level"), Is.EqualTo(result));
+            Assert.Equal(result, (LogLevel)this.m.IntegerProperty("level"));
         }
 
-        [TestCase("2014-10-23 20:00:51,790", 2014, 10, 23, 20, 0, 51, 790)]
-        [TestCase("2014-10-23 20:00:51.790", 2014, 10, 23, 20, 0, 51, 790)]
-        [TestCase("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
-        [TestCase("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
-        [TestCase("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 13, 34, 30, 0)]
-        [TestCase("24/Oct/2014 09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
+        [Theory]
+        [InlineData("2014-10-23 20:00:51,790", 2014, 10, 23, 20, 0, 51, 790)]
+        [InlineData("2014-10-23 20:00:51.790", 2014, 10, 23, 20, 0, 51, 790)]
+        [InlineData("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
+        [InlineData("24/Oct/2014:09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
+        [InlineData("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 13, 34, 30, 0)]
+        [InlineData("24/Oct/2014 09:34:30 +0400", 2014, 10, 24, 9, 34, 30, 0)]
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
             this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
-            Assert.That(DateTime.FromFileTime(this.m.IntegerProperty("dt")), Is.EqualTo(new DateTime(y, month, d, h, min, sec, millisecond)));
+            Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond), DateTime.FromFileTime(this.m.IntegerProperty("dt")));
         }
 
-        [TestCase("1", 1, "long")]
-        [TestCase("-1", -1, "long")]
-        [TestCase("0", 0, "long")]
-        [TestCase("a", 0, "long")]
-        [TestCase("1", 1, "int")]
-        [TestCase("1", 1, "Int32")]
-        [TestCase("1", 1, "Int64")]
-        [TestCase("9223372036854775807", long.MaxValue, "long")]
-        [TestCase("9223372036854775807", long.MaxValue, "int")]
-        [TestCase("9223372036854775807", long.MaxValue, "Int32")]
-        [TestCase("9223372036854775807", long.MaxValue, "Int64")]
-        [TestCase("-9223372036854775808", long.MinValue, "long")]
-        [TestCase("-9223372036854775810", 0, "long")]
-        [TestCase("9223372036854775810", 0, "long")]
+        [Theory]
+        [InlineData("1", 1, "long")]
+        [InlineData("-1", -1, "long")]
+        [InlineData("0", 0, "long")]
+        [InlineData("a", 0, "long")]
+        [InlineData("1", 1, "int")]
+        [InlineData("1", 1, "Int32")]
+        [InlineData("1", 1, "Int64")]
+        [InlineData("9223372036854775807", long.MaxValue, "long")]
+        [InlineData("9223372036854775807", long.MaxValue, "int")]
+        [InlineData("9223372036854775807", long.MaxValue, "Int32")]
+        [InlineData("9223372036854775807", long.MaxValue, "Int64")]
+        [InlineData("-9223372036854775808", long.MinValue, "long")]
+        [InlineData("-9223372036854775810", 0, "long")]
+        [InlineData("9223372036854775810", 0, "long")]
         public void ParseInteger(string input, long result, string type)
         {
             this.ParseTest("integer", type, ParserType.Interger, input);
-            Assert.That(this.m.IntegerProperty("integer"), Is.EqualTo(result));
+            Assert.Equal(result, this.m.IntegerProperty("integer"));
         }
 
-        [TestCase("s", "s", "string")]
-        [TestCase("s", "s", "String")]
+        [Theory]
+        [InlineData("s", "s", "string")]
+        [InlineData("s", "s", "String")]
         public void ParseString(string input, string result, string type)
         {
             this.ParseTest("str", type, ParserType.String, input);
-            Assert.That(this.m.StringProperty("str"), Is.EqualTo(result));
+            Assert.Equal(result, this.m.StringProperty("str"));
         }
 
-        [TestCase("a", LogLevel.Debug)]
-        [TestCase("100", LogLevel.Debug)]
-        [TestCase("200", LogLevel.Info)]
-        [TestCase("301", LogLevel.Warn)]
-        [TestCase("404", LogLevel.Error)]
-        [TestCase("410", LogLevel.Error)]
-        [TestCase("416", LogLevel.Error)]
-        [TestCase("500", LogLevel.Fatal)]
+        [Theory]
+        [InlineData("a", LogLevel.Debug)]
+        [InlineData("100", LogLevel.Debug)]
+        [InlineData("200", LogLevel.Info)]
+        [InlineData("301", LogLevel.Warn)]
+        [InlineData("404", LogLevel.Error)]
+        [InlineData("410", LogLevel.Error)]
+        [InlineData("416", LogLevel.Error)]
+        [InlineData("500", LogLevel.Fatal)]
         public void ParseLogLevelCustomRules(string input, LogLevel result)
         {
             this.ParseTest("Level", ParserType.LogLevel, input, 
@@ -166,7 +170,7 @@ namespace logviewer.tests
                 new Rule("LogLevel.Error", "41"), 
                 new Rule("LogLevel.Fatal", "50"), 
                 new Rule("LogLevel.Debug"));
-            Assert.That((LogLevel)this.m.IntegerProperty("Level"), Is.EqualTo(result));
+            Assert.Equal(result, (LogLevel)this.m.IntegerProperty("Level"));
         }
         
         private void ParseTest(string prop, string type, ParserType parser, string input)

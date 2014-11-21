@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>logviewer.engine</id>
+        <version>1.0.0.0</version>
+        <authors>Alexander Egorov</authors>
+        <projectUrl>https://github.com/aegoroff/logviewer</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>An engine for convenient working with application text logs. The engine parses text logs separates it to messages and read metadata if necessary.</description>
+        <tags>logviewer</tags>
+		<dependencies>
+		  <dependency id="Antlr4.Runtime" version="4.3.0" />
+		</dependencies>
+    </metadata>
+    <files>
+        <file src="logviewer.engine\grok.patterns" target="content\grok.patterns" />
+        <file src="logviewer.engine\webservers.patterns" target="content\webservers.patterns" />
+        <file src="logviewer.engine\bin\Release\logviewer.engine.dll" target="lib\net45\logviewer.engine.dll" />
+        <file src="logviewer.engine\bin\Release\logviewer.engine.XML" target="lib\net45\logviewer.engine.XML" />
+        <file src="logviewer.engine\Install.ps1" target="tools\net45\Install.ps1" />
+    </files>
+</package>

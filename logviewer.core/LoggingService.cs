@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading;
+using logviewer.engine;
 using NLog;
 
 namespace logviewer.core

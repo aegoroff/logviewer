@@ -4,36 +4,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using logviewer.core.Properties;
+using logviewer.engine;
 
 namespace logviewer.core
 {
     public static class Extensions
     {
-        /// <summary>
-        ///     Decodes string into encoding specified
-        /// </summary>
-        /// <param name="line"> Source string </param>
-        /// <param name="srcEncoding"> Source string encoding </param>
-        /// <param name="dstEncoding"> Destination encoding </param>
-        /// <returns>Decoded string</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        internal static string Convert(this string line, Encoding srcEncoding, Encoding dstEncoding)
-        {
-            byte[] srcBytes = srcEncoding.GetBytes(line);
-            byte[] dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
-            return dstEncoding.GetString(dstBytes);
-        }
-
         internal static string ToParameterName(this LogLevel level)
         {
             return level.ToString("G") + "Color";
+        }
+
+        internal static  bool HasProperty(this ICollection<Semantic> schema, string type)
+        {
+            return schema.SelectMany(s => s.CastingRules).Any(r => r.Type.Contains(type));
+        }
+
+        internal static string PropertyNameOf(this ICollection<Semantic> schema, string type)
+        {
+            return (from s in schema from rule in s.CastingRules where rule.Type.Contains(type) select s.Property).FirstOrDefault();
         }
 
         public static string FormatString(this ulong value)
@@ -59,16 +53,6 @@ namespace logviewer.core
             return builder.ToString();
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static string UnescapeString(this string escaped)
-        {
-            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
-            {
-                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
-            }
-            return escaped;
-        }
-
         public static int ToSafePercent(this int value, int min, int max)
         {
             if (value > max)
@@ -76,25 +60,6 @@ namespace logviewer.core
                 return max;
             }
             return value < min ? min : value;
-        }
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static int PercentOf(this ulong value, ulong total)
-        {
-            return (int)((value / (double)total) * 100);
-        }
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static int PercentOf(this long value, long total)
-        {
-            var v = value > 0 ? (ulong)value : 0;
-            return total == 0 ? 0 : v.PercentOf((ulong)total);
-        }
-
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
-        public static int PercentOf(this FileSize value, FileSize total)
-        {
-            return value.Bytes.PercentOf(total.Bytes);
         }
 
         private static string WithDays(TimeSpan input)
@@ -119,22 +84,27 @@ namespace logviewer.core
 
         private static string SecondsToString(this TimeSpan input)
         {
-            return input.Seconds.Declension(Resources.SecondsNominative, Resources.SecondsGenitiveSingular, Resources.SecondsGenitivePlural);
+            return ((long)input.Seconds).Declension(Resources.SecondsNominative, Resources.SecondsGenitiveSingular, Resources.SecondsGenitivePlural);
         }
         
         private static string MinutesToString(this TimeSpan input)
         {
-            return input.Minutes.Declension(Resources.MinutesNominative, Resources.MinutesGenitiveSingular, Resources.MinutesGenitivePlural);
+            return ((long)input.Minutes).Declension(Resources.MinutesNominative, Resources.MinutesGenitiveSingular, Resources.MinutesGenitivePlural);
         }
         
         private static string HoursToString(this TimeSpan input)
         {
-            return input.Hours.Declension(Resources.HoursNominative, Resources.HoursGenitiveSingular, Resources.HoursGenitivePlural);
+            return ((long)input.Hours).Declension(Resources.HoursNominative, Resources.HoursGenitiveSingular, Resources.HoursGenitivePlural);
         }
         
         private static string DaysToString(this TimeSpan input)
         {
-            return input.Days.Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
+            return ((long)input.Days).Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
+        }
+
+        private static string BytesToString(this ulong bytes)
+        {
+            return ((long)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
         }
 
         internal static string TimespanToHumanString(this TimeSpan timeSpan)
@@ -153,13 +123,51 @@ namespace logviewer.core
             return Resources.RemainingLessThenSecond;
         }
 
-        private static readonly IDictionary<int, Func<int, string, string, string, string>> declensions = new Dictionary
-            <int, Func<int, string, string, string, string>>
+        public static string Format(this LoadProgress progress)
+        {
+            return progress.Speed.Bytes == 0
+                ? string.Format(Resources.SpeedPercent, progress.Percent)
+                : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(), progress.Remainig.TimespanToHumanString());
+        
+        }
+
+        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
+        private const string BigFileFormatNoBytes = "{0:F2} {1}";
+        private const string SmallFileFormat = "{0} {1}";
+
+        public static string Format(this FileSize fileSize)
+        {
+            string[] sizes =
+            {
+                Resources.SizeBytes,
+                Resources.SizeKBytes,
+                Resources.SizeMBytes,
+                Resources.SizeGBytes,
+                Resources.SizeTBytes,
+                Resources.SizePBytes,
+                Resources.SizeEBytes
+            };
+            if (fileSize.Unit == SizeUnit.Bytes)
+            {
+                return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, fileSize.Bytes,
+                    fileSize.Bytes.BytesToString());
+            }
+            if (fileSize.BigWithoutBytes)
+            {
+                return string.Format(CultureInfo.CurrentCulture, BigFileFormatNoBytes, fileSize.Value, sizes[(int)fileSize.Unit]);
+            }
+            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, fileSize.Value,
+                sizes[(int)fileSize.Unit], fileSize.Bytes.ToString(fileSize.Bytes.FormatString(), CultureInfo.CurrentCulture),
+                fileSize.Bytes.BytesToString());
+        }
+
+        private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary
+            <int, Func<long, string, string, string, string>>
         {
             { 1049, DeclensionRu }
         };
 
-        private static string Declension(this int number, string nominative, string genitiveSingular,
+        private static string Declension(this long number, string nominative, string genitiveSingular,
             string genitivePlural)
         {
             return declensions.ContainsKey(Thread.CurrentThread.CurrentUICulture.LCID)
@@ -175,7 +183,7 @@ namespace logviewer.core
          /// <param name="genitiveSingular"></param>
          /// <param name="genitivePlural"></param>
          /// <returns></returns>
-         private static string DeclensionRu(int number, string nominative, string genitiveSingular, string genitivePlural)
+         private static string DeclensionRu(long number, string nominative, string genitiveSingular, string genitivePlural)
          {
              var lastDigit = number % 10;
              var lastTwoDigits = number % 100;
@@ -198,24 +206,13 @@ namespace logviewer.core
          /// <param name="genitiveSingular"></param>
          /// <param name="genitivePlural"></param>
          /// <returns></returns>
-         private static string DeclensionEn(int number, string nominative, string genitiveSingular, string genitivePlural)
+         private static string DeclensionEn(long number, string nominative, string genitiveSingular, string genitivePlural)
          {
              if (number == 1 || number == -1)
              {
                  return nominative;
              }
              return genitiveSingular ?? genitivePlural;
-         }
-
-         public static string AssemblyDirectory
-         {
-             get
-             {
-                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                 var uri = new UriBuilder(codeBase);
-                 string path = Uri.UnescapeDataString(uri.Path);
-                 return Path.GetDirectoryName(path);
-             }
          }
     }
 }

@@ -61,6 +61,33 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to bytes.
+        /// </summary>
+        internal static string BytesGenitivePlural {
+            get {
+                return ResourceManager.GetString("BytesGenitivePlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bytes.
+        /// </summary>
+        internal static string BytesGenitiveSingular {
+            get {
+                return ResourceManager.GetString("BytesGenitiveSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to byte.
+        /// </summary>
+        internal static string BytesNominative {
+            get {
+                return ResourceManager.GetString("BytesNominative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancelling previous log loading in progress ....
         /// </summary>
         internal static string CancelPrevious {

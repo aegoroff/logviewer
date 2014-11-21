@@ -10,12 +10,6 @@
 
 		<!-- Code configuration to build (Release or Debug) -->
 		<Configuration>Release</Configuration>
-
-        <!-- NUnit working path  -->
-        <NUnitPath>$(MSBuildProjectDirectory)\packages\NUnit.Runners.2.6.3\tools</NUnitPath>
-
-        <!-- Managed unit tests report  -->
-        <ManagedTestsReport>ManagedTests.xml</ManagedTestsReport>
 		
 		<!-- Enables updating version mechanism -->
 		<IsUpdateVersion>false</IsUpdateVersion>
@@ -58,7 +52,7 @@
 		<MSBuild
 			StopOnFirstFailure="true"
 			Projects="logviewer.sln"
-			Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(SnkPath)" 
+			Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword)" 
 		/>
 		<Copy
 			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi"
@@ -68,17 +62,19 @@
 			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe"
 			DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe"
 		/>
+        <ItemGroup>
+            <EngineProject Include="$(MSBuildProjectDirectory)\logviewer.engine\logviewer.engine.csproj" />
+        </ItemGroup>
+        <MSBuild
+                Projects="@(EngineProject)"
+				Targets="Rebuild"
+                Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(LogviewerSnkPath)" />
 	</Target>
 
     <!-- Run unit tests task -->
     <Target Name="UnitTesting" DependsOnTargets="Compile">
         <!-- Managed tests -->
-        <Exec
-            Command='"$(NUnitPath)\nunit-console.exe" /xml:$(MSBuildProjectDirectory)\$(ManagedTestsReport) $(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll /config=$(Configuration)'
-            IgnoreExitCode="true"
-        />
-        <!-- Import into TeamCity -->
-        <ImportData Type="nunit" Path="$(MSBuildProjectDirectory)\$(ManagedTestsReport)" />
+        <xunit Assembly="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll" TeamCity="true" ShadowCopy="false" />
     </Target>
     <ItemGroup>
 		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi => installer" />
@@ -89,4 +85,10 @@
 		<PublishArtifacts Artifacts="@(SetupFile)"/>
 		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
 	</Target>
+
+    <ItemGroup>
+        <XunitTools Include="$(MSBuildProjectDirectory)\packages\xunit.runners.*\tools\xunit.runner.msbuild.dll" />
+    </ItemGroup>
+
+    <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
 </Project>
