@@ -367,7 +367,10 @@ namespace logviewer
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
-            this.Controller.UpdateLog(e.FullPath);
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                this.Controller.UpdateLog(e.FullPath);
+            }
         }
 
         private void OnExport(object sender, EventArgs e)

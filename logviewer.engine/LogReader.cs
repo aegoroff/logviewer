@@ -16,7 +16,6 @@ namespace logviewer.engine
     /// </summary>
     public sealed class LogReader
     {
-        private const int BufferSize = 0xFFFFFF;
         private readonly ICharsetDetector detector;
         private readonly GrokMatcher matcher;
         private readonly GrokMatcher filter;
@@ -76,37 +75,39 @@ namespace logviewer.engine
                 return null;
             }
 
+            var mapName = Guid.NewGuid().ToString();
             Encoding srcEncoding;
-            if (encoding != null)
+            using (
+                var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
+                    MemoryMappedFileAccess.Read))
             {
-                srcEncoding = encoding;
-            }
-            else
-            {
-                if (this.EncodingDetectionStarted != null)
+                
+                if (encoding != null)
                 {
-                    this.EncodingDetectionStarted(this, new EventArgs());
+                    srcEncoding = encoding;
                 }
-                var mapName = Guid.NewGuid().ToString();
-                using (
-                    var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
-                        MemoryMappedFileAccess.Read))
+                else
                 {
+                    if (this.EncodingDetectionStarted != null)
+                    {
+                        this.EncodingDetectionStarted(this, new EventArgs());
+                    }
+
                     using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                     {
                         srcEncoding = this.detector.Detect(s);
                     }
                 }
-            }
-            if (this.EncodingDetectionFinished != null)
-            {
-                this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
-            }
+                if (this.EncodingDetectionFinished != null)
+                {
+                    this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
+                }
 
-            var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize);
-            fs.Seek(offset, SeekOrigin.Begin);
-            var stream = new BufferedStream(fs, BufferSize);
-            this.Read(stream, length, onRead, canContinue, srcEncoding);
+                using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
+                {
+                    this.Read(s, length, onRead, canContinue, srcEncoding);
+                }
+            }
 
             return srcEncoding;
         }
@@ -119,11 +120,13 @@ namespace logviewer.engine
         /// <param name="onRead">On message complete action</param>
         /// <param name="canContinue">Continue validator</param>
         /// <param name="encoding">Stream encoding</param>
-        public void Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
+        /// <returns>Current stream position</returns>
+        public long Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
             var sr = new StreamReader(stream, encoding ?? Encoding.UTF8);
+            var result = 0L;
             using (sr)
             {
                 var total = length;
@@ -208,9 +211,18 @@ namespace logviewer.engine
                     };
                     this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
                 }
+                try
+                {
+                    result = stream.Position;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                }
                 // Add last message
                 onRead(message);
             }
+            return result;
         }
 
         private static bool DecodeNeeded(Encoding srcEncoding)
