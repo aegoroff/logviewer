@@ -3,11 +3,13 @@
 // © 2012-2014 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using logviewer.engine;
 using NMock;
 using Xunit;
+using Xunit.Extensions;
 
 namespace logviewer.tests
 {
@@ -22,18 +24,22 @@ namespace logviewer.tests
         private readonly LogReader reader;
         private readonly MemoryStream stream;
         private readonly RulesBuilder builder;
-        private readonly byte[] buffer;
+        private byte[] buffer;
 
         public TstLogReader()
         {
             var mockery = new MockFactory();
             var detector = mockery.CreateMock<ICharsetDetector>();
             this.stream = new MemoryStream();
-            this.buffer = Encoding.UTF8.GetBytes(MessageExamples);
-            this.stream.Write(this.buffer, 0, this.buffer.Length);
             var grokMatcher = new GrokMatcher(NlogGrok);
             this.reader = new LogReader(detector.MockObject, grokMatcher);
             this.builder = new RulesBuilder(grokMatcher.MessageSchema);
+        }
+
+        private void CreateStream(string data = MessageExamples)
+        {
+            this.buffer = Encoding.UTF8.GetBytes(data);
+            this.stream.Write(this.buffer, 0, this.buffer.Length);
         }
 
         public void Dispose()
@@ -41,9 +47,10 @@ namespace logviewer.tests
             this.stream.Dispose();
         }
 
-        [Fact]
-        public void LogFromStream()
+        [Theory, PropertyData("ValidStreams")]
+        public void LogFromStream(string data)
         {
+            this.CreateStream(data);
             this.stream.Seek(0, SeekOrigin.Begin);
             var count = 0;
             Action<LogMessage> onRead = delegate(LogMessage message)
@@ -57,9 +64,26 @@ namespace logviewer.tests
             Assert.Equal(this.buffer.LongLength, position);
         }
 
+        public static IEnumerable<object[]> ValidStreams
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[] { MessageExamples  },
+                    new object[] { Environment.NewLine + MessageExamples },
+                    new object[] { " " + Environment.NewLine + " " + Environment.NewLine + MessageExamples },
+                    new object[] { MessageExamples + Environment.NewLine },
+                    new object[] { Environment.NewLine + MessageExamples + Environment.NewLine }
+
+                };
+            }
+        }
+
         [Fact]
         public void LogFromStreamWithCache()
         {
+            this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
             var count = 0;
             Action<LogMessage> onRead = delegate(LogMessage message)
@@ -83,6 +107,7 @@ namespace logviewer.tests
         [Fact]
         public void LogFromStreamCannotContinue()
         {
+            this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
             var count = 0;
             Action<LogMessage> onRead = delegate(LogMessage message)
@@ -98,6 +123,7 @@ namespace logviewer.tests
         [Fact]
         public void LogFromStreamEnd()
         {
+            this.CreateStream();
             var count = 0;
             Action<LogMessage> onRead = delegate(LogMessage message)
             {
