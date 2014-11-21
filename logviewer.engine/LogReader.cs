@@ -75,6 +75,7 @@ namespace logviewer.engine
                 return null;
             }
 
+            var mapName = Guid.NewGuid().ToString();
             Encoding srcEncoding;
             if (encoding != null)
             {
@@ -86,7 +87,6 @@ namespace logviewer.engine
                 {
                     this.EncodingDetectionStarted(this, new EventArgs());
                 }
-                var mapName = Guid.NewGuid().ToString();
                 using (
                     var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
                         MemoryMappedFileAccess.Read))
@@ -102,9 +102,8 @@ namespace logviewer.engine
                 this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
             }
 
-            var mapName1 = Guid.NewGuid().ToString();
             using (
-                var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName1, 0,
+                var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
                     MemoryMappedFileAccess.Read))
             {
                 using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
