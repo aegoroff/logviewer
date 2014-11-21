@@ -1,0 +1,47 @@
+# version format
+version: 1.5.{build}
+
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+    - develop
+
+# Do not build on tags (GitHub only)
+skip_tags: true
+
+# environment variables
+environment:
+  sign_tool: "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
+  # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
+  pfx_password:
+    secure: QDWBD+3IIAYVFCfHFY7YCw==
+
+# enable patching of AssemblyInfo.* files
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
+install:
+    nuget restore
+
+platform: Any CPU
+
+configuration: Release
+
+build:
+    project: logviewer.sln
+
+test:
+  assemblies:
+    - logviewer.tests.dll
+
+artifacts:
+
+  # pushing a single file with environment variable in path and "Deployment name" specified
+  - path: logviewer.install.bootstrap\bin\$(configuration)
+    name: logviewer.install.bootstrap.exe
