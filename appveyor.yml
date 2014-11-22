@@ -37,9 +37,6 @@ platform: Any CPU
 
 configuration: Release
 
-#before_build: |
-	
-
 build:
     project: logviewer.sln
 
