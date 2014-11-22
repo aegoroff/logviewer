@@ -48,7 +48,10 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="SignBundleEngine">
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundleEngine) /nologo /noconsolelogger"/>
+	<Exec
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;@(SignBundleEngine)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
   </Target>
   <Target Name="SignBundle">
 	<Exec
