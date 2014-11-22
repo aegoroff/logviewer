@@ -14,7 +14,7 @@ skip_tags: true
 # environment variables
 environment:
   SignTool: C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
-  KeyFile: logviewer.pfx
+  KeyFile: C:\projects\logviewer\logviewer.pfx
   # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
   CertPassword:
     secure: QDWBD+3IIAYVFCfHFY7YCw==
