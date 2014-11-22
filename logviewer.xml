@@ -30,7 +30,7 @@
 	<Target Name="VersionUpdater" Condition=" '$(IsUpdateVersion)'=='true' ">
 		<!-- Updating AssemblyInfo.cs files -->
 		<ItemGroup>
-		  <AssemblyInfoVersion Include="@(WixFile)">
+		  <AssemblyInfoVersion Include="@(AssemblyInfoFile)">
 			<Find><![CDATA[\[assembly(\s*):(\s*)(AssemblyVersion|AssemblyFileVersion|AssemblyInformationalVersionAttribute)\((\s*)"(\d+)\.(\d+)\.(\d+)\.(\d+)"(\s*)\)\]]]></Find>
 			<ReplaceWith><![CDATA[[assembly : $3("$(Major).$(Minor).$(Build).$(Revision)")]]]></ReplaceWith>
 			<Options>Singleline</Options>
