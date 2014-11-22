@@ -52,7 +52,7 @@ test:
     - logviewer.tests.dll
 
 after_test:
-    -cmd: nuget pack logviewer.engine\logviewer.engine.csproj -OutputDirectory nuget
+    -cmd: nuget pack logviewer.engine\logviewer.engine.nuspec -OutputDirectory nuget
 
 artifacts:
   - path: logviewer.install.bootstrap\bin\$(configuration)\*.exe
