@@ -42,7 +42,7 @@ platform: Any CPU
 configuration: Release
 
 before_build: |
-   function Edit-WixItem($file, $ver) {
+   Function Edit-WixItem($file, $ver) {
       $pattern = 'define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"'
       $replacement = 'define Version = "' + $ver + '"'
       $content = (Get-Content $file)
