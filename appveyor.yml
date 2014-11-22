@@ -55,8 +55,9 @@ test:
     - logviewer.tests.dll
 
 after_test:
-    -ps: Get-ChildItem .\logviewer.install.bootstrap\bin\$env:CONFIGURATION\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName "$_.BaseName.$env:APPVEYOR_BUILD_VERSION.exe" }
     -cmd: nuget pack logviewer.engine\logviewer.engine.nuspec -BasePath logviewer.engine -OutputDirectory logviewer.engine\bin\%CONFIGURATION% -Version %APPVEYOR_BUILD_VERSION%
 
 artifacts:
   - path: logviewer.engine\bin\$(configuration)\*.nupkg
+  - path: logviewer.install.bootstrap\bin\$(configuration)\*.exe
+
