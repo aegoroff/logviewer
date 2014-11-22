@@ -56,3 +56,4 @@ after_test:
 
 artifacts:
   - path: logviewer.install.bootstrap\bin\$(configuration)\*.exe
+  - path: nuget\*.nupkg
