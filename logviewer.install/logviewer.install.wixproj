@@ -47,7 +47,7 @@
     <CreateItem Include="@(BinFile)">
        <Output ItemName="SigningInput" TaskParameter="Include"/>
     </CreateItem>
-	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand /nologo /noconsolelogger"/>
+	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand "/>
   </Target>
   <Target Name="SignCommand">
 	 <Exec 
