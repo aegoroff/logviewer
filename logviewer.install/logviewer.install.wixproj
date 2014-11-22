@@ -44,10 +44,12 @@
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe"/>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
-    <Exec 
-        Condition="Exists('@(BinFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
-        Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.globalsign.com/scripts/timstamp.dll /v &quot;%(BinFile.Identity)&quot;" 
-    />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(BinFile.Identity) /nologo /noconsolelogger"/>
+  </Target>
+  <Target Name="SignCommand">
+	 <Exec 
+		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
+		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;$(SigningInput)&quot;"/>
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
