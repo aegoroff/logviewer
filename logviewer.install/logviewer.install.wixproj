@@ -40,19 +40,16 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
+	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand "/>
+  </Target>
+  <Target Name="SignCommand">
     <ItemGroup>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe"/>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
-    <CreateItem Include="@(BinFile)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand "/>
-  </Target>
-  <Target Name="SignCommand">
 	 <Exec 
 		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
-		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SigningInput.Identity)&quot;"/>
+		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(BinFile.Identity)&quot;"/>
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
