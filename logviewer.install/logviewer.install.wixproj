@@ -55,7 +55,7 @@
 		Condition="$(SignCommand) != ''" 
 		Command="$(TmpFile) &quot;%(BinFile.Identity)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
 	/>
-	
+	<Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
