@@ -45,15 +45,15 @@ build:
     project: logviewer.sln
 
 after_build:
-    -cmd: msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /t:Rebuild /p:Configuration=Release;Platform=AnyCPU;SnkPath=%LogviewerSnkPath%
+    -cmd: msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /t:Rebuild /p:Configuration=%CONFIGURATION%;Platform=AnyCPU;SnkPath=%LogviewerSnkPath%
 
 test:
   assemblies:
     - logviewer.tests.dll
 
 after_test:
-    -cmd: nuget pack logviewer.engine\logviewer.engine.nuspec -OutputDirectory nuget
+    -cmd: nuget pack logviewer.engine\logviewer.engine.nuspec -BasePath logviewer.engine -OutputDirectory logviewer.engine\bin\%CONFIGURATION% -Version %APPVEYOR_BUILD_VERSION%
 
 artifacts:
   - path: logviewer.install.bootstrap\bin\$(configuration)\*.exe
-  - path: nuget\*.nupkg
+  - path: logviewer.engine\bin\$(configuration)\*.nupkg
