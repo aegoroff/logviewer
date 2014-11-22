@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- Importing MSBuild Community Tasks -->
-	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<!-- Importing MSBuild TeamCity Tasks -->
 	<Import Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.260.0\tools\MSBuild.TeamCity.Tasks.Targets"/>
 
@@ -31,20 +29,31 @@
 	<!-- Updating version and product code task -->
 	<Target Name="VersionUpdater" Condition=" '$(IsUpdateVersion)'=='true' ">
 		<!-- Updating AssemblyInfo.cs files -->
-		<FileUpdate
-			Files="@(AssemblyInfoFile)"
-			Regex='\[assembly(\s*):(\s*)(AssemblyVersion|AssemblyFileVersion|AssemblyInformationalVersionAttribute)\((\s*)"(\d+)\.(\d+)\.(\d+)\.(\d+)"(\s*)\)\]'
-			ReplacementText='[assembly : $3("$(Major).$(Minor).$(Build).$(Revision)")]' />
+		<ItemGroup>
+		  <AssemblyInfoVersion Include="@(AssemblyInfoFile)">
+			<Find><![CDATA[\[assembly(\s*):(\s*)(AssemblyVersion|AssemblyFileVersion|AssemblyInformationalVersionAttribute)\((\s*)"(\d+)\.(\d+)\.(\d+)\.(\d+)"(\s*)\)\]]]></Find>
+			<ReplaceWith><![CDATA[[assembly : $3("$(Major).$(Minor).$(Build).$(Revision)")]]]></ReplaceWith>
+			<Options>Singleline</Options>
+		  </AssemblyInfoVersion>
+		</ItemGroup>
 		<!-- Updating WiX files -->
-		<FileUpdate
-			Files="@(WixFile)"
-			Regex='define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"'
-			ReplacementText='define Version = "$(Major).$(Minor).$(Build).$(Revision)"' />
-		<FileUpdate
-			Files="@(WixFile)"
-			Regex='\$\(var\.SolutionDir\)'
-			ReplacementText='$(MSBuildProjectDirectory)\' />
-
+		<ItemGroup>
+		  <WixSolutionDir Include="@(WixFile)">
+			<Find><![CDATA[\$\(var\.SolutionDir\)]]></Find>
+			<ReplaceWith><![CDATA[$(MSBuildProjectDirectory)\]]></ReplaceWith>
+			<Options>Singleline</Options>
+		  </WixSolutionDir>
+		</ItemGroup>
+		<ItemGroup>
+		  <WixVersion Include="@(WixFile)">
+			<Find><![CDATA[define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"]]></Find>
+			<ReplaceWith><![CDATA[define Version = "$(Major).$(Minor).$(Build).$(Revision)"]]></ReplaceWith>
+			<Options>Singleline</Options>
+		  </WixVersion>
+		</ItemGroup>
+		<RegexTransform Items="@(WixVersion)" />
+		<RegexTransform Items="@(WixSolutionDir)" />
+		<RegexTransform Items="@(AssemblyInfoVersion)" />
 	</Target>
 	<!-- Main build step where solution file are built -->
 	<Target Name="Compile" DependsOnTargets="VersionUpdater">
@@ -91,4 +100,42 @@
     </ItemGroup>
 
     <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
+	<UsingTask TaskName="RegexTransform" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+		<ParameterGroup>
+		  <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
+		</ParameterGroup>
+		<Task>
+		  <Using Namespace="System.IO" />
+		  <Using Namespace="System.Text.RegularExpressions" />
+		  <Using Namespace="Microsoft.Build.Framework" />
+		  <Code Type="Fragment" Language="cs"><![CDATA[
+			   foreach(var item in Items)
+			   {
+				 string fileName = item.GetMetadata("FullPath");
+				 string find = item.GetMetadata("Find");
+				 string replaceWith = item.GetMetadata("ReplaceWith");
+				 string optionsValue = item.GetMetadata("Options") ?? "";
+		 
+				 var options = string.IsNullOrWhiteSpace(optionsValue) ?
+					 RegexOptions.None : (RegexOptions)Enum.Parse(typeof(RegexOptions), optionsValue.Replace('|', ','));
+		 
+				 if(!File.Exists(fileName))
+				 {
+				   Log.LogError("Could not find file: {0}", fileName);
+				   return false;
+				 }
+				 string content = File.ReadAllText(fileName);
+				 File.WriteAllText(
+				   fileName,
+				   Regex.Replace(
+					 content,
+					 find,
+					 replaceWith,
+					 options
+				   )
+				 );
+			   }
+			 ]]></Code>
+		</Task>
+	</UsingTask>
 </Project>

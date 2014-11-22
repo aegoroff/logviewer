@@ -44,10 +44,18 @@
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe"/>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
-    <Exec 
-        Condition="Exists('@(BinFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
-        Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.globalsign.com/scripts/timstamp.dll /v &quot;%(BinFile.Identity)&quot;" 
-    />
+	<PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" >
+	  <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
+	</PropertyGroup> 
+	<PropertyGroup Condition="$(SignCommand) != ''" >
+		<TmpFile>tmp.bat</TmpFile>
+	</PropertyGroup>
+    <WriteLinesToFile File="$(TmpFile)" Lines="$(SignCommand)"/>
+	<Exec 
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;%(BinFile.Identity)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
+	<Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

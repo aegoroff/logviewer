@@ -195,10 +195,10 @@ namespace logviewer.engine
         private static ParseResult<DateTime> ParseDateTime(string s)
         {
             DateTime r;
-            var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out r);
+            var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
             if (!success)
             {
-                success = DateTime.TryParse(s, out r);
+                success = DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
             }
             return new ParseResult<DateTime> { Result = success, Value = r };
         }
