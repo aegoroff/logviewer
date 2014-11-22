@@ -41,16 +41,9 @@ platform: Any CPU
 
 configuration: Release
 
-before_build: |
-   Function Edit-WixItem($file, $ver) {
-      $pattern = 'define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"'
-      $replacement = 'define Version = "' + $ver + '"'
-      $content = (Get-Content $file)
-      $content = $content -replace $pattern, $replacement
-      $content | Out-File $file
-   }
-   Edit-WixItem logviewer.install\Product.wxs $env:APPVEYOR_BUILD_VERSION
-   Edit-WixItem logviewer.install.bootstrap\Bundle.wxs $env:APPVEYOR_BUILD_VERSION
+before_build:
+   -ps: \wix.ps1 logviewer.install\Product.wxs $env:APPVEYOR_BUILD_VERSION
+   -ps: \wix.ps1 logviewer.install.bootstrap\Bundle.wxs $env:APPVEYOR_BUILD_VERSION
 
 build:
     project: logviewer.sln
