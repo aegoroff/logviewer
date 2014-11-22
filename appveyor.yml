@@ -15,11 +15,14 @@ skip_tags: true
 environment:
   SignTool: C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
   KeyFile: C:\projects\logviewer\logviewer.pfx
+  LogviewerSnkPath: C:\projects\logviewer\logviewer.snk
   # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
   CertPassword:
     secure: QDWBD+3IIAYVFCfHFY7YCw==
   PfxUri:
     secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwpxChllc+IbmK6KhExQVE1ae2ut5W3CjeeHjcHRDvlGXs4q2bDPVL455cH3ld6S3R
+  SnkUri:
+    secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwWkZOmP1fCRP5m2Bclrbc22uOBlleZWaxVycTis9Jb4QCSI2FFddeTQAxehQypUsI
 
 # enable patching of AssemblyInfo.* files
 assembly_info:
@@ -31,6 +34,7 @@ assembly_info:
 
 install:
     - ps: Start-FileDownload $env:PfxUri -FileName $env:KeyFile
+    - ps: Start-FileDownload $env:SnkUri -FileName $env:LogviewerSnkPath
     - cmd: nuget restore
 
 platform: Any CPU
@@ -39,6 +43,7 @@ configuration: Release
 
 build:
     project: logviewer.sln
+    msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:SnkPath=$env:LogviewerSnkPath
 
 test:
   assemblies:
