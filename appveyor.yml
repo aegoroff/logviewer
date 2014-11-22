@@ -42,7 +42,7 @@ platform: Any CPU
 configuration: Release
 
 before_build:
-   -ps: .\wix.ps1 logviewer.install\Product.wxs $env:APPVEYOR_BUILD_VERSION
+   -cmd: msbuild WiX.msbuild /p:Version=%APPVEYOR_BUILD_VERSION%
 
 build:
     project: logviewer.sln

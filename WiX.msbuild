@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="VersionUpdater" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="VersionUpdater">
+	<ItemGroup>
+		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install\Product.wxs" />
+		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\Bundle.wxs" />
+	</ItemGroup>
+	<ItemGroup>
+      <RegexTransform Include="@(WixFile)">
+        <Find><![CDATA[define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"]]></Find>
+        <ReplaceWith><![CDATA[define Version = "$(Version)"]]></ReplaceWith>
+        <Options>Singleline</Options>
+      </RegexTransform>
+    </ItemGroup>
+    <RegexTransform Items="@(RegexTransform)" />
+  </Target>
+  
+  <UsingTask TaskName="RegexTransform" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Using Namespace="Microsoft.Build.Framework" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+           foreach(var item in Items)
+           {
+             string fileName = item.GetMetadata("FullPath");
+             string find = item.GetMetadata("Find");
+             string replaceWith = item.GetMetadata("ReplaceWith");
+             string optionsValue = item.GetMetadata("Options") ?? "";
+     
+             var options = string.IsNullOrWhiteSpace(optionsValue) ?
+                 RegexOptions.None : (RegexOptions)Enum.Parse(typeof(RegexOptions), optionsValue.Replace('|', ','));
+     
+             if(!File.Exists(fileName))
+             {
+               Log.LogError("Could not find file: {0}", fileName);
+               return false;
+             }
+             string content = File.ReadAllText(fileName);
+             File.WriteAllText(
+               fileName,
+               Regex.Replace(
+                 content,
+                 find,
+                 replaceWith,
+                 options
+               )
+             );
+           }
+         ]]></Code>
+    </Task>
+  </UsingTask>
+</Project>
