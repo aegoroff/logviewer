@@ -40,7 +40,7 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
-	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand "/>
+	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand /p:Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword) "/>
   </Target>
   <Target Name="SignCommand">
     <ItemGroup>
