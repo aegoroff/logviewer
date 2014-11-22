@@ -44,28 +44,35 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="SignBundleEngine">
-    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignBundleEngine)&quot;" />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundleEngine) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignBundle">
-    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignBundle)&quot;" />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundle) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignMsi">
-    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignMsi)&quot;" />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignMsi) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignCabs">
-    <Exec Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SignCabs)&quot;" />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignCabs) /nologo /noconsolelogger"/>
   </Target>
+  
+  <Target Name="SignCommand">
+	 <Exec 
+		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
+		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;$(SigningInput)&quot;"/>
+  </Target>
+  
   <Target Name="BeforeBuild">
     <ItemGroup>
       <MsiFile Include="$(MSBuildProjectDirectory)\..\logviewer.install\bin\$(Configuration)\*.msi" />
     </ItemGroup>
-    <Exec Condition="Exists('@(MsiFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.globalsign.com/scripts/timstamp.dll /v &quot;%(MsiFile.Identity)&quot;" />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(MsiFile.Identity) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="AfterBuild">
     <ItemGroup>
       <MsiFile Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.exe" />
     </ItemGroup>
-    <Exec Condition="Exists('@(MsiFile)') AND $(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer /t http://timestamp.globalsign.com/scripts/timstamp.dll /v &quot;%(MsiFile.Identity)&quot;" />
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(MsiFile.Identity) /nologo /noconsolelogger"/>
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
