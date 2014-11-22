@@ -40,7 +40,9 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
-	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand /p:Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword) "/>
+	<Exec 
+		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''"
+		Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand "/>
   </Target>
   <Target Name="SignCommand">
     <ItemGroup>
@@ -48,7 +50,6 @@
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
 	 <Exec 
-		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
 		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(BinFile.Identity)&quot;"/>
   </Target>
   <!--
