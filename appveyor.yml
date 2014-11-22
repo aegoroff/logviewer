@@ -61,8 +61,3 @@ artifacts:
   - path: logviewer.engine\bin\$(configuration)\*.nupkg
   - path: logviewer.install.bootstrap\bin\$(configuration)\*.exe
 
-deploy:
-  provider: Environment
-  name: stable
-  on:
-    branch: master
