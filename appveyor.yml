@@ -31,7 +31,7 @@ assembly_info:
 
 install:
     - ps: Start-FileDownload $env:PfxUri -FileName $env:KeyFile
-    nuget restore
+    - cmd: nuget restore
 
 platform: Any CPU
 
