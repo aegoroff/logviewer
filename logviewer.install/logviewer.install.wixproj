@@ -44,7 +44,7 @@
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe"/>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
-	<Exec Command="$(MSBuildBinPath)\MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(BinFile.Identity) /nologo /noconsolelogger"/>
+	<Exec Command="&quot;$(MSBuildBinPath)\MSBuild&quot; $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(BinFile.Identity) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignCommand">
 	 <Exec 
