@@ -44,53 +44,35 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="SignBundleEngine">
-	<CreateItem Include="@(SignBundleEngine)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /nologo /noconsolelogger"/>
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundleEngine) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignBundle">
-	<CreateItem Include="@(SignBundle)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /nologo /noconsolelogger"/>
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundle) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignMsi">
-	<CreateItem Include="@(SignMsi)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /nologo /noconsolelogger"/>
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignMsi) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignCabs">
-	<CreateItem Include="@(SignCabs)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /nologo /noconsolelogger"/>
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignCabs) /nologo /noconsolelogger"/>
   </Target>
   
   <Target Name="SignCommand">
 	 <Exec 
 		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
-		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;@(SigningInput)&quot;"/>
+		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;$(SigningInput)&quot;"/>
   </Target>
   
   <Target Name="BeforeBuild">
     <ItemGroup>
       <MsiFile Include="$(MSBuildProjectDirectory)\..\logviewer.install\bin\$(Configuration)\*.msi" />
     </ItemGroup>
-	<CreateItem Include="@(MsiFile)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /nologo /noconsolelogger"/>
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(MsiFile.Identity) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="AfterBuild">
     <ItemGroup>
       <MsiFile Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.exe" />
     </ItemGroup>
-	<CreateItem Include="@(MsiFile)">
-       <Output ItemName="SigningInput" TaskParameter="Include"/>
-    </CreateItem>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand  /nologo /noconsolelogger"/>
+	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(MsiFile.Identity) /nologo /noconsolelogger"/>
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
