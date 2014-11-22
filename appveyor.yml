@@ -41,6 +41,10 @@ platform: Any CPU
 
 configuration: Release
 
+before_build: |
+           (Get-Content logviewer.install\Product.wxs) | Foreach-Object {[regex]::replace($_,'define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"', $env:APPVEYOR_BUILD_VERSION)}  | logviewer.install\Product.wxs
+           (Get-Content logviewer.install.bootstrap\Bundle.wxs) | Foreach-Object {[regex]::replace($_,'define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"', $env:APPVEYOR_BUILD_VERSION)}  | logviewer.install.bootstrap\Bundle.wxs
+
 build:
     project: logviewer.sln
 
