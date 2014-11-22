@@ -43,7 +43,7 @@ configuration: Release
 
 build:
     project: logviewer.sln
-    msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:SnkPath=$env:LogviewerSnkPath
+    msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /t:Rebuild /p:SnkPath=$env:LogviewerSnkPath
 
 test:
   assemblies:
