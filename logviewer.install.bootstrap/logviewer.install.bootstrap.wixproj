@@ -84,13 +84,6 @@
   </Target>
   
   <Target Name="AfterBuild">
-    <ItemGroup>
-      <ExeFile Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.exe" />
-    </ItemGroup>
-	<Exec
-		Condition="$(SignCommand) != ''" 
-		Command="$(TmpFile) &quot;%(ExeFile.Identity)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
-	/>
 	<Delete Files="$(TmpFile)" Condition="Exists('$(TmpFile)')" />
   </Target>
   <!--
