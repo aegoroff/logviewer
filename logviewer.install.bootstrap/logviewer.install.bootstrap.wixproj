@@ -11,6 +11,7 @@
     <SignOutput>true</SignOutput>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+	<TmpFile>tmp.bat</TmpFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -21,6 +22,9 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>CONFIGURATION=Release</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" >
+    <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bundle.wxs" />
@@ -47,32 +51,44 @@
 	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundleEngine) /nologo /noconsolelogger"/>
   </Target>
   <Target Name="SignBundle">
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignBundle) /nologo /noconsolelogger"/>
+	<Exec
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;@(SignBundle)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
   </Target>
   <Target Name="SignMsi">
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignMsi) /nologo /noconsolelogger"/>
+	<Exec
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;@(SignMsi)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
   </Target>
   <Target Name="SignCabs">
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=@(SignCabs) /nologo /noconsolelogger"/>
-  </Target>
-  
-  <Target Name="SignCommand">
-	 <Exec 
-		Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" 
-		Command="&quot;$(SignTool)&quot; sign /f &quot;$(KeyFile)&quot; /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d &quot;logviewer&quot; /du https://github.com/aegoroff/logviewer &quot;$(SigningInput)&quot;"/>
+	<Exec
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;@(SignCabs)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
   </Target>
   
   <Target Name="BeforeBuild">
+    <WriteLinesToFile File="$(TmpFile)" Lines="$(SignCommand)" />
     <ItemGroup>
       <MsiFile Include="$(MSBuildProjectDirectory)\..\logviewer.install\bin\$(Configuration)\*.msi" />
     </ItemGroup>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(MsiFile.Identity) /nologo /noconsolelogger"/>
+	<Exec
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;%(MsiFile.Identity)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
   </Target>
+  
   <Target Name="AfterBuild">
     <ItemGroup>
-      <MsiFile Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.exe" />
+      <ExeFile Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.exe" />
     </ItemGroup>
-	<Exec Command="MSBuild $(MsBuildThisFile) /t:SignCommand /p:SigningInput=%(MsiFile.Identity) /nologo /noconsolelogger"/>
+	<Exec
+		Condition="$(SignCommand) != ''" 
+		Command="$(TmpFile) &quot;%(ExeFile.Identity)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
+	/>
+	<Delete Files="$(TmpFile)" Condition="Exists('$(TmpFile)')" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
