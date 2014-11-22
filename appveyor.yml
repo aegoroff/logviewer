@@ -43,7 +43,6 @@ configuration: Release
 
 before_build:
    -ps: \wix.ps1 logviewer.install\Product.wxs $env:APPVEYOR_BUILD_VERSION
-   -ps: \wix.ps1 logviewer.install.bootstrap\Bundle.wxs $env:APPVEYOR_BUILD_VERSION
 
 build:
     project: logviewer.sln
