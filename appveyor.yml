@@ -41,15 +41,8 @@ platform: Any CPU
 
 configuration: Release
 
-before_build: |
-    $files = @('logviewer.install\Product.wxs','logviewer.install.bootstrap\Bundle.wxs')
-    $pattern = 'define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"'
-    $replacement = 'define Version = "' + $env:APPVEYOR_BUILD_VERSION + '"'
-    foreach ($file in $files) {
-      (Get-Content $file) | `
-      Foreach-Object {$_ -replace $pattern, $replacement} | `
-      Set-Content $file
-    }
+before_build:
+   -ps: .\wix.ps1 -files @('logviewer.install\Product.wxs','logviewer.install.bootstrap\Bundle.wxs') -ver $env:APPVEYOR_BUILD_VERSION
 
 build:
     project: logviewer.sln
