@@ -99,7 +99,7 @@
     <PropertyGroup Condition="$(SignCommand) != ''">
       <TmpFile>tmp.bat</TmpFile>
     </PropertyGroup>
-    <WriteLinesToFile File="$(TmpFile)" Lines="$(SignCommand)" />
+    <WriteLinesToFile File="$(TmpFile)" Condition="$(SignCommand) != ''" Lines="$(SignCommand)" />
     <Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(OutputPath)$(AssemblyName).dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
     <Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
