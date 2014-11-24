@@ -211,7 +211,7 @@ namespace logviewer.core
         {
             var order = reverse ? "DESC" : "ASC";
 
-            var where = Where(min, max, filter, useRegexp);
+            var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             
             var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,
@@ -254,8 +254,8 @@ namespace logviewer.core
             {
                 return 0;
             }
-            
-            var where = Where(min, max, filter, useRegexp);
+
+            var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
             Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
@@ -272,18 +272,19 @@ namespace logviewer.core
                 return DateTime.MinValue;
             }
             
-            var where = Where(min, max, filter, useRegexp);
+            var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = string.Format(@"SELECT {2}({0}) FROM Log {1}", this.dateTimeProperty, where, func);
             Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return DateTime.FromFileTime(result);
         }
 
-        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, bool excludeNoLevel = false)
+        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish, bool excludeNoLevel = false)
         {
             var clauses = new[]
             {
                 LevelClause(min, max),
+                DateClause(start, finish),
                 FilterClause(filter, useRegexp),
                 ExcludeNoLevelClause(excludeNoLevel)
             };
@@ -305,6 +306,20 @@ namespace logviewer.core
             if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
                 clause.Add(this.logLevelProperty + " <= @Max");
+            }
+            return string.Join(" AND ", clause);
+        }
+
+        private string DateClause(DateTime start, DateTime finish)
+        {
+            var clause = new List<string>();
+            if (start != DateTime.MinValue && this.hasDateTimeProperty)
+            {
+                clause.Add(this.dateTimeProperty + " >= @Start");
+            }
+            if (finish != DateTime.MaxValue && this.hasDateTimeProperty)
+            {
+                clause.Add(this.dateTimeProperty + " <= @Finish");
             }
             return string.Join(" AND ", clause);
         }
