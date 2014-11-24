@@ -202,6 +202,8 @@ namespace logviewer.core
             int limit,
             Action<LogMessage> onReadMessage,
             Func<bool> notCancelled,
+            DateTime start,
+            DateTime finish,
             long offset = 0,
             bool reverse = true,
             LogLevel min = LogLevel.Trace,
@@ -211,7 +213,7 @@ namespace logviewer.core
         {
             var order = reverse ? "DESC" : "ASC";
 
-            var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+            var where = Where(min, max, filter, useRegexp, start, finish);
             
             var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,

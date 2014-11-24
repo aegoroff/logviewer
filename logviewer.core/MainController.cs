@@ -989,6 +989,8 @@ namespace logviewer.core
                 this.pageSize,
                 onRead,
                 () => this.NotCancelled,
+                DateTime.MinValue,
+                DateTime.MaxValue,
                 start,
                 this.reverseChronological,
                 this.minFilter,
