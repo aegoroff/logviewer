@@ -218,7 +218,7 @@ namespace logviewer.core
             var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,
                 where, this.additionalColumnsString);
-            Action<IDbCommand> beforeRead = command => AddParameters(command, min, max, filter, useRegexp);
+            Action<IDbCommand> beforeRead = command => AddParameters(command, min, max, filter, useRegexp, start, finish);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
@@ -259,7 +259,7 @@ namespace logviewer.core
 
             var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
+            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
         }
@@ -276,7 +276,7 @@ namespace logviewer.core
             
             var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = string.Format(@"SELECT {2}({0}) FROM Log {1}", this.dateTimeProperty, where, func);
-            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp);
+            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return DateTime.FromFileTime(result);
         }
@@ -338,7 +338,7 @@ namespace logviewer.core
             return excludeNoLevel && this.hasLogLevelProperty ? this.logLevelProperty + " > " + (int)LogLevel.None : string.Empty;
         }
 
-        private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp)
+        private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish)
         {
             if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
@@ -347,6 +347,14 @@ namespace logviewer.core
             if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
                 DatabaseConnection.AddParameter(command, "@Max", (int) max);
+            }
+            if (start != DateTime.MinValue && this.hasDateTimeProperty)
+            {
+                DatabaseConnection.AddParameter(command, "@Start", start.ToFileTimeUtc());
+            }
+            if (finish != DateTime.MaxValue && this.hasDateTimeProperty)
+            {
+                DatabaseConnection.AddParameter(command, "@Finish", finish.ToFileTimeUtc());
             }
             if (!string.IsNullOrWhiteSpace(filter))
             {
