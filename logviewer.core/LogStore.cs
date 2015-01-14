@@ -246,6 +246,16 @@ namespace logviewer.core
         }
 
         public long CountMessages(
+            LogLevel min = LogLevel.Trace,
+            LogLevel max = LogLevel.Fatal,
+            string filter = null,
+            bool useRegexp = true,
+            bool excludeNoLevel = false)
+        {
+            return CountMessages(DateTime.MinValue, DateTime.MaxValue, min, max, filter, useRegexp, excludeNoLevel);
+        }
+        
+        public long CountMessages(
             DateTime start, 
             DateTime finish,
             LogLevel min = LogLevel.Trace,

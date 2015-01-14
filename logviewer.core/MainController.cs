@@ -950,7 +950,7 @@ namespace logviewer.core
 
         private long TotalMessages
         {
-            get { return this.store != null ? this.store.CountMessages(this.minDate, this.maxDate) : 0; }
+            get { return this.store != null ? this.store.CountMessages() : 0; }
         }
 
         public LogStore Store
