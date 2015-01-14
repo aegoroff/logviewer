@@ -56,11 +56,11 @@ namespace logviewer
 
             Action action = delegate
             {
-                total = (ulong)this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, filter, regexp);
+                total = (ulong)this.store.CountMessages(DateTime.MinValue, DateTime.MaxValue, LogLevel.Trace, LogLevel.Fatal, filter, regexp);
                 for (var i = 0; i < byLevel.Length; i++)
                 {
                     var level = (LogLevel)i;
-                    byLevel[i] = (ulong)this.store.CountMessages(level, level, filter, regexp, true);
+                    byLevel[i] = (ulong)this.store.CountMessages(DateTime.MinValue, DateTime.MaxValue, level, level, filter, regexp, true);
                 }
                 var fi = new FileInfo(this.store.DatabasePath);
                 dbSize = fi.Length;

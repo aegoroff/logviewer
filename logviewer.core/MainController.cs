@@ -57,6 +57,8 @@ namespace logviewer.core
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
         private const int KeepLastFilters = 20;
         private const int CheckUpdatesEveryDays = 7;
+        private DateTime minDate = DateTime.MinValue;
+        private DateTime maxDate = DateTime.MaxValue;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -747,6 +749,16 @@ namespace logviewer.core
         {
             this.maxFilter = (LogLevel)value;
         }
+        
+        public void MinDate(DateTime value)
+        {
+            this.minDate = value;
+        }
+
+        public void MaxDate(DateTime value)
+        {
+            this.maxDate = value;
+        }
 
         public void TextFilter(string value)
         {
@@ -938,7 +950,7 @@ namespace logviewer.core
 
         private long TotalMessages
         {
-            get { return this.store != null ? this.store.CountMessages() : 0; }
+            get { return this.store != null ? this.store.CountMessages(this.minDate, this.maxDate) : 0; }
         }
 
         public LogStore Store
@@ -958,7 +970,7 @@ namespace logviewer.core
                 return doc.Rtf;
             }
 
-            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
+            this.totalFiltered = this.store.CountMessages(this.minDate, this.maxDate, this.minFilter, this.maxFilter, this.textFilter,
                 this.useRegexp);
 
             if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
@@ -989,6 +1001,8 @@ namespace logviewer.core
                 this.pageSize,
                 onRead,
                 () => this.NotCancelled,
+                this.minDate,
+                this.maxDate,
                 start,
                 this.reverseChronological,
                 this.minFilter,
