@@ -246,6 +246,8 @@ namespace logviewer.core
         }
 
         public long CountMessages(
+            DateTime start, 
+            DateTime finish,
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
             string filter = null,
@@ -257,9 +259,9 @@ namespace logviewer.core
                 return 0;
             }
 
-            var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+            var where = Where(min, max, filter, useRegexp, start, finish);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp, start, finish);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
         }
