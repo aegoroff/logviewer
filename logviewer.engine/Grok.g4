@@ -1,7 +1,7 @@
 // Created by: egr
 // Created at: 02.10.2014
 // Grok templating syntax
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 grammar Grok;
 

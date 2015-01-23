@@ -1,6 +1,6 @@
 // Created by: egr
 // Created at: 19.09.2012
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
