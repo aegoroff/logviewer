@@ -1,12 +1,6 @@
-﻿// ***********************************************************************
-// <author>Alexander Egorov</author>
-//
-// <summary>  </summary>
-//
-// <copyright company="Comindware">    
-//    Copyright (c) Comindware 2010-2014. All rights reserved.   
-// </copyright>
-// ***********************************************************************
+﻿// Created by: egr
+// Created at: 04.10.2014
+// © 2012-2015 Alexander Egorov
 
 using System.IO;
 using System.Text;
