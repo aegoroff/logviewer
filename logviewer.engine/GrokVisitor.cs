@@ -22,8 +22,6 @@ namespace logviewer.engine
         private string property;
         private bool doNotWrapCurrentIntoNamedMatchGroup;
 
-        internal const string PatternStart = "%{";
-        internal const string PatternStop = "}";
 
         internal GrokVisitor()
         {
@@ -177,7 +175,7 @@ namespace logviewer.engine
                     matchFound = false;
                     foreach (var k in this.templates.Keys)
                     {
-                        var link = PatternStart + k + PatternStop;
+                        var link = new PassthroughPattern(k).Content;
                         if (!this.compiledPattern.Contains(link))
                         {
                             continue;
@@ -185,7 +183,7 @@ namespace logviewer.engine
                         this.compiledPattern = this.compiledPattern.Replace(link, this.templates[k]);
                         matchFound = true;
                     }
-                    continueMatch = this.compiledPattern.Contains(PatternStart);
+                    continueMatch = this.compiledPattern.Contains(PassthroughPattern.Start);
                 } while (continueMatch && matchFound);
 
 

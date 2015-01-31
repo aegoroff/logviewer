@@ -6,8 +6,11 @@ namespace logviewer.engine
 {
     internal class PassthroughPattern : Pattern
     {
+        internal const string Start = "%{";
+        private const string Stop = "}";
+
         internal PassthroughPattern(string content)
-            : base(GrokVisitor.PatternStart + content + GrokVisitor.PatternStop)
+            : base(Start + content + Stop)
         {
         }
     }
