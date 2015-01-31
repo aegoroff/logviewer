@@ -15,15 +15,15 @@ namespace logviewer.engine
     {
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
         private readonly List<Semantic> schema = new List<Semantic>();
-        private readonly List<string> agregattor = new List<string>();
+        private readonly Composer composer = new Composer();
         private readonly List<int> recompileIndexes = new List<int>();
         private readonly Dictionary<int, string> recompileProperties = new Dictionary<int, string>();
         private string compiledPattern;
         private string property;
         private bool doNotWrapCurrentIntoNamedMatchGroup;
 
-        private const string PatternStart = "%{";
-        private const string PatternStop = "}";
+        internal const string PatternStart = "%{";
+        internal const string PatternStop = "}";
         private const string NamedPattern = @"(?<{0}>{1})";
 
         internal GrokVisitor()
@@ -61,7 +61,7 @@ namespace logviewer.engine
 
         internal string Template
         {
-            get { return string.Join(string.Empty, this.agregattor); }
+            get { return this.composer.ToString(); }
         }
 
         internal bool RecompilationNeeded { get; private set; }
@@ -78,14 +78,15 @@ namespace logviewer.engine
 
         internal string GetRecompile(int ix)
         {
-            return this.agregattor[ix];
+            return this.composer.GetPattern(ix);
         }
 
         internal void SetRecompiled(int ix, string recompiled)
         {
-            this.agregattor[ix] = this.recompileProperties.ContainsKey(ix)
+            var content = this.recompileProperties.ContainsKey(ix)
                 ? string.Format(NamedPattern, this.recompileProperties[ix], recompiled)
                 : recompiled;
+            this.composer.SetPattern(ix, new CompiledPattern(content));
         }
 
         private void AddSemantic(Rule rule)
@@ -101,7 +102,7 @@ namespace logviewer.engine
             this.compiledPattern = this.doNotWrapCurrentIntoNamedMatchGroup
                 ? this.compiledPattern
                 : string.Format(NamedPattern, this.property, this.compiledPattern);
-            this.agregattor.Add(this.compiledPattern);
+            this.composer.Add(new CompiledPattern(this.compiledPattern));
             if (!this.doNotWrapCurrentIntoNamedMatchGroup)
             {
                 return;
@@ -111,7 +112,7 @@ namespace logviewer.engine
 
         private void AddRecompileIndex(string prop = null)
         {
-            var recompileIx = this.agregattor.Count - 1;
+            var recompileIx = this.composer.Count - 1;
             this.recompileIndexes.Add(recompileIx);
             if (prop != null)
             {
@@ -163,9 +164,7 @@ namespace logviewer.engine
             if (!this.templates.ContainsKey(node))
             {
                 this.compiledPattern = null;
-                this.agregattor.Add(PatternStart);
-                this.agregattor.Add(node);
-                this.agregattor.Add(PatternStop);
+                this.composer.Add(new PassthroughPattern(node));
             }
             else
             {
@@ -230,7 +229,7 @@ namespace logviewer.engine
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
                 {
-                    this.agregattor.Add(this.compiledPattern);
+                    this.composer.Add(new CompiledPattern(this.compiledPattern));
                     if (this.RecompilationNeeded)
                     {
                         this.AddRecompileIndex();
@@ -249,8 +248,7 @@ namespace logviewer.engine
 
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
-            var raw = context.GetText();
-            this.agregattor.Add(raw.UnescapeString());
+            this.composer.Add(new StringLiteral(context.GetText()));
             return this.VisitChildren(context);
         }
     }

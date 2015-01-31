@@ -45,12 +45,18 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompiledPattern.cs" />
+    <Compile Include="Composer.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="GrokMatcher.cs" />
     <Compile Include="GrokVisitor.cs" />
     <Compile Include="ICharsetDetector.cs" />
+    <Compile Include="IPattern.cs" />
+    <Compile Include="PassthroughPattern.cs" />
+    <Compile Include="Pattern.cs" />
+    <Compile Include="StringLiteral.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogMessage.cs" />
