@@ -24,7 +24,6 @@ namespace logviewer.engine
 
         internal const string PatternStart = "%{";
         internal const string PatternStop = "}";
-        private const string NamedPattern = @"(?<{0}>{1})";
 
         internal GrokVisitor()
         {
@@ -61,7 +60,7 @@ namespace logviewer.engine
 
         internal string Template
         {
-            get { return this.composer.ToString(); }
+            get { return this.composer.Content; }
         }
 
         internal bool RecompilationNeeded { get; private set; }
@@ -83,10 +82,10 @@ namespace logviewer.engine
 
         internal void SetRecompiled(int ix, string recompiled)
         {
-            var content = this.recompileProperties.ContainsKey(ix)
-                ? string.Format(NamedPattern, this.recompileProperties[ix], recompiled)
-                : recompiled;
-            this.composer.SetPattern(ix, new CompiledPattern(content));
+            var p = this.recompileProperties.ContainsKey(ix)
+                ? (IPattern) new NamedPattern(this.recompileProperties[ix], recompiled)
+                : new CompiledPattern(recompiled);
+            this.composer.SetPattern(ix, p);
         }
 
         private void AddSemantic(Rule rule)
@@ -99,10 +98,11 @@ namespace logviewer.engine
         {
             this.schema.Add(s);
 
-            this.compiledPattern = this.doNotWrapCurrentIntoNamedMatchGroup
-                ? this.compiledPattern
-                : string.Format(NamedPattern, this.property, this.compiledPattern);
-            this.composer.Add(new CompiledPattern(this.compiledPattern));
+            var p = this.doNotWrapCurrentIntoNamedMatchGroup
+                ? new CompiledPattern(this.compiledPattern)
+                : (IPattern)new NamedPattern(this.property, this.compiledPattern);
+            this.compiledPattern = p.Content;
+            this.composer.Add(p);
             if (!this.doNotWrapCurrentIntoNamedMatchGroup)
             {
                 return;

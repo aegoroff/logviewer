@@ -2,7 +2,6 @@
 // Created at: 31.01.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,7 +18,7 @@ namespace logviewer.engine
 
         public string Content
         {
-            get { throw new NotImplementedException(); }
+            get { return string.Join(string.Empty, this.composition.Select(c => c.Content)); }
         }
 
         public void Add(IPattern pattern)
@@ -31,15 +30,10 @@ namespace logviewer.engine
         {
             return this.composition[ix].Content;
         }
-        
+
         internal void SetPattern(int ix, IPattern pattern)
         {
             this.composition[ix] = pattern;
-        }
-
-        public override string ToString()
-        {
-            return string.Join(string.Empty, this.composition.Select(c => c.Content));
         }
     }
 }
