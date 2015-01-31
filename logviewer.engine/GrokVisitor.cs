@@ -160,7 +160,14 @@ namespace logviewer.engine
         {
             var node = context.PATTERN().Symbol.Text;
 
-            if (this.templates.ContainsKey(node))
+            if (!this.templates.ContainsKey(node))
+            {
+                this.compiledPattern = null;
+                this.agregattor.Add(PatternStart);
+                this.agregattor.Add(node);
+                this.agregattor.Add(PatternStop);
+            }
+            else
             {
                 this.compiledPattern = this.templates[node];
 
@@ -189,7 +196,7 @@ namespace logviewer.engine
                 this.doNotWrapCurrentIntoNamedMatchGroup = m.Success;
                 this.RecompilationNeeded |= this.doNotWrapCurrentIntoNamedMatchGroup;
 
-                
+
                 if (this.doNotWrapCurrentIntoNamedMatchGroup)
                 {
                     var ix = 0;
@@ -229,13 +236,6 @@ namespace logviewer.engine
                         this.AddRecompileIndex();
                     }
                 }
-            }
-            else
-            {
-                this.compiledPattern = null;
-                this.agregattor.Add(PatternStart);
-                this.agregattor.Add(node);
-                this.agregattor.Add(PatternStop);
             }
             return this.VisitChildren(context);
         }
