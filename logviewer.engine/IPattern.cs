@@ -7,7 +7,7 @@ namespace logviewer.engine
     /// <summary>
     /// Represents common pattern interface
     /// </summary>
-    public interface IPattern
+    internal interface IPattern
     {
         /// <summary>
         /// Gets pattern's content
