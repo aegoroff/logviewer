@@ -7,8 +7,8 @@ namespace logviewer.engine
     internal class PassthroughPattern : Pattern
     {
         internal PassthroughPattern(string content)
+            : base(GrokVisitor.PatternStart + content + GrokVisitor.PatternStop)
         {
-            this.SetContent(GrokVisitor.PatternStart + content + GrokVisitor.PatternStop);
         }
     }
 }

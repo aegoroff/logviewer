@@ -84,7 +84,7 @@ namespace logviewer.engine
         {
             var p = this.recompileProperties.ContainsKey(ix)
                 ? (IPattern) new NamedPattern(this.recompileProperties[ix], recompiled)
-                : new CompiledPattern(recompiled);
+                : new Pattern(recompiled);
             this.composer.SetPattern(ix, p);
         }
 
@@ -99,7 +99,7 @@ namespace logviewer.engine
             this.schema.Add(s);
 
             var p = this.doNotWrapCurrentIntoNamedMatchGroup
-                ? new CompiledPattern(this.compiledPattern)
+                ? new Pattern(this.compiledPattern)
                 : (IPattern)new NamedPattern(this.property, this.compiledPattern);
             this.compiledPattern = p.Content;
             this.composer.Add(p);
@@ -229,7 +229,7 @@ namespace logviewer.engine
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
                 {
-                    this.composer.Add(new CompiledPattern(this.compiledPattern));
+                    this.composer.Add(new Pattern(this.compiledPattern));
                     if (this.RecompilationNeeded)
                     {
                         this.AddRecompileIndex();

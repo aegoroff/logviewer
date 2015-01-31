@@ -4,9 +4,9 @@
 
 namespace logviewer.engine
 {
-    internal abstract class Pattern : IPattern
+    internal class Pattern : IPattern
     {
-        protected void SetContent(string c)
+        internal Pattern(string c)
         {
             this.Content = c;
         }

@@ -6,9 +6,8 @@ namespace logviewer.engine
 {
     internal class StringLiteral : Pattern
     {
-        internal StringLiteral(string content)
+        internal StringLiteral(string content) : base(content.UnescapeString())
         {
-            this.SetContent(content.UnescapeString());
         }
     }
 }

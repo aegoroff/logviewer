@@ -45,7 +45,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompiledPattern.cs" />
     <Compile Include="Composer.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />
     <Compile Include="Extensions.cs" />
