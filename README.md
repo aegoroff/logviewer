@@ -1,6 +1,6 @@
 logviewer
 =========
-[![Build status](https://ci.appveyor.com/api/projects/status/3hjuqdoag2s4jhx2?svg=true)](https://ci.appveyor.com/project/aegoroff/logviewer)
+[![Build status](https://ci.appveyor.com/api/projects/status/3hjuqdoag2s4jhx2?svg=true)](https://ci.appveyor.com/project/aegoroff/logviewer) [![NuGet version (logviewer.engine)](https://img.shields.io/nuget/v/logviewer.engine.svg?style=flat-square)](https://www.nuget.org/packages/logviewer.engine/)
 
 A simple application for convenient working with application text logs. The application can parse text logs, extract messages, assign message level and colorize messages by the level assigned. See [Wiki](https://github.com/aegoroff/logviewer/wiki) for more information.
 
