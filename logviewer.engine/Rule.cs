@@ -79,7 +79,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return this.pattern != null ? this.pattern.GetHashCode() : 0;
+            return this.pattern.Return(s => s.GetHashCode(), 0);
         }
 
         /// <summary>
