@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace logviewer.engine
 {
@@ -15,6 +16,7 @@ namespace logviewer.engine
         /// <param name="input">Input instance</param>
         /// <param name="evaluator">Evaluation function</param>
         /// <returns>if input null returns null evaluator result otherwise</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TResult With<TInput, TResult>(this TInput input, Func<TInput, TResult> evaluator) 
             where TInput: class  where TResult: class
         {
@@ -30,6 +32,7 @@ namespace logviewer.engine
         /// <param name="evaluator">Evaluation function</param>
         /// <param name="failure">Failure result</param>
         /// <returns>if input null returns null evaluator result otherwise</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TResult Return<TInput, TResult>(this TInput input, Func<TInput, TResult> evaluator, TResult failure) 
             where TInput: class
         {
@@ -42,6 +45,7 @@ namespace logviewer.engine
         /// <typeparam name="TInput">Input type</typeparam>
         /// <param name="input">Input instance</param>
         /// <returns>if input null returns false otherwise true</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ReturnSuccess<TInput>(this TInput input) 
             where TInput: class
         {
@@ -55,6 +59,7 @@ namespace logviewer.engine
         /// <param name="input">Input instance</param>
         /// <param name="evaluator"></param>
         /// <returns>if input null or predicate fails returns null otherwise input instance</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TInput If<TInput>(this TInput input, Predicate<TInput> evaluator) 
             where TInput: class
         {
@@ -72,6 +77,7 @@ namespace logviewer.engine
         /// <param name="input">Input instance</param>
         /// <param name="action">Action to run if input is not null</param>
         /// <returns>if input null returns null otherwise runs action and returns input</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TInput Do<TInput>(this TInput input, Action<TInput> action) 
             where TInput: class
         {
