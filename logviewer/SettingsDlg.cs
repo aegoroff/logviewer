@@ -102,10 +102,7 @@ namespace logviewer
                     g.FillRectangle(pen.Brush, rect);
                 }
             }
-            if (button.Image != null)
-            {
-                button.Image.Dispose();
-            }
+            button.Image.Do(image => image.Dispose());
             button.Image = img;
         }
 
