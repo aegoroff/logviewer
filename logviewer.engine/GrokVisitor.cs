@@ -112,10 +112,7 @@ namespace logviewer.engine
         {
             var recompileIx = this.composer.Count - 1;
             this.recompileIndexes.Add(recompileIx);
-            if (prop != null)
-            {
-                this.recompileProperties.Add(recompileIx, prop);
-            }
+            prop.Do(s => this.recompileProperties.Add(recompileIx, s));
         }
 
         public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
