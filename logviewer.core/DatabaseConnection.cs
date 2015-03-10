@@ -39,15 +39,12 @@ namespace logviewer.core
             MessageId = "connection")]
         public void Dispose()
         {
-            if (this.transaction != null)
+            this.transaction.Do(tran => tran.Dispose());
+            this.connection.Do(delegate(SQLiteConnection conn)
             {
-                this.transaction.Dispose();
-            }
-            if (this.connection != null)
-            {
-                SafeRunner.Run(this.connection.Close);
-                SafeRunner.Run(this.connection.Dispose);
-            }
+                SafeRunner.Run(conn.Close);
+                SafeRunner.Run(conn.Dispose);
+            });
         }
 
         internal void BeginTran()
