@@ -53,6 +53,7 @@
     <Compile Include="GrokVisitor.cs" />
     <Compile Include="ICharsetDetector.cs" />
     <Compile Include="IPattern.cs" />
+    <Compile Include="Maybe.cs" />
     <Compile Include="NamedPattern.cs" />
     <Compile Include="PassthroughPattern.cs" />
     <Compile Include="Pattern.cs" />
