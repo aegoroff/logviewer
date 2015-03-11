@@ -98,7 +98,7 @@ namespace logviewer.engine
         /// <returns>True if string matches the pattern false otherwise </returns>
         public bool Match(string s)
         {
-            return this.regex != null && this.regex.IsMatch(s);
+            return this.regex.Return(r => r.IsMatch(s), false);
         }
 
         /// <summary>
@@ -113,7 +113,9 @@ namespace logviewer.engine
                 return null;
             }
             var match = this.regex.Match(s);
-            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
+            return match.Success 
+                ? this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value) 
+                : null;
         }
     }
 }

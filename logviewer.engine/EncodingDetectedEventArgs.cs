@@ -32,7 +32,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return this.encoding == null ? string.Empty : this.encoding.EncodingName;
+            return this.encoding.Return(enc => enc.EncodingName, string.Empty);
         }
     }
 }
