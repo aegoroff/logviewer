@@ -102,10 +102,7 @@ namespace logviewer.core
         {
             this.RunSqlQuery(delegate(IDbCommand command)
             {
-                if (beforeRead != null)
-                {
-                    beforeRead(command);
-                }
+                beforeRead.Do(action => action(command));
                 var rdr = command.ExecuteReader();
                 using (rdr)
                 {
@@ -141,10 +138,7 @@ namespace logviewer.core
             var result = default(T);
             this.RunSqlQuery(delegate(IDbCommand cmd)
             {
-                if (actionBeforeExecute != null)
-                {
-                    actionBeforeExecute(cmd);
-                }
+                actionBeforeExecute.Do(action => action(cmd));
                 result = (T)cmd.ExecuteScalar();
             }, query);
             return result;
@@ -156,10 +150,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    if (actionBeforeExecute != null)
-                    {
-                        actionBeforeExecute(command);
-                    }
+                    actionBeforeExecute.Do(action => action(command));
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
