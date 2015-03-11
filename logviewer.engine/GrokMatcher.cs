@@ -108,14 +108,10 @@ namespace logviewer.engine
         /// <returns>Metadata dictionary or null</returns>
         public IDictionary<string, string> Parse(string s)
         {
-            if (this.regex == null)
-            {
-                return null;
-            }
-            var match = this.regex.Match(s);
-            return match.Success 
-                ? this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value) 
-                : null;
+            return this.regex
+                .With(r => r.Match(s))
+                .If(m => m.Success)
+                .Return(m => this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => m.Groups[semantic.Property].Value), null);
         }
     }
 }
