@@ -176,7 +176,7 @@ namespace logviewer.tests
             Assert.Equal(c, this.controller.MessagesCount);
         }
 
-        [Theory, PropertyData("MaxDates")]
+        [Theory, MemberData("MaxDates")]
         public void MaxDate(DateTime filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
@@ -189,7 +189,7 @@ namespace logviewer.tests
             Assert.Equal(c, this.controller.MessagesCount);
         }
 
-        [Theory, PropertyData("MinDates")]
+        [Theory, MemberData("MinDates")]
         public void MinDate(DateTime filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);

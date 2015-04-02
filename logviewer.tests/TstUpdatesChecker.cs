@@ -44,7 +44,7 @@ namespace logviewer.tests
         private static readonly Version v1 = new Version(1, 2, 104, 0);
         private static readonly Version v2 = new Version(1, 0);
 
-        [Theory, PropertyData("Versions")]
+        [Theory, MemberData("Versions")]
         public void EqualLess(Version[] versions)
         {
             this.Invoke(versions);
@@ -61,7 +61,7 @@ namespace logviewer.tests
             Assert.Equal(v, this.checker.LatestVersion);
         }
 
-        [Theory, PropertyData("Versions")]
+        [Theory, MemberData("Versions")]
         public void Less(Version[] versions)
         {
             this.Invoke(versions);

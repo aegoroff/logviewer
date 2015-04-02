@@ -47,7 +47,7 @@ namespace logviewer.tests
             this.stream.Dispose();
         }
 
-        [Theory, PropertyData("ValidStreams")]
+        [Theory, MemberData("ValidStreams")]
         public void LogFromStream(string data)
         {
             this.CreateStream(data);
