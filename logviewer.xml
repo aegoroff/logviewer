@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Importing MSBuild TeamCity Tasks -->
-	<Import Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.260.0\tools\MSBuild.TeamCity.Tasks.Targets"/>
+	<Import Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.261.0\tools\MSBuild.TeamCity.Tasks.Targets"/>
 
     <!-- Global properties definitions -->
 	<PropertyGroup>
