@@ -96,7 +96,7 @@
 	</Target>
 
     <ItemGroup>
-        <XunitTools Include="$(MSBuildProjectDirectory)\packages\xunit.runners.*\tools\xunit.runner.msbuild.dll" />
+        <XunitTools Include="$(MSBuildProjectDirectory)\packages\xunit.runner.msbuild.*\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.dll" />
     </ItemGroup>
 
     <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
