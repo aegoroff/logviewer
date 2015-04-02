@@ -420,12 +420,8 @@ namespace logviewer
         private void OnDragAndDropFile(object sender, DragEventArgs e)
         {
             var files = e.Data.GetData(DataFormats.FileDrop) as string[];
-
-            if (files == null || files.Length == 0)
-            {
-                return;
-            }
-            this.StartLoadingLog(files[0]);
+            files.If(strings => strings.Length != 0)
+                .Do(strings => this.StartLoadingLog(strings[0]));
         }
 
         private void OnDragEnter(object sender, DragEventArgs e)
@@ -453,9 +449,9 @@ namespace logviewer
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (this.components != null))
+            if (disposing)
             {
-                this.components.Dispose();
+                this.components.Do(container => container.Dispose());
             }
             this.controller.Dispose();
             base.Dispose(disposing);

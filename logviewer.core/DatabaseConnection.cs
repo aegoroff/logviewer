@@ -39,15 +39,12 @@ namespace logviewer.core
             MessageId = "connection")]
         public void Dispose()
         {
-            if (this.transaction != null)
+            this.transaction.Do(tran => tran.Dispose());
+            this.connection.Do(delegate(SQLiteConnection conn)
             {
-                this.transaction.Dispose();
-            }
-            if (this.connection != null)
-            {
-                SafeRunner.Run(this.connection.Close);
-                SafeRunner.Run(this.connection.Dispose);
-            }
+                SafeRunner.Run(conn.Close);
+                SafeRunner.Run(conn.Dispose);
+            });
         }
 
         internal void BeginTran()
@@ -105,10 +102,7 @@ namespace logviewer.core
         {
             this.RunSqlQuery(delegate(IDbCommand command)
             {
-                if (beforeRead != null)
-                {
-                    beforeRead(command);
-                }
+                beforeRead.Do(action => action(command));
                 var rdr = command.ExecuteReader();
                 using (rdr)
                 {
@@ -144,10 +138,7 @@ namespace logviewer.core
             var result = default(T);
             this.RunSqlQuery(delegate(IDbCommand cmd)
             {
-                if (actionBeforeExecute != null)
-                {
-                    actionBeforeExecute(cmd);
-                }
+                actionBeforeExecute.Do(action => action(cmd));
                 result = (T)cmd.ExecuteScalar();
             }, query);
             return result;
@@ -159,10 +150,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    if (actionBeforeExecute != null)
-                    {
-                        actionBeforeExecute(command);
-                    }
+                    actionBeforeExecute.Do(action => action(command));
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)

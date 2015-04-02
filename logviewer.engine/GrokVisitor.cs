@@ -15,16 +15,13 @@ namespace logviewer.engine
     {
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
         private readonly List<Semantic> schema = new List<Semantic>();
-        private readonly List<string> agregattor = new List<string>();
+        private readonly Composer composer = new Composer();
         private readonly List<int> recompileIndexes = new List<int>();
         private readonly Dictionary<int, string> recompileProperties = new Dictionary<int, string>();
         private string compiledPattern;
         private string property;
         private bool doNotWrapCurrentIntoNamedMatchGroup;
 
-        private const string PatternStart = "%{";
-        private const string PatternStop = "}";
-        private const string NamedPattern = @"(?<{0}>{1})";
 
         internal GrokVisitor()
         {
@@ -61,7 +58,7 @@ namespace logviewer.engine
 
         internal string Template
         {
-            get { return string.Join(string.Empty, this.agregattor); }
+            get { return this.composer.Content; }
         }
 
         internal bool RecompilationNeeded { get; private set; }
@@ -78,14 +75,15 @@ namespace logviewer.engine
 
         internal string GetRecompile(int ix)
         {
-            return this.agregattor[ix];
+            return this.composer.GetPattern(ix);
         }
 
         internal void SetRecompiled(int ix, string recompiled)
         {
-            this.agregattor[ix] = this.recompileProperties.ContainsKey(ix)
-                ? string.Format(NamedPattern, this.recompileProperties[ix], recompiled)
-                : recompiled;
+            var p = this.recompileProperties.ContainsKey(ix)
+                ? (IPattern) new NamedPattern(this.recompileProperties[ix], recompiled)
+                : new Pattern(recompiled);
+            this.composer.SetPattern(ix, p);
         }
 
         private void AddSemantic(Rule rule)
@@ -98,10 +96,11 @@ namespace logviewer.engine
         {
             this.schema.Add(s);
 
-            this.compiledPattern = this.doNotWrapCurrentIntoNamedMatchGroup
-                ? this.compiledPattern
-                : string.Format(NamedPattern, this.property, this.compiledPattern);
-            this.agregattor.Add(this.compiledPattern);
+            var p = this.doNotWrapCurrentIntoNamedMatchGroup
+                ? new Pattern(this.compiledPattern)
+                : (IPattern)new NamedPattern(this.property, this.compiledPattern);
+            this.compiledPattern = p.Content;
+            this.composer.Add(p);
             if (!this.doNotWrapCurrentIntoNamedMatchGroup)
             {
                 return;
@@ -111,12 +110,9 @@ namespace logviewer.engine
 
         private void AddRecompileIndex(string prop = null)
         {
-            var recompileIx = this.agregattor.Count - 1;
+            var recompileIx = this.composer.Count - 1;
             this.recompileIndexes.Add(recompileIx);
-            if (prop != null)
-            {
-                this.recompileProperties.Add(recompileIx, prop);
-            }
+            prop.Do(s => this.recompileProperties.Add(recompileIx, s));
         }
 
         public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
@@ -163,9 +159,7 @@ namespace logviewer.engine
             if (!this.templates.ContainsKey(node))
             {
                 this.compiledPattern = null;
-                this.agregattor.Add(PatternStart);
-                this.agregattor.Add(node);
-                this.agregattor.Add(PatternStop);
+                this.composer.Add(new PassthroughPattern(node));
             }
             else
             {
@@ -178,7 +172,7 @@ namespace logviewer.engine
                     matchFound = false;
                     foreach (var k in this.templates.Keys)
                     {
-                        var link = PatternStart + k + PatternStop;
+                        var link = new PassthroughPattern(k).Content;
                         if (!this.compiledPattern.Contains(link))
                         {
                             continue;
@@ -186,7 +180,7 @@ namespace logviewer.engine
                         this.compiledPattern = this.compiledPattern.Replace(link, this.templates[k]);
                         matchFound = true;
                     }
-                    continueMatch = this.compiledPattern.Contains(PatternStart);
+                    continueMatch = this.compiledPattern.Contains(PassthroughPattern.Start);
                 } while (continueMatch && matchFound);
 
 
@@ -230,7 +224,7 @@ namespace logviewer.engine
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
                 {
-                    this.agregattor.Add(this.compiledPattern);
+                    this.composer.Add(new Pattern(this.compiledPattern));
                     if (this.RecompilationNeeded)
                     {
                         this.AddRecompileIndex();
@@ -249,8 +243,7 @@ namespace logviewer.engine
 
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
-            var raw = context.GetText();
-            this.agregattor.Add(raw.UnescapeString());
+            this.composer.Add(new StringLiteral(context.GetText()));
             return this.VisitChildren(context);
         }
     }
