@@ -99,7 +99,7 @@
         <XunitTools Include="$(MSBuildProjectDirectory)\packages\xunit.runner.msbuild.*\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.dll" />
     </ItemGroup>
 
-    <UsingTask Assemblies="@(XunitTools)" ParallelizeTestCollections="false" TaskName="Xunit.Runner.MSBuild.xunit" />
+    <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
 	<UsingTask TaskName="RegexTransform" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
 		<ParameterGroup>
 		  <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
