@@ -50,6 +50,9 @@ namespace logviewer.engine
             var tokenStream = new CommonTokenStream(lexer);
             var parser = new GrokParser(tokenStream);
             var tree = parser.parse();
+#if DEBUG
+            parser.Trace = true;
+#endif
 
             this.CompilationFailed = parser.NumberOfSyntaxErrors > 0;
 
