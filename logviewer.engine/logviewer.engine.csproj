@@ -81,6 +81,12 @@
     <None Include="grok.patterns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Antlr4 Include="GrokLexer.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>logviewer.engine</CustomToolNamespace>
+      <Listener>False</Listener>
+      <Visitor>False</Visitor>
+    </Antlr4>
     <None Include="Install.ps1" />
     <None Include="logviewer.engine.nuspec" />
     <None Include="packages.config">
