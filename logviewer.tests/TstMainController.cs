@@ -14,10 +14,10 @@ using Net.Sgoliver.NRtfTree.Util;
 using NMock;
 using NMock.Matchers;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {
+    [Collection("SerialTests")]
     public class TstMainController : IDisposable
     {
         private const string f1 = "1";

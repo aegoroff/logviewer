@@ -10,6 +10,7 @@ using Xunit;
 
 namespace logviewer.tests
 {
+    [Collection("SerialTests")]
     public class TstSqliteSettingsProvider : IDisposable
     {
         public TstSqliteSettingsProvider()

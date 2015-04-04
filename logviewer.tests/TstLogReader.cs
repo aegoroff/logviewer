@@ -9,7 +9,6 @@ using System.Text;
 using logviewer.engine;
 using NMock;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {

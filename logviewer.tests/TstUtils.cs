@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using logviewer.core;
 using logviewer.engine;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {

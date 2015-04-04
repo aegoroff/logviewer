@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using logviewer.engine;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {
