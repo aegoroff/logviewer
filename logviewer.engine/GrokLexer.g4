@@ -5,9 +5,11 @@
 
 lexer grammar GrokLexer;
 
-OPEN : PERCENT OPEN_BRACE  -> pushMode(PATTERN_MODE);
-CLOSE : CLOSE_BRACE -> popMode;
+OPEN : PERCENT OPEN_BRACE ;
 
+PROPERTY
+	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT | UNDERSCORE)*  -> pushMode(SEMANTIC_MODE)
+	;
 
 SKIP : (QUOTED_STR | NOT_QUOTED_STR) ;
 
@@ -22,11 +24,6 @@ ARROW : '->' ;
 COLON : ':' ;
 
 fragment UNDERSCORE : '_' ;
-
-PROPERTY
-	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT | UNDERSCORE)*  -> pushMode(SEMANTIC_MODE)
-	;
-
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
 fragment DIGIT : '0' .. '9' ;
@@ -63,6 +60,12 @@ fragment LEVEL_WARN : 'Warn' ;
 fragment LEVEL_ERROR : 'Error' ;
 fragment LEVEL_FATAL : 'Fatal' ;
 
+mode PATTERN_MODE ;
+
+PATTERN 
+	: UPPER_LETTER (UPPER_LETTER | DIGIT | UNDERSCORE)* 
+	;
+
 mode SEMANTIC_MODE ;
 
 TYPE_NAME
@@ -73,8 +76,4 @@ TYPE_MEMBER
 	: (LEVEL_TRACE | LEVEL_DEBUG | LEVEL_INFO | LEVEL_WARN | LEVEL_ERROR | LEVEL_FATAL)
 	;
 
-mode PATTERN_MODE ;
-
-PATTERN 
-	: UPPER_LETTER (UPPER_LETTER | DIGIT | UNDERSCORE)* -> popMode
-	;
+CLOSE : CLOSE_BRACE -> popMode;
