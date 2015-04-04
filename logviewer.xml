@@ -2,6 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Importing MSBuild TeamCity Tasks -->
 	<Import Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.261.0\tools\MSBuild.TeamCity.Tasks.Targets"/>
+	<Import Project="WiX.msbuild"/>
 
     <!-- Global properties definitions -->
 	<PropertyGroup>
@@ -102,42 +103,4 @@
     </ItemGroup>
 
     <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
-	<UsingTask TaskName="RegexTransform" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-		<ParameterGroup>
-		  <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
-		</ParameterGroup>
-		<Task>
-		  <Using Namespace="System.IO" />
-		  <Using Namespace="System.Text.RegularExpressions" />
-		  <Using Namespace="Microsoft.Build.Framework" />
-		  <Code Type="Fragment" Language="cs"><![CDATA[
-			   foreach(var item in Items)
-			   {
-				 string fileName = item.GetMetadata("FullPath");
-				 string find = item.GetMetadata("Find");
-				 string replaceWith = item.GetMetadata("ReplaceWith");
-				 string optionsValue = item.GetMetadata("Options") ?? "";
-		 
-				 var options = string.IsNullOrWhiteSpace(optionsValue) ?
-					 RegexOptions.None : (RegexOptions)Enum.Parse(typeof(RegexOptions), optionsValue.Replace('|', ','));
-		 
-				 if(!File.Exists(fileName))
-				 {
-				   Log.LogError("Could not find file: {0}", fileName);
-				   return false;
-				 }
-				 string content = File.ReadAllText(fileName);
-				 File.WriteAllText(
-				   fileName,
-				   Regex.Replace(
-					 content,
-					 find,
-					 replaceWith,
-					 options
-				   )
-				 );
-			   }
-			 ]]></Code>
-		</Task>
-	</UsingTask>
 </Project>
