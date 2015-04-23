@@ -11,9 +11,9 @@ namespace logviewer.engine.Tree
 
         public NodeList(int initialSize)
         {
-            for (var i = 0; i < initialSize; i++)
+            for (int i = 0; i < initialSize; i++)
             {
-                Items.Add(default(Node<T>));
+                this.Items.Add(default(Node<T>));
             }
         }
 
