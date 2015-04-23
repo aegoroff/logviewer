@@ -71,6 +71,10 @@
     <Compile Include="Semantic.cs" />
     <Compile Include="SemanticProperty.cs" />
     <Compile Include="SizeUnit.cs" />
+    <Compile Include="Tree\BinaryTree.cs" />
+    <Compile Include="Tree\BinaryTreeNode.cs" />
+    <Compile Include="Tree\Node.cs" />
+    <Compile Include="Tree\NodeList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Antlr4 Include="Grok.g4">
