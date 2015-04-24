@@ -123,11 +123,10 @@ namespace logviewer.engine.Tree
         /// <returns></returns>
         public bool Contains(T data)
         {
-            // search the tree for a node that contains data
-            BinaryTreeNode<T> current = this.Root;
+            var current = this.Root;
             while (current != null)
             {
-                int result = this.comparer.Compare(current.Value, data);
+                var result = this.comparer.Compare(current.Value, data);
                 if (result == 0)
                 {
                     return true;

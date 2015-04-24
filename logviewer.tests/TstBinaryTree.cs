@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using logviewer.engine.Tree;
 using Xunit;
 
@@ -67,6 +68,7 @@ namespace logviewer.tests
         [Fact]
         public void Contains()
         {
+            // TODO: think over 2
             Assert.True(this.tree.Contains(3));
         }
 
@@ -93,6 +95,20 @@ namespace logviewer.tests
             this.tree.Remove(5);
             Assert.False(this.tree.Contains(5));
             Assert.True(this.tree.Contains(6));
+        }
+
+        [Fact]
+        public void StringTree()
+        {
+            var sTree = new BinaryTree<string>(StringComparer.Ordinal)
+            {
+                Root = new BinaryTreeNode<string>("s1")
+                {
+                    Left = new BinaryTreeNode<string>("s3"),
+                    Right = new BinaryTreeNode<string>("s22")
+                }
+            };
+            Assert.True(sTree.Contains("s22"));
         }
     }
 }
