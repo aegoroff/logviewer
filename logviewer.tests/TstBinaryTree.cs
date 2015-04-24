@@ -75,5 +75,24 @@ namespace logviewer.tests
         {
             Assert.False(this.tree.Contains(4));
         }
+        
+        [Fact]
+        public void Add()
+        {
+            this.tree.Add(6);
+            this.tree.Add(5);
+            Assert.True(this.tree.Contains(5));
+            Assert.True(this.tree.Contains(6));
+        }
+        
+        [Fact]
+        public void Remove()
+        {
+            this.tree.Add(6);
+            this.tree.Add(5);
+            this.tree.Remove(5);
+            Assert.False(this.tree.Contains(5));
+            Assert.True(this.tree.Contains(6));
+        }
     }
 }

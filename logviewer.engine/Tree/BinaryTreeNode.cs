@@ -1,9 +1,12 @@
-﻿namespace logviewer.engine.Tree
+﻿using System.Diagnostics;
+
+namespace logviewer.engine.Tree
 {
     /// <summary>
     /// Represents binary tree node abstraction
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [DebuggerDisplay("{Value}")]
     public class BinaryTreeNode<T> : Node<T>
     {
         /// <summary>
