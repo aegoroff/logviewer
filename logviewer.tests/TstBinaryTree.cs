@@ -68,7 +68,6 @@ namespace logviewer.tests
         [Fact]
         public void Contains()
         {
-            // TODO: think over 2
             Assert.True(this.tree.Contains(3));
         }
 

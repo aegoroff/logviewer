@@ -120,6 +120,7 @@ namespace logviewer.engine.Tree
         ///     Checks whether the tree contains value specified
         /// </summary>
         /// <param name="data">Value to find</param>
+        /// <remarks>WARNING: Works correctly only in case of BST (binary search tree) i.e. if tree created using only Add method, not manually</remarks>
         /// <returns></returns>
         public bool Contains(T data)
         {
