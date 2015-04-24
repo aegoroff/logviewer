@@ -1,15 +1,32 @@
 ﻿namespace logviewer.engine.Tree
 {
+    /// <summary>
+    /// Represents binary tree node abstraction
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BinaryTreeNode<T> : Node<T>
     {
+        /// <summary>
+        /// Initializes new empty node
+        /// </summary>
         public BinaryTreeNode()
         {
         }
 
+        /// <summary>
+        /// Initializes node with data specified but without childs
+        /// </summary>
+        /// <param name="data">Node data</param>
         public BinaryTreeNode(T data) : base(data, null)
         {
         }
 
+        /// <summary>
+        /// Creates fully initialized node
+        /// </summary>
+        /// <param name="data">Node data</param>
+        /// <param name="left">Left child</param>
+        /// <param name="right">Right child</param>
         public BinaryTreeNode(T data, Node<T> left, Node<T> right)
         {
             this.Value = data;
@@ -20,6 +37,9 @@
             this.Neighbors = children;
         }
 
+        /// <summary>
+        /// Gets or sets left child node
+        /// </summary>
         public BinaryTreeNode<T> Left
         {
             get
@@ -41,6 +61,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets right child node
+        /// </summary>
         public BinaryTreeNode<T> Right
         {
             get
