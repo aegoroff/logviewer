@@ -102,12 +102,12 @@ namespace logviewer.tests
             var sTree = new BinaryTree<string>(StringComparer.Ordinal)
             {
                 Root = new BinaryTreeNode<string>("s1")
-                {
-                    Left = new BinaryTreeNode<string>("s3"),
-                    Right = new BinaryTreeNode<string>("s22")
-                }
             };
+            sTree.Add("s3");
+            sTree.Add("s22");
+            Assert.True(sTree.Contains("s1"));
             Assert.True(sTree.Contains("s22"));
+            Assert.True(sTree.Contains("s3"));
         }
     }
 }
