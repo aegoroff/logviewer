@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace logviewer.engine.Tree
 {
@@ -8,11 +9,22 @@ namespace logviewer.engine.Tree
     /// <typeparam name="T"></typeparam>
     public class BinaryTree<T>
     {
+        private readonly IComparer<T> comparer;
+
         /// <summary>
-        /// Creates new empty tree
+        /// Creates new empty tree with default comparere
         /// </summary>
-        public BinaryTree()
+        public BinaryTree() : this(Comparer<T>.Default)
         {
+        }
+        
+        /// <summary>
+        /// Creates new empty tree with comparer specified
+        /// </summary>
+        /// <param name="comparer">Node value comparer</param>
+        public BinaryTree(IComparer<T> comparer)
+        {
+            this.comparer = comparer;
             this.Root = null;
         }
 
@@ -104,6 +116,37 @@ namespace logviewer.engine.Tree
             this.PostorderTraversal(current.Left, action);
             this.PostorderTraversal(current.Right, action);
             action(current);
+        }
+
+        /// <summary>
+        /// Checks whether the tree contains value specified
+        /// </summary>
+        /// <param name="data">Value to find</param>
+        /// <returns></returns>
+        public bool Contains(T data)
+        {
+            // search the tree for a node that contains data
+            var current = this.Root;
+            while (current != null)
+            {
+                int result = comparer.Compare(current.Value, data);
+                if (result == 0)
+                {
+                    return true;
+                }
+                if (result > 0)
+                {
+                    // current.Value > data, search current's left subtree
+                    current = current.Left;
+                }
+                else if (result < 0)
+                {
+                    // current.Value < data, search current's right subtree
+                    current = current.Right;
+                }
+            }
+
+            return false;
         }
     }
 }
