@@ -11,15 +11,6 @@ namespace logviewer.tests
 {
     public class TstGrokMatcher
     {
-        [Fact]
-        public void RuleWithTemplateAlternatives()
-        {
-            const string template = "%{MAC}";
-            var matcher = new GrokMatcher(template);
-            var fromtree = matcher.CreateTemplate();
-            Assert.NotEqual(template, matcher.Template);
-        }
-        
         [Theory]
         [InlineData("%{ID}")]
         [InlineData("%{ID}%{DAT}")]
@@ -88,7 +79,6 @@ namespace logviewer.tests
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
-            var fromtree = matcher.CreateTemplate();
             Assert.False(matcher.CompilationFailed);
             Assert.Equal(result, matcher.Template);
         }
@@ -169,7 +159,6 @@ namespace logviewer.tests
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
             var matcher = new GrokMatcher(pattern);
-            var t = matcher.CreateTemplate();
             Assert.Equal(semanticCount, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
             Assert.NotEqual(pattern, matcher.Template);

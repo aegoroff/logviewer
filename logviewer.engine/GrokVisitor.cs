@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using logviewer.engine.Tree;
 
 namespace logviewer.engine
 {
@@ -16,22 +15,12 @@ namespace logviewer.engine
         private readonly Composer composer = new Composer();
         private string compiledPattern;
         private string property;
-        readonly BinaryTree<Pattern> tree = new BinaryTree<Pattern>();
-        private BinaryTreeNode<Pattern> lastNode;
         private readonly Func<string, string> compiler;
 
-
-        internal GrokVisitor(IDictionary<string, string> templates, BinaryTreeNode<Pattern> root, Func<string, string> compiler)
+        internal GrokVisitor(IDictionary<string, string> templates, Func<string, string> compiler)
         {
             this.templates = templates;
-            this.tree.Root = root;
-            this.lastNode = root;
             this.compiler = compiler;
-        }
-
-        internal BinaryTree<Pattern> Tree
-        {
-            get { return tree; }
         }
 
         internal string Template
@@ -108,11 +97,6 @@ namespace logviewer.engine
                 this.compiledPattern = null;
                 // just use pattern itself
                 var pattern = new PassthroughPattern(node);
-                
-                var ruleNode = new BinaryTreeNode<Pattern>(pattern);
-                this.lastNode.Left = ruleNode;
-                this.lastNode = ruleNode;
-
                 this.composer.Add(pattern);
             }
             else
@@ -124,9 +108,6 @@ namespace logviewer.engine
                 if (context.semantic() == null)
                 {
                     var p = new Pattern(this.compiledPattern);
-                    var ruleNode = new BinaryTreeNode<Pattern>(p);
-                    this.lastNode.Right = ruleNode;
-                    this.lastNode = ruleNode;
                     this.composer.Add(p);
                 }
             }
@@ -137,10 +118,6 @@ namespace logviewer.engine
         {
             var literal = new StringLiteral(context.GetText());
             this.composer.Add(literal);
-
-            var literalNode = new BinaryTreeNode<Pattern>(literal);
-            this.lastNode.Left = literalNode;
-            this.lastNode = literalNode;
             return this.VisitChildren(context);
         }
     }
