@@ -41,7 +41,7 @@ namespace logviewer.core
                 {
                     try
                     {
-                        var assets = github.Release.GetAssets(this.account, this.project, release.Id);
+                        var assets = github.Release.GetAllAssets(this.account, this.project, release.Id);
                         assets.Wait();
                         foreach (var m in from releaseAsset in assets.Result
                             select this.versionRegexp.Match(releaseAsset.Name)
