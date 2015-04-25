@@ -175,6 +175,7 @@ namespace logviewer.engine
             }
             else
             {
+                // Rule needs rewinding
                 this.compiledPattern = this.templates[node];
 
                 bool continueMatch;
