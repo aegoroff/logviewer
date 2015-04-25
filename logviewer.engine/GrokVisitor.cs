@@ -186,15 +186,15 @@ namespace logviewer.engine
                     {
                         var pp = new PassthroughPattern(k);
 
-                        var ruleNode = new BinaryTreeNode<Pattern>(pp);
-                        this.lastNode.Right = ruleNode;
-                        this.lastNode = ruleNode;
-
                         var link = pp.Content;
                         if (!this.compiledPattern.Contains(link))
                         {
                             continue;
                         }
+                        var ruleNode = new BinaryTreeNode<Pattern>(pp);
+                        this.lastNode.Right = ruleNode;
+                        this.lastNode = ruleNode;
+
                         this.compiledPattern = this.compiledPattern.Replace(link, this.templates[k]);
                         matchFound = true;
                     }
