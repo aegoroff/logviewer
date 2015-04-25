@@ -1,9 +1,12 @@
-﻿namespace logviewer.engine.Tree
+﻿using System.Diagnostics;
+
+namespace logviewer.engine.Tree
 {
     /// <summary>
     /// Represents generic tree node
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [DebuggerDisplay("{Value}")]
     public class Node<T>
     {
         

@@ -22,13 +22,13 @@ namespace logviewer.engine
         private string compiledPattern;
         private string property;
         private bool doNotWrapCurrentIntoNamedMatchGroup;
-        readonly BinaryTree<string> tree = new BinaryTree<string>();
-        private BinaryTreeNode<string> lastNode;
+        readonly BinaryTree<Pattern> tree = new BinaryTree<Pattern>();
+        private BinaryTreeNode<Pattern> lastNode;
 
 
         internal GrokVisitor()
         {
-            this.tree.Root = new BinaryTreeNode<string>(string.Empty);
+            this.tree.Root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
             this.lastNode = this.tree.Root;
             const string pattern = "*.patterns";
             var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
@@ -160,15 +160,18 @@ namespace logviewer.engine
         public override string VisitOnRule(GrokParser.OnRuleContext context)
         {
             var node = context.PATTERN().Symbol.Text;
-            
-            var ruleNode = new BinaryTreeNode<string>(node);
-            this.lastNode.Right = ruleNode;
-            this.lastNode = ruleNode;
 
             if (!this.templates.ContainsKey(node))
             {
                 this.compiledPattern = null;
-                this.composer.Add(new PassthroughPattern(node));
+                
+                var pattern = new PassthroughPattern(node);
+                
+                var ruleNode = new BinaryTreeNode<Pattern>(pattern);
+                this.lastNode.Left = ruleNode;
+                this.lastNode = ruleNode;
+
+                this.composer.Add(pattern);
             }
             else
             {
@@ -181,7 +184,13 @@ namespace logviewer.engine
                     matchFound = false;
                     foreach (var k in this.templates.Keys)
                     {
-                        var link = new PassthroughPattern(k).Content;
+                        var pp = new PassthroughPattern(k);
+
+                        var ruleNode = new BinaryTreeNode<Pattern>(pp);
+                        this.lastNode.Right = ruleNode;
+                        this.lastNode = ruleNode;
+
+                        var link = pp.Content;
                         if (!this.compiledPattern.Contains(link))
                         {
                             continue;
@@ -233,7 +242,13 @@ namespace logviewer.engine
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
                 {
-                    this.composer.Add(new Pattern(this.compiledPattern));
+                    var p = new Pattern(this.compiledPattern);
+                    var ruleNode = new BinaryTreeNode<Pattern>(p);
+                    this.lastNode.Right = ruleNode;
+                    this.lastNode = ruleNode;
+
+                    this.composer.Add(p);
+
                     if (this.RecompilationNeeded)
                     {
                         this.AddRecompileIndex();
@@ -255,7 +270,7 @@ namespace logviewer.engine
             var literal = new StringLiteral(context.GetText());
             this.composer.Add(literal);
 
-            var literalNode = new BinaryTreeNode<string>(literal.Content);
+            var literalNode = new BinaryTreeNode<Pattern>(literal);
             this.lastNode.Left = literalNode;
             this.lastNode = literalNode;
             return this.VisitChildren(context);

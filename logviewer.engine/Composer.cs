@@ -3,10 +3,12 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace logviewer.engine
 {
+    [DebuggerDisplay("{Content}")]
     internal class Composer : IPattern
     {
         private readonly List<IPattern> composition = new List<IPattern>();
