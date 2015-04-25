@@ -98,19 +98,9 @@ namespace logviewer.engine
                 throw new ArgumentException("Invalid pattern: " + grok, "grok");
             }
             var root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
-            var grokVisitor = new GrokVisitor(this.templates, root);
+            var grokVisitor = new GrokVisitor(this.templates, root, this.Compile);
             grokVisitor.Visit(tree);
-
             this.messageSchema.AddRange(grokVisitor.Schema);
-            if (!grokVisitor.RecompilationNeeded)
-            {
-                return grokVisitor.Template;
-            }
-            foreach (var ix in grokVisitor.RecompileIndexes)
-            {
-                var recompiled = this.Compile(grokVisitor.GetRecompile(ix));
-                grokVisitor.SetRecompiled(ix, recompiled);
-            }
             return grokVisitor.Template;
         }
 
