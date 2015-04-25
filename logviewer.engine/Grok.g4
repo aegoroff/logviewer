@@ -52,14 +52,11 @@ PATTERN
 
 SKIP : (QUOTED_STR | NOT_QUOTED_STR) {!inPattern}?;
 
-OPEN : START_TAG { InPattern(); };
-CLOSE : STOP_TAG { OutPattern(); OutSemantic(); };
+OPEN : '%{' { InPattern(); };
+CLOSE : '}' { OutPattern(); OutSemantic(); };
 
 
 fragment NOT_QUOTED_STR : (~[%])+  ;
-
-fragment START_TAG : '%{' ;
-fragment STOP_TAG : '}' ;
 
 QUOTED_STR : SHORT_STRING ;
 

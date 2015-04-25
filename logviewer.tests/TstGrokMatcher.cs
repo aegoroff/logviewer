@@ -80,6 +80,8 @@ namespace logviewer.tests
         [InlineData("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{POSINT}%%{POSINT}", "\\b(?:[1-9][0-9]*)\\b{POSINT}")]
+        [InlineData("%{POSINT}}%{POSINT}", "\\b(?:[1-9][0-9]*)\\b}\\b(?:[1-9][0-9]*)\\b")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern);
@@ -96,8 +98,6 @@ namespace logviewer.tests
         [InlineData("%{POSINT:1N}")]
         [InlineData("%{POSINT:1n}")]
         [InlineData("%{id}")]
-        [InlineData("%{POSINT}%%{POSINT}")]
-        [InlineData("%{POSINT}}%{POSINT}")]
         [InlineData("%{POSINT:num,small}")]
         [InlineData("%{INT:Id,'0'->LogLevel.T}")]
         [InlineData("%{INT:Id,'0'->LogLevel.None}")]
