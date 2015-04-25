@@ -46,11 +46,16 @@ target
 	: TYPE_NAME (DOT TYPE_MEMBER)*
 	;
 
+SKIP : (QUOTED_STR | NOT_QUOTED_STR) {!inPattern}?;
+
 PATTERN 
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | UNDERSCORE)* {!inSemantic}?
 	;
 
-SKIP : (QUOTED_STR | NOT_QUOTED_STR) {!inPattern}?;
+// MUST follow SKIP rule but not to be before it
+PROPERTY
+	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT | UNDERSCORE)* { InSemantic(); } {!inSemantic}?
+	;
 
 OPEN : '%{' { InPattern(); };
 CLOSE : '}' { OutPattern(); OutSemantic(); };
@@ -74,10 +79,6 @@ ARROW : '->' ;
 COLON : ':' ;
 
 fragment UNDERSCORE : '_' ;
-
-PROPERTY
-	: (LOWER_LETTER | UPPER_LETTER) (LOWER_LETTER | UPPER_LETTER | DIGIT | UNDERSCORE)* { InSemantic(); } {!inSemantic}?
-	;
 
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
