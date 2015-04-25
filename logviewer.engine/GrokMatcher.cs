@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
@@ -17,6 +18,7 @@ namespace logviewer.engine
     {
         private Regex regex;
         private readonly List<Semantic> messageSchema = new List<Semantic>();
+        private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
 
         /// <summary>
         /// Init new matcher
@@ -25,7 +27,41 @@ namespace logviewer.engine
         /// <param name="options">Result regexp options</param>
         public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
         {
+            this.CreateTemplates();
             this.CreateRegexp(grok, options);
+        }
+
+        private void CreateTemplates()
+        {
+            const string pattern = "*.patterns";
+            var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
+            if (patternFiles.Length == 0)
+            {
+                patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
+            }
+            foreach (var file in patternFiles)
+            {
+                this.AddTemplates(file);
+            }
+        }
+
+        private void AddTemplates(string fullPath)
+        {
+            var patterns = File.ReadAllLines(fullPath);
+            foreach (var pattern in patterns)
+            {
+                var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
+                if (parts.Length < 2)
+                {
+                    continue;
+                }
+                var template = parts[0];
+                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || this.templates.ContainsKey(template))
+                {
+                    continue;
+                }
+                this.templates.Add(template, pattern.Substring(template.Length).Trim());
+            }
         }
 
         private void CreateRegexp(string grok, RegexOptions options)
@@ -60,7 +96,7 @@ namespace logviewer.engine
             {
                 throw new ArgumentException("Invalid pattern: " + grok, "grok");
             }
-            var grokVisitor = new GrokVisitor();
+            var grokVisitor = new GrokVisitor(this.templates);
             grokVisitor.Visit(tree);
 
             this.messageSchema.AddRange(grokVisitor.Schema);

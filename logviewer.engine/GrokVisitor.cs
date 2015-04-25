@@ -2,9 +2,7 @@
 // Created at: 02.10.2014
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,7 +12,7 @@ namespace logviewer.engine
 {
     internal class GrokVisitor : GrokBaseVisitor<string>
     {
-        private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> templates;
         private readonly List<Semantic> schema = new List<Semantic>();
         private readonly Composer composer = new Composer();
         private readonly List<int> recompileIndexes = new List<int>();
@@ -26,39 +24,11 @@ namespace logviewer.engine
         private BinaryTreeNode<Pattern> lastNode;
 
 
-        internal GrokVisitor()
+        internal GrokVisitor(IDictionary<string, string> templates)
         {
+            this.templates = templates;
             this.tree.Root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
             this.lastNode = this.tree.Root;
-            const string pattern = "*.patterns";
-            var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
-            if (patternFiles.Length == 0)
-            {
-                patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
-            }
-            foreach (var file in patternFiles)
-            {
-                this.AddTemplates(file);
-            }
-        }
-
-        private void AddTemplates(string fullPath)
-        {
-            var patterns = File.ReadAllLines(fullPath);
-            foreach (var pattern in patterns)
-            {
-                var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
-                if (parts.Length < 2)
-                {
-                    continue;
-                }
-                var template = parts[0];
-                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || this.templates.ContainsKey(template))
-                {
-                    continue;
-                }
-                this.templates.Add(template, pattern.Substring(template.Length).Trim());
-            }
         }
 
         internal string Template
