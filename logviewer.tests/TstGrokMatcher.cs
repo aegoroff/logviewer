@@ -165,6 +165,7 @@ namespace logviewer.tests
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
             var matcher = new GrokMatcher(pattern);
+            var t = matcher.CreateTemplate();
             Assert.Equal(semanticCount, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
             Assert.NotEqual(pattern, matcher.Template);
