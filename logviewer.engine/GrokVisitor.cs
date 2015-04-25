@@ -152,7 +152,7 @@ namespace logviewer.engine
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnDefinition(GrokParser.OnDefinitionContext context)
+        public override string VisitOnRule(GrokParser.OnRuleContext context)
         {
             var node = context.PATTERN().Symbol.Text;
 

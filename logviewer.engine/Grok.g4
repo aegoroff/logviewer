@@ -27,7 +27,7 @@ grok
 	;
 
 definition
-	: PATTERN semantic?  # OnDefinition
+	: PATTERN semantic?  # OnRule
 	;
 
 semantic
