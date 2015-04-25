@@ -24,11 +24,16 @@ namespace logviewer.engine
         private BinaryTreeNode<Pattern> lastNode;
 
 
-        internal GrokVisitor(IDictionary<string, string> templates)
+        internal GrokVisitor(IDictionary<string, string> templates, BinaryTreeNode<Pattern> root)
         {
             this.templates = templates;
-            this.tree.Root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
-            this.lastNode = this.tree.Root;
+            this.tree.Root = root;
+            this.lastNode = root;
+        }
+
+        internal BinaryTree<Pattern> Tree
+        {
+            get { return tree; }
         }
 
         internal string Template
@@ -147,6 +152,7 @@ namespace logviewer.engine
             {
                 // Rule needs rewinding
                 this.compiledPattern = this.templates[node];
+                // TODO: Restart compilation for this.compiledPattern
 
                 bool continueMatch;
                 bool matchFound;

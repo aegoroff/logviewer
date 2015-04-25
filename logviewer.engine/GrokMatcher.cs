@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using logviewer.engine.Tree;
 
 namespace logviewer.engine
 {
@@ -96,7 +97,8 @@ namespace logviewer.engine
             {
                 throw new ArgumentException("Invalid pattern: " + grok, "grok");
             }
-            var grokVisitor = new GrokVisitor(this.templates);
+            var root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
+            var grokVisitor = new GrokVisitor(this.templates, root);
             grokVisitor.Visit(tree);
 
             this.messageSchema.AddRange(grokVisitor.Schema);
