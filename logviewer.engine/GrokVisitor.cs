@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using logviewer.engine.Tree;
 
 namespace logviewer.engine
 {
@@ -21,10 +22,14 @@ namespace logviewer.engine
         private string compiledPattern;
         private string property;
         private bool doNotWrapCurrentIntoNamedMatchGroup;
+        readonly BinaryTree<string> tree = new BinaryTree<string>();
+        private BinaryTreeNode<string> lastNode;
 
 
         internal GrokVisitor()
         {
+            this.tree.Root = new BinaryTreeNode<string>(string.Empty);
+            this.lastNode = this.tree.Root;
             const string pattern = "*.patterns";
             var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
             if (patternFiles.Length == 0)
@@ -155,6 +160,10 @@ namespace logviewer.engine
         public override string VisitOnRule(GrokParser.OnRuleContext context)
         {
             var node = context.PATTERN().Symbol.Text;
+            
+            var ruleNode = new BinaryTreeNode<string>(node);
+            this.lastNode.Right = ruleNode;
+            this.lastNode = ruleNode;
 
             if (!this.templates.ContainsKey(node))
             {
@@ -243,7 +252,12 @@ namespace logviewer.engine
 
         public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
-            this.composer.Add(new StringLiteral(context.GetText()));
+            var literal = new StringLiteral(context.GetText());
+            this.composer.Add(literal);
+
+            var literalNode = new BinaryTreeNode<string>(literal.Content);
+            this.lastNode.Left = literalNode;
+            this.lastNode = literalNode;
             return this.VisitChildren(context);
         }
     }
