@@ -156,6 +156,8 @@ namespace logviewer.tests
         [InlineData("%{SYSLOGFACILITY}", 2)]
         [InlineData("%{SYSLOGBASE}", 6)]
         [InlineData("%{NGINXACCESS}", 16)]
+        [InlineData("%{COMMONAPACHELOG_LEVELED}", 2)]
+        [InlineData("%{COMBINEDAPACHELOG_LEVELED}", 2)]
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
             var matcher = new GrokMatcher(pattern);
