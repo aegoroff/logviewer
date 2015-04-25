@@ -121,6 +121,14 @@ namespace logviewer.tests
         }
         
         [Fact]
+        public void RuleWithTemplateAlternatives()
+        {
+            const string template = "%{MAC}";
+            var matcher = new GrokMatcher(template);
+            Assert.NotEqual(template, matcher.Template);
+        }
+        
+        [Fact]
         public void NegativeMatch()
         {
             var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601 %{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
