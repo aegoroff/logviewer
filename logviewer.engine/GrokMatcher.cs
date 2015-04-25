@@ -20,6 +20,7 @@ namespace logviewer.engine
         private Regex regex;
         private readonly List<Semantic> messageSchema = new List<Semantic>();
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
+        readonly BinaryTree<Pattern> tree = new BinaryTree<Pattern>();
 
         /// <summary>
         /// Init new matcher
@@ -28,6 +29,7 @@ namespace logviewer.engine
         /// <param name="options">Result regexp options</param>
         public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
         {
+            this.tree.Root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
             this.CreateTemplates();
             this.CreateRegexp(grok, options);
         }
@@ -80,6 +82,13 @@ namespace logviewer.engine
             }
         }
 
+        public string CreateTemplate()
+        {
+            var composer = new Composer();
+            tree.InorderTraversal(node => composer.Add(node.Value));
+            return composer.Content;
+        }
+
         private string Compile(string grok)
         {
             ICharStream inputStream = new AntlrInputStream(grok);
@@ -97,8 +106,8 @@ namespace logviewer.engine
             {
                 throw new ArgumentException("Invalid pattern: " + grok, "grok");
             }
-            var root = new BinaryTreeNode<Pattern>(new StringLiteral(string.Empty));
-            var grokVisitor = new GrokVisitor(this.templates, root, this.Compile);
+
+            var grokVisitor = new GrokVisitor(this.templates, this.tree.Root, this.Compile);
             grokVisitor.Visit(tree);
             this.messageSchema.AddRange(grokVisitor.Schema);
             return grokVisitor.Template;

@@ -6,12 +6,20 @@ using System;
 using System.Linq;
 using logviewer.engine;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {
     public class TstGrokMatcher
     {
+        [Fact]
+        public void RuleWithTemplateAlternatives()
+        {
+            const string template = "%{MAC}";
+            var matcher = new GrokMatcher(template);
+            var fromtree = matcher.CreateTemplate();
+            Assert.NotEqual(template, matcher.Template);
+        }
+        
         [Theory]
         [InlineData("%{ID}")]
         [InlineData("%{ID}%{DAT}")]
@@ -25,6 +33,9 @@ namespace logviewer.tests
         [InlineData("%{ID}' %{DAT}")]
         [InlineData("%{ID} \"%{DAT}")]
         [InlineData("%{ID} '%{DAT}")]
+        [InlineData("(?:(?:[A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})")]
+        [InlineData("(?:(?:[A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})")]
+        [InlineData("(?:(?:[A-Fa-f0-9]{4}\\.){2}[A-Fa-f0-9]{4})")]
         public void PositiveCompileTestsNotChangingString(string pattern)
         {
             this.PositiveCompileTestsThatChangeString(pattern, pattern);
@@ -118,14 +129,6 @@ namespace logviewer.tests
         {
             var matcher = new GrokMatcher(pattern);
             Assert.True(matcher.Match(message));
-        }
-        
-        [Fact]
-        public void RuleWithTemplateAlternatives()
-        {
-            const string template = "%{MAC}";
-            var matcher = new GrokMatcher(template);
-            Assert.NotEqual(template, matcher.Template);
         }
         
         [Fact]
