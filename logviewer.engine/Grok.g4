@@ -50,8 +50,8 @@ PATTERN
 	: UPPER_LETTER (UPPER_LETTER | DIGIT | UNDERSCORE)* {!inSemantic}?
 	;
 
-OPEN : PERCENT OPEN_BRACE { InPattern(); };
-CLOSE : CLOSE_BRACE { OutPattern(); OutSemantic(); };
+OPEN : '%{' { InPattern(); };
+CLOSE : '}' { OutPattern(); OutSemantic(); };
 
 
 SKIP : (QUOTED_STR | NOT_QUOTED_STR) {!inPattern}?;
@@ -82,9 +82,6 @@ PROPERTY
 fragment UPPER_LETTER : 'A' .. 'Z' ;
 fragment LOWER_LETTER : 'a' .. 'z' ;
 fragment DIGIT : '0' .. '9' ;
-fragment PERCENT : '%' ;
-fragment OPEN_BRACE : '{' ;
-fragment CLOSE_BRACE : '}';
 
 /// shortstring     ::=  "'" shortstringitem* "'" | '"' shortstringitem* '"'
 /// shortstringitem ::=  shortstringchar | stringescapeseq
