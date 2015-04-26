@@ -6,7 +6,7 @@ namespace logviewer.server.Providers
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
-        private readonly string _publicClientId;
+        private readonly string publicClientId;
 
         public ApplicationOAuthProvider(string publicClientId)
         {
@@ -15,12 +15,12 @@ namespace logviewer.server.Providers
                 throw new ArgumentNullException("publicClientId");
             }
 
-            _publicClientId = publicClientId;
+            this.publicClientId = publicClientId;
         }
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == _publicClientId)
+            if (context.ClientId == this.publicClientId)
             {
                 Uri expectedRootUri = new Uri(context.Request.Uri, "/");
 

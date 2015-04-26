@@ -17,7 +17,7 @@ namespace logviewer.server.Controllers
     [Authorize]
     public class MeController : ApiController
     {
-        private ApplicationUserManager _userManager;
+        private ApplicationUserManager userManager;
 
         public MeController()
         {
@@ -32,11 +32,11 @@ namespace logviewer.server.Controllers
         {
             get
             {
-                return _userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return this.userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
             private set
             {
-                _userManager = value;
+                this.userManager = value;
             }
         }
 
