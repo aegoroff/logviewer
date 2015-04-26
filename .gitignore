@@ -23,3 +23,4 @@ logviewer.core/x64/
 .sonar
 *.psess
 *.vsp
+logviewer.server/bin/
