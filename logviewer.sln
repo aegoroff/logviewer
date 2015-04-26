@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B720ED
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logviewer.engine", "logviewer.engine\logviewer.engine.csproj", "{90E3A68D-C96D-4764-A1D0-F73D9F474BE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logviewer.server", "logviewer.server\logviewer.server.csproj", "{20AF4B41-F61F-4427-91F1-333824EDC103}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,16 @@ Global
 		{90E3A68D-C96D-4764-A1D0-F73D9F474BE4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{90E3A68D-C96D-4764-A1D0-F73D9F474BE4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{90E3A68D-C96D-4764-A1D0-F73D9F474BE4}.Release|x86.ActiveCfg = Release|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{20AF4B41-F61F-4427-91F1-333824EDC103}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
