@@ -312,12 +312,16 @@ namespace logviewer.core
 
         private string LevelClause(LogLevel min, LogLevel max)
         {
+            if (!this.hasLogLevelProperty)
+            {
+                return string.Empty;
+            }
             var clause = new List<string>();
-            if (min != LogLevel.Trace && this.hasLogLevelProperty)
+            if (min != LogLevel.Trace)
             {
                 clause.Add(this.logLevelProperty + " >= @Min");
             }
-            if (max != LogLevel.Fatal && this.hasLogLevelProperty)
+            if (max != LogLevel.Fatal)
             {
                 clause.Add(this.logLevelProperty + " <= @Max");
             }
@@ -326,12 +330,16 @@ namespace logviewer.core
 
         private string DateClause(DateTime start, DateTime finish)
         {
+            if (!this.hasDateTimeProperty)
+            {
+                return string.Empty;
+            }
             var clause = new List<string>();
-            if (start != DateTime.MinValue && this.hasDateTimeProperty)
+            if (start != DateTime.MinValue)
             {
                 clause.Add(this.dateTimeProperty + " >= @Start");
             }
-            if (finish != DateTime.MaxValue && this.hasDateTimeProperty)
+            if (finish != DateTime.MaxValue)
             {
                 clause.Add(this.dateTimeProperty + " <= @Finish");
             }
