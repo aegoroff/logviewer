@@ -55,7 +55,7 @@ namespace logviewer.engine
         {
             var pattern = context.QUOTED_STR().Symbol.Text.UnescapeString();
             var value = context.target().GetText();
-             this.schema.Last().CastingRules.Add(new Rule(value, pattern));
+            this.schema.Last().CastingRules.Add(new Rule(value, pattern));
             return this.VisitChildren(context);
         }
 
