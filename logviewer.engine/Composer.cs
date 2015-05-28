@@ -15,15 +15,5 @@ namespace logviewer.engine
         {
             get { return string.Join(string.Empty, this.Select(c => c.Content)); }
         }
-
-        internal string GetPattern(int ix)
-        {
-            return this[ix].Content;
-        }
-
-        internal void SetPattern(int ix, IPattern pattern)
-        {
-            this[ix] = pattern;
-        }
     }
 }
