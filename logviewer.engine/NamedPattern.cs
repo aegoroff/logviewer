@@ -2,7 +2,6 @@
 // Created at: 31.01.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Diagnostics;
 
 namespace logviewer.engine
