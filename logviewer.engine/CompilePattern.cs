@@ -21,10 +21,5 @@ namespace logviewer.engine
         {
             get { return this.callback(this.grok); }
         }
-
-        public void Add(IPattern pattern)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

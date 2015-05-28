@@ -24,10 +24,5 @@ namespace logviewer.engine
         {
             get { return string.Format(@"(?<{0}>{1})", this.Property, this.wrapped.Content); }
         }
-
-        public void Add(IPattern pattern)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
