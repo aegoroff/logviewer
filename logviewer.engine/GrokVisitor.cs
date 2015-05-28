@@ -33,11 +33,6 @@ namespace logviewer.engine
             get { return this.schema; }
         }
 
-        internal string GetRecompile(int ix)
-        {
-            return this.composer.GetPattern(ix);
-        }
-
         private void AddSemantic(Rule rule)
         {
             var s = new Semantic(this.property, rule);
