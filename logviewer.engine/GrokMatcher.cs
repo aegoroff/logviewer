@@ -99,8 +99,9 @@ namespace logviewer.engine
 
             var grokVisitor = new GrokVisitor(this.templates, this.Compile);
             grokVisitor.Visit(tree);
+            var result = grokVisitor.Template; // All nested templates compiled here
             this.messageSchema.AddRange(grokVisitor.Schema);
-            return grokVisitor.Template;
+            return result;
         }
 
         /// <summary>

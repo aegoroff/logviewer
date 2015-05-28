@@ -13,7 +13,7 @@ namespace logviewer.engine
         private readonly IDictionary<string, string> templates;
         private readonly List<Semantic> schema = new List<Semantic>();
         private readonly Composer composer = new Composer();
-        private string compiledPattern;
+        private IPattern compiledPattern;
         private string property;
         private readonly Func<string, string> compiler;
 
@@ -97,13 +97,12 @@ namespace logviewer.engine
             else
             {
                 // Rule needs rewinding
-                this.compiledPattern = this.compiler(this.templates[node]);
+                this.compiledPattern = new CompilePattern(this.templates[node], this.compiler);
 
                 // Semantic handlers do it later but without semantic it MUST BE done here
                 if (context.semantic() == null)
                 {
-                    var p = new Pattern(this.compiledPattern);
-                    this.composer.Add(p);
+                    this.composer.Add(this.compiledPattern);
                 }
             }
             return this.VisitChildren(context);
