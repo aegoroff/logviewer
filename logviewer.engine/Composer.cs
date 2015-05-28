@@ -9,33 +9,21 @@ using System.Linq;
 namespace logviewer.engine
 {
     [DebuggerDisplay("{Content}")]
-    internal class Composer : IPattern
+    internal class Composer : List<IPattern>, IPattern
     {
-        private readonly List<IPattern> composition = new List<IPattern>();
-
-        internal int Count
-        {
-            get { return this.composition.Count; }
-        }
-
         public string Content
         {
-            get { return string.Join(string.Empty, this.composition.Select(c => c.Content)); }
-        }
-
-        public void Add(IPattern pattern)
-        {
-            this.composition.Add(pattern);
+            get { return string.Join(string.Empty, this.Select(c => c.Content)); }
         }
 
         internal string GetPattern(int ix)
         {
-            return this.composition[ix].Content;
+            return this[ix].Content;
         }
 
         internal void SetPattern(int ix, IPattern pattern)
         {
-            this.composition[ix] = pattern;
+            this[ix] = pattern;
         }
     }
 }
