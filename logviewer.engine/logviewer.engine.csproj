@@ -14,7 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>f8f83baf</NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(SnkPath) != '' ">
+  <PropertyGroup Condition=" $(SnkPath) != '' AND Exists('$(SnkPath)')">
     <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
