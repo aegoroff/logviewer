@@ -61,12 +61,12 @@ namespace logviewer.install.mca
             }
         }
 
-        private static void RestoreConfig(Session session, string keptFile, RestoreConfigMethod restoreAction)
+        private static void RestoreConfig(Session session, string keptFile, Action<Session, XmlDocument, XmlDocument> restoreAction)
         {
             RestoreConfig(session, keptFile, tempToConfigMap[keptFile], restoreAction);
         }
-        
-        private static void RestoreConfig(Session session, string keptFile, string targetFile, RestoreConfigMethod restoreAction)
+
+        private static void RestoreConfig(Session session, string keptFile, string targetFile, Action<Session, XmlDocument, XmlDocument> restoreAction)
         {
             if (!File.Exists(keptFile))
             {
@@ -172,7 +172,5 @@ namespace logviewer.install.mca
                 session.Log("Node {0} set to {1}", node.Attributes[keyAttr].Value, node.Attributes[valueAttr].Value);
             }
         }
-
-        private delegate void RestoreConfigMethod(Session session, XmlDocument src, XmlDocument tgt);
     }
 }
