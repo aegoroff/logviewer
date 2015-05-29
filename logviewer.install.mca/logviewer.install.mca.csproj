@@ -70,6 +70,18 @@
   </Target>
   -->
   <Target Name="AfterBuild">
+	<PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')">
+      <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(SignCommand) != ''">
+      <TmpFile>tmp.bat</TmpFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(TmpFile)" Condition="$(SignCommand) != ''" Lines="$(SignCommand)" />
+    <Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(OutputPath)$(AssemblyName).dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
     <Exec Command="&quot;$(WixSdkPath)MakeSfxCA.exe&quot; &quot;$(TargetDir)logviewer.install.mca.pack.dll&quot; &quot;$(WixSdkX86Path)sfxca.dll&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)CustomAction.config&quot; &quot;$(TargetDir)Microsoft.Deployment.WindowsInstaller.dll&quot;" />
+	
+	<Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(TargetDir)logviewer.install.mca.pack.dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
+	
+	<Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
 </Project>
