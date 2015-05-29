@@ -17,7 +17,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>3f5a9613</NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(SnkPath) != '' ">
+  <PropertyGroup Condition=" $(SnkPath) != '' AND Exists('$(SnkPath)')">
     <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
