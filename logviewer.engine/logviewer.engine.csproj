@@ -101,7 +101,7 @@
   </Target>
   <Import Project="..\packages\Antlr4.4.3.0\build\Antlr4.targets" Condition="Exists('..\packages\Antlr4.4.3.0\build\Antlr4.targets')" />
   <Target Name="AfterBuild">
-    <PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''">
+    <PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')">
       <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
     </PropertyGroup>
     <PropertyGroup Condition="$(SignCommand) != ''">
