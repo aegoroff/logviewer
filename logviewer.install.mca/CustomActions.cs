@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 29.05.2015
+// © 2012-2015 Alexander Egorov
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
