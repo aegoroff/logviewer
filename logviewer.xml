@@ -17,7 +17,8 @@
 		<!-- Version components  -->
 		<Major>1</Major>
 		<Minor>0</Minor>
-		<Build>0</Build>
+		<Build Condition=" '$(BUILD_BUILDNUMBER)' == '' ">0</Build>
+		<Build Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</Build>
 		<Revision>0</Revision>
 	</PropertyGroup>
 	<!-- AssemblyInfo.cs file definitions where to set version -->
