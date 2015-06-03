@@ -12,6 +12,7 @@
 		
 		<!-- Enables updating version mechanism -->
 		<IsUpdateVersion>false</IsUpdateVersion>
+        <IsRunTests>true</IsRunTests>
 		
 		<!-- Version components  -->
 		<Major>1</Major>
@@ -82,7 +83,7 @@
 	</Target>
 
     <!-- Run unit tests task -->
-    <Target Name="UnitTesting" DependsOnTargets="Compile">
+    <Target Name="UnitTesting" DependsOnTargets="Compile" Condition=" '$(IsRunTests)'=='true' ">
         <!-- Managed tests -->
         <xunit 
              Assemblies="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll" 
