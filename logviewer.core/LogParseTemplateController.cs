@@ -46,10 +46,7 @@ namespace logviewer.core
 
         private void OnTemplateChangeSuccess()
         {
-            if (this.TemplateChangeSuccess != null)
-            {
-                this.TemplateChangeSuccess(this, new EventArgs());
-            }
+            this.TemplateChangeSuccess.Do(handler => handler(this, new EventArgs()));
         }
 
         private void UpdatePattern(string value, object control, Action<string> assignAction)
@@ -63,10 +60,7 @@ namespace logviewer.core
             if (new GrokMatcher(value).CompilationFailed)
             {
                 this.view.ShowInvalidTemplateError(Resources.InvalidTemplate, control);
-                if (this.TemplateChangeFailure != null)
-                {
-                    this.TemplateChangeFailure(this, new EventArgs());
-                }
+                this.TemplateChangeFailure.Do(handler => handler(this, new EventArgs()));
                 Task.Factory.StartNew(delegate
                 {
                     Thread.Sleep(millisecondsToShowTooltip);

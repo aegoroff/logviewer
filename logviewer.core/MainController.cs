@@ -372,11 +372,11 @@ namespace logviewer.core
                 {
                     this.currentPath = string.Empty;
                     this.logSize = 0;
-                    if (this.store != null)
+                    this.store.Do(logStore =>
                     {
-                        this.store.Dispose();
+                        logStore.Dispose();
                         this.store = null;
-                    }
+                    });
                 }
                 if (f.Length == this.logSize)
                 {
@@ -671,10 +671,7 @@ namespace logviewer.core
 
         private void OnSuccessRtfCreate(string rtf)
         {
-            if (this.ReadCompleted != null)
-            {
-                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf));
-            }
+            this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(rtf)));
         }
 
         public void ShowElapsedTime()
@@ -1067,10 +1064,7 @@ namespace logviewer.core
             }
             finally
             {
-                if (this.store != null)
-                {
-                    SafeRunner.Run(this.store.Dispose);
-                }
+                this.store.Do(logStore => SafeRunner.Run(logStore.Dispose));
                 this.kernel.Dispose();
             }
         }
