@@ -22,6 +22,7 @@ using Net.Sgoliver.NRtfTree.Util;
 using Ninject;
 using NLog;
 using NLog.Targets;
+using NLog.Windows.Forms;
 using LogLevel = logviewer.engine.LogLevel;
 
 
@@ -830,7 +831,8 @@ namespace logviewer.core
                 var current = settings.SelectedParsingTemplate;
                 foreach (var template in templates)
                 {
-                    this.RunOnGuiThread(() => this.view.CreateTemplateSelectionItem(template, current));
+                    var t = template;
+                    this.RunOnGuiThread(() => this.view.CreateTemplateSelectionItem(t, current));
                 }
             });
         }
