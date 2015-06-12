@@ -143,7 +143,7 @@ namespace logviewer.engine
                     {
                         break;
                     }
-                    if (this.filter.Return(m => m.Match(line), false))
+                    if (this.filter != null && this.filter.Match(line))
                     {
                         continue;
                     }
