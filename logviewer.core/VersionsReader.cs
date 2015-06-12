@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using logviewer.engine;
 using Octokit;
 
 namespace logviewer.core
@@ -66,10 +67,7 @@ namespace logviewer.core
             }
             finally
             {
-                if (this.ReadCompleted != null)
-                {
-                    this.ReadCompleted(this, new EventArgs());
-                }
+                this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
             }
         }
     }
