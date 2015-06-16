@@ -101,6 +101,7 @@ namespace logviewer.tests
         [InlineData("%{POSINT:1N}")]
         [InlineData("%{POSINT:1n}")]
         [InlineData("%{id}")]
+        [InlineData("%{WORD")]
         [InlineData("%{POSINT:num,small}")]
         [InlineData("%{INT:Id,'0'->LogLevel.T}")]
         [InlineData("%{INT:Id,'0'->LogLevel.None}")]

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Atn;
 
 namespace logviewer.engine
 {
@@ -100,6 +101,7 @@ namespace logviewer.engine
 #if DEBUG
             parser.Trace = true;
             parser.RemoveErrorListeners();
+            parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection;
             parser.AddErrorListener(new DiagnosticErrorListener());
             if (this.customErrorOutputMethod != null)
             {
