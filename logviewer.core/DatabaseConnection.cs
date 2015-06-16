@@ -150,7 +150,10 @@ namespace logviewer.core
             {
                 try
                 {
-                    actionBeforeExecute.Do(action => action(command));
+                    if (actionBeforeExecute != null)
+                    {
+                        actionBeforeExecute(command);
+                    }
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
