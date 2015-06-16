@@ -20,13 +20,17 @@ namespace logviewer.engine
         private readonly List<Semantic> messageSchema = new List<Semantic>();
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
 
+        private readonly Action<string> customErrorOutputMethod;
+
         /// <summary>
         /// Init new matcher
         /// </summary>
         /// <param name="grok">Template definition</param>
         /// <param name="options">Result regexp options</param>
-        public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
+        /// <param name="customErrorOutputMethod"></param>
+        public GrokMatcher(string grok, RegexOptions options = RegexOptions.None, Action<string> customErrorOutputMethod = null)
         {
+            this.customErrorOutputMethod = customErrorOutputMethod;
             this.CreateTemplates();
             this.CreateRegexp(grok, options);
         }
@@ -73,7 +77,14 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine(e.ToString());
+                if (this.customErrorOutputMethod != null)
+                {
+                    this.customErrorOutputMethod(e.ToString());
+                }
+                else
+                {
+                    System.Diagnostics.Trace.WriteLine(e.ToString());
+                }
                 this.CompilationFailed = true;
                 this.Template = grok;
             }
@@ -88,6 +99,12 @@ namespace logviewer.engine
             var tree = parser.parse();
 #if DEBUG
             parser.Trace = true;
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new DiagnosticErrorListener());
+            if (this.customErrorOutputMethod != null)
+            {
+                parser.AddErrorListener(new CustomErrorListener(this.customErrorOutputMethod));
+            }
 #endif
 
             this.CompilationFailed = parser.NumberOfSyntaxErrors > 0;
@@ -145,6 +162,23 @@ namespace logviewer.engine
             }
             var match = this.regex.Match(s);
             return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
+        }
+    }
+
+    internal class CustomErrorListener : IAntlrErrorListener<IToken>
+    {
+        private readonly Action<string> outputMethod;
+
+        internal CustomErrorListener(Action<string> outputMethod)
+        {
+            this.outputMethod = outputMethod;
+        }
+
+        public static readonly ConsoleErrorListener<IToken> Instance = new ConsoleErrorListener<IToken>();
+
+        public virtual void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        {
+            this.outputMethod("line " + line + ":" + charPositionInLine + " " + msg);
         }
     }
 }
