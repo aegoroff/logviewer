@@ -61,10 +61,10 @@ OPEN : '%{' { InPattern(); };
 CLOSE : '}' { OutPattern(); OutSemantic(); };
 
 
-QUOTED_STR : SHORT_STRING ;
+QUOTED_STR : SHORT_STR ;
 
 TYPE_NAME
-	: (INT | INT32 | INT64 | LONG | LOG_LEVEL | DATE_TIME | STRING_TYPE | STRING_ALT_TYPE) {inSemantic}?
+	: (INT | INT32 | INT64 | LONG | LOG_LEVEL | DATE_TIME | STRING_TYPE) {inSemantic}?
 	;
 
 TYPE_MEMBER
@@ -88,8 +88,7 @@ fragment INT64 : 'Int64' ;
 fragment LONG : 'long' ;
 fragment DATE_TIME : 'DateTime' ;
 fragment LOG_LEVEL : 'LogLevel' ;
-fragment STRING_TYPE : 'string' ;
-fragment STRING_ALT_TYPE : 'String' ;
+fragment STRING_TYPE : [Ss] 'tring' ;
 
 fragment LEVEL_TRACE : 'Trace' ;
 fragment LEVEL_DEBUG : 'Debug' ;
@@ -101,12 +100,12 @@ fragment LEVEL_FATAL : 'Fatal' ;
 /// shortstring     ::=  "'" shortstringitem* "'" | '"' shortstringitem* '"'
 /// shortstringitem ::=  shortstringchar | stringescapeseq
 /// shortstringchar ::=  <any source character except "\" or newline or the quote>
-fragment SHORT_STRING
- : '\'' ( STRING_ESCAPE_SEQ | ~[\\\r\n'] )* '\''
- | '"' ( STRING_ESCAPE_SEQ | ~[\\\r\n"] )* '"'
+fragment SHORT_STR
+ : '\'' ( STR_ESCAPE_SEQ | ~[\\\r\n'] )* '\''
+ | '"' ( STR_ESCAPE_SEQ | ~[\\\r\n"] )* '"'
  ;
 
 /// stringescapeseq ::=  "\" <any source character>
-fragment STRING_ESCAPE_SEQ : '\\' . ;
+fragment STR_ESCAPE_SEQ : '\\' . ;
 
 fragment NOT_QUOTED_STR : (~[%])+  ;

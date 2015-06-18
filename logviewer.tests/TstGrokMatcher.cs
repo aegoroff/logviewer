@@ -85,6 +85,8 @@ namespace logviewer.tests
         [InlineData("%{URIPATH}", @"(?:/[A-Za-z0-9$.+!*'(){},~:;=@#%_\-]*)+")]
         [InlineData("%{NGUSERNAME}", @"[a-zA-Z\.\@\-\+_%]+")]
         [InlineData("%{URIPARAM}", @"\?[A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\-\[\]]*")]
+        [InlineData("%{WORD:word,String}", @"(?<word>\b\w+\b)")]
+        [InlineData("%{WORD:word,string}", @"(?<word>\b\w+\b)")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
