@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 20.11.2014
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,6 @@ using System.Text;
 using logviewer.engine;
 using NMock;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {
@@ -47,7 +46,7 @@ namespace logviewer.tests
             this.stream.Dispose();
         }
 
-        [Theory, PropertyData("ValidStreams")]
+        [Theory, MemberData("ValidStreams")]
         public void LogFromStream(string data)
         {
             this.CreateStream(data);

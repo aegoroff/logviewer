@@ -1,6 +1,6 @@
 // Created by: egr
 // Created at: 19.09.2012
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Collections.Concurrent;
@@ -22,6 +22,7 @@ using Net.Sgoliver.NRtfTree.Util;
 using Ninject;
 using NLog;
 using NLog.Targets;
+using NLog.Windows.Forms;
 using LogLevel = logviewer.engine.LogLevel;
 
 
@@ -57,6 +58,8 @@ namespace logviewer.core
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
         private const int KeepLastFilters = 20;
         private const int CheckUpdatesEveryDays = 7;
+        private DateTime minDate = DateTime.MinValue;
+        private DateTime maxDate = DateTime.MaxValue;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -370,11 +373,11 @@ namespace logviewer.core
                 {
                     this.currentPath = string.Empty;
                     this.logSize = 0;
-                    if (this.store != null)
+                    this.store.Do(logStore =>
                     {
-                        this.store.Dispose();
+                        logStore.Dispose();
                         this.store = null;
-                    }
+                    });
                 }
                 if (f.Length == this.logSize)
                 {
@@ -669,10 +672,7 @@ namespace logviewer.core
 
         private void OnSuccessRtfCreate(string rtf)
         {
-            if (this.ReadCompleted != null)
-            {
-                this.ReadCompleted(this, new LogReadCompletedEventArgs(rtf));
-            }
+            this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(rtf)));
         }
 
         public void ShowElapsedTime()
@@ -746,6 +746,16 @@ namespace logviewer.core
         public void MaxFilter(int value)
         {
             this.maxFilter = (LogLevel)value;
+        }
+        
+        public void MinDate(DateTime value)
+        {
+            this.minDate = value;
+        }
+
+        public void MaxDate(DateTime value)
+        {
+            this.maxDate = value;
         }
 
         public void TextFilter(string value)
@@ -821,7 +831,8 @@ namespace logviewer.core
                 var current = settings.SelectedParsingTemplate;
                 foreach (var template in templates)
                 {
-                    this.RunOnGuiThread(() => this.view.CreateTemplateSelectionItem(template, current));
+                    var t = template;
+                    this.RunOnGuiThread(() => this.view.CreateTemplateSelectionItem(t, current));
                 }
             });
         }
@@ -958,7 +969,7 @@ namespace logviewer.core
                 return doc.Rtf;
             }
 
-            this.totalFiltered = this.store.CountMessages(this.minFilter, this.maxFilter, this.textFilter,
+            this.totalFiltered = this.store.CountMessages(this.minDate, this.maxDate, this.minFilter, this.maxFilter, this.textFilter,
                 this.useRegexp);
 
             if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
@@ -989,6 +1000,8 @@ namespace logviewer.core
                 this.pageSize,
                 onRead,
                 () => this.NotCancelled,
+                this.minDate,
+                this.maxDate,
                 start,
                 this.reverseChronological,
                 this.minFilter,
@@ -1053,10 +1066,7 @@ namespace logviewer.core
             }
             finally
             {
-                if (this.store != null)
-                {
-                    SafeRunner.Run(this.store.Dispose);
-                }
+                this.store.Do(logStore => SafeRunner.Run(logStore.Dispose));
                 this.kernel.Dispose();
             }
         }

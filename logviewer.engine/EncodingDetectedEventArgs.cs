@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 01.10.2013
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Text;
@@ -32,7 +32,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return this.encoding == null ? string.Empty : this.encoding.EncodingName;
+            return this.encoding.Return(enc => enc.EncodingName, string.Empty);
         }
     }
 }

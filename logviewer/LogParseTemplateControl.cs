@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 14.09.2013
+// © 2012-2015 Alexander Egorov
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using logviewer.core;

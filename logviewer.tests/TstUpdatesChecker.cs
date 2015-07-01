@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 29.03.2014
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using logviewer.core;
 using NMock;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {
@@ -44,7 +43,7 @@ namespace logviewer.tests
         private static readonly Version v1 = new Version(1, 2, 104, 0);
         private static readonly Version v2 = new Version(1, 0);
 
-        [Theory, PropertyData("Versions")]
+        [Theory, MemberData("Versions")]
         public void EqualLess(Version[] versions)
         {
             this.Invoke(versions);
@@ -61,7 +60,7 @@ namespace logviewer.tests
             Assert.Equal(v, this.checker.LatestVersion);
         }
 
-        [Theory, PropertyData("Versions")]
+        [Theory, MemberData("Versions")]
         public void Less(Version[] versions)
         {
             this.Invoke(versions);

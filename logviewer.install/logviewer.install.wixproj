@@ -44,7 +44,7 @@
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe"/>
       <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
     </ItemGroup>
-	<PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != ''" >
+	<PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')" >
 	  <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
 	</PropertyGroup> 
 	<PropertyGroup Condition="$(SignCommand) != ''" >

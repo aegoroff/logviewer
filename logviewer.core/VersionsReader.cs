@@ -1,10 +1,11 @@
 ﻿// Created by: egr
 // Created at: 29.03.2014
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using logviewer.engine;
 using Octokit;
 
 namespace logviewer.core
@@ -41,7 +42,7 @@ namespace logviewer.core
                 {
                     try
                     {
-                        var assets = github.Release.GetAssets(this.account, this.project, release.Id);
+                        var assets = github.Release.GetAllAssets(this.account, this.project, release.Id);
                         assets.Wait();
                         foreach (var m in from releaseAsset in assets.Result
                             select this.versionRegexp.Match(releaseAsset.Name)
@@ -66,10 +67,7 @@ namespace logviewer.core
             }
             finally
             {
-                if (this.ReadCompleted != null)
-                {
-                    this.ReadCompleted(this, new EventArgs());
-                }
+                this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
             }
         }
     }

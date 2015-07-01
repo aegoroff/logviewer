@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 14.09.2013
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.ComponentModel;
@@ -88,20 +88,14 @@ namespace logviewer.engine
                 }
                 else
                 {
-                    if (this.EncodingDetectionStarted != null)
-                    {
-                        this.EncodingDetectionStarted(this, new EventArgs());
-                    }
+                    this.EncodingDetectionStarted.Do(handler => handler(this, new EventArgs()));
 
                     using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                     {
                         srcEncoding = this.detector.Detect(s);
                     }
                 }
-                if (this.EncodingDetectionFinished != null)
-                {
-                    this.EncodingDetectionFinished(this, new EncodingDetectedEventArgs(srcEncoding));
-                }
+                this.EncodingDetectionFinished.Do(handler => handler(this, new EncodingDetectedEventArgs(srcEncoding)));
 
                 using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
@@ -157,10 +151,7 @@ namespace logviewer.engine
                     // Occured on first row
                     if (!compiled)
                     {
-                        if (this.CompilationStarted != null)
-                        {
-                            this.CompilationStarted(this, new EventArgs());
-                        }
+                        this.CompilationStarted.Do(handler => handler(this, new EventArgs()));
                     }
 
                     var properties = this.matcher.Parse(line);
@@ -168,10 +159,7 @@ namespace logviewer.engine
                     // Occured only after first row
                     if (!compiled)
                     {
-                        if (this.CompilationFinished != null)
-                        {
-                            this.CompilationFinished(this, new EventArgs());
-                        }
+                        this.CompilationFinished.Do(handler => handler(this, new EventArgs()));
                     }
 
                     compiled = true;

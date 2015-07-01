@@ -1,8 +1,9 @@
 ﻿// Created by: egr
 // Created at: 19.09.2012
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,10 @@ using Net.Sgoliver.NRtfTree.Util;
 using NMock;
 using NMock.Matchers;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {
+    [Collection("SerialTests")]
     public class TstMainController : IDisposable
     {
         private const string f1 = "1";
@@ -173,6 +174,58 @@ namespace logviewer.tests
             this.controller.StartReadLog();
             this.WaitReadingComplete();
             Assert.Equal(c, this.controller.MessagesCount);
+        }
+
+        [Theory, MemberData("MaxDates")]
+        public void MaxDate(DateTime filter, int c)
+        {
+            File.WriteAllText(TestPath, MessageExamples);
+
+            this.ReadLogExpectations();
+
+            this.controller.MaxDate(filter);
+            this.controller.StartReadLog();
+            this.WaitReadingComplete();
+            Assert.Equal(c, this.controller.MessagesCount);
+        }
+
+        [Theory, MemberData("MinDates")]
+        public void MinDate(DateTime filter, int c)
+        {
+            File.WriteAllText(TestPath, MessageExamples);
+
+            this.ReadLogExpectations();
+
+            this.controller.MinDate(filter);
+            this.controller.StartReadLog();
+            this.WaitReadingComplete();
+            Assert.Equal(c, this.controller.MessagesCount);
+        }
+
+        public static IEnumerable<object[]> MaxDates
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
+                    new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 2 },
+                    new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 0 }
+                };
+            }
+        }
+        
+        public static IEnumerable<object[]> MinDates
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
+                    new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 0 },
+                    new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 2 }
+                };
+            }
         }
 
         private bool completed;

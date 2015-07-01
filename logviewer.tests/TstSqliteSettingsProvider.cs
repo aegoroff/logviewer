@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 11.01.2014
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.IO;
@@ -10,6 +10,7 @@ using Xunit;
 
 namespace logviewer.tests
 {
+    [Collection("SerialTests")]
     public class TstSqliteSettingsProvider : IDisposable
     {
         public TstSqliteSettingsProvider()

@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 03.10.2014
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -98,7 +98,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return this.property != null ? this.property.GetHashCode() : 0;
+            return this.property.Return(s => s.GetHashCode(), 0);
         }
 
         /// <summary>

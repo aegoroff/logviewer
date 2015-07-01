@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 14.09.2013
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System;
 using System.Diagnostics;
@@ -102,10 +102,7 @@ namespace logviewer
                     g.FillRectangle(pen.Brush, rect);
                 }
             }
-            if (button.Image != null)
-            {
-                button.Image.Dispose();
-            }
+            button.Image.Do(image => image.Dispose());
             button.Image = img;
         }
 

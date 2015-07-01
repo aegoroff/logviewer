@@ -1,12 +1,11 @@
 ﻿// Created by: egr
 // Created at: 24.10.2012
-// © 2012-2014 Alexander Egorov
+// © 2012-2015 Alexander Egorov
 
 using System.Text.RegularExpressions;
 using logviewer.core;
 using logviewer.engine;
 using Xunit;
-using Xunit.Extensions;
 
 namespace logviewer.tests
 {

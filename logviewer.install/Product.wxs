@@ -26,6 +26,12 @@
 
         <util:CloseApplication Id="CloseLogviewer" CloseMessage="yes" Target="logviewer.exe" RebootPrompt="no" />
 
+        <Binary Id="logviewer.install.mca.Pack.dll"
+                SourceFile="..\logviewer.install.mca\bin\$(var.CONFIGURATION)\logviewer.install.mca.pack.dll" />
+
+        <CustomAction Id="KeepConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll" DllEntry="KeepConfigurationFiles" Execute="deferred" Impersonate="no"/>
+        <CustomAction Id="RestoreConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll" DllEntry="RestoreConfigurationFiles" Execute="deferred" Impersonate="no"/>
+
         <Feature Id="ProductFeature" Title="logviewer.install" Level="1">
 			<ComponentRef Id="logviewer.bin" />
 			<ComponentRef Id="logviewer.bin.x86" />
@@ -36,6 +42,8 @@
 
         <InstallExecuteSequence>
             <Custom Before="InstallInitialize" Action="WixCloseApplications">WIX_UPGRADE_DETECTED</Custom>
+            <Custom Action="KeepConfigurationFiles" Before="RemoveFiles">Installed</Custom>
+            <Custom Action="RestoreConfigurationFiles" Before="StartServices">Not Installed AND WIX_UPGRADE_DETECTED</Custom>
         </InstallExecuteSequence>
     
         <UIRef Id="WixUI_Minimal"/>
@@ -104,6 +112,11 @@
 								Id="NLog.dll"
 								Name="NLog.dll"
 								Source="$(var.SourcePath)\NLog.dll"
+								DiskId="1"/>
+                            <File
+								Id="NLog.Windows.Forms.dll"
+								Name="NLog.Windows.Forms.dll"
+								Source="$(var.SourcePath)\NLog.Windows.Forms.dll"
 								DiskId="1"/>
                             <File
 								Id="Octokit.dll"

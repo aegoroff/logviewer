@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\wix.ca.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\wix.ca.targets</WixTargetsPath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{405827CB-84E1-46F3-82C9-D889892645AC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>logviewer.install.mca</RootNamespace>
+    <AssemblyName>logviewer.install.mca</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SnkPath) != '' AND Exists('$(SnkPath)')">
+    <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <ItemGroup>
+    <Reference Include="Microsoft.Deployment.WindowsInstaller">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(WixToolPath)Microsoft.Deployment.WindowsInstaller.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CustomActions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CustomAction.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild">
+	<PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')">
+      <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(SignCommand) != ''">
+      <TmpFile>tmp.bat</TmpFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(TmpFile)" Condition="$(SignCommand) != ''" Lines="$(SignCommand)" />
+    <Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(OutputPath)$(AssemblyName).dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
+    <Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(OutputPath)Microsoft.Deployment.WindowsInstaller.dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
+    
+	<Exec Command="&quot;$(WixSdkPath)MakeSfxCA.exe&quot; &quot;$(TargetDir)logviewer.install.mca.pack.dll&quot; &quot;$(WixSdkX86Path)sfxca.dll&quot; &quot;$(TargetPath)&quot; &quot;$(ProjectDir)CustomAction.config&quot; &quot;$(TargetDir)Microsoft.Deployment.WindowsInstaller.dll&quot;" />
+	
+	<Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(TargetDir)logviewer.install.mca.pack.dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
+	
+	<Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
+  </Target>
+</Project>
