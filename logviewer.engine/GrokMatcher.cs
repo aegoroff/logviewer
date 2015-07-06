@@ -96,7 +96,7 @@ namespace logviewer.engine
             ICharStream inputStream = new AntlrInputStream(grok);
             var lexer = new GrokLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
-            var parser = new GrokParser(tokenStream);
+            var parser = new engine.GrokParser(tokenStream);
             var tree = parser.parse();
 #if DEBUG
             parser.Trace = true;
