@@ -3,7 +3,7 @@
 // Grok templating syntax
 // © 2012-2015 Alexander Egorov
 
-grammar Grok;
+grammar GrokLL;
 
 @lexer::members {
 	public bool inPattern;

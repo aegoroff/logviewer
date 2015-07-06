@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace logviewer.engine
 {
-    internal class GrokVisitor : GrokBaseVisitor<string>
+    internal class GrokVisitor : GrokLLBaseVisitor<string>
     {
         private readonly IDictionary<string, string> templates;
         private readonly List<Semantic> schema = new List<Semantic>();
@@ -46,7 +46,7 @@ namespace logviewer.engine
             this.composer.Add(p);
         }
 
-        public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
+        public override string VisitOnCastingCustomRule(GrokLLParser.OnCastingCustomRuleContext context)
         {
             var pattern = context.QUOTED_STR().Symbol.Text.UnescapeString();
             var value = context.target().GetText();
@@ -54,7 +54,7 @@ namespace logviewer.engine
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnCasting(GrokParser.OnCastingContext context)
+        public override string VisitOnCasting(GrokLLParser.OnCastingContext context)
         {
             if (context.TYPE_NAME() == null)
             {
@@ -68,7 +68,7 @@ namespace logviewer.engine
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnSemantic(GrokParser.OnSemanticContext context)
+        public override string VisitOnSemantic(GrokLLParser.OnSemanticContext context)
         {
             if (this.compiledPattern == null)
             {
@@ -83,7 +83,7 @@ namespace logviewer.engine
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnRule(GrokParser.OnRuleContext context)
+        public override string VisitOnRule(GrokLLParser.OnRuleContext context)
         {
             var node = context.PATTERN().Symbol.Text;
 
@@ -108,7 +108,7 @@ namespace logviewer.engine
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
+        public override string VisitOnLiteral(GrokLLParser.OnLiteralContext context)
         {
             var literal = new StringLiteral(context.GetText());
             this.composer.Add(literal);
