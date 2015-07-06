@@ -30,30 +30,31 @@
 %%
 
 
-parse  : { Console.WriteLine("Start parse"); }  groks literal
+parse  : { customErrorOutputMethod("Start parse"); }  groks
        ;
-
-literal 
-    :
-    | SKIP { Console.WriteLine("- Literal: {0}", $1); } // TODO: OnLiteral
-    ;
 
 groks 
     : literal grok
     | literal grok groks
+    | literal
     ;
 
 grok
 	: OPEN definition CLOSE
 	;
 
+literal 
+    : 
+    | SKIP { customErrorOutputMethod(string.Format("- Literal: {0}", $1)); } // TODO: OnLiteral
+    ;
+
 definition
-	: { Console.WriteLine("start definition"); } PATTERN semantic  { Console.WriteLine("- Pattern: {0}", $1); } // TODO: OnRule
+	: PATTERN semantic  { customErrorOutputMethod(string.Format("- Pattern: {0}", $1)); } // TODO: OnRule
 	;
 
 semantic
 	: 
-    | COLON PROPERTY casting { Console.WriteLine("-- Property: {0}", $2); } // TODO: OnSemantic
+    | COLON PROPERTY casting { customErrorOutputMethod(string.Format("-- Property: {0}", $2)); } // TODO: OnSemantic
 	;
 
 casting
@@ -62,7 +63,7 @@ casting
 	;
     
 type_cast
-	: TYPE_NAME { Console.WriteLine("--- Parser: {0}", $1); }
+	: TYPE_NAME { customErrorOutputMethod(string.Format("--- Parser: {0}", $1)); }
 	;
     
 casting_list
@@ -89,7 +90,7 @@ members
 	;
     
 member
-	: DOT TYPE_MEMBER { Console.WriteLine("-- Type member: {0}", $2); }
+	: DOT TYPE_MEMBER { customErrorOutputMethod(string.Format("-- Type member: {0}", $2)); }
 	;
 
 %%

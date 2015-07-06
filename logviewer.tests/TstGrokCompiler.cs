@@ -23,6 +23,8 @@ namespace logviewer.tests
         [InlineData("%{ID} %{DAT}")]
         [InlineData("%{ID},%{DAT}")]
         [InlineData("%{ID}str%{DAT}")]
+        [InlineData("%{ID}str%{DAT}str")]
+        [InlineData("str%{ID}str%{DAT}")]
         [InlineData("str%{ID}str%{DAT}str")]
         [InlineData("%{ID}\"%{DAT}")]
         [InlineData("%{ID}'%{DAT}")]
