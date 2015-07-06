@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace logviewer.engine.grammar
 {
@@ -10,15 +8,16 @@ namespace logviewer.engine.grammar
 
         internal Action<string> CustomErrorOutputMethod
         {
-            get { return customErrorOutputMethod; }
-            set { customErrorOutputMethod = value; }
+            get { return this.customErrorOutputMethod; }
+            set { this.customErrorOutputMethod = value; }
         }
 
         public override void yyerror(string format, params object[] args)
-		{
-			base.yyerror(format, args);
-            this.CustomErrorOutputMethod(string.Format(format, args));
-            CustomErrorOutputMethod(string.Empty);
-		}
+        {
+            base.yyerror(format, args);
+            var message = string.Format(format, args);
+            this.CustomErrorOutputMethod(message);
+            this.CustomErrorOutputMethod(string.Empty);
+        }
     }
 }

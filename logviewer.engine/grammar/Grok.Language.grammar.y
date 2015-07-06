@@ -30,22 +30,25 @@
 %%
 
 
-parse  : { customErrorOutputMethod("Start parse"); }  groks
+parse  : { customErrorOutputMethod("Start parse"); }  opt_groks
        ;
 
+opt_groks :
+    | groks
+    ;
+
 groks 
-    : literal grok
-    | literal grok groks
-    | literal
+    : grok
+    | grok groks
     ;
 
 grok
 	: OPEN definition CLOSE
+	| literal
 	;
 
 literal 
-    : 
-    | SKIP { customErrorOutputMethod(string.Format("- Literal: {0}", $1)); } // TODO: OnLiteral
+    : SKIP { customErrorOutputMethod(string.Format("- Literal: {0}", $1)); } // TODO: OnLiteral
     ;
 
 definition
