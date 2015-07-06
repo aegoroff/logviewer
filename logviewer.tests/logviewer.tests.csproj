@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TstGrokCompiler.cs" />
     <Compile Include="TstGrokMatcher.cs" />
     <Compile Include="TstLogReader.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />

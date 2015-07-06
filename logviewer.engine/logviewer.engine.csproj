@@ -63,6 +63,7 @@
     <Compile Include="FileSize.cs" />
     <Compile Include="grammar\GplexBuffers.cs" />
     <Compile Include="grammar\ShiftReduceParserCode.cs" />
+    <Compile Include="GrokCompiler.cs" />
     <Compile Include="GrokMatcher.cs" />
     <Compile Include="GrokVisitor.cs" />
     <Compile Include="ICharsetDetector.cs" />
