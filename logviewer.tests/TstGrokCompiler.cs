@@ -64,6 +64,7 @@ namespace logviewer.tests
         [Theory]
         [InlineData("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}")]
         [InlineData("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}")]
+        [InlineData("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head,String}")]
         public void ParseRealMessage(string pattern)
         {
             GrokCompiler compiler = new GrokCompiler(this.output.WriteLine);
