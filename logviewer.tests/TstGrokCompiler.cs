@@ -60,5 +60,14 @@ namespace logviewer.tests
             GrokCompiler compiler = new GrokCompiler(this.output.WriteLine);
             compiler.Compile(pattern);
         }
+
+        [Theory]
+        [InlineData("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}")]
+        [InlineData("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}")]
+        public void ParseRealMessage(string pattern)
+        {
+            GrokCompiler compiler = new GrokCompiler(this.output.WriteLine);
+            compiler.Compile(pattern);
+        }
     }
 }

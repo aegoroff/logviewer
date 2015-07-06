@@ -57,7 +57,12 @@ definition
 
 semantic
 	: 
-    | COLON PROPERTY casting { customErrorOutputMethod(string.Format("-- Property: {0}", $2)); } // TODO: OnSemantic
+    | property_ref 
+    | property_ref casting
+	;
+    
+property_ref
+	: COLON PROPERTY { customErrorOutputMethod(string.Format("-- Property: {0}", $2)); } // TODO: OnSemantic
 	;
 
 casting
