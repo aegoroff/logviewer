@@ -38,5 +38,25 @@ namespace logviewer.tests
             GrokCompiler compiler = new GrokCompiler(this.output.WriteLine);
             compiler.Compile(pattern);
         }
+
+        [Theory]
+        [InlineData("%{POSINT:num,int,int}")]
+        [InlineData("%{POSINT:num,int_number}")]
+        [InlineData("%{POSINT:_num}")]
+        [InlineData("%{POSINT:num1,num1}")]
+        [InlineData("%{POSINT:N1}")]
+        [InlineData("%{POSINT:1N}")]
+        [InlineData("%{POSINT:1n}")]
+        [InlineData("%{id}")]
+        [InlineData("%{WORD")]
+        [InlineData("%{POSINT:num,small}")]
+        [InlineData("%{INT:Id,'0'->LogLevel.T}")]
+        [InlineData("%{INT:Id,'0'->LogLevel.None}")]
+        [InlineData("%{ID:Id,'0'->LogLevel.Trace}")]
+        public void NegativeCompileTests(string pattern)
+        {
+            GrokCompiler compiler = new GrokCompiler(this.output.WriteLine);
+            compiler.Compile(pattern);
+        }
     }
 }
