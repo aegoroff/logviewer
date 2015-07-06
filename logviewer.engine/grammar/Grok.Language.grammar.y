@@ -8,6 +8,7 @@
 			public string Pattern;
 			public string Property;
 			public string Literal;
+			public string CastLValue;
 			public ParserType Parser;
 			public LogLevel TypeMember;
 	   }
@@ -22,10 +23,19 @@
 %token CLOSE
 %token <Literal> SKIP
 %token <Pattern> PATTERN
-%token L_CAST
+%token <CastLValue> L_CAST
 %token <Parser> TYPE_NAME
 %token <TypeMember> TYPE_MEMBER
 %token <Property> PROPERTY
+
+%{
+    private readonly Composer composer = new Composer();
+    private readonly IDictionary<string, string> templates;
+    private readonly List<Semantic> schema = new List<Semantic>();
+    private IPattern compiledPattern;
+    private string property;
+%}
+
 
 %%
 
@@ -48,11 +58,14 @@ grok
 	;
 
 literal 
-    : SKIP { customErrorOutputMethod(string.Format("- Literal: {0}", $1)); } // TODO: OnLiteral
+    : SKIP { 
+        var literal = new StringLiteral($1);
+        this.composer.Add(literal);
+     } 
     ;
 
 definition
-	: PATTERN semantic  { customErrorOutputMethod(string.Format("- Pattern: {0}", $1)); } // TODO: OnRule
+	: PATTERN semantic  { OnRule($1); }
 	;
 
 semantic
@@ -62,7 +75,7 @@ semantic
 	;
     
 property_ref
-	: COLON PROPERTY { customErrorOutputMethod(string.Format("-- Property: {0}", $2)); } // TODO: OnSemantic
+	: COLON PROPERTY { OnSemantic($2); }
 	;
 
 casting
@@ -80,11 +93,11 @@ casting_list
 	;
 
 cast
-	: L_CAST ARROW target {} // TODO: OnCastingCustomRule
+	: L_CAST ARROW target { OnCastingCustomRule($1, $3.Parser); }
 	;
 
 target
-	: TYPE_NAME opt_members
+	: TYPE_NAME opt_members { $$.Parser = $1; }
 	;
     
 opt_members
