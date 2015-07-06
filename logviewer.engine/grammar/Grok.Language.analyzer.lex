@@ -1,4 +1,4 @@
-%namespace logviewer.engine
+%namespace logviewer.engine.grammar
 %scannertype GrokScanner
 %visibility internal
 %tokentype Token
@@ -28,6 +28,7 @@ LEVEL_FATAL   "Fatal"
 UPPER_LETTER [A-Z]
 LOWER_LETTER [a-z]
 DIGIT [0-9]
+
 
 OPEN "%{"
 CLOSE "}" 

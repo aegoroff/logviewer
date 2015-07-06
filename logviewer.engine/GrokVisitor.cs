@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace logviewer.engine
 {
-    internal class GrokVisitor : GrokLLBaseVisitor<string>
+    internal class GrokVisitor : GrokBaseVisitor<string>
     {
         private readonly IDictionary<string, string> templates;
         private readonly List<Semantic> schema = new List<Semantic>();
@@ -33,7 +33,7 @@ namespace logviewer.engine
             get { return this.schema; }
         }
 
-        private void AddSemantic(Rule rule)
+        private void AddSemantic(GrokRule rule)
         {
             var s = new Semantic(this.property, rule);
             AddSemantic(s);
@@ -46,15 +46,15 @@ namespace logviewer.engine
             this.composer.Add(p);
         }
 
-        public override string VisitOnCastingCustomRule(GrokLLParser.OnCastingCustomRuleContext context)
+        public override string VisitOnCastingCustomRule(GrokParser.OnCastingCustomRuleContext context)
         {
             var pattern = context.QUOTED_STR().Symbol.Text.UnescapeString();
             var value = context.target().GetText();
-            this.schema.Last().CastingRules.Add(new Rule(value, pattern));
+            this.schema.Last().CastingRules.Add(new GrokRule(value, pattern));
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnCasting(GrokLLParser.OnCastingContext context)
+        public override string VisitOnCasting(GrokParser.OnCastingContext context)
         {
             if (context.TYPE_NAME() == null)
             {
@@ -63,12 +63,12 @@ namespace logviewer.engine
             }
             var typeName = context.TYPE_NAME().Symbol.Text;
 
-            this.AddSemantic(new Rule(typeName));
+            this.AddSemantic(new GrokRule(typeName));
 
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnSemantic(GrokLLParser.OnSemanticContext context)
+        public override string VisitOnSemantic(GrokParser.OnSemanticContext context)
         {
             if (this.compiledPattern == null)
             {
@@ -78,12 +78,12 @@ namespace logviewer.engine
 
             if (context.casting() == null)
             {
-                this.AddSemantic(new Semantic(this.property, new Rule("string")));
+                this.AddSemantic(new Semantic(this.property, new GrokRule("string")));
             }
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnRule(GrokLLParser.OnRuleContext context)
+        public override string VisitOnRule(GrokParser.OnRuleContext context)
         {
             var node = context.PATTERN().Symbol.Text;
 
@@ -108,7 +108,7 @@ namespace logviewer.engine
             return this.VisitChildren(context);
         }
 
-        public override string VisitOnLiteral(GrokLLParser.OnLiteralContext context)
+        public override string VisitOnLiteral(GrokParser.OnLiteralContext context)
         {
             var literal = new StringLiteral(context.GetText());
             this.composer.Add(literal);

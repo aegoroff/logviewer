@@ -1,4 +1,4 @@
-%namespace logviewer.engine
+%namespace logviewer.engine.grammar
 %partial
 %parsertype GrokParser
 %visibility internal
@@ -28,6 +28,7 @@
 %token <Property> PROPERTY
 
 %%
+
 
 parse  : { Console.WriteLine("Start parse"); }  groks literal
        ;
