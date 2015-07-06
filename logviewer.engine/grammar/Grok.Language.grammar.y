@@ -30,7 +30,7 @@
 %%
 
 
-parse  : { customErrorOutputMethod("Start parse"); }  opt_groks
+parse  : opt_groks
        ;
 
 opt_groks :
