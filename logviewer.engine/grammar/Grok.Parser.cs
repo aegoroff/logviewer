@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace logviewer.engine.grammar
 {
     internal partial class GrokParser
     {
         private readonly Action<string> customErrorOutputMethod;
+        private readonly Stack<GrokRule> rulesStack = new Stack<GrokRule>();
 
         public GrokParser(IDictionary<string, string> templates, Action<string> customErrorOutputMethod = null) : base(null)
         {
@@ -24,20 +24,21 @@ namespace logviewer.engine.grammar
             this.Parse();
         }
 
+        private void AddSemantic(string prop)
+        {
+            var semantic = new Semantic(prop);
+            while (this.rulesStack.Count > 0)
+            {
+                semantic.CastingRules.Add(this.rulesStack.Pop());
+            }
+            this.AddSemantic(semantic);
+        }
+
         private void AddSemantic(Semantic s)
         {
             this.schema.Add(s);
-            var p = new NamedPattern(this.property, this.compiledPattern);
+            var p = new NamedPattern(s.Property, this.compiledPattern);
             this.composer.Add(p);
-        }
-
-        private void OnSemantic(string prop)
-        {
-            if (this.compiledPattern == null)
-            {
-                return;
-            }
-            this.property = prop;
         }
 
         void OnRule(string patternName)
@@ -64,9 +65,9 @@ namespace logviewer.engine.grammar
             }
         }
 
-        void OnCastingCustomRule(string lvalue, ParserType parser)
+        void AddRule(string parser, string pattern)
         {
-            this.schema.Last().CastingRules.Add(new GrokRule(parser.ToString(), lvalue));
+            this.rulesStack.Push(new GrokRule(parser, pattern));
         }
     }
 }

@@ -9,7 +9,7 @@
 			public string Property;
 			public string Literal;
 			public string CastLValue;
-			public ParserType Parser;
+			public string Parser;
 			public LogLevel TypeMember;
 	   }
 
@@ -65,26 +65,26 @@ literal
     ;
 
 definition
-	: PATTERN semantic  { OnRule($1); }
+	: PATTERN semantic  { this.AddSemantic($2.Property); OnRule($1); }
 	;
 
 semantic
 	: 
-    | property_ref 
-    | property_ref casting
+    | property_ref { AddRule("string", "*"); $$ = $1; }
+    | property_ref casting { $$ = $1; }
 	;
     
 property_ref
-	: COLON PROPERTY { OnSemantic($2); }
+	: COLON PROPERTY { $$.Property = $2; }
 	;
 
 casting
-	: COMMA type_cast {} // TODO: OnCasting
-    | COMMA casting_list {} // TODO: OnCasting
+	: COMMA type_cast { AddRule($2.Parser, "*"); }
+    | COMMA casting_list
 	;
     
 type_cast
-	: TYPE_NAME { customErrorOutputMethod(string.Format("--- Parser: {0}", $1)); }
+	: TYPE_NAME { $$.Parser = $1; }
 	;
     
 casting_list
@@ -93,7 +93,7 @@ casting_list
 	;
 
 cast
-	: L_CAST ARROW target { OnCastingCustomRule($1, $3.Parser); }
+	: L_CAST ARROW target { AddRule($3.Parser, $1); }
 	;
 
 target
@@ -111,7 +111,7 @@ members
 	;
     
 member
-	: DOT TYPE_MEMBER { customErrorOutputMethod(string.Format("-- Type member: {0}", $2)); }
+	: DOT TYPE_MEMBER
 	;
 
 %%
