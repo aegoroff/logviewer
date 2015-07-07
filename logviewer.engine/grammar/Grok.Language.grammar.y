@@ -8,7 +8,7 @@
 			public string Pattern;
 			public string Property;
 			public string Literal;
-			public string CastLValue;
+			public string CastingPattern;
 			public string Parser;
 			public LogLevel TypeMember;
 	   }
@@ -23,7 +23,7 @@
 %token CLOSE
 %token <Literal> SKIP
 %token <Pattern> PATTERN
-%token <CastLValue> L_CAST
+%token <CastingPattern> CASTING_PATTERN
 %token <Parser> TYPE_NAME
 %token <TypeMember> TYPE_MEMBER
 %token <Property> PROPERTY
@@ -93,7 +93,7 @@ casting_list
 	;
 
 cast
-	: L_CAST ARROW target { AddRule($3.Parser, $1); }
+	: CASTING_PATTERN ARROW target { AddRule($3.Parser, $1); }
 	;
 
 target

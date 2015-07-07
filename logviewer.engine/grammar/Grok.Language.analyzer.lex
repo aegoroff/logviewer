@@ -49,7 +49,7 @@ SKIP {NOT_QUOTED_STR}|{QUOTED_STR}
 TYPE_NAME {INT}|{INT32}|{INT64}|{LONG}|{LOG_LEVEL}|{DATE_TIME}|{STRING_TYPE}
 
 TYPE_MEMBER {LEVEL_TRACE}|{LEVEL_DEBUG}|{LEVEL_INFO}|{LEVEL_WARN}|{LEVEL_ERROR}|{LEVEL_FATAL}
-L_CAST {QUOTED_STR}
+CASTING_PATTERN {QUOTED_STR}
 
 %{
 
@@ -87,7 +87,7 @@ L_CAST {QUOTED_STR}
     {PATTERN} { yylval.Pattern = yytext; return (int)Token.PATTERN; }
     {PROPERTY} { yylval.Property = yytext; return (int)Token.PROPERTY; }
 
-    {L_CAST} { yylval.CastLValue = yytext; return (int)Token.L_CAST; }
+    {CASTING_PATTERN} { yylval.CastingPattern = yytext; return (int)Token.CASTING_PATTERN; }
 
     {CLOSE} {  yy_pop_state(); return (int)Token.CLOSE; }
 }
