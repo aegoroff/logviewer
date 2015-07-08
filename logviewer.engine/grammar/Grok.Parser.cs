@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace logviewer.engine.grammar
 {
@@ -20,7 +19,7 @@ namespace logviewer.engine.grammar
         {
             byte[] inputBuffer = System.Text.Encoding.Default.GetBytes(s);
             MemoryStream stream = new MemoryStream(inputBuffer);
-            this.Scanner = new GrokScanner(stream) { CustomErrorOutputMethod = customErrorOutputMethod };
+            this.Scanner = new GrokScanner(stream) { CustomErrorOutputMethod = this.customErrorOutputMethod };
             this.Parse();
         }
 
