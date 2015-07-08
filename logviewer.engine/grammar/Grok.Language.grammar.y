@@ -28,14 +28,6 @@
 %token <TypeMember> TYPE_MEMBER
 %token <Property> PROPERTY
 
-%{
-    private readonly Composer composer = new Composer();
-    private readonly IDictionary<string, string> templates;
-    private readonly List<Semantic> schema = new List<Semantic>();
-    private IPattern compiledPattern;
-    private string property;
-%}
-
 
 %%
 
@@ -62,13 +54,18 @@ literal
     ;
 
 definition
-	: PATTERN semantic  { this.AddSemantic($2.Property); OnRule($1); }
+	: PATTERN semantic  { 
+        OnPattern($1); 
+      }
 	;
 
 semantic
 	: /* Empty */
-    | property_ref { AddRule("string", "*"); $$ = $1; }
-    | property_ref casting { $$ = $1; }
+    | property_ref { 
+        AddRule("string", "*"); // No schema case. Add generic string rule
+        this.OnSemantic($1.Property); 
+      }
+    | property_ref casting { this.OnSemantic($2.Property); }
 	;
     
 property_ref

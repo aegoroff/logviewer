@@ -6,62 +6,69 @@ namespace logviewer.engine.grammar
 {
     internal partial class GrokParser
     {
+        private readonly Composer composer = new Composer();
+        private readonly IDictionary<string, string> templates;
+        private readonly Func<string, string> compiler;
+        private readonly List<Semantic> schema = new List<Semantic>();
+        
         private readonly Action<string> customErrorOutputMethod;
         private readonly Stack<GrokRule> rulesStack = new Stack<GrokRule>();
+        private readonly Stack<string> propertiesStack = new Stack<string>();
 
-        public GrokParser(IDictionary<string, string> templates, Action<string> customErrorOutputMethod = null) : base(null)
+        public GrokParser(IDictionary<string, string> templates, Func<string, string> compiler, Action<string> customErrorOutputMethod = null) : base(null)
         {
             this.templates = templates;
+            this.compiler = compiler;
             this.customErrorOutputMethod = customErrorOutputMethod ?? Console.WriteLine;
         }
 
         public void Parse(string s)
         {
-            byte[] inputBuffer = System.Text.Encoding.Default.GetBytes(s);
-            MemoryStream stream = new MemoryStream(inputBuffer);
+            var inputBuffer = System.Text.Encoding.Default.GetBytes(s);
+            var stream = new MemoryStream(inputBuffer);
             this.Scanner = new GrokScanner(stream) { CustomErrorOutputMethod = this.customErrorOutputMethod };
             this.Parse();
         }
 
-        private void AddSemantic(string prop)
+        internal string Template
         {
-            var semantic = new Semantic(prop);
+            get { return this.composer.Content; }
+        }
+
+        internal List<Semantic> Schema
+        {
+            get { return this.schema; }
+        }
+
+        void OnPattern(string patternName)
+        {
+            IPattern pattern;
+            if (this.templates.ContainsKey(patternName))
+            {
+                pattern = new CompilePattern(this.templates[patternName], this.compiler);
+                if (this.propertiesStack.Count > 0)
+                {
+                    var property = this.propertiesStack.Pop();
+                    pattern = new NamedPattern(property, pattern);
+                }
+            }
+            else
+            {
+                // just use pattern itself
+                pattern = new PassthroughPattern(patternName);
+            }
+            this.composer.Add(pattern);
+        }
+
+        private void OnSemantic(string property)
+        {
+            var semantic = new Semantic(property);
             while (this.rulesStack.Count > 0)
             {
                 semantic.CastingRules.Add(this.rulesStack.Pop());
             }
-            this.AddSemantic(semantic);
-        }
-
-        private void AddSemantic(Semantic s)
-        {
-            this.schema.Add(s);
-            var p = new NamedPattern(s.Property, this.compiledPattern);
-            this.composer.Add(p);
-        }
-
-        void OnRule(string patternName)
-        {
-            var node = patternName;
-
-            if (!this.templates.ContainsKey(node))
-            {
-                this.compiledPattern = null;
-                // just use pattern itself
-                var pattern = new PassthroughPattern(node);
-                this.composer.Add(pattern);
-            }
-            else
-            {
-                // Rule needs rewinding
-                // this.compiledPattern = new CompilePattern(this.templates[node], this.compiler);
-
-                // Semantic handlers do it later but without semantic it MUST BE done here
-                //if (context.semantic() == null)
-                //{
-                //    this.composer.Add(this.compiledPattern);
-                //}
-            }
+            this.schema.Add(semantic);
+            this.propertiesStack.Push(property); // push property into stack to wrap pattern later
         }
 
         void AddRule(string parser, string pattern)

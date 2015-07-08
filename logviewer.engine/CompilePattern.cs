@@ -22,4 +22,14 @@ namespace logviewer.engine
             get { return this.callback(this.grok); }
         }
     }
+
+    internal class GrokPattern : IPattern
+    {
+        internal GrokPattern(string grok)
+        {
+            this.Content = grok;
+        }
+
+        public string Content { get; internal set; }
+    }
 }

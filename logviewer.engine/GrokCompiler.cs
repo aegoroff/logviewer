@@ -7,16 +7,17 @@ namespace logviewer.engine
     /// <summary>
     ///     Represents grok template compiler
     /// </summary>
-    public class GrokCompiler
+    internal class GrokCompiler
     {
         private readonly Action<string> customErrorOutputMethod;
         private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
+        private readonly List<Semantic> messageSchema = new List<Semantic>();
 
         /// <summary>
         ///     Creates new compiler instance using custom error method output if necessary
         /// </summary>
         /// <param name="customErrorOutputMethod"></param>
-        public GrokCompiler(Action<string> customErrorOutputMethod = null)
+        internal GrokCompiler(Action<string> customErrorOutputMethod = null)
         {
             this.customErrorOutputMethod = customErrorOutputMethod;
             this.CreateTemplates();
@@ -59,10 +60,21 @@ namespace logviewer.engine
         ///     Compiles grok specified
         /// </summary>
         /// <param name="grok"></param>
-        public void Compile(string grok)
+        /// <returns>Regular expression</returns>
+        internal string Compile(string grok)
         {
-            var parser = new grammar.GrokParser(this.templates, this.customErrorOutputMethod);
+            var parser = new grammar.GrokParser(this.templates, this.Compile, this.customErrorOutputMethod); // recursion here
             parser.Parse(grok);
+            this.messageSchema.AddRange(parser.Schema);
+            return parser.Template;
+        }
+
+        /// <summary>
+        /// Message schema - all possible properties and casting rules
+        /// </summary>
+        internal ICollection<Semantic> MessageSchema
+        {
+            get { return this.messageSchema; }
         }
     }
 }
