@@ -33,16 +33,13 @@ DIGIT [0-9]
 OPEN "%{"
 CLOSE "}" 
 
+PATTERN {UPPER_LETTER}({UPPER_LETTER}|{DIGIT}|{UNDERSCORE})*
+PROPERTY ({LOWER_LETTER}|{UPPER_LETTER})({LOWER_LETTER}|{UPPER_LETTER}|{DIGIT}|{UNDERSCORE})*
 
 NOT_QUOTED_STR  [^%]+
 STR_ESCAPE_SEQ "\\".
 
 QUOTED_STR "'"({STR_ESCAPE_SEQ}|[^\\\r\n'])*"'"|"\""({STR_ESCAPE_SEQ}|[^\\\r\n"])*"\""
-
-PATTERN {UPPER_LETTER}({UPPER_LETTER}|{DIGIT}|{UNDERSCORE})*
-
-PROPERTY ({LOWER_LETTER}|{UPPER_LETTER})({LOWER_LETTER}|{UPPER_LETTER}|{DIGIT}|{UNDERSCORE})*
-
 
 SKIP {NOT_QUOTED_STR}|{QUOTED_STR}
 
@@ -64,6 +61,9 @@ CASTING_PATTERN {QUOTED_STR}
     {DOT} { return (int)Token.DOT; }
     {ARROW} { return (int)Token.ARROW; }
     {COLON} { return (int)Token.COLON; }
+    
+	{UNDERSCORE} { throw new Exception("Unexpected underscore inside"); }
+	{DIGIT} { throw new Exception("Unexpected digit inside pattern"); }
     
     {INT} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
     {INT32} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
