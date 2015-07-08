@@ -49,7 +49,7 @@ opt_groks :
 
 groks 
     : grok
-    | grok groks
+    | groks grok
     ;
 
 grok
@@ -89,7 +89,7 @@ type_cast
     
 casting_list
 	: cast
-	| cast COMMA casting_list
+	| casting_list COMMA cast
 	;
 
 cast
@@ -107,7 +107,7 @@ opt_members
 
 members
     : member
-	| member members
+	| members member 
 	;
     
 member
