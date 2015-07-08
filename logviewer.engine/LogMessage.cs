@@ -212,7 +212,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
+        void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
         {
             var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
             if (result.Result)
@@ -222,7 +222,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
+        void ParseDateTime(string dataToParse, ISet<GrokRule> rules, string property)
         {
             var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
             if (result.Result)
@@ -232,7 +232,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseInteger(string dataToParse, ISet<Rule> rules, string property)
+        void ParseInteger(string dataToParse, ISet<GrokRule> rules, string property)
         {
             var result = RunSemanticAction(integerParsers, dataToParse, rules);
             if (result.Result)
@@ -242,7 +242,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private void ParseString(string dataToParse, ISet<Rule> rules, string property)
+        private void ParseString(string dataToParse, ISet<GrokRule> rules, string property)
         {
             var result = RunSemanticAction(stringParsers, dataToParse, rules);
             if (result.Result)
@@ -252,7 +252,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<Rule>> schema)
+        private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.properties == null || schema == null)
             {
@@ -287,9 +287,9 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<T> RunSemanticAction<T>(IDictionary<string, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<Rule> rules)
+        private static ParseResult<T> RunSemanticAction<T>(IDictionary<string, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<GrokRule> rules)
         {
-            var defaultRule = new Rule(rules.First().Type);
+            var defaultRule = new GrokRule(rules.First().Type);
             foreach (var rule in rules.Where(rule => rule == defaultRule || dataToParse.Contains(rule.Pattern)))
             {
                 var r = ApplyRule(rule, dataToParse, parsers);
@@ -302,7 +302,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
+        private static ParseResult<T> ApplyRule<T>(GrokRule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
         {
             Func<string, ParseResult<T>> func;
             return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
@@ -360,7 +360,7 @@ namespace logviewer.engine
         /// Builds message from lines array. All metadata will be extracted using schema specified
         /// </summary>
         /// <param name="schema">Message schema to extract metadata by</param>
-        public void Cache(IDictionary<SemanticProperty, ISet<Rule>> schema)
+        public void Cache(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.head != null && this.body != null)
             {

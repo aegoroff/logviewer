@@ -134,11 +134,6 @@
 								Source="$(var.SourcePath)\System.Data.SQLite.dll"
 								DiskId="1"/>
                             <File
-								Id="Antlr4.Runtime.net45.dll"
-								Name="Antlr4.Runtime.net45.dll"
-								Source="$(var.SourcePath)\Antlr4.Runtime.net45.dll"
-								DiskId="1"/>
-                            <File
 								Id="grok.patterns"
 								Name="grok.patterns"
 								Source="$(var.SourcePath)\grok.patterns"

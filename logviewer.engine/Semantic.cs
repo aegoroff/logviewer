@@ -15,7 +15,7 @@ namespace logviewer.engine
     public struct Semantic
     {
         private readonly string property;
-        private readonly HashSet<Rule> castingRules;
+        private readonly HashSet<GrokRule> castingRules;
 
         /// <summary>
         /// Initializes new <see cref="Semantic"/> instance using name specified.
@@ -24,7 +24,7 @@ namespace logviewer.engine
         public Semantic(string property)
         {
             this.property = property;
-            this.castingRules = new HashSet<Rule>();
+            this.castingRules = new HashSet<GrokRule>();
         }
         
         /// <summary>
@@ -32,7 +32,7 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="rule">Casting rule</param>
-        public Semantic(string property, Rule rule) : this(property)
+        public Semantic(string property, GrokRule rule) : this(property)
         {
             this.castingRules.Add(rule);
         }
@@ -48,17 +48,17 @@ namespace logviewer.engine
         /// <summary>
         /// Gets all possible casting rules
         /// </summary>
-        public ISet<Rule> CastingRules
+        public ISet<GrokRule> CastingRules
         {
             get { return this.castingRules; }
         }
 
         /// <summary>
-        /// Gets whether this container has <see cref="Rule"/> specified
+        /// Gets whether this container has <see cref="GrokRule"/> specified
         /// </summary>
         /// <param name="rule">Rule to validate</param>
         /// <returns>True if this container has desired casting rule. False otherwise</returns>
-        public bool Contains(Rule rule)
+        public bool Contains(GrokRule rule)
         {
             return this.castingRules.Contains(rule);
         }

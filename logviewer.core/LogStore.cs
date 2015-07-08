@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using logviewer.engine;
 using Microsoft.VisualBasic.Devices;
-using Rule = logviewer.engine.Rule;
 
 namespace logviewer.core
 {
@@ -29,7 +28,7 @@ namespace logviewer.core
         private readonly string logLevelProperty;
         private readonly bool hasDateTimeProperty;
         private readonly string dateTimeProperty;
-        private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
+        private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
         private IDictionary<string, PropertyType> propertyTypesCache;
         private readonly RulesBuilder builder;
 
