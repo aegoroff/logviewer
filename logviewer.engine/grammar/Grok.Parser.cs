@@ -64,6 +64,11 @@ namespace logviewer.engine.grammar
             this.composer.Add(pattern);
         }
 
+        internal bool IsPropertyStackEmpty
+        {
+            get { return this.propertiesStack.Count == 0; }
+        }
+
         private void OnSemantic(string property)
         {
             var semantic = new Semantic(property);

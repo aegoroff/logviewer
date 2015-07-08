@@ -66,7 +66,12 @@ namespace logviewer.engine
             var parser = new grammar.GrokParser(this.templates, this.Compile, this.customErrorOutputMethod); // recursion here
             parser.Parse(grok);
             this.messageSchema.AddRange(parser.Schema);
-            return parser.Template;
+            var result = parser.Template;
+            if (!parser.IsPropertyStackEmpty)
+            {
+                throw new Exception("Unused property detected");
+            }
+            return result;
         }
 
         /// <summary>
