@@ -1,3 +1,7 @@
+// Created by: egr
+// Created at: 06.07.2015
+// © 2012-2015 Alexander Egorov
+
 using System;
 
 namespace logviewer.engine.grammar
@@ -18,6 +22,7 @@ namespace logviewer.engine.grammar
             var message = string.Format(format, args);
             this.CustomErrorOutputMethod(message);
             this.CustomErrorOutputMethod(string.Empty);
+            throw new Exception(message);
         }
     }
 }

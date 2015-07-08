@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 10.03.2015
+// © 2012-2015 Alexander Egorov
+
+using System;
 using System.Runtime.CompilerServices;
 
 namespace logviewer.engine
