@@ -40,12 +40,9 @@
 %%
 
 
-parse  : opt_groks
+parse  : /* Empty */
+       | groks
        ;
-
-opt_groks :
-    | groks
-    ;
 
 groks 
     : grok
@@ -69,7 +66,7 @@ definition
 	;
 
 semantic
-	: 
+	: /* Empty */
     | property_ref { AddRule("string", "*"); $$ = $1; }
     | property_ref casting { $$ = $1; }
 	;
@@ -101,7 +98,7 @@ target
 	;
     
 opt_members
-	: 
+	: /* Empty */
     | members 
 	;
 
