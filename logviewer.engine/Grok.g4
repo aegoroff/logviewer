@@ -15,7 +15,11 @@ grammar Grok;
 }
 
 parse
-	: (literal? grok)* literal? 
+	: groks*
+	;
+
+groks
+	: grok | literal
 	;
 
 literal

@@ -36,7 +36,7 @@ namespace logviewer.engine
         private void AddSemantic(GrokRule rule)
         {
             var s = new Semantic(this.property, rule);
-            AddSemantic(s);
+            this.AddSemantic(s);
         }
         
         private void AddSemantic(Semantic s)
