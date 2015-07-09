@@ -56,7 +56,6 @@ namespace logviewer.engine
         {
             var compiler = new GrokCompiler();
             var result = compiler.Compile(grok);
-            // TODO: Add compilation failure in case of grammar errors
             this.messageSchema.AddRange(compiler.MessageSchema);
             return result;
         }
