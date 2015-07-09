@@ -4,13 +4,22 @@
 
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using logviewer.engine;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace logviewer.tests
 {
     public class TstGrokMatcher
     {
+        private readonly ITestOutputHelper output;
+
+        public TstGrokMatcher(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+        
         [Theory]
         [InlineData("%{ID}")]
         [InlineData("%{ID}%{DAT}")]
@@ -57,7 +66,6 @@ namespace logviewer.tests
         [InlineData("%{WORD}str%{INT}trs", @"\b\w+\bstr(?:[+-]?(?:[0-9]+))trs")]
         [InlineData("%{TIME}", @"(?!<[0-9])(?:2[0123]|[01]?[0-9]):(?:[0-5][0-9])(?::(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))(?![0-9])")]
         [InlineData("%{TIMESTAMP_ISO8601}", @"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?")]
-        [InlineData("%{S1:s}%{S2:s}", @"%{S1}%{S2}")]
         [InlineData("%{LOGLEVEL:level}", @"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))")]
         [InlineData("%{POSINT:num,int}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
         [InlineData("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
@@ -71,14 +79,17 @@ namespace logviewer.tests
         [InlineData("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{POSINT}%%{POSINT}", "\\b(?:[1-9][0-9]*)\\b{POSINT}")]
+        [InlineData("%{POSINT}%%{POSINT}", "\\b(?:[1-9][0-9]*)\\b%%{POSINT}")]
         [InlineData("%{POSINT}}%{POSINT}", "\\b(?:[1-9][0-9]*)\\b}\\b(?:[1-9][0-9]*)\\b")]
         [InlineData("%{URIPATH}", @"(?:/[A-Za-z0-9$.+!*'(){},~:;=@#%_\-]*)+")]
         [InlineData("%{NGUSERNAME}", @"[a-zA-Z\.\@\-\+_%]+")]
         [InlineData("%{URIPARAM}", @"\?[A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\-\[\]]*")]
+        [InlineData("%{WORD:word,String}", @"(?<word>\b\w+\b)")]
+        [InlineData("%{WORD:word,string}", @"(?<word>\b\w+\b)")]
+        [InlineData("%{QUOTEDSTRING}", "(?>(?<!\\\\)(?>\"(?>\\\\.|[^\\\\\"]+)+\"|\"\"|(?>'(?>\\\\.|[^\\\\']+)+')|''|(?>`(?>\\\\.|[^\\\\`]+)+`)|``))")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
-            var matcher = new GrokMatcher(pattern);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
             Assert.False(matcher.CompilationFailed);
             Assert.Equal(result, matcher.Template);
         }
@@ -92,13 +103,15 @@ namespace logviewer.tests
         [InlineData("%{POSINT:1N}")]
         [InlineData("%{POSINT:1n}")]
         [InlineData("%{id}")]
+        [InlineData("%{WORD")]
         [InlineData("%{POSINT:num,small}")]
         [InlineData("%{INT:Id,'0'->LogLevel.T}")]
         [InlineData("%{INT:Id,'0'->LogLevel.None}")]
         [InlineData("%{ID:Id,'0'->LogLevel.Trace}")]
+        [InlineData("%{S1:s}%{S2:s}")]
         public void NegativeCompileTests(string pattern)
         {
-            var matcher = new GrokMatcher(pattern);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
             Assert.Equal(pattern, matcher.Template);
             Assert.True(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
         }
@@ -121,14 +134,14 @@ namespace logviewer.tests
         [InlineData("^%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}", "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1")]
         public void PositiveMatch(string pattern, string message)
         {
-            var matcher = new GrokMatcher(pattern);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
             Assert.True(matcher.Match(message));
         }
         
         [Fact]
         public void NegativeMatch()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601 %{DATA:meta}%{LOGLEVEL:level}%{DATA:head}");
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601 %{DATA:meta}%{LOGLEVEL:level}%{DATA:head}", RegexOptions.None, output.WriteLine);
             Assert.False(matcher.Match("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1"));
         }
 
@@ -137,7 +150,7 @@ namespace logviewer.tests
         [InlineData("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}")]
         public void ParseRealMessage(string pattern)
         {
-            var matcher = new GrokMatcher(pattern);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
             Assert.Equal(4, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
             
@@ -160,7 +173,7 @@ namespace logviewer.tests
         [InlineData("%{COMBINEDAPACHELOG_LEVELED}", 2)]
         public void ParsePatternWithCastingInside(string pattern, int semanticCount)
         {
-            var matcher = new GrokMatcher(pattern);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
             Assert.Equal(semanticCount, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
             Assert.NotEqual(pattern, matcher.Template);
@@ -169,23 +182,23 @@ namespace logviewer.tests
         [Fact]
         public void ParseRealMessageNonDefaultCasting()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}");
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}", RegexOptions.None, output.WriteLine);
             Assert.Equal(1, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
             
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
             Assert.True(result.ContainsKey("datetime"));
             Assert.Equal(1, result.Keys.Count);
-            Assert.True(matcher.MessageSchema.First().CastingRules.Contains(new Rule("*")));
-            var rule = new Rule("*");
+            Assert.True(matcher.MessageSchema.First().CastingRules.Contains(new GrokRule(ParserType.Datetime)));
+            var rule = new GrokRule(ParserType.Datetime);
             Assert.True(matcher.MessageSchema.First().Contains(rule));
-            Assert.Equal("DateTime", matcher.MessageSchema.First().CastingRules.First(r => r == rule).Type);
+            Assert.Equal(ParserType.Datetime, matcher.MessageSchema.First().CastingRules.First(r => r == rule).Type);
         }
         
         [Fact]
         public void ParseRealMessageWithDatatypesFailure()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}");
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}", RegexOptions.None, output.WriteLine);
             var result = matcher.Parse(" [4688] INFO \nmessage body 1");
             Assert.Null(result);
         }
@@ -193,7 +206,7 @@ namespace logviewer.tests
         [Fact]
         public void ParseSemanticWithTheSameName()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:dt}%{DATA:meta}%{LOGLEVEL:dt}%{DATA:head}");
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:dt}%{DATA:meta}%{LOGLEVEL:dt}%{DATA:head}", RegexOptions.None, output.WriteLine);
             Assert.Throws<ArgumentException>(delegate
             {
                 matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO Head");

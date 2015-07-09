@@ -12,26 +12,7 @@ namespace logviewer.engine
     /// </summary>
     public class RulesBuilder
     {
-        private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
-
-        private readonly IDictionary<string, ParserType> typesStorage = new Dictionary<string, ParserType>
-        {
-            { "LogLevel", ParserType.LogLevel },
-            { "LogLevel.None", ParserType.LogLevel },
-            { "LogLevel.Trace", ParserType.LogLevel },
-            { "LogLevel.Debug", ParserType.LogLevel },
-            { "LogLevel.Info", ParserType.LogLevel },
-            { "LogLevel.Warn", ParserType.LogLevel },
-            { "LogLevel.Error", ParserType.LogLevel },
-            { "LogLevel.Fatal", ParserType.LogLevel },
-            { "DateTime", ParserType.Datetime },
-            { "int", ParserType.Interger },
-            { "Int32", ParserType.Interger },
-            { "long", ParserType.Interger },
-            { "Int64", ParserType.Interger },
-            { "string", ParserType.String },
-            { "String", ParserType.String },
-        };
+        private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
 
         /// <summary>
         /// Initialize new builder instance
@@ -41,14 +22,14 @@ namespace logviewer.engine
         {
             if (schema == null)
             {
-                this.rules = new Dictionary<SemanticProperty, ISet<Rule>>();
+                this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
                 return;
             }
-            var dictionary = new Dictionary<SemanticProperty, ISet<Rule>>();
+            var dictionary = new Dictionary<SemanticProperty, ISet<GrokRule>>();
             foreach (var semantic in schema)
             {
                 var k = dictionary.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
-                dictionary.Add(this.Create(k, semantic.CastingRules), semantic.CastingRules);
+                dictionary.Add(Create(k, semantic.CastingRules), semantic.CastingRules);
             }
             this.rules = dictionary;
         }
@@ -56,7 +37,7 @@ namespace logviewer.engine
         /// <summary>
         /// Gets rules dictionary that has been built from the schema
         /// </summary>
-        public IDictionary<SemanticProperty, ISet<Rule>> Rules
+        public IDictionary<SemanticProperty, ISet<GrokRule>> Rules
         {
             get { return this.rules; }
         }
@@ -68,20 +49,14 @@ namespace logviewer.engine
         /// <returns>Parser type info</returns>
         public ParserType DefineParserType(SemanticProperty property)
         {
-            ParserType result;
-            return !this.typesStorage.TryGetValue(this.Rules[property].First().Type, out result) ? ParserType.String : result;
+            return property.Parser;
         }
 
-        private SemanticProperty Create(string name, IEnumerable<Rule> castingRules)
+        private static SemanticProperty Create(string name, IEnumerable<GrokRule> castingRules)
         {
             foreach (var rule in castingRules)
             {
-                ParserType parserType;
-                if (!this.typesStorage.TryGetValue(rule.Type, out parserType))
-                {
-                    continue;
-                }
-                return new SemanticProperty(name, parserType);
+                return new SemanticProperty(name, rule.Type);
             }
             return new SemanticProperty(name, ParserType.String);
         }

@@ -4,10 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Antlr4.Runtime;
 
 namespace logviewer.engine
 {
@@ -18,50 +16,18 @@ namespace logviewer.engine
     {
         private Regex regex;
         private readonly List<Semantic> messageSchema = new List<Semantic>();
-        private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
+        private readonly Action<string> customErrorOutputMethod;
 
         /// <summary>
         /// Init new matcher
         /// </summary>
         /// <param name="grok">Template definition</param>
         /// <param name="options">Result regexp options</param>
-        public GrokMatcher(string grok, RegexOptions options = RegexOptions.None)
+        /// <param name="customErrorOutputMethod"></param>
+        public GrokMatcher(string grok, RegexOptions options = RegexOptions.None, Action<string> customErrorOutputMethod = null)
         {
-            this.CreateTemplates();
+            this.customErrorOutputMethod = customErrorOutputMethod;
             this.CreateRegexp(grok, options);
-        }
-
-        private void CreateTemplates()
-        {
-            const string pattern = "*.patterns";
-            var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
-            if (patternFiles.Length == 0)
-            {
-                patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
-            }
-            foreach (var file in patternFiles)
-            {
-                this.AddTemplates(file);
-            }
-        }
-
-        private void AddTemplates(string fullPath)
-        {
-            var patterns = File.ReadAllLines(fullPath);
-            foreach (var pattern in patterns)
-            {
-                var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
-                if (parts.Length < 2)
-                {
-                    continue;
-                }
-                var template = parts[0];
-                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || this.templates.ContainsKey(template))
-                {
-                    continue;
-                }
-                this.templates.Add(template, pattern.Substring(template.Length).Trim());
-            }
         }
 
         private void CreateRegexp(string grok, RegexOptions options)
@@ -73,7 +39,14 @@ namespace logviewer.engine
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine(e.ToString());
+                if (this.customErrorOutputMethod != null)
+                {
+                    this.customErrorOutputMethod(e.ToString());
+                }
+                else
+                {
+                    System.Diagnostics.Trace.WriteLine(e.ToString());
+                }
                 this.CompilationFailed = true;
                 this.Template = grok;
             }
@@ -81,26 +54,10 @@ namespace logviewer.engine
 
         private string Compile(string grok)
         {
-            ICharStream inputStream = new AntlrInputStream(grok);
-            var lexer = new GrokLexer(inputStream);
-            var tokenStream = new CommonTokenStream(lexer);
-            var parser = new GrokParser(tokenStream);
-            var tree = parser.parse();
-#if DEBUG
-            parser.Trace = true;
-#endif
-
-            this.CompilationFailed = parser.NumberOfSyntaxErrors > 0;
-
-            if (this.CompilationFailed)
-            {
-                throw new ArgumentException("Invalid pattern: " + grok, "grok");
-            }
-
-            var grokVisitor = new GrokVisitor(this.templates, this.Compile);
-            grokVisitor.Visit(tree);
-            this.messageSchema.AddRange(grokVisitor.Schema);
-            return grokVisitor.Template;
+            var compiler = new GrokCompiler();
+            var result = compiler.Compile(grok);
+            this.messageSchema.AddRange(compiler.MessageSchema);
+            return result;
         }
 
         /// <summary>
@@ -128,7 +85,7 @@ namespace logviewer.engine
         /// <returns>True if string matches the pattern false otherwise </returns>
         public bool Match(string s)
         {
-            return this.regex.Return(r => r.IsMatch(s), false);
+            return this.regex != null && this.regex.IsMatch(s);
         }
 
         /// <summary>
@@ -138,10 +95,12 @@ namespace logviewer.engine
         /// <returns>Metadata dictionary or null</returns>
         public IDictionary<string, string> Parse(string s)
         {
-            return this.regex
-                .With(r => r.Match(s))
-                .If(m => m.Success)
-                .Return(m => this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => m.Groups[semantic.Property].Value), null);
+            if (this.regex == null)
+            {
+                return null;
+            }
+            var match = this.regex.Match(s);
+            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
         }
     }
 }

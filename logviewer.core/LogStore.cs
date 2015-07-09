@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using logviewer.engine;
 using Microsoft.VisualBasic.Devices;
-using Rule = logviewer.engine.Rule;
 
 namespace logviewer.core
 {
@@ -29,7 +28,7 @@ namespace logviewer.core
         private readonly string logLevelProperty;
         private readonly bool hasDateTimeProperty;
         private readonly string dateTimeProperty;
-        private readonly IDictionary<SemanticProperty, ISet<Rule>> rules;
+        private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
         private IDictionary<string, PropertyType> propertyTypesCache;
         private readonly RulesBuilder builder;
 
@@ -41,10 +40,10 @@ namespace logviewer.core
         {
             this.builder = new RulesBuilder(schema);
             this.rules = this.builder.Rules;
-            this.hasLogLevelProperty = schema.HasProperty("LogLevel");
-            this.logLevelProperty = schema.PropertyNameOf("LogLevel");
-            this.hasDateTimeProperty = schema.HasProperty("DateTime");
-            this.dateTimeProperty = schema.PropertyNameOf("DateTime");
+            this.hasLogLevelProperty = schema.HasProperty(ParserType.LogLevel);
+            this.logLevelProperty = schema.PropertyNameOf(ParserType.LogLevel);
+            this.hasDateTimeProperty = schema.HasProperty(ParserType.Datetime);
+            this.dateTimeProperty = schema.PropertyNameOf(ParserType.Datetime);
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
             this.connection = new DatabaseConnection(this.DatabasePath);

@@ -7,14 +7,21 @@ using System.Diagnostics;
 namespace logviewer.engine
 {
     [DebuggerDisplay("{Content}")]
-    internal class NamedPattern : Pattern
+    internal class NamedPattern : IPattern
     {
+        private readonly IPattern wrapped;
+
+        internal NamedPattern(string property, IPattern wrapped)
+        {
+            this.wrapped = wrapped;
+            this.Property = property;
+        }
+
         internal string Property { get; private set; }
 
-        internal NamedPattern(string property, string content)
-            : base(string.Format(@"(?<{0}>{1})", property, content))
+        public string Content
         {
-            this.Property = property;
+            get { return string.Format(@"(?<{0}>{1})", this.Property, this.wrapped.Content); }
         }
     }
 }

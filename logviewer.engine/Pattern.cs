@@ -15,10 +15,5 @@ namespace logviewer.engine
         }
 
         public string Content { get; private set; }
-
-        public void Add(IPattern pattern)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

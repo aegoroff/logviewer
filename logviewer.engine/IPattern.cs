@@ -13,11 +13,5 @@ namespace logviewer.engine
         /// Gets pattern's content
         /// </summary>
         string Content { get; }
-
-        /// <summary>
-        /// Adds new pattern into composition
-        /// </summary>
-        /// <param name="pattern">pattern to add</param>
-        void Add(IPattern pattern);
     }
 }

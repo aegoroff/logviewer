@@ -12,11 +12,13 @@
 		
 		<!-- Enables updating version mechanism -->
 		<IsUpdateVersion>false</IsUpdateVersion>
+        <IsRunTests>true</IsRunTests>
 		
 		<!-- Version components  -->
 		<Major>1</Major>
 		<Minor>0</Minor>
-		<Build>0</Build>
+		<Build Condition=" '$(BUILD_BUILDNUMBER)' == '' ">0</Build>
+		<Build Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</Build>
 		<Revision>0</Revision>
 	</PropertyGroup>
 	<!-- AssemblyInfo.cs file definitions where to set version -->
@@ -82,7 +84,7 @@
 	</Target>
 
     <!-- Run unit tests task -->
-    <Target Name="UnitTesting" DependsOnTargets="Compile">
+    <Target Name="UnitTesting" DependsOnTargets="Compile" Condition=" '$(IsRunTests)'=='true' ">
         <!-- Managed tests -->
         <xunit 
              Assemblies="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll" 
