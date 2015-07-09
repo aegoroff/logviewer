@@ -87,7 +87,7 @@ namespace logviewer.engine.grammar
         
         void AddRule(ParserType parser, string pattern, LogLevel level)
         {
-            this.rulesStack.Push(new GrokRule(parser, pattern, level));
+            this.rulesStack.Push(new GrokRule(parser, pattern.UnescapeString(), level));
         }
     }
 }

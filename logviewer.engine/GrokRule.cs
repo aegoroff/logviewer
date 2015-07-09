@@ -40,11 +40,19 @@ namespace logviewer.engine
         }
 
         /// <summary>
-        /// Gets or sets target casting type
+        /// Gets target casting type
         /// </summary>
         public ParserType Type
         {
             get { return this.type; }
+        }
+
+        /// <summary>
+        /// Gets target log level
+        /// </summary>
+        public LogLevel Level
+        {
+            get { return this.level; }
         }
 
         /// <summary>
