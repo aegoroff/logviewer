@@ -189,10 +189,10 @@ namespace logviewer.tests
             var result = matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1");
             Assert.True(result.ContainsKey("datetime"));
             Assert.Equal(1, result.Keys.Count);
-            Assert.True(matcher.MessageSchema.First().CastingRules.Contains(new GrokRule("*")));
-            var rule = new GrokRule("*");
+            Assert.True(matcher.MessageSchema.First().CastingRules.Contains(new GrokRule(ParserType.Datetime)));
+            var rule = new GrokRule(ParserType.Datetime);
             Assert.True(matcher.MessageSchema.First().Contains(rule));
-            Assert.Equal("DateTime", matcher.MessageSchema.First().CastingRules.First(r => r == rule).Type);
+            Assert.Equal(ParserType.Datetime, matcher.MessageSchema.First().CastingRules.First(r => r == rule).Type);
         }
         
         [Fact]

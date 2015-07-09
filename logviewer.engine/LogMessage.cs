@@ -127,40 +127,30 @@ namespace logviewer.engine
             this.properties = parsedProperties;
         }
 
-        private static readonly IDictionary<string, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
-            <string, Func<string, ParseResult<LogLevel>>>
+        private static readonly IDictionary<ParserType, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
+            <ParserType, Func<string, ParseResult<LogLevel>>>
         {
-            { "LogLevel", ParseLogLevel },
-            { "LogLevel.Trace", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Trace } },
-            { "LogLevel.Debug", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Debug } },
-            { "LogLevel.Info", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Info } },
-            { "LogLevel.Warn", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Warn } },
-            { "LogLevel.Error", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Error } },
-            { "LogLevel.Fatal", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Fatal } }
+            { ParserType.LogLevel, ParseLogLevel }
         };
 
-        private static readonly IDictionary<string, Func<string, ParseResult<DateTime>>> dateTimeParsers = new Dictionary
-            <string, Func<string, ParseResult<DateTime>>>
+        private static readonly IDictionary<ParserType, Func<string, ParseResult<DateTime>>> dateTimeParsers = new Dictionary
+            <ParserType, Func<string, ParseResult<DateTime>>>
         {
             {
-                "DateTime", ParseDateTime
+                ParserType.Datetime, ParseDateTime
             },
         };
 
-        private static readonly IDictionary<string, Func<string, ParseResult<long>>> integerParsers = new Dictionary
-            <string, Func<string, ParseResult<long>>>
+        private static readonly IDictionary<ParserType, Func<string, ParseResult<long>>> integerParsers = new Dictionary
+            <ParserType, Func<string, ParseResult<long>>>
         {
-            { "long", ParseInteger },
-            { "int", ParseInteger },
-            { "Int32", ParseInteger },
-            { "Int64", ParseInteger },
+            { ParserType.Interger, ParseInteger }
         };
 
-        private static readonly IDictionary<string, Func<string, ParseResult<string>>> stringParsers = new Dictionary
-            <string, Func<string, ParseResult<string>>>
+        private static readonly IDictionary<ParserType, Func<string, ParseResult<string>>> stringParsers = new Dictionary
+            <ParserType, Func<string, ParseResult<string>>>
         {
-            {"string", s => new ParseResult<string> {Result = true, Value = s}},
-            {"String", s => new ParseResult<string> {Result = true, Value = s}}
+            {ParserType.String, s => new ParseResult<string> {Result = true, Value = s}},
         };
 
         static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
@@ -286,8 +276,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<T> RunSemanticAction<T>(IDictionary<string, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<GrokRule> rules)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ParseResult<T> RunSemanticAction<T>(IDictionary<ParserType, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<GrokRule> rules)
         {
             var defaultRule = new GrokRule(rules.First().Type);
             foreach (var rule in rules.Where(rule => rule == defaultRule || dataToParse.Contains(rule.Pattern)))
@@ -302,7 +292,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ParseResult<T> ApplyRule<T>(GrokRule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
+        private static ParseResult<T> ApplyRule<T>(GrokRule rule, string matchedData, IDictionary<ParserType, Func<string, ParseResult<T>>> parsers)
         {
             Func<string, ParseResult<T>> func;
             return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();

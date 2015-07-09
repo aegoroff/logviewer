@@ -104,7 +104,7 @@ namespace logviewer.tests
         [InlineData("emergency", LogLevel.Fatal)]
         public void ParseLogLevel(string input, LogLevel result)
         {
-            this.ParseTest("level", "LogLevel", ParserType.LogLevel, input);
+            this.ParseTest("level", ParserType.LogLevel, ParserType.LogLevel, input);
             Assert.Equal(result, (LogLevel)this.m.IntegerProperty("level"));
         }
 
@@ -114,7 +114,7 @@ namespace logviewer.tests
         [InlineData("2014-10-23 20:00:51", 2014, 10, 23, 20, 0, 51, 0)]
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
-            this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
+            this.ParseTest("dt", ParserType.Datetime, ParserType.Datetime, input);
             Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")));
         }
         
@@ -123,35 +123,31 @@ namespace logviewer.tests
         [InlineData("24/Oct/2014:09:34:30 +0000", 2014, 10, 24, 9, 34, 30, 0, 0)]
         public void ParseDateTimeTimezone(string input, int y, int month, int d, int h, int min, int sec, int millisecond, int offset)
         {
-            this.ParseTest("dt", "DateTime", ParserType.Datetime, input);
+            this.ParseTest("dt", ParserType.Datetime, ParserType.Datetime, input);
             Assert.Equal(new DateTime(y, month, d, h + offset, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")));
         }
 
         [Theory]
-        [InlineData("1", 1, "long")]
-        [InlineData("-1", -1, "long")]
-        [InlineData("0", 0, "long")]
-        [InlineData("a", 0, "long")]
-        [InlineData("1", 1, "int")]
-        [InlineData("1", 1, "Int32")]
-        [InlineData("1", 1, "Int64")]
-        [InlineData("9223372036854775807", long.MaxValue, "long")]
-        [InlineData("9223372036854775807", long.MaxValue, "int")]
-        [InlineData("9223372036854775807", long.MaxValue, "Int32")]
-        [InlineData("9223372036854775807", long.MaxValue, "Int64")]
-        [InlineData("-9223372036854775808", long.MinValue, "long")]
-        [InlineData("-9223372036854775810", 0, "long")]
-        [InlineData("9223372036854775810", 0, "long")]
-        public void ParseInteger(string input, long result, string type)
+        [InlineData("-1", -1)]
+        [InlineData("0", 0)]
+        [InlineData("a", 0)]
+        [InlineData("1", 1)]
+        [InlineData("9223372036854775807", long.MaxValue)]
+        [InlineData("9223372036854775807", long.MaxValue)]
+        [InlineData("9223372036854775807", long.MaxValue)]
+        [InlineData("9223372036854775807", long.MaxValue)]
+        [InlineData("-9223372036854775808", long.MinValue)]
+        [InlineData("-9223372036854775810", 0)]
+        [InlineData("9223372036854775810", 0)]
+        public void ParseInteger(string input, long result)
         {
-            this.ParseTest("integer", type, ParserType.Interger, input);
+            this.ParseTest("integer", ParserType.Interger, ParserType.Interger, input);
             Assert.Equal(result, this.m.IntegerProperty("integer"));
         }
 
         [Theory]
-        [InlineData("s", "s", "string")]
-        [InlineData("s", "s", "String")]
-        public void ParseString(string input, string result, string type)
+        [InlineData("s", "s", ParserType.String)]
+        public void ParseString(string input, string result, ParserType type)
         {
             this.ParseTest("str", type, ParserType.String, input);
             Assert.Equal(result, this.m.StringProperty("str"));
@@ -168,17 +164,17 @@ namespace logviewer.tests
         [InlineData("500", LogLevel.Fatal)]
         public void ParseLogLevelCustomRules(string input, LogLevel result)
         {
-            this.ParseTest("Level", ParserType.LogLevel, input, 
-                new GrokRule("LogLevel.Info", "20"), 
-                new GrokRule("LogLevel.Warn", "30"),
-                new GrokRule("LogLevel.Error", "40"), 
-                new GrokRule("LogLevel.Error", "41"), 
-                new GrokRule("LogLevel.Fatal", "50"), 
-                new GrokRule("LogLevel.Debug"));
+            this.ParseTest("Level", ParserType.LogLevel, input,
+                new GrokRule(ParserType.LogLevel, "20"),
+                new GrokRule(ParserType.LogLevel, "30"),
+                new GrokRule(ParserType.LogLevel, "40"),
+                new GrokRule(ParserType.LogLevel, "41"),
+                new GrokRule(ParserType.LogLevel, "50"),
+                new GrokRule(ParserType.LogLevel));
             Assert.Equal(result, (LogLevel)this.m.IntegerProperty("Level"));
         }
-        
-        private void ParseTest(string prop, string type, ParserType parser, string input)
+
+        private void ParseTest(string prop, ParserType type, ParserType parser, string input)
         {
             this.ParseTest(prop, parser, input, new GrokRule(type));
         }

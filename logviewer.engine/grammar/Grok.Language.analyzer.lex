@@ -65,20 +65,20 @@ CASTING_PATTERN {QUOTED_STR}
 	{UNDERSCORE} { throw new Exception("Unexpected underscore inside"); }
 	{DIGIT} { throw new Exception("Unexpected digit inside pattern"); }
     
-    {INT} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
-    {INT32} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
-    {INT64} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
-    {LONG} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
-    {DATE_TIME} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
-    {LOG_LEVEL} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
-    {STRING_TYPE} { yylval.Parser = yytext; return (int)Token.TYPE_NAME; }
+    {INT} { yylval.Parser = ParserType.Interger; return (int)Token.TYPE_NAME; }
+    {INT32} { yylval.Parser = ParserType.Interger; return (int)Token.TYPE_NAME; }
+    {INT64} { yylval.Parser = ParserType.Interger; return (int)Token.TYPE_NAME; }
+    {LONG} { yylval.Parser = ParserType.Interger; return (int)Token.TYPE_NAME; }
+    {DATE_TIME} { yylval.Parser = ParserType.Datetime; return (int)Token.TYPE_NAME; }
+    {LOG_LEVEL} { yylval.Parser = ParserType.LogLevel; return (int)Token.TYPE_NAME; }
+    {STRING_TYPE} { yylval.Parser = ParserType.String; return (int)Token.TYPE_NAME; }
 
-    {LEVEL_TRACE} { yylval.Parser = yytext; yylval.TypeMember = LogLevel.Trace; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_DEBUG} { yylval.Parser = yytext; yylval.TypeMember = LogLevel.Debug; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_INFO} { yylval.Parser = yytext; yylval.TypeMember = LogLevel.Info; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_WARN} { yylval.Parser = yytext; yylval.TypeMember = LogLevel.Warn; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_ERROR} { yylval.Parser = yytext; yylval.TypeMember = LogLevel.Error; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_FATAL} { yylval.Parser = yytext; yylval.TypeMember = LogLevel.Fatal; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_TRACE} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Trace; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_DEBUG} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Debug; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_INFO} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Info; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_WARN} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Warn; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_ERROR} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Error; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_FATAL} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Fatal; return (int)Token.TYPE_MEMBER; }
 
     {PATTERN} { yylval.Pattern = yytext; return (int)Token.PATTERN; }
     {PROPERTY} { yylval.Property = yytext; return (int)Token.PROPERTY; }

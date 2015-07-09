@@ -80,7 +80,7 @@ namespace logviewer.engine.grammar
             this.propertiesStack.Push(property); // push property into stack to wrap pattern later
         }
 
-        void AddRule(string parser, string pattern)
+        void AddRule(ParserType parser, string pattern)
         {
             this.rulesStack.Push(new GrokRule(parser, pattern));
         }

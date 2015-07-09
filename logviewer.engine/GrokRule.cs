@@ -15,14 +15,14 @@ namespace logviewer.engine
     public struct GrokRule
     {
         private readonly string pattern;
-        private readonly string type;
+        private readonly ParserType type;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance
         /// </summary>
         /// <param name="type">Data type</param>
         /// <param name="pattern">Matching pattern</param>
-        public GrokRule(string type = "string", string pattern = "*")
+        public GrokRule(ParserType type = ParserType.String, string pattern = "*")
         {
             this.pattern = pattern;
             this.type = type;
@@ -39,7 +39,7 @@ namespace logviewer.engine
         /// <summary>
         /// Gets or sets target casting type
         /// </summary>
-        public string Type
+        public ParserType Type
         {
             get { return this.type; }
         }

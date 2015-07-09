@@ -9,7 +9,7 @@
 			public string Property;
 			public string Literal;
 			public string CastingPattern;
-			public string Parser;
+			public ParserType Parser;
 			public LogLevel TypeMember;
 	   }
 
@@ -62,7 +62,7 @@ definition
 semantic
 	: /* Empty */
     | property_ref { 
-        AddRule("string", "*"); // No schema case. Add generic string rule
+        AddRule(ParserType.String, "*"); // No schema case. Add generic string rule
         this.OnSemantic($1.Property); 
       }
     | property_ref casting { this.OnSemantic($2.Property); }
