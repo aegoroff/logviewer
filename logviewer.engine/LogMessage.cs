@@ -251,13 +251,14 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ParseResult<LogLevel> RunSemanticAction(string dataToParse, ISet<GrokRule> rules)
         {
-            var result = new ParseResult<LogLevel>();
+            var result = new ParseResult<LogLevel> { Result = true };
             foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
             {
-                result.Result = true;
                 result.Value = rule.Level;
                 return result;
             }
+            var defaultRule = rules.First(rule => rule.Pattern.Equals("*", StringComparison.OrdinalIgnoreCase));
+            result.Value = defaultRule.Level;
             return result;
         }
 
