@@ -16,16 +16,19 @@ namespace logviewer.engine
     {
         private readonly string pattern;
         private readonly ParserType type;
+        private readonly LogLevel level;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance
         /// </summary>
         /// <param name="type">Data type</param>
         /// <param name="pattern">Matching pattern</param>
-        public GrokRule(ParserType type = ParserType.String, string pattern = "*")
+        /// <param name="level">LogLevel if applicable</param>
+        public GrokRule(ParserType type = ParserType.String, string pattern = "*", LogLevel level = LogLevel.None)
         {
             this.pattern = pattern;
             this.type = type;
+            this.level = level;
         }
 
         /// <summary>

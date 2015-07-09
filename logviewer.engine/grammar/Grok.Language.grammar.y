@@ -10,7 +10,7 @@
 			public string Literal;
 			public string CastingPattern;
 			public ParserType Parser;
-			public LogLevel TypeMember;
+			public LogLevel Level;
 	   }
 
 %start parse
@@ -25,7 +25,7 @@
 %token <Pattern> PATTERN
 %token <CastingPattern> CASTING_PATTERN
 %token <Parser> TYPE_NAME
-%token <TypeMember> TYPE_MEMBER
+%token <Level> LEVEL
 %token <Property> PROPERTY
 
 
@@ -87,25 +87,20 @@ casting_list
 	;
 
 cast
-	: CASTING_PATTERN ARROW target { AddRule($3.Parser, $1); }
+	: CASTING_PATTERN ARROW target { AddRule($3.Parser, $1, $3.Level); }
 	;
 
 target
-	: TYPE_NAME opt_members { $$.Parser = $1; }
+	: TYPE_NAME opt_member { $$.Parser = $1; $$.Level = $2.Level; }
 	;
     
-opt_members
+opt_member
 	: /* Empty */
-    | members 
-	;
-
-members
-    : member
-	| members member 
+    | member
 	;
     
 member
-	: DOT TYPE_MEMBER
+	: DOT LEVEL { $$.Level = $2; }
 	;
 
 %%
