@@ -79,7 +79,7 @@ namespace logviewer.tests
         [InlineData("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{POSINT}%%{POSINT}", "\\b(?:[1-9][0-9]*)\\b\\b(?:[1-9][0-9]*)\\b")]
+        [InlineData("%{POSINT}%%{POSINT}", "\\b(?:[1-9][0-9]*)\\b%%{POSINT}")]
         [InlineData("%{POSINT}}%{POSINT}", "\\b(?:[1-9][0-9]*)\\b}\\b(?:[1-9][0-9]*)\\b")]
         [InlineData("%{URIPATH}", @"(?:/[A-Za-z0-9$.+!*'(){},~:;=@#%_\-]*)+")]
         [InlineData("%{NGUSERNAME}", @"[a-zA-Z\.\@\-\+_%]+")]
