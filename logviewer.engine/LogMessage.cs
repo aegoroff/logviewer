@@ -257,7 +257,7 @@ namespace logviewer.engine
                 result.Value = rule.Level;
                 return result;
             }
-            var defaultRule = rules.First(rule => rule.Pattern.Equals("*", StringComparison.OrdinalIgnoreCase));
+            var defaultRule = rules.First(rule => rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase));
             result.Value = defaultRule.Level;
             return result;
         }

@@ -14,6 +14,7 @@ namespace logviewer.engine
     [DebuggerDisplay("{Pattern}")]
     public struct GrokRule
     {
+        internal const string DefaultPattern = "*";
         private readonly string pattern;
         private readonly ParserType type;
         private readonly LogLevel level;
@@ -24,7 +25,7 @@ namespace logviewer.engine
         /// <param name="type">Data type</param>
         /// <param name="pattern">Matching pattern</param>
         /// <param name="level">LogLevel if applicable</param>
-        public GrokRule(ParserType type = ParserType.String, string pattern = "*", LogLevel level = LogLevel.None)
+        public GrokRule(ParserType type = ParserType.String, string pattern = DefaultPattern, LogLevel level = LogLevel.None)
         {
             this.pattern = pattern;
             this.type = type;
