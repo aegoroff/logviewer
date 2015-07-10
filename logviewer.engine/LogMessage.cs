@@ -44,7 +44,7 @@ namespace logviewer.engine
             this.head = header;
             this.body = body;
             this.ix = 0;
-            this.properties = null;
+            this.rawProperties = null;
             this.bodyBuilder = null;
             this.integerProperties = new Dictionary<string, long>();
             this.stringProperties = new Dictionary<string, string>();
@@ -98,7 +98,7 @@ namespace logviewer.engine
         /// </summary>
         public bool HasHeader
         {
-            get { return this.properties != null; }
+            get { return this.rawProperties != null; }
         }
 
         /// <summary>
@@ -121,10 +121,10 @@ namespace logviewer.engine
         /// <summary>
         /// Adds metadata into message
         /// </summary>
-        /// <param name="parsedProperties">Metadata</param>
-        public void AddProperties(IDictionary<string, string> parsedProperties)
+        /// <param name="extractedProperties">Concrete messate properties extracted by template</param>
+        public void AddProperties(IDictionary<string, string> extractedProperties)
         {
-            this.properties = parsedProperties;
+            this.rawProperties = extractedProperties;
         }
 
         static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
@@ -216,21 +216,21 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
-            if (this.properties == null || schema == null)
+            if (this.rawProperties == null || schema == null)
             {
                 return;
             }
-            foreach (var property in this.properties)
+            foreach (var property in this.rawProperties)
             {
                 if (!schema.ContainsKey(property.Key))
                 {
                     continue;
                 }
-                var sp = schema.First(p => p.Key == property.Key).Key;
+                var semanticProperty = schema.First(p => p.Key == property.Key).Key;
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
 
-                switch (sp.Parser)
+                switch (semanticProperty.Parser)
                 {
                     case ParserType.LogLevel:
                         this.ParseLogLevel(matchedData, rules, property.Key);
@@ -360,7 +360,7 @@ namespace logviewer.engine
         private StringBuilder bodyBuilder;
         private string head;
         private long ix;
-        private IDictionary<string, string> properties;
+        private IDictionary<string, string> rawProperties;
 
         #endregion
     }
