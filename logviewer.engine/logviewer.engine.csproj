@@ -72,7 +72,6 @@
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="LogReader.cs" />
-    <Compile Include="ParseResult.cs" />
     <Compile Include="ParserType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GrokRule.cs" />

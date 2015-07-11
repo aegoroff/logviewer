@@ -128,95 +128,77 @@ namespace logviewer.engine
         }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<LogLevel> ParseLogLevel(string s)
+        private static bool ParseLogLevel(string s, out LogLevel level)
         {
-            LogLevel r;
-            var success = true;
             switch (s.ToUpperInvariant())
             {
                 case "TRACE":
                 case "ALERT":
-                    r = LogLevel.Trace;
-                    break;
+                    level = LogLevel.Trace;
+                    return true;
                 case "DEBUG":
-                    r = LogLevel.Debug;
-                    break;
+                    level = LogLevel.Debug;
+                    return true;
                 case "INFO":
-                case "INFORMATION":
                 case "NOTICE":
-                    r = LogLevel.Info;
-                    break;
+                    level = LogLevel.Info;
+                    return true;
                 case "WARN":
                 case "WARNING":
-                    r = LogLevel.Warn;
-                    break;
+                    level = LogLevel.Warn;
+                    return true;
                 case "ERROR":
                 case "CRITICAL":
-                    r = LogLevel.Error;
-                    break;
+                    level = LogLevel.Error;
+                    return true;
                 case "FATAL":
                 case "SEVERE":
                 case "EMERG":
                 case "EMERGENCY":
-                    r = LogLevel.Fatal;
-                    break;
+                    level = LogLevel.Fatal;
+                    return true;
                 default:
-                    r = LogLevel.None;
-                    success = false;
-                    break;
+                    level = LogLevel.None;
+                    return false;
             }
-            return new ParseResult<LogLevel> { Result = success, Value = r };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<DateTime> ParseDateTime(string s)
-        {
-            DateTime r;
-            var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
-            if (!success)
-            {
-                success = DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
-            }
-            return new ParseResult<DateTime> { Result = success, Value = r };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<long> ParseInteger(string s)
-        {
-            long r;
-            var success = long.TryParse(s, out r);
-            return new ParseResult<long> { Result = success, Value = r };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
         {
+            LogLevel level;
             var result = rules.Count > 1
-                ? RunSemanticAction(dataToParse, rules) 
-                : ParseLogLevel(dataToParse);
-            if (result.Result)
+                ? RunSemanticAction(dataToParse, rules, out level) 
+                : ParseLogLevel(dataToParse, out level);
+            if (result)
             {
-                this.integerProperties[property] = (int)result.Value;
+                this.integerProperties[property] = (int)level;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseDateTime(string dataToParse, string property)
         {
-            var result = ParseDateTime(dataToParse);
-            if (result.Result)
+            DateTime r;
+            var success = DateTime.TryParseExact(dataToParse, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+            if (!success)
             {
-                this.integerProperties[property] = result.Value.ToFileTime();
+                success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+            }
+            if (success)
+            {
+                this.integerProperties[property] = r.ToFileTime();
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseInteger(string dataToParse, string property)
         {
-            var result = ParseInteger(dataToParse);
-            if (result.Result)
+            long r;
+            var success = long.TryParse(dataToParse, out r);
+            if (success)
             {
-                this.integerProperties[property] = result.Value;
+                this.integerProperties[property] = r;
             }
         }
 
@@ -262,17 +244,16 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ParseResult<LogLevel> RunSemanticAction(string dataToParse, ISet<GrokRule> rules)
+        private static bool RunSemanticAction(string dataToParse, ISet<GrokRule> rules, out LogLevel level)
         {
-            var result = new ParseResult<LogLevel> { Result = true };
             foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
             {
-                result.Value = rule.Level;
-                return result;
+                level = rule.Level;
+                return true;
             }
             var defaultRule = rules.First(rule => rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase));
-            result.Value = defaultRule.Level;
-            return result;
+            level = defaultRule.Level;
+            return true;
         }
 
         /// <summary>
