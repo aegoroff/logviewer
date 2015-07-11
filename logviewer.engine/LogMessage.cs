@@ -149,6 +149,7 @@ namespace logviewer.engine
                     level = LogLevel.Warn;
                     return true;
                 case "ERROR":
+                case "ERR":
                 case "CRITICAL":
                     level = LogLevel.Error;
                     return true;
