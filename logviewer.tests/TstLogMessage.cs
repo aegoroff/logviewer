@@ -165,12 +165,12 @@ namespace logviewer.tests
         public void ParseLogLevelCustomRules(string input, LogLevel result)
         {
             this.ParseTest("Level", ParserType.LogLevel, input,
-                new GrokRule(ParserType.LogLevel, "20"),
-                new GrokRule(ParserType.LogLevel, "30"),
-                new GrokRule(ParserType.LogLevel, "40"),
-                new GrokRule(ParserType.LogLevel, "41"),
-                new GrokRule(ParserType.LogLevel, "50"),
-                new GrokRule(ParserType.LogLevel));
+                new GrokRule(ParserType.LogLevel, "20", LogLevel.Info),
+                new GrokRule(ParserType.LogLevel, "30", LogLevel.Warn),
+                new GrokRule(ParserType.LogLevel, "40", LogLevel.Error),
+                new GrokRule(ParserType.LogLevel, "41", LogLevel.Error),
+                new GrokRule(ParserType.LogLevel, "50", LogLevel.Fatal),
+                new GrokRule(ParserType.LogLevel, "*", LogLevel.Debug));
             Assert.Equal(result, (LogLevel)this.m.IntegerProperty("Level"));
         }
 

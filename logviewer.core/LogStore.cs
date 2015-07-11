@@ -212,12 +212,12 @@ namespace logviewer.core
         {
             var order = reverse ? "DESC" : "ASC";
 
-            var where = Where(min, max, filter, useRegexp, start, finish);
+            var where = this.Where(min, max, filter, useRegexp, start, finish);
             
             var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
                 order, limit, offset,
                 where, this.additionalColumnsString);
-            Action<IDbCommand> beforeRead = command => AddParameters(command, min, max, filter, useRegexp, start, finish);
+            Action<IDbCommand> beforeRead = command => this.AddParameters(command, min, max, filter, useRegexp, start, finish);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
@@ -251,7 +251,7 @@ namespace logviewer.core
             bool useRegexp = true,
             bool excludeNoLevel = false)
         {
-            return CountMessages(DateTime.MinValue, DateTime.MaxValue, min, max, filter, useRegexp, excludeNoLevel);
+            return this.CountMessages(DateTime.MinValue, DateTime.MaxValue, min, max, filter, useRegexp, excludeNoLevel);
         }
         
         public long CountMessages(
@@ -268,9 +268,9 @@ namespace logviewer.core
                 return 0;
             }
 
-            var where = Where(min, max, filter, useRegexp, start, finish);
+            var where = this.Where(min, max, filter, useRegexp, start, finish);
             var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
-            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp, start, finish);
+            Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, start, finish);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
         }
@@ -285,9 +285,9 @@ namespace logviewer.core
                 return DateTime.MinValue;
             }
             
-            var where = Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+            var where = this.Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = string.Format(@"SELECT {2}({0}) FROM Log {1}", this.dateTimeProperty, where, func);
-            Action<IDbCommand> addParameters = cmd => AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+            Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return DateTime.FromFileTime(result);
         }
@@ -296,10 +296,10 @@ namespace logviewer.core
         {
             var clauses = new[]
             {
-                LevelClause(min, max),
-                DateClause(start, finish),
-                FilterClause(filter, useRegexp),
-                ExcludeNoLevelClause(excludeNoLevel)
+                this.LevelClause(min, max), 
+                this.DateClause(start, finish), 
+                FilterClause(filter, useRegexp), 
+                this.ExcludeNoLevelClause(excludeNoLevel)
             };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
             if (!notEmpty.Any())

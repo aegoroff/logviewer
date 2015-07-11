@@ -44,7 +44,7 @@ namespace logviewer.engine
             this.head = header;
             this.body = body;
             this.ix = 0;
-            this.properties = null;
+            this.rawProperties = null;
             this.bodyBuilder = null;
             this.integerProperties = new Dictionary<string, long>();
             this.stringProperties = new Dictionary<string, string>();
@@ -98,7 +98,7 @@ namespace logviewer.engine
         /// </summary>
         public bool HasHeader
         {
-            get { return this.properties != null; }
+            get { return this.rawProperties != null; }
         }
 
         /// <summary>
@@ -121,37 +121,11 @@ namespace logviewer.engine
         /// <summary>
         /// Adds metadata into message
         /// </summary>
-        /// <param name="parsedProperties">Metadata</param>
-        public void AddProperties(IDictionary<string, string> parsedProperties)
+        /// <param name="extractedProperties">Concrete messate properties extracted by template</param>
+        public void AddProperties(IDictionary<string, string> extractedProperties)
         {
-            this.properties = parsedProperties;
+            this.rawProperties = extractedProperties;
         }
-
-        private static readonly IDictionary<ParserType, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
-            <ParserType, Func<string, ParseResult<LogLevel>>>
-        {
-            { ParserType.LogLevel, ParseLogLevel }
-        };
-
-        private static readonly IDictionary<ParserType, Func<string, ParseResult<DateTime>>> dateTimeParsers = new Dictionary
-            <ParserType, Func<string, ParseResult<DateTime>>>
-        {
-            {
-                ParserType.Datetime, ParseDateTime
-            },
-        };
-
-        private static readonly IDictionary<ParserType, Func<string, ParseResult<long>>> integerParsers = new Dictionary
-            <ParserType, Func<string, ParseResult<long>>>
-        {
-            { ParserType.Interger, ParseInteger }
-        };
-
-        private static readonly IDictionary<ParserType, Func<string, ParseResult<string>>> stringParsers = new Dictionary
-            <ParserType, Func<string, ParseResult<string>>>
-        {
-            {ParserType.String, s => new ParseResult<string> {Result = true, Value = s}},
-        };
 
         static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
 
@@ -204,7 +178,9 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
         {
-            var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
+            var result = rules.Count > 1
+                ? RunSemanticAction(dataToParse, rules) 
+                : ParseLogLevel(dataToParse);
             if (result.Result)
             {
                 this.integerProperties[property] = (int)result.Value;
@@ -212,9 +188,9 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseDateTime(string dataToParse, ISet<GrokRule> rules, string property)
+        void ParseDateTime(string dataToParse, string property)
         {
-            var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
+            var result = ParseDateTime(dataToParse);
             if (result.Result)
             {
                 this.integerProperties[property] = result.Value.ToFileTime();
@@ -222,9 +198,9 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseInteger(string dataToParse, ISet<GrokRule> rules, string property)
+        void ParseInteger(string dataToParse, string property)
         {
-            var result = RunSemanticAction(integerParsers, dataToParse, rules);
+            var result = ParseInteger(dataToParse);
             if (result.Result)
             {
                 this.integerProperties[property] = result.Value;
@@ -232,70 +208,58 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private void ParseString(string dataToParse, ISet<GrokRule> rules, string property)
+        private void ParseString(string dataToParse, string property)
         {
-            var result = RunSemanticAction(stringParsers, dataToParse, rules);
-            if (result.Result)
-            {
-                this.stringProperties[property] = result.Value;
-            }
+            this.stringProperties[property] = dataToParse;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
-            if (this.properties == null || schema == null)
+            if (this.rawProperties == null || schema == null)
             {
                 return;
             }
-            foreach (var property in this.properties)
+            foreach (var property in this.rawProperties)
             {
                 if (!schema.ContainsKey(property.Key))
                 {
                     continue;
                 }
-                var sp = schema.First(p => p.Key == property.Key).Key;
+                var semanticProperty = schema.First(p => p.Key == property.Key).Key;
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
 
-                switch (sp.Parser)
+                switch (semanticProperty.Parser)
                 {
                     case ParserType.LogLevel:
                         this.ParseLogLevel(matchedData, rules, property.Key);
                         break;
                     case ParserType.Datetime:
-                        this.ParseDateTime(matchedData, rules, property.Key);
+                        this.ParseDateTime(matchedData, property.Key);
                         break;
                     case ParserType.Interger:
-                        this.ParseInteger(matchedData, rules, property.Key);
+                        this.ParseInteger(matchedData, property.Key);
                         break;
                     default:
-                        this.ParseString(matchedData, rules, property.Key);
+                        this.ParseString(matchedData, property.Key);
                         break;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ParseResult<T> RunSemanticAction<T>(IDictionary<ParserType, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<GrokRule> rules)
+        private static ParseResult<LogLevel> RunSemanticAction(string dataToParse, ISet<GrokRule> rules)
         {
-            var defaultRule = new GrokRule(rules.First().Type);
-            foreach (var rule in rules.Where(rule => rule == defaultRule || dataToParse.Contains(rule.Pattern)))
+            var result = new ParseResult<LogLevel> { Result = true };
+            foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
             {
-                var r = ApplyRule(rule, dataToParse, parsers);
-                if (r.Result)
-                {
-                    return r;
-                }
+                result.Value = rule.Level;
+                return result;
             }
-            return ApplyRule(defaultRule, dataToParse, parsers);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ParseResult<T> ApplyRule<T>(GrokRule rule, string matchedData, IDictionary<ParserType, Func<string, ParseResult<T>>> parsers)
-        {
-            Func<string, ParseResult<T>> func;
-            return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
+            var defaultRule = rules.First(rule => rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase));
+            result.Value = defaultRule.Level;
+            return result;
         }
 
         /// <summary>
@@ -396,7 +360,7 @@ namespace logviewer.engine
         private StringBuilder bodyBuilder;
         private string head;
         private long ix;
-        private IDictionary<string, string> properties;
+        private IDictionary<string, string> rawProperties;
 
         #endregion
     }

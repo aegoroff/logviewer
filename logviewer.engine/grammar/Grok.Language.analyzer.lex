@@ -45,7 +45,7 @@ SKIP {NOT_QUOTED_STR}|{QUOTED_STR}
 
 TYPE_NAME {INT}|{INT32}|{INT64}|{LONG}|{LOG_LEVEL}|{DATE_TIME}|{STRING_TYPE}
 
-TYPE_MEMBER {LEVEL_TRACE}|{LEVEL_DEBUG}|{LEVEL_INFO}|{LEVEL_WARN}|{LEVEL_ERROR}|{LEVEL_FATAL}
+LEVEL {LEVEL_TRACE}|{LEVEL_DEBUG}|{LEVEL_INFO}|{LEVEL_WARN}|{LEVEL_ERROR}|{LEVEL_FATAL}
 CASTING_PATTERN {QUOTED_STR}
 
 %x INPATTERN
@@ -73,12 +73,12 @@ CASTING_PATTERN {QUOTED_STR}
     {LOG_LEVEL} { yylval.Parser = ParserType.LogLevel; return (int)Token.TYPE_NAME; }
     {STRING_TYPE} { yylval.Parser = ParserType.String; return (int)Token.TYPE_NAME; }
 
-    {LEVEL_TRACE} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Trace; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_DEBUG} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Debug; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_INFO} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Info; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_WARN} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Warn; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_ERROR} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Error; return (int)Token.TYPE_MEMBER; }
-    {LEVEL_FATAL} { yylval.Parser = ParserType.LogLevel; yylval.TypeMember = LogLevel.Fatal; return (int)Token.TYPE_MEMBER; }
+    {LEVEL_TRACE} { yylval.Parser = ParserType.LogLevel; yylval.Level = LogLevel.Trace; return (int)Token.LEVEL; }
+    {LEVEL_DEBUG} { yylval.Parser = ParserType.LogLevel; yylval.Level = LogLevel.Debug; return (int)Token.LEVEL; }
+    {LEVEL_INFO} { yylval.Parser = ParserType.LogLevel; yylval.Level = LogLevel.Info; return (int)Token.LEVEL; }
+    {LEVEL_WARN} { yylval.Parser = ParserType.LogLevel; yylval.Level = LogLevel.Warn; return (int)Token.LEVEL; }
+    {LEVEL_ERROR} { yylval.Parser = ParserType.LogLevel; yylval.Level = LogLevel.Error; return (int)Token.LEVEL; }
+    {LEVEL_FATAL} { yylval.Parser = ParserType.LogLevel; yylval.Level = LogLevel.Fatal; return (int)Token.LEVEL; }
 
     {PATTERN} { yylval.Pattern = yytext; return (int)Token.PATTERN; }
     {PROPERTY} { yylval.Property = yytext; return (int)Token.PROPERTY; }

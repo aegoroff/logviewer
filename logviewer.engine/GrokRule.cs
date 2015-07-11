@@ -14,18 +14,22 @@ namespace logviewer.engine
     [DebuggerDisplay("{Pattern}")]
     public struct GrokRule
     {
+        internal const string DefaultPattern = "*";
         private readonly string pattern;
         private readonly ParserType type;
+        private readonly LogLevel level;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance
         /// </summary>
         /// <param name="type">Data type</param>
         /// <param name="pattern">Matching pattern</param>
-        public GrokRule(ParserType type = ParserType.String, string pattern = "*")
+        /// <param name="level">LogLevel if applicable</param>
+        public GrokRule(ParserType type = ParserType.String, string pattern = DefaultPattern, LogLevel level = LogLevel.None)
         {
             this.pattern = pattern;
             this.type = type;
+            this.level = level;
         }
 
         /// <summary>
@@ -37,11 +41,19 @@ namespace logviewer.engine
         }
 
         /// <summary>
-        /// Gets or sets target casting type
+        /// Gets target casting type
         /// </summary>
         public ParserType Type
         {
             get { return this.type; }
+        }
+
+        /// <summary>
+        /// Gets target log level
+        /// </summary>
+        public LogLevel Level
+        {
+            get { return this.level; }
         }
 
         /// <summary>
