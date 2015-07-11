@@ -126,32 +126,45 @@ namespace logviewer.engine
         {
             this.rawProperties = extractedProperties;
         }
-
-        static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        static IDictionary<string, LogLevel> Levels()
-        {
-            var r = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
-            foreach (var n in Enum.GetNames(typeof(LogLevel)))
-            {
-                r.Add(n, (LogLevel)Enum.Parse(typeof(LogLevel), n));
-            }
-            r.Add("alert", LogLevel.Trace);
-            r.Add("notice", LogLevel.Info);
-            r.Add("critical", LogLevel.Error);
-            r.Add("severe", LogLevel.Fatal);
-            r.Add("emerg", LogLevel.Fatal);
-            r.Add("emergency", LogLevel.Fatal);
-            r.Add("warning", LogLevel.Warn);
-            return r;
-        }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static ParseResult<LogLevel> ParseLogLevel(string s)
         {
             LogLevel r;
-            var success = levels.TryGetValue(s, out r);
+            var success = true;
+            switch (s.ToUpperInvariant())
+            {
+                case "TRACE":
+                case "ALERT":
+                    r = LogLevel.Trace;
+                    break;
+                case "DEBUG":
+                    r = LogLevel.Debug;
+                    break;
+                case "INFO":
+                case "INFORMATION":
+                case "NOTICE":
+                    r = LogLevel.Info;
+                    break;
+                case "WARN":
+                case "WARNING":
+                    r = LogLevel.Warn;
+                    break;
+                case "ERROR":
+                case "CRITICAL":
+                    r = LogLevel.Error;
+                    break;
+                case "FATAL":
+                case "SEVERE":
+                case "EMERG":
+                case "EMERGENCY":
+                    r = LogLevel.Fatal;
+                    break;
+                default:
+                    r = LogLevel.None;
+                    success = false;
+                    break;
+            }
             return new ParseResult<LogLevel> { Result = success, Value = r };
         }
 
