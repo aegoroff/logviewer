@@ -128,7 +128,7 @@ namespace logviewer.engine
         }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static bool ParseLogLevel(string s, out LogLevel level)
+        private static bool TryParseLogLevel(string s, out LogLevel level)
         {
             switch (s.ToUpperInvariant())
             {
@@ -168,8 +168,8 @@ namespace logviewer.engine
         {
             LogLevel level;
             var result = rules.Count > 1
-                ? RunSemanticAction(dataToParse, rules, out level) 
-                : ParseLogLevel(dataToParse, out level);
+                ? TryRunSemanticAction(dataToParse, rules, out level) 
+                : TryParseLogLevel(dataToParse, out level);
             if (result)
             {
                 this.integerProperties[property] = (int)level;
@@ -244,7 +244,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool RunSemanticAction(string dataToParse, ISet<GrokRule> rules, out LogLevel level)
+        private static bool TryRunSemanticAction(string dataToParse, ISet<GrokRule> rules, out LogLevel level)
         {
             foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
             {
