@@ -73,8 +73,8 @@ property_ref
 	;
 
 casting
-	: COMMA type_cast { AddRule($2.Parser, "*"); }
-    | COMMA casting_list
+	: COLON type_cast { AddRule($2.Parser, "*"); }
+    | COLON casting_list
 	;
     
 type_cast

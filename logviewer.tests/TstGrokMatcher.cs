@@ -67,25 +67,25 @@ namespace logviewer.tests
         [InlineData("%{TIME}", @"(?!<[0-9])(?:2[0123]|[01]?[0-9]):(?:[0-5][0-9])(?::(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))(?![0-9])")]
         [InlineData("%{TIMESTAMP_ISO8601}", @"(?>\d\d){1,2}-(?:0?[1-9]|1[0-2])-(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[T ](?:2[0123]|[01]?[0-9]):?(?:[0-5][0-9])(?::?(?:(?:[0-5][0-9]|60)(?:[:.,][0-9]+)?))?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?")]
         [InlineData("%{LOGLEVEL:level}", @"(?<level>([A-a]lert|ALERT|[T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|EMERG(?:ENCY)?|[Ee]merg(?:ency)?))")]
-        [InlineData("%{POSINT:num,int}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
-        [InlineData("%{POSINT:num,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
-        [InlineData("%{POSINT:num,\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
-        [InlineData("%{POSINT:num,'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
-        [InlineData("%{INT:Id,'0'->LogLevel.Trace}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{INT:Id,'1'->LogLevel.Debug}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{INT:Id,'2'->LogLevel.Info}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{INT:Id,'3'->LogLevel.Warn}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{INT:Id,'4'->LogLevel.Error}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{INT:Id,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
-        [InlineData("%{INT:Id,'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{POSINT:num:int}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [InlineData("%{POSINT:num:'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [InlineData("%{POSINT:num:\"0\"->LogLevel.Trace,\"1\"->LogLevel.Debug,\"2\"->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [InlineData("%{POSINT:num:'  0 '->LogLevel.Trace,' 1 '->LogLevel.Debug,' 2'->LogLevel.Info}", @"(?<num>\b(?:[1-9][0-9]*)\b)")]
+        [InlineData("%{INT:Id:'0'->LogLevel.Trace}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{INT:Id:'1'->LogLevel.Debug}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{INT:Id:'2'->LogLevel.Info}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{INT:Id:'3'->LogLevel.Warn}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{INT:Id:'4'->LogLevel.Error}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{INT:Id:'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
+        [InlineData("%{INT:Id:'0'->LogLevel.Trace,'1'->LogLevel.Debug,'2'->LogLevel.Info,'3'->LogLevel.Warn,'4'->LogLevel.Error,'5'->LogLevel.Fatal}", "(?<Id>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{INT:num_property}", "(?<num_property>(?:[+-]?(?:[0-9]+)))")]
         [InlineData("%{POSINT}%%{POSINT}", "\\b(?:[1-9][0-9]*)\\b%%{POSINT}")]
         [InlineData("%{POSINT}}%{POSINT}", "\\b(?:[1-9][0-9]*)\\b}\\b(?:[1-9][0-9]*)\\b")]
         [InlineData("%{URIPATH}", @"(?:/[A-Za-z0-9$.+!*'(){},~:;=@#%_\-]*)+")]
         [InlineData("%{NGUSERNAME}", @"[a-zA-Z\.\@\-\+_%]+")]
         [InlineData("%{URIPARAM}", @"\?[A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\-\[\]]*")]
-        [InlineData("%{WORD:word,String}", @"(?<word>\b\w+\b)")]
-        [InlineData("%{WORD:word,string}", @"(?<word>\b\w+\b)")]
+        [InlineData("%{WORD:word:String}", @"(?<word>\b\w+\b)")]
+        [InlineData("%{WORD:word:string}", @"(?<word>\b\w+\b)")]
         [InlineData("%{QUOTEDSTRING}", "(?>(?<!\\\\)(?>\"(?>\\\\.|[^\\\\\"]+)+\"|\"\"|(?>'(?>\\\\.|[^\\\\']+)+')|''|(?>`(?>\\\\.|[^\\\\`]+)+`)|``))")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
@@ -95,19 +95,19 @@ namespace logviewer.tests
         }
 
         [Theory]
-        [InlineData("%{POSINT:num,int,int}")]
-        [InlineData("%{POSINT:num,int_number}")]
+        [InlineData("%{POSINT:num:int:int}")]
+        [InlineData("%{POSINT:num:int_number}")]
         [InlineData("%{POSINT:_num}")]
-        [InlineData("%{POSINT:num1,num1}")]
+        [InlineData("%{POSINT:num1:num1}")]
         [InlineData("%{POSINT:N1}")]
         [InlineData("%{POSINT:1N}")]
         [InlineData("%{POSINT:1n}")]
         [InlineData("%{id}")]
         [InlineData("%{WORD")]
-        [InlineData("%{POSINT:num,small}")]
-        [InlineData("%{INT:Id,'0'->LogLevel.T}")]
-        [InlineData("%{INT:Id,'0'->LogLevel.None}")]
-        [InlineData("%{ID:Id,'0'->LogLevel.Trace}")]
+        [InlineData("%{POSINT:num:small}")]
+        [InlineData("%{INT:Id:'0'->LogLevel.T}")]
+        [InlineData("%{INT:Id:'0'->LogLevel.None}")]
+        [InlineData("%{ID:Id:'0'->LogLevel.Trace}")]
         [InlineData("%{S1:s}%{S2:s}")]
         public void NegativeCompileTests(string pattern)
         {
@@ -147,7 +147,7 @@ namespace logviewer.tests
 
         [Theory]
         [InlineData("%{TIMESTAMP_ISO8601:datetime}%{DATA:meta}%{LOGLEVEL:level}%{DATA:head}")]
-        [InlineData("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}")]
+        [InlineData("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}")]
         public void ParseRealMessage(string pattern)
         {
             var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
@@ -182,7 +182,7 @@ namespace logviewer.tests
         [Fact]
         public void ParseRealMessageNonDefaultCasting()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA}", RegexOptions.None, output.WriteLine);
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA}", RegexOptions.None, output.WriteLine);
             Assert.Equal(1, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
             
@@ -198,7 +198,7 @@ namespace logviewer.tests
         [Fact]
         public void ParseRealMessageWithDatatypesFailure()
         {
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime,DateTime}%{DATA:meta}%{LOGLEVEL:level,LogLevel}%{DATA:head}", RegexOptions.None, output.WriteLine);
+            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:datetime:DateTime}%{DATA:meta}%{LOGLEVEL:level:LogLevel}%{DATA:head}", RegexOptions.None, output.WriteLine);
             var result = matcher.Parse(" [4688] INFO \nmessage body 1");
             Assert.Null(result);
         }
