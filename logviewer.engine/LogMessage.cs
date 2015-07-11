@@ -133,14 +133,15 @@ namespace logviewer.engine
             switch (s.ToUpperInvariant())
             {
                 case "TRACE":
-                case "ALERT":
                     level = LogLevel.Trace;
                     return true;
                 case "DEBUG":
+                case "DEBUGGING":
                     level = LogLevel.Debug;
                     return true;
                 case "INFO":
                 case "NOTICE":
+                case "INFORMATIONAL":
                     level = LogLevel.Info;
                     return true;
                 case "WARN":
@@ -155,6 +156,8 @@ namespace logviewer.engine
                 case "SEVERE":
                 case "EMERG":
                 case "EMERGENCY":
+                case "PANIC":
+                case "ALERT":
                     level = LogLevel.Fatal;
                     return true;
                 default:
