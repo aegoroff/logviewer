@@ -22,7 +22,7 @@ namespace logviewer.engine.grammar
             var message = string.Format(format, args);
             this.CustomErrorOutputMethod(message);
             this.CustomErrorOutputMethod(string.Empty);
-            throw new Exception(message);
+            throw new GrokSyntaxException(message);
         }
     }
 }

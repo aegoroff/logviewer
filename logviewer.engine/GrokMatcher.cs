@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using logviewer.engine.grammar;
 
 namespace logviewer.engine
 {
@@ -37,19 +38,33 @@ namespace logviewer.engine
                 this.Template = this.Compile(grok);
                 this.regex = new Regex(this.Template, options);
             }
+            catch (GrokSyntaxException e)
+            {
+                this.HandleRegexpException(grok, grok, e);
+            }
+            catch (ArgumentException e)
+            {
+                this.HandleRegexpException(grok, string.Empty, e);
+            }
             catch (Exception e)
             {
-                if (this.customErrorOutputMethod != null)
-                {
-                    this.customErrorOutputMethod(e.ToString());
-                }
-                else
-                {
-                    System.Diagnostics.Trace.WriteLine(e.ToString());
-                }
-                this.CompilationFailed = true;
-                this.Template = grok;
+                this.HandleRegexpException(grok, string.Empty, e);
             }
+        }
+
+        private void HandleRegexpException(string grok, string template, Exception e)
+        {
+            if (this.customErrorOutputMethod != null)
+            {
+                this.customErrorOutputMethod(e.ToString());
+            }
+            else
+            {
+                System.Diagnostics.Trace.WriteLine(e.ToString());
+            }
+            this.CompilationFailed = true;
+            this.Template = grok;
+            this.regex = new Regex(template);
         }
 
         private string Compile(string grok)
@@ -85,7 +100,7 @@ namespace logviewer.engine
         /// <returns>True if string matches the pattern false otherwise </returns>
         public bool Match(string s)
         {
-            return this.regex != null && this.regex.IsMatch(s);
+            return this.regex.IsMatch(s);
         }
 
         /// <summary>
@@ -95,10 +110,6 @@ namespace logviewer.engine
         /// <returns>Metadata dictionary or null</returns>
         public IDictionary<string, string> Parse(string s)
         {
-            if (this.regex == null)
-            {
-                return null;
-            }
             var match = this.regex.Match(s);
             return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
         }

@@ -58,6 +58,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
     <Compile Include="grammar\GplexBuffers.cs" />
+    <Compile Include="grammar\GrokSyntaxException.cs" />
     <Compile Include="grammar\ShiftReduceParserCode.cs" />
     <Compile Include="GrokCompiler.cs" />
     <Compile Include="GrokMatcher.cs" />
