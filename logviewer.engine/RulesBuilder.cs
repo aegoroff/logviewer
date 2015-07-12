@@ -25,13 +25,12 @@ namespace logviewer.engine
                 this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
                 return;
             }
-            var dictionary = new Dictionary<SemanticProperty, ISet<GrokRule>>();
+            this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
             foreach (var semantic in schema)
             {
-                var k = dictionary.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
-                dictionary.Add(Create(k, semantic.CastingRules), semantic.CastingRules);
+                var k = this.rules.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
+                this.rules.Add(Create(k, semantic.CastingRules), semantic.CastingRules);
             }
-            this.rules = dictionary;
         }
 
         /// <summary>
