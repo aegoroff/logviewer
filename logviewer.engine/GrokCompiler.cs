@@ -64,7 +64,8 @@ namespace logviewer.engine
         internal string Compile(string grok)
         {
             var parser = new grammar.GrokParser(this.templates, this.Compile, this.customErrorOutputMethod); // recursion here
-            parser.Parse(grok);
+            var translation = string.Format("MAIN {0}", grok);
+            parser.Parse(translation);
             this.messageSchema.AddRange(parser.Schema);
             var result = parser.Template;
             if (!parser.IsPropertyStackEmpty)

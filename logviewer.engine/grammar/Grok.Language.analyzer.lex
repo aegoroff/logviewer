@@ -41,6 +41,11 @@ STR_ESCAPE_SEQ "\\".
 
 QUOTED_STR "'"({STR_ESCAPE_SEQ}|[^\\\r\n'])*"'"|"\""({STR_ESCAPE_SEQ}|[^\\\r\n"])*"\""
 
+COMMENT ^#[^\r\n]*
+WS [ \t]+ // whitespaces
+CRLF \r?\n 
+
+PATTERN_DEFINITION {PATTERN}
 SKIP {NOT_QUOTED_STR}|{QUOTED_STR}
 
 TYPE_NAME {INT}|{INT32}|{INT64}|{LONG}|{LOG_LEVEL}|{DATE_TIME}|{STRING_TYPE}
@@ -49,12 +54,32 @@ LEVEL {LEVEL_TRACE}|{LEVEL_DEBUG}|{LEVEL_INFO}|{LEVEL_WARN}|{LEVEL_ERROR}|{LEVEL
 CASTING_PATTERN {QUOTED_STR}
 
 %x INPATTERN
+%x INDEFINITION
+%x INGROK
 
 %%
 
 /* Scanner body */
 
-{OPEN} {  yy_push_state (INPATTERN); return (int)Token.OPEN; }
+{PATTERN_DEFINITION} {  yy_push_state (INDEFINITION); return (int)Token.PATTERN_DEFINITION; }
+
+<INDEFINITION>{
+	{WS} { yy_push_state (INGROK); return (int)Token.WS; }
+	{COMMENT} { 
+		yy_pop_state(); // INDEFINITION
+		return (int)Token.COMMENT; 
+	}
+	{CRLF} { 
+		yy_pop_state(); // INGROK
+		yy_pop_state(); // INDEFINITION
+		return (int)Token.CRLF; 
+	}
+}
+
+<INGROK> {
+	{OPEN} {  yy_push_state (INPATTERN); return (int)Token.OPEN; }
+	{SKIP} { yylval.Literal = yytext; return (int)Token.SKIP; }
+}
 
 <INPATTERN>{
     {COMMA} { return (int)Token.COMMA; }
@@ -87,7 +112,5 @@ CASTING_PATTERN {QUOTED_STR}
 
     {CLOSE} {  yy_pop_state(); return (int)Token.CLOSE; }
 }
-
-{SKIP} { yylval.Literal = yytext; return (int)Token.SKIP; }
 
 %%

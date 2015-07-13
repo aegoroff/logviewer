@@ -13,7 +13,7 @@
 			public LogLevel Level;
 	   }
 
-%start parse
+%start translation_unit
 
 %token COMMA
 %token DOT
@@ -23,12 +23,30 @@
 %token CLOSE
 %token <Literal> SKIP
 %token <Pattern> PATTERN
+%token <Pattern> PATTERN_DEFINITION
 %token <CastingPattern> CASTING_PATTERN
 %token <Parser> TYPE_NAME
 %token <Level> LEVEL
 %token <Property> PROPERTY
+%token CRLF
+%token WS
+%token COMMENT
 
 %%
+
+translation_unit : /* Empty */
+       | pattern_definitions
+       ;
+
+pattern_definitions 
+    : pattern_definition_or_comment 
+    | pattern_definitions CRLF pattern_definition_or_comment
+    ;
+	
+pattern_definition_or_comment 
+    : PATTERN_DEFINITION WS parse
+    | COMMENT
+    ;
 
 parse  : /* Empty */
        | groks

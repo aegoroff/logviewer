@@ -69,7 +69,7 @@ namespace logviewer.engine
 
         private string Compile(string grok)
         {
-            var compiler = new GrokCompiler();
+            var compiler = new GrokCompiler(this.customErrorOutputMethod);
             var result = compiler.Compile(grok);
             this.messageSchema.AddRange(compiler.MessageSchema);
             return result;
