@@ -44,7 +44,7 @@ pattern_definitions
     ;
 	
 pattern_definition_or_comment 
-    : PATTERN_DEFINITION WS parse
+    : PATTERN_DEFINITION { OnPatternDefinition($1); } WS parse
     | COMMENT
     ;
 
@@ -71,17 +71,17 @@ literal
     ;
 
 definition
-	: PATTERN semantic { OnPattern($1); }
+	: PATTERN { OnPattern($1); } semantic { SaveSchema(); }
 	;
 
 semantic
 	: /* Empty */
-    | property_ref { this.OnSemantic($1.Property); }
-    | property_ref casting { this.OnSemantic($1.Property); }
+    | property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No schema case. Add generic string rule
+    | property_ref casting
 	;
     
 property_ref
-	: COLON PROPERTY { $$.Property = $2; }
+	: COLON PROPERTY { this.OnSemantic($2); }
 	;
 
 casting

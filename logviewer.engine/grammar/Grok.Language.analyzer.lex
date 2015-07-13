@@ -61,7 +61,7 @@ CASTING_PATTERN {QUOTED_STR}
 
 /* Scanner body */
 
-{PATTERN_DEFINITION} {  yy_push_state (INDEFINITION); return (int)Token.PATTERN_DEFINITION; }
+{PATTERN_DEFINITION} {  yy_push_state (INDEFINITION); yylval.Pattern = yytext; return (int)Token.PATTERN_DEFINITION; }
 
 <INDEFINITION>{
 	{WS} { yy_push_state (INGROK); return (int)Token.WS; }

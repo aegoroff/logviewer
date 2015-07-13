@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace logviewer.engine
 {
@@ -10,7 +11,7 @@ namespace logviewer.engine
     internal class GrokCompiler
     {
         private readonly Action<string> customErrorOutputMethod;
-        private readonly Dictionary<string, string> templates = new Dictionary<string, string>();
+        private StringBuilder translationUnit;
         private readonly List<Semantic> messageSchema = new List<Semantic>();
 
         /// <summary>
@@ -20,10 +21,10 @@ namespace logviewer.engine
         internal GrokCompiler(Action<string> customErrorOutputMethod = null)
         {
             this.customErrorOutputMethod = customErrorOutputMethod;
-            this.CreateTemplates();
+            this.CreateLibraryTemplates();
         }
 
-        private void CreateTemplates()
+        private void CreateLibraryTemplates()
         {
             const string pattern = "*.patterns";
             var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
@@ -31,28 +32,10 @@ namespace logviewer.engine
             {
                 patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
             }
+            this.translationUnit = new StringBuilder();
             foreach (var file in patternFiles)
             {
-                this.AddTemplates(file);
-            }
-        }
-
-        private void AddTemplates(string fullPath)
-        {
-            var patterns = File.ReadAllLines(fullPath);
-            foreach (var pattern in patterns)
-            {
-                var parts = pattern.Split(new[] { ' ' }, StringSplitOptions.None);
-                if (parts.Length < 2)
-                {
-                    continue;
-                }
-                var template = parts[0];
-                if (string.IsNullOrWhiteSpace(template) || template.StartsWith("#") || this.templates.ContainsKey(template))
-                {
-                    continue;
-                }
-                this.templates.Add(template, pattern.Substring(template.Length).Trim());
+                this.translationUnit.AppendLine(File.ReadAllText(file));
             }
         }
 
@@ -63,9 +46,10 @@ namespace logviewer.engine
         /// <returns>Regular expression</returns>
         internal string Compile(string grok)
         {
-            var parser = new grammar.GrokParser(this.templates, this.Compile, this.customErrorOutputMethod); // recursion here
+            var parser = new grammar.GrokParser(this.customErrorOutputMethod);
             var translation = string.Format("MAIN {0}", grok);
-            parser.Parse(translation);
+            this.translationUnit.AppendLine(translation);
+            parser.Parse(this.translationUnit.ToString());
             this.messageSchema.AddRange(parser.Schema);
             var result = parser.Template;
             if (!parser.IsPropertyStackEmpty)

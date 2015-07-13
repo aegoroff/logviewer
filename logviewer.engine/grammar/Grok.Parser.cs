@@ -11,18 +11,16 @@ namespace logviewer.engine.grammar
     internal partial class GrokParser
     {
         private readonly Composer composer = new Composer();
-        private readonly IDictionary<string, string> templates;
-        private readonly Func<string, string> compiler;
+        private readonly IDictionary<string, IPattern> definitionsTable;
         private readonly List<Semantic> schema = new List<Semantic>();
         
         private readonly Action<string> customErrorOutputMethod;
-        private readonly Stack<GrokRule> rulesStack = new Stack<GrokRule>();
-        private readonly Stack<string> propertiesStack = new Stack<string>();
+        private readonly Stack<Semantic> propertiesStack = new Stack<Semantic>();
+        private readonly Stack<Composer> patternStack = new Stack<Composer>();
 
-        public GrokParser(IDictionary<string, string> templates, Func<string, string> compiler, Action<string> customErrorOutputMethod = null) : base(null)
+        public GrokParser(Action<string> customErrorOutputMethod = null) : base(null)
         {
-            this.templates = templates;
-            this.compiler = compiler;
+            this.definitionsTable = new Dictionary<string, IPattern>();
             this.customErrorOutputMethod = customErrorOutputMethod ?? Console.WriteLine;
         }
 
@@ -47,28 +45,44 @@ namespace logviewer.engine.grammar
         void OnLiteral(string text)
         {
             var pattern = new StringLiteral(text);
-            this.composer.Add(pattern);
+            this.patternStack.Peek().Add(pattern);
+        }
+
+
+        void OnPatternDefinition(string patternName)
+        {
+            var currentComposer = new Composer();
+            this.definitionsTable.Add(patternName, currentComposer);
+            this.patternStack.Push(currentComposer);
+        }
+        
+        void SaveSchema()
+        {
+            if (this.propertiesStack.Count > 0)
+            {
+                this.schema.Add(this.propertiesStack.Pop());
+            }
         }
 
 
         void OnPattern(string patternName)
         {
-            IPattern pattern;
-            if (this.templates.ContainsKey(patternName))
-            {
-                pattern = new CompilePattern(this.templates[patternName], this.compiler);
-                if (this.propertiesStack.Count > 0)
-                {
-                    var property = this.propertiesStack.Pop();
-                    pattern = new NamedPattern(property, pattern);
-                }
-            }
-            else
-            {
-                // just use pattern itself
-                pattern = new PassthroughPattern(patternName);
-            }
-            this.composer.Add(pattern);
+            //IPattern pattern;
+            //if (this.templates.ContainsKey(patternName))
+            //{
+            //    pattern = new CompilePattern(this.templates[patternName], this.compiler);
+            //    if (this.propertiesStack.Count > 0)
+            //    {
+            //        var property = this.propertiesStack.Pop();
+            //        pattern = new NamedPattern(property, pattern);
+            //    }
+            //}
+            //else
+            //{
+            //    // just use pattern itself
+            //    pattern = new PassthroughPattern(patternName);
+            //}
+            //this.composer.Add(pattern);
         }
 
         internal bool IsPropertyStackEmpty
@@ -79,28 +93,24 @@ namespace logviewer.engine.grammar
         private void OnSemantic(string property)
         {
             var semantic = new Semantic(property);
-
-            if (this.rulesStack.Count == 0)
-            {
-                this.OnRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
-            }
-
-            while (this.rulesStack.Count > 0)
-            {
-                semantic.CastingRules.Add(this.rulesStack.Pop());
-            }
-            this.schema.Add(semantic);
-            this.propertiesStack.Push(property); // push property into stack to wrap pattern later
+            this.propertiesStack.Push(semantic); // push property into stack to wrap pattern later
         }
 
         void OnRule(ParserType parser, string pattern)
         {
-            this.rulesStack.Push(new GrokRule(parser, pattern));
+            var rule = new GrokRule(parser, pattern);
+            this.AddRule(rule);
         }
         
         void OnRule(ParserType parser, string pattern, LogLevel level)
         {
-            this.rulesStack.Push(new GrokRule(parser, pattern.UnescapeString(), level));
+            var rule = new GrokRule(parser, pattern.UnescapeString(), level);
+            this.AddRule(rule);
+        }
+
+        private void AddRule(GrokRule rule)
+        {
+            this.propertiesStack.Peek().CastingRules.Add(rule);
         }
     }
 }
