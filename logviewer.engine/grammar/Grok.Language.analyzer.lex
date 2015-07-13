@@ -31,22 +31,22 @@ DIGIT [0-9]
 
 
 OPEN "%{"
-CLOSE "}" 
+CLOSE "}"
 
 PATTERN {UPPER_LETTER}({UPPER_LETTER}|{DIGIT}|{UNDERSCORE})*
 PROPERTY ({LOWER_LETTER}|{UPPER_LETTER})({LOWER_LETTER}|{UPPER_LETTER}|{DIGIT}|{UNDERSCORE})*
 
-NOT_QUOTED_STR  ([^%]|%[^\{]|%\{\})+
+NOT_QUOTED_STR  ([^%\r\n]|%[^\{]|%\{\})+
 STR_ESCAPE_SEQ "\\".
 
 QUOTED_STR "'"({STR_ESCAPE_SEQ}|[^\\\r\n'])*"'"|"\""({STR_ESCAPE_SEQ}|[^\\\r\n"])*"\""
 
 COMMENT ^#[^\r\n]*
 WS [ \t]+ // whitespaces
-CRLF \r?\n 
+CRLF (\r)?(\n)
 
 PATTERN_DEFINITION {PATTERN}
-SKIP {NOT_QUOTED_STR}|{QUOTED_STR}
+LITERAL {NOT_QUOTED_STR}|{QUOTED_STR}
 
 TYPE_NAME {INT}|{INT32}|{INT64}|{LONG}|{LOG_LEVEL}|{DATE_TIME}|{STRING_TYPE}
 
@@ -56,29 +56,38 @@ CASTING_PATTERN {QUOTED_STR}
 %x INPATTERN
 %x INDEFINITION
 %x INGROK
+%x INCOMMENT
 
 %%
 
 /* Scanner body */
 
-{PATTERN_DEFINITION} {  yy_push_state (INDEFINITION); yylval.Pattern = yytext; return (int)Token.PATTERN_DEFINITION; }
+{PATTERN_DEFINITION} { yy_push_state (INDEFINITION); yylval.Pattern = yytext; return (int)Token.PATTERN_DEFINITION; }
+
+{COMMENT} { yy_push_state (INCOMMENT); return (int)Token.COMMENT; }
 
 <INDEFINITION>{
 	{WS} { yy_push_state (INGROK); return (int)Token.WS; }
-	{COMMENT} { 
-		yy_pop_state(); // INDEFINITION
-		return (int)Token.COMMENT; 
-	}
-	{CRLF} { 
+}
+
+<INGROK>{
+    {CRLF} { 
 		yy_pop_state(); // INGROK
 		yy_pop_state(); // INDEFINITION
 		return (int)Token.CRLF; 
 	}
 }
 
+<INCOMMENT>{
+    {CRLF} { 
+		yy_pop_state(); // INCOMMENT
+		return (int)Token.CRLF; 
+	}
+}
+
 <INGROK> {
 	{OPEN} {  yy_push_state (INPATTERN); return (int)Token.OPEN; }
-	{SKIP} { yylval.Literal = yytext; return (int)Token.SKIP; }
+	{LITERAL} { yylval.Literal = yytext; return (int)Token.LITERAL; }
 }
 
 <INPATTERN>{
