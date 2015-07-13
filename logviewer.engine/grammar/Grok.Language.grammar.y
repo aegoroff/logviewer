@@ -40,8 +40,12 @@ groks
     ;
 
 grok
-	: OPEN definition CLOSE
+	: pattern
 	| literal
+	;
+	
+pattern
+	: OPEN definition CLOSE
 	;
 
 literal 
