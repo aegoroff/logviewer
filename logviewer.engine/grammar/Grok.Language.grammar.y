@@ -57,7 +57,7 @@ definition
 semantic
 	: /* Empty */
     | property_ref { 
-        AddRule(ParserType.String, "*"); // No schema case. Add generic string rule
+        AddRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
         this.OnSemantic($1.Property); 
       }
     | property_ref casting { this.OnSemantic($2.Property); }
@@ -68,7 +68,7 @@ property_ref
 	;
 
 casting
-	: COLON type_cast { AddRule($2.Parser, "*"); }
+	: COLON type_cast { AddRule($2.Parser, GrokRule.DefaultPattern); }
     | COLON casting_list
 	;
     
