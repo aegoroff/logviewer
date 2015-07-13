@@ -80,9 +80,9 @@ namespace logviewer.engine.grammar
         {
             var semantic = new Semantic(property);
 
-            if (rulesStack.Count == 0)
+            if (this.rulesStack.Count == 0)
             {
-                OnRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
+                this.OnRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
             }
 
             while (this.rulesStack.Count > 0)
