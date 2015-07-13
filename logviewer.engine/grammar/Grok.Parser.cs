@@ -79,6 +79,12 @@ namespace logviewer.engine.grammar
         private void OnSemantic(string property)
         {
             var semantic = new Semantic(property);
+
+            if (rulesStack.Count == 0)
+            {
+                OnRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
+            }
+
             while (this.rulesStack.Count > 0)
             {
                 semantic.CastingRules.Add(this.rulesStack.Pop());
@@ -87,12 +93,12 @@ namespace logviewer.engine.grammar
             this.propertiesStack.Push(property); // push property into stack to wrap pattern later
         }
 
-        void AddRule(ParserType parser, string pattern)
+        void OnRule(ParserType parser, string pattern)
         {
             this.rulesStack.Push(new GrokRule(parser, pattern));
         }
         
-        void AddRule(ParserType parser, string pattern, LogLevel level)
+        void OnRule(ParserType parser, string pattern, LogLevel level)
         {
             this.rulesStack.Push(new GrokRule(parser, pattern.UnescapeString(), level));
         }

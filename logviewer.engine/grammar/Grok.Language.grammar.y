@@ -28,9 +28,7 @@
 %token <Level> LEVEL
 %token <Property> PROPERTY
 
-
 %%
-
 
 parse  : /* Empty */
        | groks
@@ -51,15 +49,12 @@ literal
     ;
 
 definition
-	: PATTERN semantic  {  OnPattern($1); }
+	: PATTERN semantic { OnPattern($1); }
 	;
 
 semantic
 	: /* Empty */
-    | property_ref { 
-        AddRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
-        this.OnSemantic($1.Property); 
-      }
+    | property_ref { this.OnSemantic($1.Property); }
     | property_ref casting { this.OnSemantic($1.Property); }
 	;
     
@@ -68,7 +63,7 @@ property_ref
 	;
 
 casting
-	: COLON type_cast { AddRule($2.Parser, GrokRule.DefaultPattern); }
+	: COLON type_cast { OnRule($2.Parser, GrokRule.DefaultPattern); }
     | COLON casting_list
 	;
     
@@ -82,7 +77,7 @@ casting_list
 	;
 
 cast
-	: CASTING_PATTERN ARROW target { AddRule($3.Parser, $1, $3.Level); }
+	: CASTING_PATTERN ARROW target { OnRule($3.Parser, $1, $3.Level); }
 	;
 
 target
