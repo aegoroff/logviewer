@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace logviewer.engine
+namespace logviewer.engine.grammar
 {
     [DebuggerDisplay("{Content}")]
     internal class Composer : List<IPattern>, IPattern

@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace logviewer.engine
+namespace logviewer.engine.grammar
 {
     [DebuggerDisplay("{Content}")]
     internal class StringLiteral : Pattern

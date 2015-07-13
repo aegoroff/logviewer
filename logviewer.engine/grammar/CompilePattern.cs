@@ -4,7 +4,7 @@
 
 using System;
 
-namespace logviewer.engine
+namespace logviewer.engine.grammar
 {
     internal class CompilePattern : IPattern
     {

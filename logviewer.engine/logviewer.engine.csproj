@@ -52,8 +52,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompilePattern.cs" />
-    <Compile Include="Composer.cs" />
+    <Compile Include="grammar\CompilePattern.cs" />
+    <Compile Include="grammar\Composer.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileSize.cs" />
@@ -63,12 +63,12 @@
     <Compile Include="GrokCompiler.cs" />
     <Compile Include="GrokMatcher.cs" />
     <Compile Include="ICharsetDetector.cs" />
-    <Compile Include="IPattern.cs" />
+    <Compile Include="grammar\IPattern.cs" />
     <Compile Include="Maybe.cs" />
-    <Compile Include="NamedPattern.cs" />
-    <Compile Include="PassthroughPattern.cs" />
-    <Compile Include="Pattern.cs" />
-    <Compile Include="StringLiteral.cs" />
+    <Compile Include="grammar\NamedPattern.cs" />
+    <Compile Include="grammar\PassthroughPattern.cs" />
+    <Compile Include="grammar\Pattern.cs" />
+    <Compile Include="grammar\StringLiteral.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogMessage.cs" />
