@@ -44,6 +44,13 @@ namespace logviewer.engine.grammar
             get { return this.schema; }
         }
 
+        void OnLiteral(string text)
+        {
+            var pattern = new StringLiteral(text);
+            this.composer.Add(pattern);
+        }
+
+
         void OnPattern(string patternName)
         {
             IPattern pattern;

@@ -47,16 +47,11 @@ grok
 	;
 
 literal 
-    : SKIP { 
-        var literal = new StringLiteral($1);
-        this.composer.Add(literal);
-     } 
+    : SKIP { OnLiteral($1); } 
     ;
 
 definition
-	: PATTERN semantic  { 
-        OnPattern($1); 
-      }
+	: PATTERN semantic  {  OnPattern($1); }
 	;
 
 semantic
