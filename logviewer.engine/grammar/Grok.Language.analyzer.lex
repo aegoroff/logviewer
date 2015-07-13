@@ -64,7 +64,11 @@ CASTING_PATTERN {QUOTED_STR}
 {PATTERN_DEFINITION} {  yy_push_state (INDEFINITION); return (int)Token.PATTERN_DEFINITION; }
 
 <INDEFINITION>{
-	{WS} { yy_push_state (INGROK); return (int)Token.WS; }
+	{WS} { 
+		yy_push_state (INGROK);
+		yylval.Pattern = yytext;
+		return (int)Token.WS; 
+	}
 	{COMMENT} { 
 		yy_pop_state(); // INDEFINITION
 		return (int)Token.COMMENT; 
