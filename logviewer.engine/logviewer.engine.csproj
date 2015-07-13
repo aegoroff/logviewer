@@ -81,6 +81,10 @@
     <Compile Include="Semantic.cs" />
     <Compile Include="SemanticProperty.cs" />
     <Compile Include="SizeUnit.cs" />
+    <Compile Include="Tree\BinaryTree.cs" />
+    <Compile Include="Tree\BinaryTreeNode.cs" />
+    <Compile Include="Tree\Node.cs" />
+    <Compile Include="Tree\NodeList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="grok.patterns">
@@ -120,6 +124,7 @@
     </None>
     <None Include="grammar\Grok.parser" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')">

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 12.07.2015
+// © 2012-2015 Alexander Egorov
+
+using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
