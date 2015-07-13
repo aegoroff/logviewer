@@ -60,7 +60,7 @@ semantic
         AddRule(ParserType.String, GrokRule.DefaultPattern); // No schema case. Add generic string rule
         this.OnSemantic($1.Property); 
       }
-    | property_ref casting { this.OnSemantic($2.Property); }
+    | property_ref casting { this.OnSemantic($1.Property); }
 	;
     
 property_ref
