@@ -43,7 +43,7 @@ QUOTED_STR "'"({STR_ESCAPE_SEQ}|[^\\\r\n'])*"'"|"\""({STR_ESCAPE_SEQ}|[^\\\r\n"]
 
 COMMENT ^#[^\r\n]*
 WS [ \t]+ // whitespaces
-CRLF (\r)?(\n)
+CRLF \r?\n
 
 PATTERN_DEFINITION {PATTERN}
 LITERAL {NOT_QUOTED_STR}|{QUOTED_STR}

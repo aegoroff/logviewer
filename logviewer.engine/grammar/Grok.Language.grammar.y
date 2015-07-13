@@ -34,9 +34,7 @@
 
 %%
 
-translation_unit : /* Empty */
-       | lines
-       ;
+translation_unit : lines ;
 
 lines 
     : line 
@@ -47,6 +45,7 @@ line
     : PATTERN_DEFINITION { OnPatternDefinition($1); } WS groks
     | COMMENT
     | CRLF
+    | EOF
     ;
 
 groks 
