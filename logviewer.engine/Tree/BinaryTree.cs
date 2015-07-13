@@ -82,17 +82,45 @@ namespace logviewer.engine.Tree
         /// <summary>
         ///     Inorder custom tree traverse
         /// </summary>
-        /// <param name="current">Node to start travese from</param>
+        /// <param name="root">Node to start travese from</param>
         /// <param name="action">Action to execute for each node</param>
-        public void InorderTraversal(BinaryTreeNode<T> current, Action<BinaryTreeNode<T>> action)
+        public void InorderTraversal(BinaryTreeNode<T> root, Action<BinaryTreeNode<T>> action)
         {
-            if (current == null)
+            var current = root;
+            var stack = new Stack<BinaryTreeNode<T>>();
+            var done = false;
+
+            while (!done)
             {
-                return;
+                /* Reach the left most tNode of the current tNode */
+                if (current != null)
+                {
+                    /* place pointer to a tree node on the stack before traversing 
+                the node's left subtree */
+                    stack.Push(current);
+                    current = current.Left;
+                }
+
+                /* backtrack from the empty subtree and visit the tNode 
+               at the top of the stack; however, if the stack is empty,
+              you are done */
+                else
+                {
+                    if (stack.Count > 0)
+                    {
+                        current = stack.Pop();
+                        action(current);
+
+                        /* we have visited the node and its left subtree.
+                  Now, it's right subtree's turn */
+                        current = current.Right;
+                    }
+                    else
+                    {
+                        done = true;
+                    }
+                }
             }
-            this.InorderTraversal(current.Left, action);
-            action(current);
-            this.InorderTraversal(current.Right, action);
         }
 
         /// <summary>
