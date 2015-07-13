@@ -16,7 +16,7 @@ namespace logviewer.engine.grammar
         
         private readonly Action<string> customErrorOutputMethod;
         private readonly Stack<Semantic> propertiesStack = new Stack<Semantic>();
-        private readonly Stack<Composer> patternStack = new Stack<Composer>();
+        private readonly Stack<Composer> stackFrames = new Stack<Composer>();
 
         public GrokParser(Action<string> customErrorOutputMethod = null) : base(null)
         {
@@ -45,7 +45,12 @@ namespace logviewer.engine.grammar
         void OnLiteral(string text)
         {
             var pattern = new StringLiteral(text);
-            this.patternStack.Peek().Add(pattern);
+            this.CurrentStackFrame.Add(pattern);
+        }
+
+        private Composer CurrentStackFrame
+        {
+            get { return this.stackFrames.Peek(); }
         }
 
 
@@ -53,7 +58,7 @@ namespace logviewer.engine.grammar
         {
             var currentComposer = new Composer();
             this.definitionsTable.Add(patternName, currentComposer);
-            this.patternStack.Push(currentComposer);
+            this.stackFrames.Push(currentComposer);
         }
         
         void SaveSchema()
@@ -67,7 +72,8 @@ namespace logviewer.engine.grammar
 
         void OnPattern(string patternName)
         {
-            //IPattern pattern;
+            IPattern pattern = new CompilePattern(patternName);
+            this.CurrentStackFrame.Add(pattern);
             //if (this.templates.ContainsKey(patternName))
             //{
             //    pattern = new CompilePattern(this.templates[patternName], this.compiler);
@@ -92,6 +98,8 @@ namespace logviewer.engine.grammar
 
         private void OnSemantic(string property)
         {
+            var last = this.CurrentStackFrame[this.CurrentStackFrame.Count - 1];
+            this.CurrentStackFrame[this.CurrentStackFrame.Count - 1] = new NamedPattern(property, last);
             var semantic = new Semantic(property);
             this.propertiesStack.Push(semantic); // push property into stack to wrap pattern later
         }

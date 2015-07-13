@@ -2,24 +2,20 @@
 // Created at: 29.05.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
-
 namespace logviewer.engine.grammar
 {
     internal class CompilePattern : IPattern
     {
         private readonly string grok;
-        private readonly Func<string, string> callback;
 
-        internal CompilePattern(string grok, Func<string, string> callback)
+        internal CompilePattern(string grok)
         {
             this.grok = grok;
-            this.callback = callback;
         }
 
         public string Content
         {
-            get { return this.callback(this.grok); }
+            get { return this.grok; }
         }
     }
 }
