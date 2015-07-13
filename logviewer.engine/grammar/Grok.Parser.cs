@@ -54,7 +54,6 @@ namespace logviewer.engine.grammar
             var currentComposer = new Composer();
             this.definitionsTable.Add(patternName, currentComposer);
             this.patternStack.Push(currentComposer);
-            this.customErrorOutputMethod(patternName);
         }
         
         void SaveSchema()
