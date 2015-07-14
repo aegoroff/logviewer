@@ -10,13 +10,12 @@ namespace logviewer.engine.grammar
 {
     internal partial class GrokParser
     {
-        private readonly Composer composer = new Composer();
+        private Composer composer;
         private readonly IDictionary<string, IPattern> definitionsTable;
-        private readonly List<Semantic> schema = new List<Semantic>();
         
         private readonly Action<string> customErrorOutputMethod;
         private readonly Stack<Semantic> propertiesStack = new Stack<Semantic>();
-        private readonly Stack<Composer> stackFrames = new Stack<Composer>();
+        private ReferencePattern current;
 
         public GrokParser(Action<string> customErrorOutputMethod = null) : base(null)
         {
@@ -32,25 +31,10 @@ namespace logviewer.engine.grammar
             this.Parse();
         }
 
-        internal string Template
-        {
-            get { return this.composer.Content; }
-        }
-
-        internal List<Semantic> Schema
-        {
-            get { return this.schema; }
-        }
-
         void OnLiteral(string text)
         {
             var pattern = new StringLiteral(text);
-            this.CurrentStackFrame.Add(pattern);
-        }
-
-        private Composer CurrentStackFrame
-        {
-            get { return this.stackFrames.Peek(); }
+            this.composer.Add(pattern);
         }
 
 
@@ -58,37 +42,21 @@ namespace logviewer.engine.grammar
         {
             var currentComposer = new Composer();
             this.definitionsTable.Add(patternName, currentComposer);
-            this.stackFrames.Push(currentComposer);
+            this.composer = currentComposer;
         }
         
         void SaveSchema()
         {
             if (this.propertiesStack.Count > 0)
             {
-                this.schema.Add(this.propertiesStack.Pop());
+                this.current.Schema.Add(this.propertiesStack.Pop());
             }
         }
 
-
         void OnPattern(string patternName)
         {
-            IPattern pattern = new CompilePattern(patternName);
-            this.CurrentStackFrame.Add(pattern);
-            //if (this.templates.ContainsKey(patternName))
-            //{
-            //    pattern = new CompilePattern(this.templates[patternName], this.compiler);
-            //    if (this.propertiesStack.Count > 0)
-            //    {
-            //        var property = this.propertiesStack.Pop();
-            //        pattern = new NamedPattern(property, pattern);
-            //    }
-            //}
-            //else
-            //{
-            //    // just use pattern itself
-            //    pattern = new PassthroughPattern(patternName);
-            //}
-            //this.composer.Add(pattern);
+            this.current = new ReferencePattern(patternName, this.definitionsTable);
+            this.composer.Add(this.current);
         }
 
         internal bool IsPropertyStackEmpty
@@ -96,10 +64,14 @@ namespace logviewer.engine.grammar
             get { return this.propertiesStack.Count == 0; }
         }
 
+        public IDictionary<string, IPattern> DefinitionsTable
+        {
+            get { return this.definitionsTable; }
+        }
+
         private void OnSemantic(string property)
         {
-            var last = this.CurrentStackFrame[this.CurrentStackFrame.Count - 1];
-            this.CurrentStackFrame[this.CurrentStackFrame.Count - 1] = new NamedPattern(property, last);
+            this.current.Property = property;
             var semantic = new Semantic(property);
             this.propertiesStack.Push(semantic); // push property into stack to wrap pattern later
         }

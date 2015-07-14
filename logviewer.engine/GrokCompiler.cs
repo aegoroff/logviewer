@@ -13,6 +13,7 @@ namespace logviewer.engine
         private readonly Action<string> customErrorOutputMethod;
         private StringBuilder translationUnit;
         private readonly List<Semantic> messageSchema = new List<Semantic>();
+        private const string MainPattern = "MAIN";
 
         /// <summary>
         ///     Creates new compiler instance using custom error method output if necessary
@@ -47,16 +48,17 @@ namespace logviewer.engine
         internal string Compile(string grok)
         {
             var parser = new grammar.GrokParser(this.customErrorOutputMethod);
-            var translation = string.Format("MAIN {0}", grok);
+            var translation = string.Format("{0} {1}", MainPattern, grok);
             this.translationUnit.AppendLine(translation);
             parser.Parse(this.translationUnit.ToString());
-            this.messageSchema.AddRange(parser.Schema);
-            var result = parser.Template;
+
             if (!parser.IsPropertyStackEmpty)
             {
                 throw new Exception("Unused property detected");
             }
-            return result;
+            var main = parser.DefinitionsTable[MainPattern];
+            var content = main.Content;
+            return content;
         }
 
         /// <summary>

@@ -9,9 +9,9 @@ namespace logviewer.engine.grammar
     [DebuggerDisplay("{Content}")]
     internal class NamedPattern : IPattern
     {
-        private readonly IPattern wrapped;
+        private readonly string wrapped;
 
-        internal NamedPattern(string property, IPattern wrapped)
+        internal NamedPattern(string property, string wrapped)
         {
             this.wrapped = wrapped;
             this.Property = property;
@@ -21,7 +21,7 @@ namespace logviewer.engine.grammar
 
         public string Content
         {
-            get { return string.Format(@"(?<{0}>{1})", this.Property, this.wrapped.Content); }
+            get { return string.Format(@"(?<{0}>{1})", this.Property, this.wrapped); }
         }
     }
 }
