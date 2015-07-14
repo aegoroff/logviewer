@@ -11,11 +11,6 @@ namespace logviewer.engine.grammar
     /// </summary>
     internal interface IPattern
     {
-        /// <summary>
-        /// Gets pattern's content
-        /// </summary>
-        string Content { get; }
-
-        IList<Semantic> Schema { get; }
+        string Compose(IList<Semantic> messageSchema);
     }
 }

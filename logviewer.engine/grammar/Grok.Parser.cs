@@ -14,8 +14,7 @@ namespace logviewer.engine.grammar
         private readonly IDictionary<string, IPattern> definitionsTable;
         
         private readonly Action<string> customErrorOutputMethod;
-        private readonly Stack<Semantic> propertiesStack = new Stack<Semantic>();
-        private ReferencePattern current;
+        private ReferencePattern currentPattern;
 
         public GrokParser(Action<string> customErrorOutputMethod = null) : base(null)
         {
@@ -40,28 +39,14 @@ namespace logviewer.engine.grammar
 
         void OnPatternDefinition(string patternName)
         {
-            var currentComposer = new Composer();
-            this.definitionsTable.Add(patternName, currentComposer);
-            this.composer = currentComposer;
-        }
-        
-        void SaveSchema()
-        {
-            if (this.propertiesStack.Count > 0)
-            {
-                this.current.Schema.Add(this.propertiesStack.Pop());
-            }
+            this.composer = new Composer();
+            this.definitionsTable.Add(patternName, this.composer);
         }
 
         void OnPattern(string patternName)
         {
-            this.current = new ReferencePattern(patternName, this.definitionsTable);
-            this.composer.Add(this.current);
-        }
-
-        internal bool IsPropertyStackEmpty
-        {
-            get { return this.propertiesStack.Count == 0; }
+            this.currentPattern = new ReferencePattern(patternName, this.definitionsTable);
+            this.composer.Add(this.currentPattern);
         }
 
         public IDictionary<string, IPattern> DefinitionsTable
@@ -71,9 +56,8 @@ namespace logviewer.engine.grammar
 
         private void OnSemantic(string property)
         {
-            this.current.Property = property;
-            var semantic = new Semantic(property);
-            this.propertiesStack.Push(semantic); // push property into stack to wrap pattern later
+            this.currentPattern.Property = property;
+            this.currentPattern.Schema = new Semantic(property);
         }
 
         void OnRule(ParserType parser, string pattern)
@@ -90,7 +74,7 @@ namespace logviewer.engine.grammar
 
         private void AddRule(GrokRule rule)
         {
-            this.propertiesStack.Peek().CastingRules.Add(rule);
+            this.currentPattern.Schema.CastingRules.Add(rule);
         }
     }
 }

@@ -7,21 +7,19 @@ using System.Diagnostics;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{Content}")]
+    [DebuggerDisplay("{content}")]
     internal class Pattern : IPattern
     {
-        private readonly List<Semantic> schema = new List<Semantic>();
+        private readonly string content;
 
         internal Pattern(string content)
         {
-            this.Content = content;
+            this.content = content;
         }
 
-        public string Content { get; private set; }
-
-        public IList<Semantic> Schema
+        public string Compose(IList<Semantic> messageSchema)
         {
-            get { return this.schema; }
+            return this.content;
         }
     }
 }

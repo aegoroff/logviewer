@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{Content}")]
+    [DebuggerDisplay("{content}")]
     internal class StringLiteral : Pattern
     {
         internal StringLiteral(string content) : base(content.UnescapeString())

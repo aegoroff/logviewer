@@ -8,9 +8,8 @@ namespace logviewer.engine.grammar
 {
     internal class ReferencePattern : IPattern
     {
-        private readonly string grok;
         private readonly IDictionary<string, IPattern> definitions;
-        private readonly List<Semantic> schema = new List<Semantic>();
+        private readonly string grok;
 
         internal ReferencePattern(string grok, IDictionary<string, IPattern> definitions)
         {
@@ -18,27 +17,24 @@ namespace logviewer.engine.grammar
             this.definitions = definitions;
         }
 
-        public string Content
-        {
-            get
-            {
-                var pattern = this.definitions.ContainsKey(this.grok)
-                    ? this.definitions[this.grok]
-                    : new PassthroughPattern(this.grok);
-                this.schema.AddRange(pattern.Schema);
-                if (!string.IsNullOrWhiteSpace(this.Property))
-                {
-                    pattern = new NamedPattern(this.Property, pattern);
-                }
-                return pattern.Content;
-            }
-        }
-
         internal string Property { get; set; }
+        internal Semantic Schema { get; set; }
 
-        public IList<Semantic> Schema
+        public string Compose(IList<Semantic> messageSchema)
         {
-            get { return this.schema; }
+            var pattern = this.definitions.ContainsKey(this.grok)
+                ? this.definitions[this.grok]
+                : new PassthroughPattern(this.grok);
+
+            if (this.Schema != default(Semantic))
+            {
+                messageSchema.Add(this.Schema);
+            }
+
+            var result = pattern.Compose(messageSchema);
+            return string.IsNullOrWhiteSpace(this.Property)
+                ? result
+                : string.Format(@"(?<{0}>{1})", this.Property, result);
         }
     }
 }

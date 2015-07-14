@@ -3,28 +3,20 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Text;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{Content}")]
     internal class Composer : List<IPattern>, IPattern
     {
-        private readonly List<Semantic> schema = new List<Semantic>();
-
-        public string Content
+        public string Compose(IList<Semantic> messageSchema)
         {
-            get { return string.Join(string.Empty, this.Select(pattern =>
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < this.Count; i++)
             {
-                this.schema.AddRange(pattern.Schema);
-                return pattern.Content;
-            })); }
-        }
-
-        public IList<Semantic> Schema
-        {
-            get { return this.schema; }
+                stringBuilder.Append(this[i].Compose(messageSchema));
+            }
+            return stringBuilder.ToString();
         }
     }
 }

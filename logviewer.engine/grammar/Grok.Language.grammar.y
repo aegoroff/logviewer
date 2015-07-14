@@ -67,12 +67,12 @@ literal
     ;
 
 definition
-	: PATTERN { OnPattern($1); } semantic { SaveSchema(); }
+	: PATTERN { OnPattern($1); } semantic
 	;
 
 semantic
 	: /* Empty */
-    | property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No schema case. Add generic string rule
+    | property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No explicit schema case. Add generic string rule
     | property_ref casting
 	;
     

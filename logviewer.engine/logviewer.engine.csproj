@@ -52,7 +52,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="grammar\NamedPattern.cs" />
     <Compile Include="grammar\ReferencePattern.cs" />
     <Compile Include="grammar\Composer.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />

@@ -52,14 +52,8 @@ namespace logviewer.engine
             this.translationUnit.AppendLine(translation);
             parser.Parse(this.translationUnit.ToString());
 
-            if (!parser.IsPropertyStackEmpty)
-            {
-                throw new Exception("Unused property detected");
-            }
             var main = parser.DefinitionsTable[MainPattern];
-            var content = main.Content;
-            this.messageSchema.AddRange(main.Schema);
-            return content;
+            return main.Compose(this.messageSchema);
         }
 
         /// <summary>
