@@ -2,18 +2,24 @@
 // Created at: 31.01.2015
 // © 2012-2015 Alexander Egorov
 
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{Content}")]
+    [DebuggerDisplay("{content}")]
     internal class Pattern : IPattern
     {
-        internal Pattern(string c)
+        private readonly string content;
+
+        internal Pattern(string content)
         {
-            this.Content = c;
+            this.content = content;
         }
 
-        public string Content { get; private set; }
+        public string Compose(IList<Semantic> messageSchema)
+        {
+            return this.content;
+        }
     }
 }

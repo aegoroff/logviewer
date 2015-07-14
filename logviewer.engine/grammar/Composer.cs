@@ -3,17 +3,20 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Text;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{Content}")]
     internal class Composer : List<IPattern>, IPattern
     {
-        public string Content
+        public string Compose(IList<Semantic> messageSchema)
         {
-            get { return string.Join(string.Empty, this.Select(c => c.Content)); }
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < this.Count; i++)
+            {
+                stringBuilder.Append(this[i].Compose(messageSchema));
+            }
+            return stringBuilder.ToString();
         }
     }
 }

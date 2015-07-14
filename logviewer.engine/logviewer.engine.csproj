@@ -52,7 +52,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="grammar\CompilePattern.cs" />
+    <Compile Include="grammar\ReferencePattern.cs" />
     <Compile Include="grammar\Composer.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />
     <Compile Include="Extensions.cs" />
@@ -65,7 +65,6 @@
     <Compile Include="ICharsetDetector.cs" />
     <Compile Include="grammar\IPattern.cs" />
     <Compile Include="Maybe.cs" />
-    <Compile Include="grammar\NamedPattern.cs" />
     <Compile Include="grammar\PassthroughPattern.cs" />
     <Compile Include="grammar\Pattern.cs" />
     <Compile Include="grammar\StringLiteral.cs" />
@@ -81,10 +80,6 @@
     <Compile Include="Semantic.cs" />
     <Compile Include="SemanticProperty.cs" />
     <Compile Include="SizeUnit.cs" />
-    <Compile Include="Tree\BinaryTree.cs" />
-    <Compile Include="Tree\BinaryTreeNode.cs" />
-    <Compile Include="Tree\Node.cs" />
-    <Compile Include="Tree\NodeList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="grok.patterns">

@@ -21,7 +21,7 @@
 %token COLON
 %token OPEN
 %token CLOSE
-%token <Literal> SKIP
+%token <Literal> LITERAL
 %token <Pattern> PATTERN
 %token <Pattern> PATTERN_DEFINITION
 %token <CastingPattern> CASTING_PATTERN
@@ -34,23 +34,19 @@
 
 %%
 
-translation_unit : /* Empty */
-       | pattern_definitions
-       ;
+translation_unit : lines ;
 
-pattern_definitions 
-    : pattern_definition_or_comment 
-    | pattern_definitions CRLF pattern_definition_or_comment
+lines 
+    : line 
+    | lines CRLF line
     ;
 	
-pattern_definition_or_comment 
-    : PATTERN_DEFINITION WS parse
+line
+    : PATTERN_DEFINITION { OnPatternDefinition($1); } WS groks
     | COMMENT
+    | CRLF
+    | EOF
     ;
-
-parse  : /* Empty */
-       | groks
-       ;
 
 groks 
     : grok
@@ -67,21 +63,21 @@ pattern
 	;
 
 literal 
-    : SKIP { OnLiteral($1); } 
+    : LITERAL { OnLiteral($1); } 
     ;
 
 definition
-	: PATTERN semantic { OnPattern($1); }
+	: PATTERN { OnPattern($1); } semantic
 	;
 
 semantic
 	: /* Empty */
-    | property_ref { this.OnSemantic($1.Property); }
-    | property_ref casting { this.OnSemantic($1.Property); }
+    | property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No explicit schema case. Add generic string rule
+    | property_ref casting
 	;
     
 property_ref
-	: COLON PROPERTY { $$.Property = $2; }
+	: COLON PROPERTY { this.OnSemantic($2); }
 	;
 
 casting

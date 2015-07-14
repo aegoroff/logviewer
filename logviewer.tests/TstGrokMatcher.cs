@@ -88,9 +88,11 @@ namespace logviewer.tests
         [InlineData("%{WORD:word:string}", @"(?<word>\b\w+\b)")]
         [InlineData("%{QUOTEDSTRING}", "(?>(?<!\\\\)(?>\"(?>\\\\.|[^\\\\\"]+)+\"|\"\"|(?>'(?>\\\\.|[^\\\\']+)+')|''|(?>`(?>\\\\.|[^\\\\`]+)+`)|``))")]
         [InlineData("%{USERNAME}", "[a-zA-Z0-9._-]+")]
+        [InlineData("%{S1:s}%{S2:s}", "(?<s>%{S1})(?<s>%{S2})")]
+        [InlineData("%{ID:Id:'0'->LogLevel.Trace}", "(?<Id>%{ID})")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
-            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, this.output.WriteLine);
             Assert.False(matcher.CompilationFailed);
             Assert.Equal(result, matcher.Template);
         }
@@ -108,11 +110,9 @@ namespace logviewer.tests
         [InlineData("%{POSINT:num:small}")]
         [InlineData("%{INT:Id:'0'->LogLevel.T}")]
         [InlineData("%{INT:Id:'0'->LogLevel.None}")]
-        [InlineData("%{ID:Id:'0'->LogLevel.Trace}")]
-        [InlineData("%{S1:s}%{S2:s}")]
         public void NegativeCompileTests(string pattern)
         {
-            var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
+            var matcher = new GrokMatcher(pattern, RegexOptions.None, this.output.WriteLine);
             Assert.Equal(pattern, matcher.Template);
             Assert.True(matcher.CompilationFailed, "Compilation must be failed but it wasn't");
         }
