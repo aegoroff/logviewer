@@ -22,16 +22,21 @@ namespace logviewer.engine.grammar
         {
             get
             {
-                var content = this.definitions.ContainsKey(this.grok)
-                    ? this.definitions[this.grok].Content
-                    : new PassthroughPattern(this.grok).Content;
-                return string.IsNullOrWhiteSpace(this.Property) ? content : new NamedPattern(this.Property, content).Content;
+                var pattern = this.definitions.ContainsKey(this.grok)
+                    ? this.definitions[this.grok]
+                    : new PassthroughPattern(this.grok);
+                this.schema.AddRange(pattern.Schema);
+                if (!string.IsNullOrWhiteSpace(this.Property))
+                {
+                    pattern = new NamedPattern(this.Property, pattern);
+                }
+                return pattern.Content;
             }
         }
 
         internal string Property { get; set; }
 
-        internal List<Semantic> Schema
+        public IList<Semantic> Schema
         {
             get { return this.schema; }
         }

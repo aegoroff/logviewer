@@ -58,6 +58,7 @@ namespace logviewer.engine
             }
             var main = parser.DefinitionsTable[MainPattern];
             var content = main.Content;
+            this.messageSchema.AddRange(main.Schema);
             return content;
         }
 
