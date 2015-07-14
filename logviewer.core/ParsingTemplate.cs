@@ -33,12 +33,12 @@ namespace logviewer.core
         {
             get
             {
-                var gm = new GrokMatcher(StartMessage);
+                var gm = new GrokMatcher(this.StartMessage);
                 if (string.IsNullOrWhiteSpace(gm.Template))
                 {
-                    return Name;
+                    return this.Name;
                 }
-                return Name + " (" + new FileSize(gm.Template.Length, true).Format() + ")";
+                return this.Name + " (" + new FileSize(gm.Template.Length, true).Format() + ")";
             }
         }
 

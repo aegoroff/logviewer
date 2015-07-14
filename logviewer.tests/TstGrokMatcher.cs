@@ -87,6 +87,7 @@ namespace logviewer.tests
         [InlineData("%{WORD:word:String}", @"(?<word>\b\w+\b)")]
         [InlineData("%{WORD:word:string}", @"(?<word>\b\w+\b)")]
         [InlineData("%{QUOTEDSTRING}", "(?>(?<!\\\\)(?>\"(?>\\\\.|[^\\\\\"]+)+\"|\"\"|(?>'(?>\\\\.|[^\\\\']+)+')|''|(?>`(?>\\\\.|[^\\\\`]+)+`)|``))")]
+        [InlineData("%{USERNAME}", "[a-zA-Z0-9._-]+")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);

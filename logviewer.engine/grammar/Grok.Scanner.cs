@@ -20,7 +20,7 @@ namespace logviewer.engine.grammar
         {
             base.yyerror(format, args);
             var message = string.Format(format, args);
-            var currentToken = string.Format("current token: '{0}'", yytext);
+            var currentToken = string.Format("current token: '{0}'", this.yytext);
             this.CustomErrorOutputMethod(currentToken);
             this.CustomErrorOutputMethod(string.Empty);
             throw new GrokSyntaxException(message);
