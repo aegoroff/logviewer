@@ -47,10 +47,11 @@ namespace logviewer.engine
         /// <returns>Regular expression</returns>
         internal string Compile(string grok)
         {
+            this.messageSchema.Clear();
             var parser = new grammar.GrokParser(this.customErrorOutputMethod);
             var mainDefinition = string.Format("{0} {1}", MainPattern, grok);
-            this.translationUnit.AppendLine(mainDefinition);
-            parser.Parse(this.translationUnit.ToString());
+            // don't add main definition into translation unit to reentrant Compile
+            parser.Parse(this.translationUnit + Environment.NewLine + mainDefinition);
 
             var mainTranslated = parser.DefinitionsTable[MainPattern];
             return mainTranslated.Compose(this.messageSchema);
