@@ -48,12 +48,12 @@ namespace logviewer.engine
         internal string Compile(string grok)
         {
             var parser = new grammar.GrokParser(this.customErrorOutputMethod);
-            var translation = string.Format("{0} {1}", MainPattern, grok);
-            this.translationUnit.AppendLine(translation);
+            var mainDefinition = string.Format("{0} {1}", MainPattern, grok);
+            this.translationUnit.AppendLine(mainDefinition);
             parser.Parse(this.translationUnit.ToString());
 
-            var main = parser.DefinitionsTable[MainPattern];
-            return main.Compose(this.messageSchema);
+            var mainTranslated = parser.DefinitionsTable[MainPattern];
+            return mainTranslated.Compose(this.messageSchema);
         }
 
         /// <summary>
