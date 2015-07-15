@@ -36,6 +36,20 @@ namespace logviewer.tests
         [InlineData("(?:(?:[A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})")]
         [InlineData("(?:(?:[A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})")]
         [InlineData("(?:(?:[A-Fa-f0-9]{4}\\.){2}[A-Fa-f0-9]{4})")]
+        [InlineData("%{ID}' %{} '%{DAT}")]
+        [InlineData("%{ID}\" %{} \"%{DAT}")]
+        [InlineData("%{ID}\" %{} \"%{DAT}\" %{} \"")]
+        [InlineData("\" %{} \"%{ID}\" %{} \"%{DAT}\" %{} \"")]
+        [InlineData("%{ID}''%{DAT}")]
+        [InlineData("%{ID}\"\"%{DAT}")]
+        [InlineData("%{ID}'\" %{} \"'%{DAT}")]
+        [InlineData("%{ID}'\\' %{} \\''%{DAT}")]
+        [InlineData("%{ID}'\\\" %{} \\\"'%{DAT}")]
+        [InlineData("%{ID}\"\\' \\'%{}\\' \\'\"%{DAT}")]
+        [InlineData("%{ID}\"' %{} '\"%{DAT}")]
+        [InlineData("%{ID}\"\\' \\\"%{}\\\" \\'\"%{DAT}")]
+        [InlineData("%{ID}\"\\' %{} \\'\"%{DAT}")]
+        [InlineData("%{ID}\"\\\" %{} \\\"\"%{DAT}")]
         public void PositiveCompileTestsNotChangingString(string pattern)
         {
             this.PositiveCompileTestsThatChangeString(pattern, pattern);
@@ -43,20 +57,6 @@ namespace logviewer.tests
 
         [Theory]
         [InlineData("%{WORD}", @"\b\w+\b")]
-        [InlineData("%{ID}' %{} '%{DAT}", "%{ID} %{} %{DAT}")]
-        [InlineData("%{ID}\" %{} \"%{DAT}", "%{ID} %{} %{DAT}")]
-        [InlineData("%{ID}\"\\\" %{} \\\"\"%{DAT}", "%{ID}\" %{} \"%{DAT}")]
-        [InlineData("%{ID}\"\\' %{} \\'\"%{DAT}", "%{ID}' %{} '%{DAT}")]
-        [InlineData("%{ID}\"' %{} '\"%{DAT}", "%{ID}' %{} '%{DAT}")]
-        [InlineData("%{ID}\"\\' \\\"%{}\\\" \\'\"%{DAT}", "%{ID}' \"%{}\" '%{DAT}")]
-        [InlineData("%{ID}\"\\' \\'%{}\\' \\'\"%{DAT}", "%{ID}' '%{}' '%{DAT}")]
-        [InlineData("%{ID}'\\\" %{} \\\"'%{DAT}", "%{ID}\" %{} \"%{DAT}")]
-        [InlineData("%{ID}'\\' %{} \\''%{DAT}", "%{ID}' %{} '%{DAT}")]
-        [InlineData("%{ID}'\" %{} \"'%{DAT}", "%{ID}\" %{} \"%{DAT}")]
-        [InlineData("%{ID}\" %{} \"%{DAT}\" %{} \"", "%{ID} %{} %{DAT} %{} ")]
-        [InlineData("\" %{} \"%{ID}\" %{} \"%{DAT}\" %{} \"", " %{} %{ID} %{} %{DAT} %{} ")]
-        [InlineData("%{ID}''%{DAT}", "%{ID}%{DAT}")]
-        [InlineData("%{ID}\"\"%{DAT}", "%{ID}%{DAT}")]
         [InlineData("%{WORD}%{ID}", @"\b\w+\b%{ID}")]
         [InlineData("%{WORD}%{INT}", @"\b\w+\b(?:[+-]?(?:[0-9]+))")]
         [InlineData("%{WORD} %{INT}", @"\b\w+\b (?:[+-]?(?:[0-9]+))")]
@@ -90,6 +90,7 @@ namespace logviewer.tests
         [InlineData("%{USERNAME}", "[a-zA-Z0-9._-]+")]
         [InlineData("%{S1:s}%{S2:s}", "(?<s>%{S1})(?<s>%{S2})")]
         [InlineData("%{ID:Id:'0'->LogLevel.Trace}", "(?<Id>%{ID})")]
+        [InlineData("%{WORD}'test'%{ID}", @"\b\w+\b'test'%{ID}")]
         public void PositiveCompileTestsThatChangeString(string pattern, string result)
         {
             var matcher = new GrokMatcher(pattern, RegexOptions.None, this.output.WriteLine);

@@ -32,7 +32,7 @@ namespace logviewer.engine.grammar
 
         void OnLiteral(string text)
         {
-            var pattern = new StringLiteral(text);
+            var pattern = new Pattern(text);
             this.composer.Add(pattern);
         }
 
