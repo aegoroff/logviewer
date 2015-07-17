@@ -67,12 +67,12 @@ literal
     ;
 
 definition
-	: PATTERN { OnPattern($1); } semantic
+	: PATTERN { OnPattern($1); } 
+	| PATTERN { OnPattern($1); } semantic
 	;
 
 semantic
-	: /* Empty */
-    | property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No explicit schema case. Add generic string rule
+	: property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No explicit schema case. Add generic string rule
     | property_ref casting
 	;
     
@@ -99,12 +99,8 @@ cast
 	;
 
 target
-	: TYPE_NAME opt_member { $$.Parser = $1; $$.Level = $2.Level; }
-	;
-    
-opt_member
-	: /* Empty */
-    | member
+	: TYPE_NAME { $$.Parser = $1; }
+	| TYPE_NAME member { $$.Parser = $1; $$.Level = $2.Level; }
 	;
     
 member
