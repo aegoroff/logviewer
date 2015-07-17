@@ -72,26 +72,26 @@ definition
 	;
 
 semantic
-	: property_ref { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No explicit schema case. Add generic string rule
-    | property_ref casting
+	: property { OnRule(ParserType.String, GrokRule.DefaultPattern); } // No explicit schema case. Add generic string rule
+    | property casting
 	;
     
-property_ref
+property
 	: COLON PROPERTY { this.OnSemantic($2); }
 	;
 
 casting
-	: COLON type_cast { OnRule($2.Parser, GrokRule.DefaultPattern); }
-    | COLON casting_list
+	: COLON type { OnRule($2.Parser, GrokRule.DefaultPattern); }
+    | COLON castings
 	;
     
-type_cast
+type
 	: TYPE_NAME { $$.Parser = $1; }
 	;
     
-casting_list
+castings
 	: cast
-	| casting_list COMMA cast
+	| castings COMMA cast
 	;
 
 cast
