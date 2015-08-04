@@ -1,11 +1,16 @@
 ﻿<Window x:Class="logviewer.ui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Log Viewer" Height="714" Width="872">
+        Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500">
     <Grid>
         <RibbonTwoLineText HorizontalAlignment="Left" Margin="701,-9,-284,0" VerticalAlignment="Top" Width="100"/>
-        <Ribbon Margin="0,0,0,178"/>
+        <Ribbon Height="136" VerticalAlignment="Top"/>
         <StatusBar Height="34" VerticalAlignment="Bottom"/>
+        <RichTextBox Margin="0,136,0,29">
+            <FlowDocument>
+
+            </FlowDocument>
+        </RichTextBox>
 
     </Grid>
 </Window>
