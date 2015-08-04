@@ -26,6 +26,14 @@ namespace logviewer.engine.grammar
         {
             var inputBuffer = System.Text.Encoding.Default.GetBytes(s);
             var stream = new MemoryStream(inputBuffer);
+            using (stream)
+            {
+                this.Parse(stream);
+            }
+        }
+
+        public void Parse(Stream stream)
+        {
             this.Scanner = new GrokScanner(stream) { CustomErrorOutputMethod = this.customErrorOutputMethod };
             this.Parse();
         }
