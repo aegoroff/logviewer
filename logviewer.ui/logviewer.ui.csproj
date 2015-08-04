@@ -39,9 +39,16 @@
     <StartupObject>logviewer.ui.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fluent, Version=3.4.2.173, Culture=neutral, PublicKeyToken=3e436e32a8c5546f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fluent.Ribbon.3.4.2.173\lib\net45\Fluent.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="system.windows.controls.ribbon" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fluent.Ribbon.3.4.2.173\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -50,8 +57,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UIAutomationProvider" />
-    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -92,6 +97,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -106,10 +112,6 @@
     <Resource Include="Images\SmallIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\logviewer.core\logviewer.core.csproj">
-      <Project>{383c08fc-9cac-42e5-9b02-471561479a74}</Project>
-      <Name>logviewer.core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
       <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>
       <Name>logviewer.engine</Name>

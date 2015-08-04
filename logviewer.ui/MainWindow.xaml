@@ -1,58 +1,38 @@
-﻿<RibbonWindow x:Class="logviewer.ui.MainWindow"
+﻿<Fluent:RibbonWindow x:Class="logviewer.ui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Name="RibbonWindow"
+        xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
         Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Ribbon x:Name="Ribbon">
-            <Ribbon.ApplicationMenu>
-                <RibbonApplicationMenu x:Name="File">
-                    <RibbonApplicationMenuItem Header="AppItem 1"
-                                                      x:Name="AppItem"
-                                                      ImageSource="Images\LargeIcon.png"
-                                                      />
-                </RibbonApplicationMenu>
-            </Ribbon.ApplicationMenu>
-            <RibbonTab x:Name="HomeTab"
-                              Header="HomeTab">
-                <RibbonGroup x:Name="Group1"
-                                    Header="Group1">
-                    <RibbonButton x:Name="Button1"
-                                         LargeImageSource="Images\LargeIcon.png"
-                                         Label="Button1" />
-                    <RibbonButton x:Name="Button2"
-                                         SmallImageSource="Images\SmallIcon.png"
-                                         Label="Button2" />
-                    <RibbonButton x:Name="Button3"
-                                         SmallImageSource="Images\SmallIcon.png"
-                                         Label="Button3" />
-                    <RibbonButton x:Name="Button4"
-                                         SmallImageSource="Images\SmallIcon.png"
-                                         Label="Button4" />
-                </RibbonGroup>
-            </RibbonTab>
-
-            <RibbonTab x:Name="ContextTab"
-                              Header="ContextTab"
-                              ContextualTabGroupHeader="ContextGroup1">
-            </RibbonTab>
-
-            <Ribbon.ContextualTabGroups>
-                <RibbonContextualTabGroup Header="ContextGroup1"
-                                                 Visibility="Visible"/>
-            </Ribbon.ContextualTabGroups>
-
-            <Ribbon.QuickAccessToolBar>
-                <RibbonQuickAccessToolBar>
-                    <RibbonButton x:Name="ButtonQ1"
-                                    SmallImageSource="Images\SmallIcon.png"
-                                             Label="ButtonQ1" />
-                </RibbonQuickAccessToolBar>
-            </Ribbon.QuickAccessToolBar>
-        </Ribbon>
+        <Fluent:Ribbon x:Name="Ribbon">
+            <Fluent:Ribbon.Menu>
+                <Fluent:Backstage>
+                    <Fluent:BackstageTabControl>
+                        <Fluent:BackstageTabItem Header="Open ..."/>
+                        <Fluent:Button Header="Export"/>
+                    </Fluent:BackstageTabControl>
+                </Fluent:Backstage>
+            </Fluent:Ribbon.Menu>
+            <!--Tabs-->
+            <Fluent:RibbonTabItem Header="View">
+                <Fluent:RibbonGroupBox Header="Group">
+                    <Fluent:Button x:Name="ButtonOpen" Header="Open"
+                           LargeIcon="Images\LargeIcon.png"  Icon="Images\SmallIcon.png"/>
+                    <Fluent:Button x:Name="Button1" Header="Button1" Icon="Images\SmallIcon.png"
+                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                    <Fluent:Button x:Name="Button2" Header="Button2" Icon="Images\SmallIcon.png"
+                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+            
+            <Fluent:RibbonTabItem Header="Settings">
+                <Fluent:RibbonGroupBox Header="Group">
+                    <Fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
+                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                    <Fluent:Button x:Name="Button5" Header="Button2" Icon="Images\SmallIcon.png"
+                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+        </Fluent:Ribbon>
     </Grid>
-</RibbonWindow>
+</Fluent:RibbonWindow>
