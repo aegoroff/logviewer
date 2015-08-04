@@ -102,6 +102,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\LargeIcon.png" />
+    <Resource Include="Images\SmallIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\logviewer.core\logviewer.core.csproj">
       <Project>{383c08fc-9cac-42e5-9b02-471561479a74}</Project>
       <Name>logviewer.core</Name>
