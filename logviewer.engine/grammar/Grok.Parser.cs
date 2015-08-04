@@ -24,7 +24,7 @@ namespace logviewer.engine.grammar
 
         public void Parse(string s)
         {
-            var inputBuffer = System.Text.Encoding.Default.GetBytes(s);
+            var inputBuffer = System.Text.Encoding.UTF8.GetBytes(s);
             var stream = new MemoryStream(inputBuffer);
             using (stream)
             {
