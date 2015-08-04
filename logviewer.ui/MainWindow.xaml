@@ -4,7 +4,10 @@
         Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500">
     <Grid>
         <RibbonTwoLineText HorizontalAlignment="Left" Margin="701,-9,-284,0" VerticalAlignment="Top" Width="100"/>
-        <Ribbon Height="136" VerticalAlignment="Top"/>
+        <Ribbon Height="136" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="True">
+            <RibbonGroup Header="View" Margin="0" Height="20"/>
+            <RibbonGroup Header="Help" Margin="0" Height="20"/>
+        </Ribbon>
         <StatusBar Height="34" VerticalAlignment="Bottom"/>
         <RichTextBox Margin="0,136,0,29">
             <FlowDocument>
