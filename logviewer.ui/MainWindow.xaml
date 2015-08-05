@@ -1,7 +1,8 @@
-﻿<Fluent:RibbonWindow x:Class="logviewer.ui.MainWindow"
+﻿<Fluent:RibbonWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="logviewer.ui.MainWindow"
         Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500">
     <Grid>
         <Fluent:Ribbon x:Name="Ribbon">
@@ -17,26 +18,40 @@
             <Fluent:RibbonTabItem Header="View">
                 <Fluent:RibbonGroupBox Header="Log">
                     <Fluent:Button x:Name="ButtonOpen" Header="Open"
-                           LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
+						LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
                     <Fluent:Button x:Name="ButtonRefresh" Header="Refresh" Icon="Images\Small\database_refresh.png"
-                           LargeIcon="Images\Large\database_refresh.png" />
+						LargeIcon="Images\Large\database_refresh.png" />
                     <Fluent:Button x:Name="ButtonExport" Header="Export" Icon="Images\Small\report_go.png"
-                           LargeIcon="Images\Large\report_go.png" />
+						LargeIcon="Images\Large\report_go.png" />
                 </Fluent:RibbonGroupBox>
-                
+
                 <Fluent:RibbonGroupBox Header="Filter">
-                    <Fluent:ComboBox x:Name="MinLevel" Header="Min. level:"/>
-                    <Fluent:ComboBox x:Name="MaxLevel" Header="Max. level:"/>
+                    <Fluent:ComboBox x:Name="MinLevel" Header="Min. level:" SelectedIndex="0">
+                        <System:String>Trace - 0</System:String>
+                        <System:String>Debug - 1</System:String>
+                        <System:String>Info - 2</System:String>
+                        <System:String>Warn - 3</System:String>
+                        <System:String>Error - 3</System:String>
+                        <System:String>Fatal - 5</System:String>
+                    </Fluent:ComboBox>
+                    <Fluent:ComboBox x:Name="MaxLevel" Header="Max. level:" SelectedIndex="5">
+                        <System:String>Trace - 0</System:String>
+                        <System:String>Debug - 1</System:String>
+                        <System:String>Info - 2</System:String>
+                        <System:String>Warn - 3</System:String>
+                        <System:String>Error - 3</System:String>
+                        <System:String>Fatal - 5</System:String>
+                    </Fluent:ComboBox>
                     <Fluent:TextBox x:Name="Filter" Header="Filter:" Size="Middle" SizeDefinition="Middle, Middle, Small"/>
                 </Fluent:RibbonGroupBox>
             </Fluent:RibbonTabItem>
-            
+
             <Fluent:RibbonTabItem Header="Settings">
                 <Fluent:RibbonGroupBox Header="Group">
                     <Fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
-                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
                     <Fluent:Button x:Name="Button5" Header="Button2" Icon="Images\SmallIcon.png"
-                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
                 </Fluent:RibbonGroupBox>
             </Fluent:RibbonTabItem>
         </Fluent:Ribbon>
