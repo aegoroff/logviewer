@@ -8,20 +8,26 @@
             <Fluent:Ribbon.Menu>
                 <Fluent:Backstage>
                     <Fluent:BackstageTabControl>
-                        <Fluent:BackstageTabItem Header="Open ..."/>
-                        <Fluent:Button Header="Export"/>
+                        <Fluent:BackstageTabItem Header="Open"/>
+                        <Fluent:BackstageTabItem Header="Export"/>
                     </Fluent:BackstageTabControl>
                 </Fluent:Backstage>
             </Fluent:Ribbon.Menu>
             <!--Tabs-->
             <Fluent:RibbonTabItem Header="View">
-                <Fluent:RibbonGroupBox Header="Group">
+                <Fluent:RibbonGroupBox Header="Log">
                     <Fluent:Button x:Name="ButtonOpen" Header="Open"
-                           LargeIcon="Images\LargeIcon.png"  Icon="Images\SmallIcon.png"/>
-                    <Fluent:Button x:Name="Button1" Header="Button1" Icon="Images\SmallIcon.png"
-                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
-                    <Fluent:Button x:Name="Button2" Header="Button2" Icon="Images\SmallIcon.png"
-                           LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                           LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
+                    <Fluent:Button x:Name="ButtonRefresh" Header="Refresh" Icon="Images\Small\database_refresh.png"
+                           LargeIcon="Images\Large\database_refresh.png" />
+                    <Fluent:Button x:Name="ButtonExport" Header="Export" Icon="Images\Small\report_go.png"
+                           LargeIcon="Images\Large\report_go.png" />
+                </Fluent:RibbonGroupBox>
+                
+                <Fluent:RibbonGroupBox Header="Filter">
+                    <Fluent:ComboBox x:Name="MinLevel" Header="Min. level:"/>
+                    <Fluent:ComboBox x:Name="MaxLevel" Header="Max. level:"/>
+                    <Fluent:TextBox x:Name="Filter" Header="Filter:" Size="Middle" SizeDefinition="Middle, Middle, Small"/>
                 </Fluent:RibbonGroupBox>
             </Fluent:RibbonTabItem>
             

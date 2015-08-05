@@ -108,14 +108,44 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\LargeIcon.png" />
-    <Resource Include="Images\SmallIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
       <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>
       <Name>logviewer.engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Large\category.png" />
+    <Resource Include="Images\Large\chart_pie.png" />
+    <Resource Include="Images\Large\compile.png" />
+    <Resource Include="Images\Large\database_refresh.png" />
+    <Resource Include="Images\Large\file_extension_log.png" />
+    <Resource Include="Images\Large\filter.png" />
+    <Resource Include="Images\Large\folder.png" />
+    <Resource Include="Images\Large\help.png" />
+    <Resource Include="Images\Large\interface_preferences.png" />
+    <Resource Include="Images\Large\report_go.png" />
+    <Resource Include="Images\Large\script_code.png" />
+    <Resource Include="Images\Large\setting_tools.png" />
+    <Resource Include="Images\Large\stamp_pattern.png" />
+    <Resource Include="Images\Large\update.png" />
+    <Resource Include="Images\Large\x_ray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Small\category.png" />
+    <Resource Include="Images\Small\chart_pie.png" />
+    <Resource Include="Images\Small\compile.png" />
+    <Resource Include="Images\Small\database_refresh.png" />
+    <Resource Include="Images\Small\file_extension_log.png" />
+    <Resource Include="Images\Small\filter.png" />
+    <Resource Include="Images\Small\folder.png" />
+    <Resource Include="Images\Small\help.png" />
+    <Resource Include="Images\Small\interface_preferences.png" />
+    <Resource Include="Images\Small\report_go.png" />
+    <Resource Include="Images\Small\script_code.png" />
+    <Resource Include="Images\Small\setting_tools.png" />
+    <Resource Include="Images\Small\stamp_pattern.png" />
+    <Resource Include="Images\Small\update.png" />
+    <Resource Include="Images\Small\x_ray.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
