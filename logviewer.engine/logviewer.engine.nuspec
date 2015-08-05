@@ -9,7 +9,6 @@
         <description>An engine for convenient working with application text logs. The engine parses text logs separates it to messages and read metadata if necessary.</description>
         <tags>logviewer</tags>
 		<dependencies>
-		  <dependency id="Antlr4.Runtime" version="4.3.0" />
 		</dependencies>
     </metadata>
     <files>

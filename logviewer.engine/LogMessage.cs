@@ -44,7 +44,7 @@ namespace logviewer.engine
             this.head = header;
             this.body = body;
             this.ix = 0;
-            this.properties = null;
+            this.rawProperties = null;
             this.bodyBuilder = null;
             this.integerProperties = new Dictionary<string, long>();
             this.stringProperties = new Dictionary<string, string>();
@@ -98,7 +98,7 @@ namespace logviewer.engine
         /// </summary>
         public bool HasHeader
         {
-            get { return this.properties != null; }
+            get { return this.rawProperties != null; }
         }
 
         /// <summary>
@@ -121,191 +121,143 @@ namespace logviewer.engine
         /// <summary>
         /// Adds metadata into message
         /// </summary>
-        /// <param name="parsedProperties">Metadata</param>
-        public void AddProperties(IDictionary<string, string> parsedProperties)
+        /// <param name="extractedProperties">Concrete messate properties extracted by template</param>
+        public void AddProperties(IDictionary<string, string> extractedProperties)
         {
-            this.properties = parsedProperties;
-        }
-
-        private static readonly IDictionary<string, Func<string, ParseResult<LogLevel>>> logLevelParsers = new Dictionary
-            <string, Func<string, ParseResult<LogLevel>>>
-        {
-            { "LogLevel", ParseLogLevel },
-            { "LogLevel.Trace", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Trace } },
-            { "LogLevel.Debug", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Debug } },
-            { "LogLevel.Info", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Info } },
-            { "LogLevel.Warn", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Warn } },
-            { "LogLevel.Error", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Error } },
-            { "LogLevel.Fatal", s => new ParseResult<LogLevel> { Result = true, Value = LogLevel.Fatal } }
-        };
-
-        private static readonly IDictionary<string, Func<string, ParseResult<DateTime>>> dateTimeParsers = new Dictionary
-            <string, Func<string, ParseResult<DateTime>>>
-        {
-            {
-                "DateTime", ParseDateTime
-            },
-        };
-
-        private static readonly IDictionary<string, Func<string, ParseResult<long>>> integerParsers = new Dictionary
-            <string, Func<string, ParseResult<long>>>
-        {
-            { "long", ParseInteger },
-            { "int", ParseInteger },
-            { "Int32", ParseInteger },
-            { "Int64", ParseInteger },
-        };
-
-        private static readonly IDictionary<string, Func<string, ParseResult<string>>> stringParsers = new Dictionary
-            <string, Func<string, ParseResult<string>>>
-        {
-            {"string", s => new ParseResult<string> {Result = true, Value = s}},
-            {"String", s => new ParseResult<string> {Result = true, Value = s}}
-        };
-
-        static readonly IDictionary<string, LogLevel> levels = new Dictionary<string, LogLevel>(Levels(), StringComparer.OrdinalIgnoreCase);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        static IDictionary<string, LogLevel> Levels()
-        {
-            var r = new Dictionary<string, LogLevel>(StringComparer.OrdinalIgnoreCase);
-            foreach (var n in Enum.GetNames(typeof(LogLevel)))
-            {
-                r.Add(n, (LogLevel)Enum.Parse(typeof(LogLevel), n));
-            }
-            r.Add("alert", LogLevel.Trace);
-            r.Add("notice", LogLevel.Info);
-            r.Add("critical", LogLevel.Error);
-            r.Add("severe", LogLevel.Fatal);
-            r.Add("emerg", LogLevel.Fatal);
-            r.Add("emergency", LogLevel.Fatal);
-            r.Add("warning", LogLevel.Warn);
-            return r;
+            this.rawProperties = extractedProperties;
         }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<LogLevel> ParseLogLevel(string s)
+        private static bool TryParseLogLevel(string s, out LogLevel level)
         {
-            LogLevel r;
-            var success = levels.TryGetValue(s, out r);
-            return new ParseResult<LogLevel> { Result = success, Value = r };
+            switch (s.ToUpperInvariant())
+            {
+                case "TRACE":
+                    level = LogLevel.Trace;
+                    return true;
+                case "DEBUG":
+                case "DEBUGGING":
+                    level = LogLevel.Debug;
+                    return true;
+                case "INFO":
+                case "NOTICE":
+                case "INFORMATIONAL":
+                    level = LogLevel.Info;
+                    return true;
+                case "WARN":
+                case "WARNING":
+                    level = LogLevel.Warn;
+                    return true;
+                case "ERROR":
+                case "ERR":
+                case "CRITICAL":
+                    level = LogLevel.Error;
+                    return true;
+                case "FATAL":
+                case "SEVERE":
+                case "EMERG":
+                case "EMERGENCY":
+                case "PANIC":
+                case "ALERT":
+                    level = LogLevel.Fatal;
+                    return true;
+                default:
+                    level = LogLevel.None;
+                    return false;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<DateTime> ParseDateTime(string s)
+        void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
+        {
+            LogLevel level;
+            var result = rules.Count > 1
+                ? TryRunSemanticAction(dataToParse, rules, out level) 
+                : TryParseLogLevel(dataToParse, out level);
+            if (result)
+            {
+                this.integerProperties[property] = (int)level;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        void ParseDateTime(string dataToParse, string property)
         {
             DateTime r;
-            var success = DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+            var success = DateTime.TryParseExact(dataToParse, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
             if (!success)
             {
-                success = DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+                success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
             }
-            return new ParseResult<DateTime> { Result = success, Value = r };
+            if (success)
+            {
+                this.integerProperties[property] = r.ToFileTime();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<long> ParseInteger(string s)
+        void ParseInteger(string dataToParse, string property)
         {
             long r;
-            var success = long.TryParse(s, out r);
-            return new ParseResult<long> { Result = success, Value = r };
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseLogLevel(string dataToParse, ISet<Rule> rules, string property)
-        {
-            var result = RunSemanticAction(logLevelParsers, dataToParse, rules);
-            if (result.Result)
+            var success = long.TryParse(dataToParse, out r);
+            if (success)
             {
-                this.integerProperties[property] = (int)result.Value;
+                this.integerProperties[property] = r;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseDateTime(string dataToParse, ISet<Rule> rules, string property)
+        private void ParseString(string dataToParse, string property)
         {
-            var result = RunSemanticAction(dateTimeParsers, dataToParse, rules);
-            if (result.Result)
-            {
-                this.integerProperties[property] = result.Value.ToFileTime();
-            }
+            this.stringProperties[property] = dataToParse;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseInteger(string dataToParse, ISet<Rule> rules, string property)
+        private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
-            var result = RunSemanticAction(integerParsers, dataToParse, rules);
-            if (result.Result)
-            {
-                this.integerProperties[property] = result.Value;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private void ParseString(string dataToParse, ISet<Rule> rules, string property)
-        {
-            var result = RunSemanticAction(stringParsers, dataToParse, rules);
-            if (result.Result)
-            {
-                this.stringProperties[property] = result.Value;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<Rule>> schema)
-        {
-            if (this.properties == null || schema == null)
+            if (this.rawProperties == null || schema == null)
             {
                 return;
             }
-            foreach (var property in this.properties)
+            foreach (var property in this.rawProperties)
             {
                 if (!schema.ContainsKey(property.Key))
                 {
                     continue;
                 }
-                var sp = schema.First(p => p.Key == property.Key).Key;
+                var semanticProperty = schema.First(p => p.Key == property.Key).Key;
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
 
-                switch (sp.Parser)
+                switch (semanticProperty.Parser)
                 {
                     case ParserType.LogLevel:
                         this.ParseLogLevel(matchedData, rules, property.Key);
                         break;
                     case ParserType.Datetime:
-                        this.ParseDateTime(matchedData, rules, property.Key);
+                        this.ParseDateTime(matchedData, property.Key);
                         break;
                     case ParserType.Interger:
-                        this.ParseInteger(matchedData, rules, property.Key);
+                        this.ParseInteger(matchedData, property.Key);
                         break;
                     default:
-                        this.ParseString(matchedData, rules, property.Key);
+                        this.ParseString(matchedData, property.Key);
                         break;
                 }
             }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static ParseResult<T> RunSemanticAction<T>(IDictionary<string, Func<string, ParseResult<T>>> parsers, string dataToParse, ISet<Rule> rules)
-        {
-            var defaultRule = new Rule(rules.First().Type);
-            foreach (var rule in rules.Where(rule => rule == defaultRule || dataToParse.Contains(rule.Pattern)))
-            {
-                var r = ApplyRule(rule, dataToParse, parsers);
-                if (r.Result)
-                {
-                    return r;
-                }
-            }
-            return ApplyRule(defaultRule, dataToParse, parsers);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ParseResult<T> ApplyRule<T>(Rule rule, string matchedData, IDictionary<string, Func<string, ParseResult<T>>> parsers)
+        private static bool TryRunSemanticAction(string dataToParse, ISet<GrokRule> rules, out LogLevel level)
         {
-            Func<string, ParseResult<T>> func;
-            return parsers.TryGetValue(rule.Type, out func) ? func(matchedData) : new ParseResult<T>();
+            foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
+            {
+                level = rule.Level;
+                return true;
+            }
+            var defaultRule = rules.First(rule => rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase));
+            level = defaultRule.Level;
+            return true;
         }
 
         /// <summary>
@@ -360,7 +312,7 @@ namespace logviewer.engine
         /// Builds message from lines array. All metadata will be extracted using schema specified
         /// </summary>
         /// <param name="schema">Message schema to extract metadata by</param>
-        public void Cache(IDictionary<SemanticProperty, ISet<Rule>> schema)
+        public void Cache(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.head != null && this.body != null)
             {
@@ -406,7 +358,7 @@ namespace logviewer.engine
         private StringBuilder bodyBuilder;
         private string head;
         private long ix;
-        private IDictionary<string, string> properties;
+        private IDictionary<string, string> rawProperties;
 
         #endregion
     }

@@ -12,20 +12,24 @@ namespace logviewer.engine
     /// Represents metadata rule
     /// </summary>
     [DebuggerDisplay("{Pattern}")]
-    public struct Rule
+    public struct GrokRule
     {
+        internal const string DefaultPattern = "*";
         private readonly string pattern;
-        private readonly string type;
+        private readonly ParserType type;
+        private readonly LogLevel level;
 
         /// <summary>
-        /// Initializes new <see cref="Rule"/> instance
+        /// Initializes new <see cref="GrokRule"/> instance
         /// </summary>
         /// <param name="type">Data type</param>
         /// <param name="pattern">Matching pattern</param>
-        public Rule(string type = "string", string pattern = "*")
+        /// <param name="level">LogLevel if applicable</param>
+        public GrokRule(ParserType type = ParserType.String, string pattern = DefaultPattern, LogLevel level = LogLevel.None)
         {
             this.pattern = pattern;
             this.type = type;
+            this.level = level;
         }
 
         /// <summary>
@@ -37,11 +41,19 @@ namespace logviewer.engine
         }
 
         /// <summary>
-        /// Gets or sets target casting type
+        /// Gets target casting type
         /// </summary>
-        public string Type
+        public ParserType Type
         {
             get { return this.type; }
+        }
+
+        /// <summary>
+        /// Gets target log level
+        /// </summary>
+        public LogLevel Level
+        {
+            get { return this.level; }
         }
 
         /// <summary>
@@ -49,7 +61,7 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="other">Intance to compare with</param>
         /// <returns>True if other's intance pattern equals to this pattern</returns>
-        public bool Equals(Rule other)
+        public bool Equals(GrokRule other)
         {
             return string.Equals(this.pattern, other.pattern, StringComparison.OrdinalIgnoreCase);
         }
@@ -67,7 +79,7 @@ namespace logviewer.engine
             {
                 return false;
             }
-            return obj is Rule && this.Equals((Rule)obj);
+            return obj is GrokRule && this.Equals((GrokRule)obj);
         }
 
         /// <summary>
@@ -88,7 +100,7 @@ namespace logviewer.engine
         /// <param name="r1">First instance</param>
         /// <param name="r2">Second instance</param>
         /// <returns>True if instances are equivalent false otherwise</returns>
-        public static bool operator ==(Rule r1, Rule r2)
+        public static bool operator ==(GrokRule r1, GrokRule r2)
         {
             return r1.Equals(r2);
         }
@@ -99,7 +111,7 @@ namespace logviewer.engine
         /// <param name="r1">First instance</param>
         /// <param name="r2">Second instance</param>
         /// <returns>True if instances are not equivalent false otherwise</returns>
-        public static bool operator !=(Rule r1, Rule r2)
+        public static bool operator !=(GrokRule r1, GrokRule r2)
         {
             return !(r1 == r2);
         }

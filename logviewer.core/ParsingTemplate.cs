@@ -33,12 +33,12 @@ namespace logviewer.core
         {
             get
             {
-                var gm = new GrokMatcher(StartMessage);
+                var gm = new GrokMatcher(this.StartMessage);
                 if (string.IsNullOrWhiteSpace(gm.Template))
                 {
-                    return Name;
+                    return this.Name;
                 }
-                return Name + " (" + new FileSize(gm.Template.Length, true).Format() + ")";
+                return this.Name + " (" + new FileSize(gm.Template.Length, true).Format() + ")";
             }
         }
 
@@ -46,15 +46,15 @@ namespace logviewer.core
         {
             get
             {
-                yield return new ParsingTemplate { Index = 0, StartMessage = @"^\[?%{TIMESTAMP_ISO8601:Occured,DateTime}\]?%{DATA}%{LOGLEVEL:Level,LogLevel}%{DATA}", Name = Resources.ParsingTemplateNlog };
+                yield return new ParsingTemplate { Index = 0, StartMessage = @"^\[?%{TIMESTAMP_ISO8601:Occured:DateTime}\]?%{DATA}%{LOGLEVEL:Level:LogLevel}%{DATA}", Name = Resources.ParsingTemplateNlog };
                 yield return new ParsingTemplate { Index = 1, StartMessage = @"%{IIS}", Name = Resources.ParsingTemplateIis, Filter = "^#%{DATA}" };
                 yield return new ParsingTemplate { Index = 2, StartMessage = @"%{DATA}", Name = Resources.ParsingTemplatePlainText, Compiled = true };
                 yield return new ParsingTemplate { Index = 3, StartMessage = @"%{APACHE_SERVER}", Name = Resources.ParsingTemplateApacheServer };
                 yield return new ParsingTemplate { Index = 4, StartMessage = @"%{COMMONAPACHELOG_LEVELED}", Name = Resources.ParsingTemplateApacheCommon };
                 yield return new ParsingTemplate { Index = 5, StartMessage = @"%{COMBINEDAPACHELOG_LEVELED}", Name = Resources.ParsingTemplateApacheCombined };
                 yield return new ParsingTemplate { Index = 6, StartMessage = @"%{SYSLOGTIMESTAMP:Timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGPROG}:%{DATA:message}", Name = Resources.ParsingTemplateSyslog };
-                yield return new ParsingTemplate { Index = 7, StartMessage = "^\\[%{DATA}\\]\\[%{TIMESTAMP_ISO8601}\\]%{DATA:Level,'i'->LogLevel.Info,'w'->LogLevel.Warn,'e'->LogLevel.Error}\"\\d{3}:\"%{SPACE}%{DATA}", Name = Resources.ParsingTemplateWixBurn };
-                yield return new ParsingTemplate { Index = 8, StartMessage = "^\\[%{TIME}\\](%{WORD:Level,'W'->LogLevel.Warn,'E'->LogLevel.Error,'*'->LogLevel.Info}|%{SPACE})[:]%{DATA}", Name = Resources.ParsingTemplateTeamcityBuildLog, Filter = @"^[^\\[\\s].*" };
+                yield return new ParsingTemplate { Index = 7, StartMessage = "^\\[%{DATA}\\]\\[%{TIMESTAMP_ISO8601}\\]%{DATA:Level:'i'->LogLevel.Info,'w'->LogLevel.Warn,'e'->LogLevel.Error}\"\\d{3}:\"%{SPACE}%{DATA}", Name = Resources.ParsingTemplateWixBurn };
+                yield return new ParsingTemplate { Index = 8, StartMessage = "^\\[%{TIME}\\](%{WORD:Level:'W'->LogLevel.Warn,'E'->LogLevel.Error,'*'->LogLevel.Info}|%{SPACE})[:]%{DATA}", Name = Resources.ParsingTemplateTeamcityBuildLog, Filter = @"^[^\\[\\s].*" };
             }
         }
     }

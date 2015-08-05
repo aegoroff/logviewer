@@ -30,7 +30,7 @@ namespace logviewer.tests
 
         public TstMainController()
         {
-            completed = false;
+            this.completed = false;
             CleanupTestFiles();
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
             this.mockery = new MockFactory();
@@ -232,7 +232,7 @@ namespace logviewer.tests
 
         void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
-            completed = true;
+            this.completed = true;
         }
 
         [Theory]

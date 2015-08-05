@@ -4,9 +4,9 @@
 
 using System.Diagnostics;
 
-namespace logviewer.engine
+namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{Content}")]
+    [DebuggerDisplay("{content}")]
     internal class PassthroughPattern : Pattern
     {
         internal const string Start = "%{";
