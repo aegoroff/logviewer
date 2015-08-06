@@ -38,6 +38,9 @@
   <PropertyGroup>
     <StartupObject>logviewer.ui.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Lv.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Fluent, Version=3.4.2.173, Culture=neutral, PublicKeyToken=3e436e32a8c5546f, processorArchitecture=MSIL">
       <HintPath>..\packages\Fluent.Ribbon.3.4.2.173\lib\net45\Fluent.dll</HintPath>
@@ -146,6 +149,9 @@
     <Resource Include="Images\Small\stamp_pattern.png" />
     <Resource Include="Images\Small\update.png" />
     <Resource Include="Images\Small\x_ray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Lv.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,59 +1,60 @@
-﻿<Fluent:RibbonWindow
+﻿<fluent:RibbonWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
-        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="logviewer.ui.MainWindow"
-        Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500">
+        xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
+        xmlns:system="clr-namespace:System;assembly=mscorlib" x:Class="logviewer.ui.MainWindow"
+        Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Grid>
-        <Fluent:Ribbon x:Name="Ribbon">
-            <Fluent:Ribbon.Menu>
-                <Fluent:Backstage>
-                    <Fluent:BackstageTabControl>
-                        <Fluent:BackstageTabItem Header="Open"/>
-                        <Fluent:BackstageTabItem Header="Export"/>
-                    </Fluent:BackstageTabControl>
-                </Fluent:Backstage>
-            </Fluent:Ribbon.Menu>
+        <fluent:Ribbon x:Name="Ribbon">
+            <fluent:Ribbon.Menu>
+                <fluent:Backstage>
+                    <fluent:BackstageTabControl>
+                        <fluent:BackstageTabItem Header="Open"/>
+                        <fluent:BackstageTabItem Header="Export"/>
+                    </fluent:BackstageTabControl>
+                </fluent:Backstage>
+            </fluent:Ribbon.Menu>
             <!--Tabs-->
-            <Fluent:RibbonTabItem Header="View">
-                <Fluent:RibbonGroupBox Header="Log">
-                    <Fluent:Button x:Name="ButtonOpen" Header="Open"
+            <fluent:RibbonTabItem Header="View">
+                <fluent:RibbonGroupBox Header="Log">
+                    <fluent:Button x:Name="ButtonOpen" Header="Open"
 						LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
-                    <Fluent:Button x:Name="ButtonRefresh" Header="Refresh" Icon="Images\Small\database_refresh.png"
+                    <fluent:Button x:Name="ButtonRefresh" Header="Refresh" Icon="Images\Small\database_refresh.png"
 						LargeIcon="Images\Large\database_refresh.png" />
-                    <Fluent:Button x:Name="ButtonExport" Header="Export" Icon="Images\Small\report_go.png"
+                    <fluent:Button x:Name="ButtonExport" Header="Export" Icon="Images\Small\report_go.png"
 						LargeIcon="Images\Large\report_go.png" />
-                </Fluent:RibbonGroupBox>
+                </fluent:RibbonGroupBox>
 
-                <Fluent:RibbonGroupBox Header="Filter">
-                    <Fluent:ComboBox x:Name="MinLevel" Header="Min. level:" SelectedIndex="0">
-                        <System:String>Trace - 0</System:String>
-                        <System:String>Debug - 1</System:String>
-                        <System:String>Info - 2</System:String>
-                        <System:String>Warn - 3</System:String>
-                        <System:String>Error - 3</System:String>
-                        <System:String>Fatal - 5</System:String>
-                    </Fluent:ComboBox>
-                    <Fluent:ComboBox x:Name="MaxLevel" Header="Max. level:" SelectedIndex="5">
-                        <System:String>Trace - 0</System:String>
-                        <System:String>Debug - 1</System:String>
-                        <System:String>Info - 2</System:String>
-                        <System:String>Warn - 3</System:String>
-                        <System:String>Error - 3</System:String>
-                        <System:String>Fatal - 5</System:String>
-                    </Fluent:ComboBox>
-                    <Fluent:TextBox x:Name="Filter" Header="Filter:" Size="Middle" SizeDefinition="Middle, Middle, Small"/>
-                </Fluent:RibbonGroupBox>
-            </Fluent:RibbonTabItem>
+                <fluent:RibbonGroupBox Header="Min filter">
+                    <fluent:ComboBox x:Name="MinLevel" Header="Level:" SelectedIndex="0" IsReadOnly="True">
+                        <system:String>Trace - 0</system:String>
+                        <system:String>Debug - 1</system:String>
+                        <system:String>Info - 2</system:String>
+                        <system:String>Warn - 3</system:String>
+                        <system:String>Error - 3</system:String>
+                        <system:String>Fatal - 5</system:String>
+                    </fluent:ComboBox>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Max filter">
+                    <fluent:ComboBox x:Name="MaxLevel" Header="Level:" SelectedIndex="5" IsReadOnly="True">
+                        <system:String>Trace - 0</system:String>
+                        <system:String>Debug - 1</system:String>
+                        <system:String>Info - 2</system:String>
+                        <system:String>Warn - 3</system:String>
+                        <system:String>Error - 3</system:String>
+                        <system:String>Fatal - 5</system:String>
+                    </fluent:ComboBox>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
 
-            <Fluent:RibbonTabItem Header="Settings">
-                <Fluent:RibbonGroupBox Header="Group">
-                    <Fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
+            <fluent:RibbonTabItem Header="Settings">
+                <fluent:RibbonGroupBox Header="Group">
+                    <fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
 						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
-                    <Fluent:Button x:Name="Button5" Header="Button2" Icon="Images\SmallIcon.png"
+                    <fluent:Button x:Name="Button5" Header="Button2" Icon="Images\SmallIcon.png"
 						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
-                </Fluent:RibbonGroupBox>
-            </Fluent:RibbonTabItem>
-        </Fluent:Ribbon>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+        </fluent:Ribbon>
     </Grid>
-</Fluent:RibbonWindow>
+</fluent:RibbonWindow>
