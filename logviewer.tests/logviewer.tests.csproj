@@ -83,6 +83,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="NMock3\NMock3 Cheat Sheet.pdf" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
