@@ -40,18 +40,12 @@ namespace logviewer.engine
         /// <summary>
         /// Gets semantic property name
         /// </summary>
-        public string Property
-        {
-            get { return this.property; }
-        }
+        public string Property => this.property;
 
         /// <summary>
         /// Gets all possible casting rules
         /// </summary>
-        public ISet<GrokRule> CastingRules
-        {
-            get { return this.castingRules; }
-        }
+        public ISet<GrokRule> CastingRules => this.castingRules;
 
         /// <summary>
         /// Gets whether this container has <see cref="GrokRule"/> specified
