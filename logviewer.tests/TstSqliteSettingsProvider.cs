@@ -85,14 +85,14 @@ namespace logviewer.tests
         public void ReadParsingTemplateList()
         {
             var list = this.provider.ReadParsingTemplateList();
-            Assert.Equal(9, list.Count());
+            Assert.Equal(9, list.Count);
         }
         
         [Fact]
         public void ReadAllParsingTemplates()
         {
             var list = this.provider.ReadAllParsingTemplates();
-            Assert.Equal(9, list.Count());
+            Assert.Equal(9, list.Count);
         }
 
         [Fact]

@@ -142,10 +142,7 @@ namespace logviewer.core
 
         #region Public Methods and Operators
 
-        private bool NotCancelled
-        {
-            get { return !this.cancellation.IsCancellationRequested; }
-        }
+        private bool NotCancelled => !this.cancellation.IsCancellationRequested;
 
         public void InitializeLogger()
         {
@@ -298,15 +295,9 @@ namespace logviewer.core
             this.BeginLogReading();
         }
 
-        public string CurrentEncoding
-        {
-            get
-            {
-                return this.filesEncodingCache.ContainsKey(this.currentPath)
-                    ? this.filesEncodingCache[this.currentPath].EncodingName
-                    : string.Empty;
-            }
-        }
+        public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
+            ? this.filesEncodingCache[this.currentPath].EncodingName
+            : string.Empty;
 
         private void BeginLogReading()
         {

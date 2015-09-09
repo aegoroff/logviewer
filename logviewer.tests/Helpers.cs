@@ -18,7 +18,7 @@ namespace logviewer.tests
         {
             if (assembly == null)
             {
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException(nameof(assembly));
             }
             try
             {
@@ -53,9 +53,7 @@ namespace logviewer.tests
             var messages = assembly
                 .GetAsyncVoidMethods()
                 .Select(method =>
-                    String.Format("'{0}.{1}' is an async void method.",
-                        method.DeclaringType.Name,
-                        method.Name))
+                    $"'{method.DeclaringType.Name}.{method.Name}' is an async void method.")
                 .ToList();
             Assert.False(messages.Any(),
                 "Async void methods found!" + Environment.NewLine + String.Join(Environment.NewLine, messages));

@@ -80,9 +80,11 @@ namespace logviewer
         public ColorPickResult PickColor(Color startColor)
         {
             this.colorDialog1.Color = startColor;
-            var result = new ColorPickResult();
-            result.Result = this.colorDialog1.ShowDialog() == DialogResult.OK;
-            result.SelectedColor = this.colorDialog1.Color;
+            var result = new ColorPickResult
+            {
+                Result = this.colorDialog1.ShowDialog() == DialogResult.OK,
+                SelectedColor = this.colorDialog1.Color
+            };
             return result;
         }
 
@@ -190,34 +192,22 @@ namespace logviewer
                 MessageBoxDefaultButton.Button2) == DialogResult.Yes;
         }
 
-        public ParsingTemplate NewParsingTemplateData
+        public ParsingTemplate NewParsingTemplateData => new ParsingTemplate
         {
-            get
-            {
-                return new ParsingTemplate
-                {
-                    Name = this.newTemplateNameBox.Text,
-                    StartMessage = this.newTemplateControl.Controller.Template.StartMessage,
-                    Filter = this.newTemplateControl.Controller.Template.Filter,
-                    Compiled = this.newTemplateControl.Controller.Template.Compiled,
-                };
-            }
-        }
+            Name = this.newTemplateNameBox.Text,
+            StartMessage = this.newTemplateControl.Controller.Template.StartMessage,
+            Filter = this.newTemplateControl.Controller.Template.Filter,
+            Compiled = this.newTemplateControl.Controller.Template.Compiled,
+        };
 
         public void EnableAddNewTemplate(bool enabled)
         {
             this.addNewTemplateBtn.Enabled = enabled;
         }
 
-        public LogParseTemplateController SelectedTemplateController
-        {
-            get { return selectedTemplateControl.Controller; }
-        }
+        public LogParseTemplateController SelectedTemplateController => selectedTemplateControl.Controller;
 
-        public LogParseTemplateController NewTemplateController
-        {
-            get { return newTemplateControl.Controller; }
-        }
+        public LogParseTemplateController NewTemplateController => newTemplateControl.Controller;
 
         private void OnCheckLastOpenedFileOption(object sender, EventArgs e)
         {

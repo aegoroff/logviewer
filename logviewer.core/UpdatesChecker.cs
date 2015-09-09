@@ -21,7 +21,7 @@ namespace logviewer.core
         public Version LatestVersion { get; private set; }
         public string LatestVersionUrl { get; private set; }
         
-        public Version CurrentVersion { get; private set; }
+        public Version CurrentVersion { get; }
 
         public bool IsUpdatesAvaliable()
         {

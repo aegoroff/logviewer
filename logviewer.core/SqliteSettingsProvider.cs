@@ -110,10 +110,7 @@ namespace logviewer.core
             return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);
         }
 
-        public IDictionary<LogLevel, Color> DefaultColors
-        {
-            get { return defaultColors; }
-        }
+        public IDictionary<LogLevel, Color> DefaultColors => defaultColors;
 
         public int SelectedParsingTemplate
         {
@@ -132,15 +129,9 @@ namespace logviewer.core
             this.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
-        private static RegistryKey RegistryKey
-        {
-            get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
-        }
+        private static RegistryKey RegistryKey => GetRegKey(RegistryKeyBase + OptionsSectionName);
 
-        private static bool MigrationNeeded
-        {
-            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
-        }
+        private static bool MigrationNeeded => Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null;
 
         public static string ApplicationFolder
         {
@@ -214,24 +205,22 @@ namespace logviewer.core
             set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
 
-        public string FullPathToDatabase
-        {
-            get { return this.settingsDatabaseFilePath; }
-        }
+        public string FullPathToDatabase => this.settingsDatabaseFilePath;
 
         public void UpdateParsingTemplate(ParsingTemplate template)
         {
             var propertiesSet = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
 
-            const string cmd = @"
+            this.ExecuteNonQuery(
+                $@"
                     UPDATE
                         ParsingTemplates
                     SET
-                        {0}
+                        {
+                    propertiesSet}
                     WHERE
                         Ix = @Ix
-                    ";
-            this.ExecuteNonQuery(string.Format(cmd, propertiesSet), command => AddParsingTemplateIntoCommand(command, template));
+                    ", command => AddParsingTemplateIntoCommand(command, template));
         }
 
         private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
@@ -339,23 +328,23 @@ namespace logviewer.core
         {
             var propertiesColumns = string.Join(",", from level in parsingTemplatePropertiesNames select level);
             var propertiesParams = string.Join(",", from level in parsingTemplatePropertiesNames select "@" + level);
-            
-            const string cmd = @"
+
+            var query =
+                $@"
                     INSERT INTO ParsingTemplates (
                         Ix, 
-                        {0}
+                        {propertiesColumns}
                     )
                     VALUES (
                         @Ix,
-                        {1}
+                        {propertiesParams}
                     )";
-            var query = string.Format(cmd, propertiesColumns, propertiesParams);
             this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
         }
         
         public void DeleteParsingTemplate(int ix)
         {
-            var query = string.Format(@"DELETE FROM ParsingTemplates WHERE Ix = {0}", ix);
+            var query = $@"DELETE FROM ParsingTemplates WHERE Ix = {ix}";
 
             const string selectIndexesCmd = @"
                     SELECT
@@ -714,7 +703,7 @@ namespace logviewer.core
                         Option = @Option
                     ";
 
-            var query = string.Format(@"SELECT count(1) FROM {0} WHERE Option = @Option", table);
+            var query = $@"SELECT count(1) FROM {table} WHERE Option = @Option";
             var exist = this.ExecuteScalar<long>(query,
                 command => DatabaseConnection.AddParameter(command, "@Option", option)) > 0;
 

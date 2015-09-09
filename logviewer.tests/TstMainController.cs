@@ -68,10 +68,7 @@ namespace logviewer.tests
             this.controller.Dispose();
         }
 
-        private static string FullPathToTestDb
-        {
-            get { return Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb); }
-        }
+        private static string FullPathToTestDb => Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb);
 
         private static void CleanupTestFiles()
         {
@@ -202,31 +199,19 @@ namespace logviewer.tests
             Assert.Equal(c, this.controller.MessagesCount);
         }
 
-        public static IEnumerable<object[]> MaxDates
+        public static IEnumerable<object[]> MaxDates => new[]
         {
-            get
-            {
-                return new[]
-                {
-                    new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
-                    new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 2 },
-                    new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 0 }
-                };
-            }
-        }
-        
-        public static IEnumerable<object[]> MinDates
+            new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
+            new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 2 },
+            new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 0 }
+        };
+
+        public static IEnumerable<object[]> MinDates => new[]
         {
-            get
-            {
-                return new[]
-                {
-                    new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
-                    new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 0 },
-                    new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 2 }
-                };
-            }
-        }
+            new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
+            new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 0 },
+            new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 2 }
+        };
 
         private bool completed;
 

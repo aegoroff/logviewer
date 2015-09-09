@@ -33,7 +33,7 @@ namespace logviewer.core
         }
 
         internal bool IsEmpty { get; private set; }
-        internal string DatabasePath { get; private set; }
+        internal string DatabasePath { get; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
@@ -114,13 +114,13 @@ namespace logviewer.core
             }, query);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ExecuteInCreationContext(Action method)
         {
             this.creationContext.Send(o => method(), null);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         internal static void AddParameter<T>(IDbCommand cmd, string name, T value)
         {
             var parameter = SQLiteFactory.Instance.CreateParameter();

@@ -29,7 +29,7 @@ namespace logviewer
         {
             get
             {
-                object[] attributes =
+                var attributes =
                     Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyTitleAttribute), false);
                 if (attributes.Length > 0)
                 {
@@ -43,10 +43,7 @@ namespace logviewer
             }
         }
 
-        public string AssemblyVersion
-        {
-            get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
-        }
+        public string AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public string AssemblyDescription
         {
@@ -98,7 +95,7 @@ namespace logviewer
                     Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyCompanyAttribute), false);
                 if (attributes.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }

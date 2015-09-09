@@ -67,18 +67,12 @@ namespace logviewer.tests
             Assert.True(this.checker.IsUpdatesAvaliable(v2));
         }
 
-        public static IEnumerable<object[]> Versions
+        public static IEnumerable<object[]> Versions => new []
         {
-            get
-            {
-                return new []
-                {
-                    new object[] { new [] { v1 } },
-                    new object[] { new [] { v2, v1 } },
-                    new object[] { new [] { v1, v2 } }
+            new object[] { new [] { v1 } },
+            new object[] { new [] { v2, v1 } },
+            new object[] { new [] { v1, v2 } }
 
-                };
-            }
-        }
+        };
     }
 }

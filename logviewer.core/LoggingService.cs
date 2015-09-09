@@ -18,10 +18,7 @@ namespace logviewer.core
         {
         }
 
-        public static Log Instance
-        {
-            get { return instance; }
-        }
+        public static Log Instance => instance;
     }
 
     /// <summary>
