@@ -59,7 +59,7 @@ namespace logviewer.engine
                 }
             }
 
-            var mainDefinition = string.Format("{0} {1}", MainPattern, grok);
+            var mainDefinition = $"{MainPattern} {grok}";
             parser.Parse(mainDefinition);
 
             var mainTranslated = parser.DefinitionsTable[MainPattern];
@@ -69,9 +69,6 @@ namespace logviewer.engine
         /// <summary>
         /// Message schema - all possible properties and casting rules
         /// </summary>
-        internal ICollection<Semantic> MessageSchema
-        {
-            get { return this.messageSchema; }
-        }
+        internal ICollection<Semantic> MessageSchema => this.messageSchema;
     }
 }

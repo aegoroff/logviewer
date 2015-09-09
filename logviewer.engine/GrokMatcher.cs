@@ -88,10 +88,7 @@ namespace logviewer.engine
         /// <summary>
         /// Message schema - all possible properties and casting rules
         /// </summary>
-        public ICollection<Semantic> MessageSchema
-        {
-            get { return this.messageSchema; }
-        }
+        public ICollection<Semantic> MessageSchema => this.messageSchema;
 
         /// <summary>
         /// Checks line matching the pattern

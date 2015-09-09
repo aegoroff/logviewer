@@ -35,7 +35,7 @@ namespace logviewer.engine.grammar
         {
             if ((info == null))
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
             this.message = info.GetString("message");
         }
@@ -49,13 +49,7 @@ namespace logviewer.engine.grammar
             this.message = message;
         }
 
-        public override string Message
-        {
-            get
-            {
-                return this.message;
-            }
-        }
+        public override string Message => this.message;
 
         /// <summary>Sets the SerializationInfo with information about the exception.</summary>
         /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
@@ -66,7 +60,7 @@ namespace logviewer.engine.grammar
         {
             if ((info == null))
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
             info.AddValue("message", this.message);
             base.GetObjectData(info, context);

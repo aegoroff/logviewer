@@ -34,7 +34,7 @@ namespace logviewer.engine.grammar
             var result = pattern.Compose(messageSchema);
             return string.IsNullOrWhiteSpace(this.Property)
                 ? result
-                : string.Format(@"(?<{0}>{1})", this.Property, result);
+                : $@"(?<{this.Property}>{result})";
         }
     }
 }

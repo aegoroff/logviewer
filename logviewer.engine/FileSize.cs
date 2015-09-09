@@ -47,34 +47,22 @@ namespace logviewer.engine
         /// <summary>
         ///     Gets file size in bytes
         /// </summary>
-        public ulong Bytes
-        {
-            get { return this.bytes; }
-        }
+        public ulong Bytes => this.bytes;
 
         /// <summary>
         ///     Gets the unit of value property
         /// </summary>
-        public SizeUnit Unit
-        {
-            get { return this.sizeUnit; }
-        }
+        public SizeUnit Unit => this.sizeUnit;
 
         /// <summary>
         ///     Gets normalized size defined by Unit property
         /// </summary>
-        public double Value
-        {
-            get { return this.value; }
-        }
+        public double Value => this.value;
 
         /// <summary>
         /// Whether to output big values (> 1Kb) without bytes info
         /// </summary>
-        public bool BigWithoutBytes
-        {
-            get { return this.bigWithoutBytes; }
-        }
+        public bool BigWithoutBytes => this.bigWithoutBytes;
 
         private static ulong IntegerLogarithm(ulong x)
         {

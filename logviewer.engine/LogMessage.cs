@@ -53,14 +53,8 @@ namespace logviewer.engine
         /// <summary>
         /// Gets whether the message empty or not.
         /// </summary>
-        public bool IsEmpty
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
-                       this.bodyBuilder.Length == 0;
-            }
-        }
+        public bool IsEmpty => string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
+                               this.bodyBuilder.Length == 0;
 
         /// <summary>
         /// Gets or sets message unique index to store it into database for example
@@ -74,32 +68,20 @@ namespace logviewer.engine
         /// <summary>
         /// Gets message's head
         /// </summary>
-        public string Header
-        {
-            get { return this.head ?? string.Empty; }
-        }
+        public string Header => this.head ?? string.Empty;
 
         /// <summary>
         /// Gets message's body (without header)
         /// </summary>
-        public string Body
-        {
-            get
-            {
-                return this.body ??
-                       (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
-                           ? string.Empty
-                           : this.bodyBuilder.ToString());
-            }
-        }
+        public string Body => this.body ??
+                              (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
+                                  ? string.Empty
+                                  : this.bodyBuilder.ToString());
 
         /// <summary>
         /// Gets whether the message has header
         /// </summary>
-        public bool HasHeader
-        {
-            get { return this.rawProperties != null; }
-        }
+        public bool HasHeader => this.rawProperties != null;
 
         /// <summary>
         /// Add line to the message (the first line will be header the others will be considered as body)

@@ -35,26 +35,17 @@ namespace logviewer.engine
         /// <summary>
         /// Gets or sets data pattern that will be cast to type
         /// </summary>
-        public string Pattern
-        {
-            get { return this.pattern; }
-        }
+        public string Pattern => this.pattern;
 
         /// <summary>
         /// Gets target casting type
         /// </summary>
-        public ParserType Type
-        {
-            get { return this.type; }
-        }
+        public ParserType Type => this.type;
 
         /// <summary>
         /// Gets target log level
         /// </summary>
-        public LogLevel Level
-        {
-            get { return this.level; }
-        }
+        public LogLevel Level => this.level;
 
         /// <summary>
         /// Compares this instance with instance specified
