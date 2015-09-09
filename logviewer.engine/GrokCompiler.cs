@@ -1,7 +1,11 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 06.07.2015
+// © 2012-2015 Alexander Egorov
+
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace logviewer.engine
 {
@@ -11,9 +15,10 @@ namespace logviewer.engine
     internal class GrokCompiler
     {
         private readonly Action<string> customErrorOutputMethod;
-        private StringBuilder translationUnit;
         private readonly List<Semantic> messageSchema = new List<Semantic>();
         private const string MainPattern = "MAIN";
+        private string[] patternFiles;
+        private const int StreamBufferSize = 0xFFFF;
 
         /// <summary>
         ///     Creates new compiler instance using custom error method output if necessary
@@ -28,15 +33,10 @@ namespace logviewer.engine
         private void CreateLibraryTemplates()
         {
             const string pattern = "*.patterns";
-            var patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
-            if (patternFiles.Length == 0)
+            this.patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
+            if (this.patternFiles.Length == 0)
             {
-                patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
-            }
-            this.translationUnit = new StringBuilder();
-            foreach (var file in patternFiles)
-            {
-                this.translationUnit.AppendLine(File.ReadAllText(file));
+                this.patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
             }
         }
 
@@ -49,9 +49,18 @@ namespace logviewer.engine
         {
             this.messageSchema.Clear();
             var parser = new grammar.GrokParser(this.customErrorOutputMethod);
+            
+            foreach (var stream in this.patternFiles.Select(File.OpenRead))
+            {
+                var bufferedStream = new BufferedStream(stream, StreamBufferSize);
+                using (bufferedStream)
+                {
+                    parser.Parse(stream);
+                }
+            }
+
             var mainDefinition = string.Format("{0} {1}", MainPattern, grok);
-            // don't add main definition into translation unit to reentrant Compile
-            parser.Parse(this.translationUnit + Environment.NewLine + mainDefinition);
+            parser.Parse(mainDefinition);
 
             var mainTranslated = parser.DefinitionsTable[MainPattern];
             return mainTranslated.Compose(this.messageSchema);
