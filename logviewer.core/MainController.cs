@@ -83,7 +83,6 @@ namespace logviewer.core
             this.options = options;
             this.kernel = new StandardKernel(new CoreModule());
             this.SetCurrentParsingTemplate();
-            SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
         private void SetCurrentParsingTemplate()

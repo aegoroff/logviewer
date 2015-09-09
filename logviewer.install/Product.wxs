@@ -15,11 +15,11 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
         
         <!--
-			Check for .NET 4.5
+			Check for .NET 4.6
 		-->
 		<PropertyRef Id="NETFRAMEWORK45"/>
 		<Condition Message="This setup requires the .NET Framework 4.5 or higher.">
-            Installed OR NETFRAMEWORK45
+            Installed OR NETFRAMEWORK46
         </Condition>
         
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
