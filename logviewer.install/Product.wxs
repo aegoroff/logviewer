@@ -134,6 +134,11 @@
 								Source="$(var.SourcePath)\System.Data.SQLite.dll"
 								DiskId="1"/>
                             <File
+								Id="BurnSystems.CommandLine.dll"
+								Name="BurnSystems.CommandLine.dll"
+								Source="$(var.SourcePath)\BurnSystems.CommandLine.dll"
+								DiskId="1"/>
+                            <File
 								Id="grok.patterns"
 								Name="grok.patterns"
 								Source="$(var.SourcePath)\grok.patterns"
