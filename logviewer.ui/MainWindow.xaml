@@ -1,20 +1,22 @@
 ﻿<fluent:RibbonWindow
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:properties="clr-namespace:logviewer.ui.Properties"    
-        xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
-        x:Class="logviewer.ui.MainWindow"
-        Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:properties="clr-namespace:logviewer.ui.Properties"
+    xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    x:Class="logviewer.ui.MainWindow"
+    Title="Log Viewer" Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Grid>
         <fluent:Ribbon x:Name="Ribbon">
             <fluent:Ribbon.Menu>
                 <fluent:Backstage>
                     <fluent:BackstageTabControl>
-                        <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}"/>
-                        <fluent:BackstageTabItem Header="Export"/>
+                        <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}" />
+                        <fluent:BackstageTabItem Header="Export" />
                         <fluent:Button x:Name="ButtonCloseApp" Header="{x:Static properties:Resources.Close}"
-						    LargeIcon="Images\Large\cancel.png"  Icon="Images\Small\cancel.png" Click="OnExitApp"/>
+                                       LargeIcon="Images\Large\cancel.png" Icon="Images\Small\cancel.png"
+                                       Click="OnExitApp" />
                     </fluent:BackstageTabControl>
                 </fluent:Backstage>
             </fluent:Ribbon.Menu>
@@ -22,53 +24,50 @@
             <fluent:RibbonTabItem Header="{x:Static properties:Resources.View}">
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.Log}">
                     <fluent:Button x:Name="ButtonOpen" Header="{x:Static properties:Resources.Open}"
-						LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
-                    <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh" Icon="Images\Small\database_refresh.png"
-						LargeIcon="Images\Large\database_refresh.png" />
+                                   LargeIcon="Images\Large\folder.png" Icon="Images\Small\folder.png" />
+                    <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh"
+                                   Icon="Images\Small\database_refresh.png"
+                                   LargeIcon="Images\Large\database_refresh.png" />
                     <fluent:Button x:Name="ButtonStat" Header="Statistic" Icon="Images\Small\chart_pie.png"
-						LargeIcon="Images\Large\chart_pie.png" SizeDefinition = "Middle, Middle, Small" />
+                                   LargeIcon="Images\Large\chart_pie.png" SizeDefinition="Middle, Middle, Small" />
                     <fluent:Button x:Name="ButtonExport" Header="Export" Icon="Images\Small\report_go.png"
-						LargeIcon="Images\Large\report_go.png" SizeDefinition = "Middle, Middle, Small"/>
-                    <fluent:DropDownButton x:Name="ButtonTemplateSelection" Header="Template" Icon="Images\Small\stamp_pattern.png"
-						LargeIcon="Images\Large\stamp_pattern.png" SizeDefinition = "Middle, Middle, Small"/>
+                                   LargeIcon="Images\Large\report_go.png" SizeDefinition="Middle, Middle, Small" />
+                    <fluent:DropDownButton x:Name="ButtonTemplateSelection" Header="Template"
+                                           Icon="Images\Small\stamp_pattern.png"
+                                           LargeIcon="Images\Large\stamp_pattern.png"
+                                           SizeDefinition="Middle, Middle, Small" />
                 </fluent:RibbonGroupBox>
-
-                <fluent:RibbonGroupBox Header="Min/Max filter">
-                    <Grid Height="75">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <fluent:ComboBox x:Name="MinLevel" Header="Min. level:" SelectedIndex="0" IsReadOnly="True" Grid.Column="0">
-                            <system:String>Trace - 0</system:String>
-                            <system:String>Debug - 1</system:String>
-                            <system:String>Info - 2</system:String>
-                            <system:String>Warn - 3</system:String>
-                            <system:String>Error - 3</system:String>
-                            <system:String>Fatal - 5</system:String>
-                        </fluent:ComboBox>
-                        <fluent:ComboBox x:Name="MaxLevel" Header="Max. level:" SelectedIndex="5" IsReadOnly="True" Grid.Column="1" Grid.Row="0" Margin="10, 0, 0, 0">
-                            <system:String>Trace - 0</system:String>
-                            <system:String>Debug - 1</system:String>
-                            <system:String>Info - 2</system:String>
-                            <system:String>Warn - 3</system:String>
-                            <system:String>Error - 3</system:String>
-                            <system:String>Fatal - 5</system:String>
-                        </fluent:ComboBox>
-                    </Grid>
+                <fluent:RibbonGroupBox Header="Level filter">
+                    <fluent:ComboBox x:Name="MinLevel" Header="Min: " SelectedIndex="0" IsReadOnly="True" Margin="5">
+                        <system:String>Trace - 0</system:String>
+                        <system:String>Debug - 1</system:String>
+                        <system:String>Info - 2</system:String>
+                        <system:String>Warn - 3</system:String>
+                        <system:String>Error - 3</system:String>
+                        <system:String>Fatal - 5</system:String>
+                    </fluent:ComboBox>
+                    <fluent:ComboBox x:Name="MaxLevel" Header="Max: " SelectedIndex="5" IsReadOnly="True" Margin="5">
+                        <system:String>Trace - 0</system:String>
+                        <system:String>Debug - 1</system:String>
+                        <system:String>Info - 2</system:String>
+                        <system:String>Warn - 3</system:String>
+                        <system:String>Error - 3</system:String>
+                        <system:String>Fatal - 5</system:String>
+                    </fluent:ComboBox>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Date filter">
+                    <xctk:DateTimePicker Text="From" Margin="5"/>
+                    <xctk:DateTimePicker Text="To" Margin="5"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Text filter">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <fluent:TextBox Header="Text filter: " Width="250"></fluent:TextBox>
-                        <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0" SizeDefinition = "Small, Small, Small" ToolTip="Use regular expressions"></fluent:ToggleButton>
+                        <fluent:TextBox Header="Text filter: " Width="250" Margin="5"/>
+                        <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"
+                                             SizeDefinition="Small, Small, Small" ToolTip="Use regular expressions" />
                     </Grid>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
@@ -76,9 +75,9 @@
             <fluent:RibbonTabItem Header="{x:Static properties:Resources.Settings}">
                 <fluent:RibbonGroupBox Header="Group">
                     <fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
-						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                                   LargeIcon="Images\LargeIcon.png" SizeDefinition="Middle, Middle, Small" />
                     <fluent:Button x:Name="Button5" Header="Button2" Icon="Images\SmallIcon.png"
-						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />
+                                   LargeIcon="Images\LargeIcon.png" SizeDefinition="Middle, Middle, Small" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
