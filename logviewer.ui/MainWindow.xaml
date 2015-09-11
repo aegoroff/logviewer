@@ -25,25 +25,34 @@
 						LargeIcon="Images\Large\report_go.png" />
                 </fluent:RibbonGroupBox>
 
-                <fluent:RibbonGroupBox Header="Min filter">
-                    <fluent:ComboBox x:Name="MinLevel" Header="Level:" SelectedIndex="0" IsReadOnly="True">
-                        <system:String>Trace - 0</system:String>
-                        <system:String>Debug - 1</system:String>
-                        <system:String>Info - 2</system:String>
-                        <system:String>Warn - 3</system:String>
-                        <system:String>Error - 3</system:String>
-                        <system:String>Fatal - 5</system:String>
-                    </fluent:ComboBox>
-                </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Max filter">
-                    <fluent:ComboBox x:Name="MaxLevel" Header="Level:" SelectedIndex="5" IsReadOnly="True">
-                        <system:String>Trace - 0</system:String>
-                        <system:String>Debug - 1</system:String>
-                        <system:String>Info - 2</system:String>
-                        <system:String>Warn - 3</system:String>
-                        <system:String>Error - 3</system:String>
-                        <system:String>Fatal - 5</system:String>
-                    </fluent:ComboBox>
+                <fluent:RibbonGroupBox Header="Filter">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <fluent:ComboBox x:Name="MinLevel" Header="Min. level:" SelectedIndex="0" IsReadOnly="True" Grid.Column="0">
+                            <system:String>Trace - 0</system:String>
+                            <system:String>Debug - 1</system:String>
+                            <system:String>Info - 2</system:String>
+                            <system:String>Warn - 3</system:String>
+                            <system:String>Error - 3</system:String>
+                            <system:String>Fatal - 5</system:String>
+                        </fluent:ComboBox>
+                        <fluent:ComboBox x:Name="MaxLevel" Header="Max. level:" SelectedIndex="5" IsReadOnly="True" Grid.Column="1" Grid.Row="0" Margin="10, 0, 0, 0">
+                            <system:String>Trace - 0</system:String>
+                            <system:String>Debug - 1</system:String>
+                            <system:String>Info - 2</system:String>
+                            <system:String>Warn - 3</system:String>
+                            <system:String>Error - 3</system:String>
+                            <system:String>Fatal - 5</system:String>
+                        </fluent:ComboBox>
+                        <fluent:TextBox Header="Text filter: " Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0, 10, 0, 0"></fluent:TextBox>
+                    </Grid>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
 

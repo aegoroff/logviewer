@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutTemplate" xml:space="preserve">
-    <value>About {0}</value>
+    <value>О {0}</value>
   </data>
   <data name="CurrentPageTemplate" xml:space="preserve">
     <value>{0} / {1}</value>
   </data>
   <data name="DatabaseSize" xml:space="preserve">
-    <value>Database size</value>
+    <value>Размер базы</value>
   </data>
   <data name="Debug" xml:space="preserve">
     <value>Debug</value>
   </data>
   <data name="Encoding" xml:space="preserve">
-    <value>File encoding</value>
+    <value>Кодировка файла</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
@@ -139,46 +139,46 @@
     <value>Fatal</value>
   </data>
   <data name="FatalErrorCaption" xml:space="preserve">
-    <value>Fatal error</value>
+    <value>Фатальная ошибка</value>
   </data>
   <data name="FatalErrorMessageTemplate" xml:space="preserve">
-    <value>An unhandled exception ocured. Dump saved to {0}</value>
+    <value>Произошло необработанное исключение. Дамп записан в {0}</value>
   </data>
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
   <data name="MaxMessageDate" xml:space="preserve">
-    <value>Last</value>
+    <value>Последнее</value>
   </data>
   <data name="MinMessageDate" xml:space="preserve">
-    <value>First</value>
+    <value>Первое</value>
   </data>
   <data name="NewVersion" xml:space="preserve">
-    <value>New version available</value>
+    <value>Доступна новая версия</value>
   </data>
   <data name="NewVersionAvailable" xml:space="preserve">
-    <value>The new version of logviewer available. Current version is {0} but the new is {1}. Download it now?</value>
+    <value>Доступна новая версия logviewer. Текущая версия {0} а новая {1}. Загрузить её сейчас?</value>
   </data>
   <data name="NoUpdateAvailable" xml:space="preserve">
-    <value>You are using the latetest version of the program. No update available now.</value>
+    <value>Вы используете последнюю версию продукта. В настоящее время нет обновлений.</value>
   </data>
   <data name="NoUpdateAvailableCaption" xml:space="preserve">
-    <value>No update available</value>
+    <value>Нет новых обновлений</value>
   </data>
   <data name="Size" xml:space="preserve">
-    <value>Size</value>
+    <value>Размер</value>
   </data>
   <data name="TotalMessages" xml:space="preserve">
-    <value>Total messages</value>
+    <value>Всего сообщений</value>
   </data>
   <data name="Trace" xml:space="preserve">
     <value>Trace</value>
   </data>
   <data name="UpdateDownloadProgressFormat" xml:space="preserve">
-    <value>Downloaded {0} of {1}   {2}%</value>
+    <value>Загружено {0} из {1}   {2}%</value>
   </data>
   <data name="VersionTemplate" xml:space="preserve">
-    <value>Version {0}</value>
+    <value>Версия {0}</value>
   </data>
   <data name="Warn" xml:space="preserve">
     <value>Warning</value>
