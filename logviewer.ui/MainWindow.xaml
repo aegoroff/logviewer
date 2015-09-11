@@ -56,8 +56,8 @@
                     </fluent:ComboBox>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Date filter">
-                    <xctk:DateTimePicker Text="From" Margin="5"/>
-                    <xctk:DateTimePicker Text="To" Margin="5"/>
+                    <xctk:DateTimePicker Format="Custom" Text="From" Margin="5"/>
+                    <xctk:DateTimePicker Format="Custom" Text="To" Margin="5"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Text filter">
                     <Grid>
