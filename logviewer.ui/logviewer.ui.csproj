@@ -100,7 +100,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\Resources.ru.resx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -114,6 +114,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\logviewer.core\logviewer.core.csproj">
+      <Project>{383c08fc-9cac-42e5-9b02-471561479a74}</Project>
+      <Name>logviewer.core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
       <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>
       <Name>logviewer.engine</Name>
