@@ -21,8 +21,12 @@
 						LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
                     <fluent:Button x:Name="ButtonRefresh" Header="Refresh" Icon="Images\Small\database_refresh.png"
 						LargeIcon="Images\Large\database_refresh.png" />
+                    <fluent:Button x:Name="ButtonStat" Header="Statistic" Icon="Images\Small\chart_pie.png"
+						LargeIcon="Images\Large\chart_pie.png" SizeDefinition = "Middle, Middle, Small" />
                     <fluent:Button x:Name="ButtonExport" Header="Export" Icon="Images\Small\report_go.png"
-						LargeIcon="Images\Large\report_go.png" />
+						LargeIcon="Images\Large\report_go.png" SizeDefinition = "Middle, Middle, Small"/>
+                    <fluent:DropDownButton x:Name="ButtonTemplateSelection" Header="Template" Icon="Images\Small\stamp_pattern.png"
+						LargeIcon="Images\Large\stamp_pattern.png" SizeDefinition = "Middle, Middle, Small"/>
                 </fluent:RibbonGroupBox>
 
                 <fluent:RibbonGroupBox Header="Min/Max filter">
