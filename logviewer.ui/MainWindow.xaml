@@ -1,27 +1,29 @@
 ﻿<fluent:RibbonWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:properties="clr-namespace:logviewer.ui.Properties"    
         xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
-        xmlns:system="clr-namespace:System;assembly=mscorlib" x:Class="logviewer.ui.MainWindow"
+        x:Class="logviewer.ui.MainWindow"
         Title="Log Viewer" Height="714" Width="872" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Grid>
         <fluent:Ribbon x:Name="Ribbon">
             <fluent:Ribbon.Menu>
                 <fluent:Backstage>
                     <fluent:BackstageTabControl>
-                        <fluent:BackstageTabItem Header="Open"/>
+                        <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}"/>
                         <fluent:BackstageTabItem Header="Export"/>
-                        <fluent:Button x:Name="ButtonCloseApp" Header="Close"
+                        <fluent:Button x:Name="ButtonCloseApp" Header="{x:Static properties:Resources.Close}"
 						    LargeIcon="Images\Large\cancel.png"  Icon="Images\Small\cancel.png" Click="OnExitApp"/>
                     </fluent:BackstageTabControl>
                 </fluent:Backstage>
             </fluent:Ribbon.Menu>
             <!--Tabs-->
-            <fluent:RibbonTabItem Header="View">
-                <fluent:RibbonGroupBox Header="Log">
-                    <fluent:Button x:Name="ButtonOpen" Header="Open"
+            <fluent:RibbonTabItem Header="{x:Static properties:Resources.View}">
+                <fluent:RibbonGroupBox Header="{x:Static properties:Resources.Log}">
+                    <fluent:Button x:Name="ButtonOpen" Header="{x:Static properties:Resources.Open}"
 						LargeIcon="Images\Large\folder.png"  Icon="Images\Small\folder.png"/>
-                    <fluent:Button x:Name="ButtonRefresh" Header="Refresh" Icon="Images\Small\database_refresh.png"
+                    <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh" Icon="Images\Small\database_refresh.png"
 						LargeIcon="Images\Large\database_refresh.png" />
                     <fluent:Button x:Name="ButtonStat" Header="Statistic" Icon="Images\Small\chart_pie.png"
 						LargeIcon="Images\Large\chart_pie.png" SizeDefinition = "Middle, Middle, Small" />
@@ -60,12 +62,18 @@
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Text filter">
-                    <fluent:TextBox Header="Text filter: " Width="250"></fluent:TextBox>
-                    <fluent:CheckBox Header="Use regular expressions" Margin="5, 0, 0, 0"></fluent:CheckBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <fluent:TextBox Header="Text filter: " Width="250"></fluent:TextBox>
+                        <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0" SizeDefinition = "Small, Small, Small" ToolTip="Use regular expressions"></fluent:ToggleButton>
+                    </Grid>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
 
-            <fluent:RibbonTabItem Header="Settings">
+            <fluent:RibbonTabItem Header="{x:Static properties:Resources.Settings}">
                 <fluent:RibbonGroupBox Header="Group">
                     <fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
 						LargeIcon="Images\LargeIcon.png" SizeDefinition = "Middle, Middle, Small" />

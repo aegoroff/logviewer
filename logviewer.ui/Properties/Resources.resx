@@ -120,6 +120,9 @@
   <data name="AboutTemplate" xml:space="preserve">
     <value>About {0}</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="CurrentPageTemplate" xml:space="preserve">
     <value>{0} / {1}</value>
   </data>
@@ -147,6 +150,9 @@
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
   <data name="MaxMessageDate" xml:space="preserve">
     <value>Last</value>
   </data>
@@ -165,6 +171,15 @@
   <data name="NoUpdateAvailableCaption" xml:space="preserve">
     <value>No update available</value>
   </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>
   </data>
@@ -179,6 +194,9 @@
   </data>
   <data name="VersionTemplate" xml:space="preserve">
     <value>Version {0}</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
   </data>
   <data name="Warn" xml:space="preserve">
     <value>Warning</value>
