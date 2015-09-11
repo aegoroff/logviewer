@@ -159,5 +159,10 @@ namespace logviewer.ui
         {
             throw new NotImplementedException();
         }
+
+        private void OnExitApp(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

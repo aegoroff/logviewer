@@ -11,6 +11,8 @@
                     <fluent:BackstageTabControl>
                         <fluent:BackstageTabItem Header="Open"/>
                         <fluent:BackstageTabItem Header="Export"/>
+                        <fluent:Button x:Name="ButtonCloseApp" Header="Close"
+						    LargeIcon="Images\Large\cancel.png"  Icon="Images\Small\cancel.png" Click="OnExitApp"/>
                     </fluent:BackstageTabControl>
                 </fluent:Backstage>
             </fluent:Ribbon.Menu>
