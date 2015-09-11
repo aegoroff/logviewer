@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Text.RegularExpressions;
+using System.Xml;
 using logviewer.core;
 using logviewer.engine;
 using Xunit;
@@ -92,6 +93,36 @@ namespace logviewer.tests
         {
             Helpers.AssertNoAsyncVoidMethods(GetType().Assembly);
             Helpers.AssertNoAsyncVoidMethods(typeof(MainController).Assembly);
+        }
+        
+        [Fact]
+        public void GenerateRsaKeys()
+        {
+            var crypt = new AsymCrypt();
+            crypt.GenerateKeys();
+            Assert.NotNull(crypt.PrivateKey);
+            Assert.NotNull(crypt.PublicKey);
+        }
+        
+        [Fact]
+        public void DecryptBase64()
+        {
+            var crypt = new AsymCrypt();
+            crypt.GenerateKeys();
+            var xml = AsymCrypt.FromBase64String(crypt.PrivateKey);
+            var d = new XmlDocument();
+            d.LoadXml(xml);
+        }
+        
+        [Fact]
+        public void EncryptDecrypt()
+        {
+            var crypt = new AsymCrypt();
+            crypt.GenerateKeys();
+            const string plain = "string";
+            var crypted = crypt.Encrypt(plain);
+            var decrypted = crypt.Decrypt(crypted);
+            Assert.Equal(plain, decrypted);
         }
     }
 }
