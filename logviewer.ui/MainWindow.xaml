@@ -54,14 +54,8 @@
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Text filter">
-                    <Grid Width="300">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <fluent:TextBox Header="Text filter: " Grid.Column="0" Grid.Row="0"></fluent:TextBox>
-                        <fluent:CheckBox Header="Use regular expressions" Grid.Column="0" Grid.Row="1" Margin="5, 0, 0, 0"></fluent:CheckBox>
-                    </Grid>
+                    <fluent:TextBox Header="Text filter: " Width="250"></fluent:TextBox>
+                    <fluent:CheckBox Header="Use regular expressions" Margin="5, 0, 0, 0"></fluent:CheckBox>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
 
