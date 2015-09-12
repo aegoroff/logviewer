@@ -1,7 +1,6 @@
 ﻿<fluent:RibbonWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:properties="clr-namespace:logviewer.ui.Properties"
     xmlns:logviewer="clr-namespace:logviewer.ui"
     xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
