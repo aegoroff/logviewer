@@ -107,11 +107,9 @@
             </fluent:RibbonTabItem>
 
             <fluent:RibbonTabItem Header="{x:Static properties:Resources.Settings}">
-                <fluent:RibbonGroupBox Header="Group">
-                    <fluent:Button x:Name="Button4" Header="Button1" Icon="Images\SmallIcon.png"
-                                   LargeIcon="Images\LargeIcon.png" SizeDefinition="Middle, Middle, Small" />
-                    <fluent:Button x:Name="Button5" Header="Button2" Icon="Images\SmallIcon.png"
-                                   LargeIcon="Images\LargeIcon.png" SizeDefinition="Middle, Middle, Small" />
+                <fluent:RibbonGroupBox>
+                    <fluent:Button x:Name="ButtonSettings" Header="{x:Static properties:Resources.Settings}"
+                                   LargeIcon="Images\Large\interface_preferences.png" Icon="Images\Small\interface_preferences.png" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
