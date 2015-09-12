@@ -2,6 +2,7 @@
 // Created at: 12.09.2015
 // © 2012-2015 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace logviewer.ui
             this.Templates = new List<string>();
             var fromDb = this.settingsProvider.ReadAllParsingTemplates();
             this.Templates.AddRange(fromDb.Select(t => t.DisplayName));
+            this.From = DateTime.MinValue;
+            this.To = DateTime.MaxValue;
         }
 
         public List<string> MinLevelLabeles { get; private set; } = new List<string>
@@ -50,5 +53,9 @@ namespace logviewer.ui
         };
 
         public List<string> Templates { get; }
+
+        public DateTime From { get; set; }
+
+        public DateTime To { get; set; }
     }
 }
