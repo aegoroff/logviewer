@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿// Created by: egr
+// Created at: 04.08.2015
+// © 2012-2015 Alexander Egorov
+
+using System.Globalization;
 using System.Threading;
 using System.Windows;
 

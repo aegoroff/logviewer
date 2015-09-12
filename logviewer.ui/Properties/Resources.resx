@@ -129,14 +129,26 @@
   <data name="DatabaseSize" xml:space="preserve">
     <value>Database size</value>
   </data>
+  <data name="DateFilter" xml:space="preserve">
+    <value>Date filter</value>
+  </data>
   <data name="Debug" xml:space="preserve">
     <value>Debug</value>
+  </data>
+  <data name="DebugLabel" xml:space="preserve">
+    <value>Debug - 1</value>
   </data>
   <data name="Encoding" xml:space="preserve">
     <value>File encoding</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="ErrorLabel" xml:space="preserve">
+    <value>Error - 4</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
   </data>
   <data name="Fatal" xml:space="preserve">
     <value>Fatal</value>
@@ -147,14 +159,29 @@
   <data name="FatalErrorMessageTemplate" xml:space="preserve">
     <value>An unhandled exception ocured. Dump saved to {0}</value>
   </data>
+  <data name="FatalLabel" xml:space="preserve">
+    <value>Fatal - 5</value>
+  </data>
   <data name="Info" xml:space="preserve">
     <value>Info</value>
+  </data>
+  <data name="InfoLabel" xml:space="preserve">
+    <value>Info - 2</value>
+  </data>
+  <data name="LevelFilter" xml:space="preserve">
+    <value>Level filter</value>
   </data>
   <data name="Log" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="MaxLabel" xml:space="preserve">
+    <value>Max: </value>
+  </data>
   <data name="MaxMessageDate" xml:space="preserve">
     <value>Last</value>
+  </data>
+  <data name="MinLabel" xml:space="preserve">
+    <value>Min: </value>
   </data>
   <data name="MinMessageDate" xml:space="preserve">
     <value>First</value>
@@ -183,14 +210,29 @@
   <data name="Size" xml:space="preserve">
     <value>Size</value>
   </data>
+  <data name="Statistic" xml:space="preserve">
+    <value>Statistic</value>
+  </data>
+  <data name="TemplateSelection" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="TextFilter" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="TotalMessages" xml:space="preserve">
     <value>Total messages</value>
   </data>
   <data name="Trace" xml:space="preserve">
     <value>Trace</value>
   </data>
+  <data name="TraceLabel" xml:space="preserve">
+    <value>Trace - 0</value>
+  </data>
   <data name="UpdateDownloadProgressFormat" xml:space="preserve">
     <value>Downloaded {0} of {1}   {2}%</value>
+  </data>
+  <data name="UseRegexp" xml:space="preserve">
+    <value>Use regular expressions</value>
   </data>
   <data name="VersionTemplate" xml:space="preserve">
     <value>Version {0}</value>
@@ -200,5 +242,8 @@
   </data>
   <data name="Warn" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="WarnLabel" xml:space="preserve">
+    <value>Warn - 3</value>
   </data>
 </root>

@@ -129,6 +129,9 @@
   <data name="DatabaseSize" xml:space="preserve">
     <value>Размер базы</value>
   </data>
+  <data name="DateFilter" xml:space="preserve">
+    <value>Фильтр по дате</value>
+  </data>
   <data name="Debug" xml:space="preserve">
     <value>Debug</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Экспорт</value>
   </data>
   <data name="Fatal" xml:space="preserve">
     <value>Fatal</value>
@@ -150,11 +156,20 @@
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="LevelFilter" xml:space="preserve">
+    <value>Фильтр по уровню</value>
+  </data>
   <data name="Log" xml:space="preserve">
     <value>Журнал</value>
   </data>
+  <data name="MaxLabel" xml:space="preserve">
+    <value>Макс: </value>
+  </data>
   <data name="MaxMessageDate" xml:space="preserve">
     <value>Последнее</value>
+  </data>
+  <data name="MinLabel" xml:space="preserve">
+    <value>Мин: </value>
   </data>
   <data name="MinMessageDate" xml:space="preserve">
     <value>Первое</value>
@@ -183,6 +198,15 @@
   <data name="Size" xml:space="preserve">
     <value>Размер</value>
   </data>
+  <data name="Statistic" xml:space="preserve">
+    <value>Статистика</value>
+  </data>
+  <data name="TemplateSelection" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="TextFilter" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
   <data name="TotalMessages" xml:space="preserve">
     <value>Всего сообщений</value>
   </data>
@@ -191,6 +215,9 @@
   </data>
   <data name="UpdateDownloadProgressFormat" xml:space="preserve">
     <value>Загружено {0} из {1}   {2}%</value>
+  </data>
+  <data name="UseRegexp" xml:space="preserve">
+    <value>Использовать регулярные выражения</value>
   </data>
   <data name="VersionTemplate" xml:space="preserve">
     <value>Версия {0}</value>
