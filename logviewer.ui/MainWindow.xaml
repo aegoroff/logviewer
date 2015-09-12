@@ -68,8 +68,20 @@
                     </fluent:ComboBox>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.DateFilter}">
-                    <xctk:DateTimePicker Format="Custom" Text="From" Margin="5" ShowButtonSpinner="False"/>
-                    <xctk:DateTimePicker Format="Custom" Text="To" Margin="5" ShowButtonSpinner="False"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="{x:Static properties:Resources.From}" Grid.Column="0" Grid.Row="0"/>
+                        <Label Content="{x:Static properties:Resources.To}" Grid.Column="0" Grid.Row="1"/>
+                        <xctk:DateTimePicker Format="Custom" Text="From" Margin="5" ShowButtonSpinner="False" Grid.Column="1" Grid.Row="0"/>
+                        <xctk:DateTimePicker Format="Custom" Text="To" Margin="5" ShowButtonSpinner="False" Grid.Column="1" Grid.Row="1"/>
+                    </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.TextFilter}">
                     <Grid>

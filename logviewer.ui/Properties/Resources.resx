@@ -162,6 +162,9 @@
   <data name="FatalLabel" xml:space="preserve">
     <value>Fatal - 5</value>
   </data>
+  <data name="From" xml:space="preserve">
+    <value>From:</value>
+  </data>
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
@@ -218,6 +221,9 @@
   </data>
   <data name="TextFilter" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>To:</value>
   </data>
   <data name="TotalMessages" xml:space="preserve">
     <value>Total messages</value>
