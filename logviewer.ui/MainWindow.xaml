@@ -15,6 +15,9 @@
         <CollectionViewSource 
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MaxLevelLabeles}"   
             x:Key="MaxLogLevelLabels" />
+        <CollectionViewSource 
+            Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Templates}"   
+            x:Key="ParsingTemplates" />
     </Window.Resources>
     <Grid>
         <fluent:Ribbon x:Name="Ribbon">
@@ -44,7 +47,8 @@
                     <fluent:DropDownButton x:Name="ButtonTemplateSelection" Header="{x:Static properties:Resources.TemplateSelection}"
                                            Icon="Images\Small\stamp_pattern.png"
                                            LargeIcon="Images\Large\stamp_pattern.png"
-                                           SizeDefinition="Middle, Middle, Small" />
+                                           SizeDefinition="Middle, Middle, Small" 
+                                           ItemsSource="{Binding Source={StaticResource ParsingTemplates}}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.LevelFilter}">
                     <fluent:ComboBox 
