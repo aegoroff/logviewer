@@ -349,6 +349,33 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date, ASC.
+        /// </summary>
+        public static string SortAsc {
+            get {
+                return ResourceManager.GetString("SortAsc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date, DESC.
+        /// </summary>
+        public static string SortDesc {
+            get {
+                return ResourceManager.GetString("SortDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting.
+        /// </summary>
+        public static string Sorting {
+            get {
+                return ResourceManager.GetString("Sorting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Statistic.
         /// </summary>
         public static string Statistic {

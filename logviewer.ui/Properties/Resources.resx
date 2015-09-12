@@ -213,6 +213,15 @@
   <data name="Size" xml:space="preserve">
     <value>Size</value>
   </data>
+  <data name="SortAsc" xml:space="preserve">
+    <value>Date, ASC</value>
+  </data>
+  <data name="SortDesc" xml:space="preserve">
+    <value>Date, DESC</value>
+  </data>
+  <data name="Sorting" xml:space="preserve">
+    <value>Sorting</value>
+  </data>
   <data name="Statistic" xml:space="preserve">
     <value>Statistic</value>
   </data>

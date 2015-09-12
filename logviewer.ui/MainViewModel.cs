@@ -43,6 +43,12 @@ namespace logviewer.ui
             Resources.FatalLabel
         };
 
+        public List<string> Sorting { get; private set; } = new List<string>
+        {
+            Resources.SortAsc,
+            Resources.SortDesc
+        };
+
         public List<string> Templates { get; }
     }
 }
