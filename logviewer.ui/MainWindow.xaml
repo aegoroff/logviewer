@@ -62,14 +62,14 @@
                     <fluent:ComboBox
                         x:Name="MinLevel"
                         Header="{x:Static properties:Resources.MinLabel}"
-                        SelectedIndex="0"
+                        SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MinLevel}"
                         IsReadOnly="True"
                         Margin="5"
                         ItemsSource="{Binding Source={StaticResource MinLogLevelLabels}}" />
                     <fluent:ComboBox
                         x:Name="MaxLevel"
                         Header="{x:Static properties:Resources.MaxLabel}"
-                        SelectedIndex="5"
+                        SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MaxLevel}"
                         IsReadOnly="True"
                         Margin="5"
                         ItemsSource="{Binding Source={StaticResource MaxLogLevelLabels}}" />
@@ -89,11 +89,17 @@
                         <xctk:DateTimePicker 
                                 Format="Custom" 
                                 Margin="5"
+                                Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=From}"
                                 ShowButtonSpinner="False"
                                 Grid.Column="1" 
                                 Grid.Row="0" />
-                        <xctk:DateTimePicker Format="Custom" Margin="5" ShowButtonSpinner="False"
-                                             Grid.Column="1" Grid.Row="1" />
+                        <xctk:DateTimePicker 
+                                Format="Custom" 
+                                Margin="5" 
+                                Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=To}"
+                                ShowButtonSpinner="False"
+                                Grid.Column="1" 
+                                Grid.Row="1" />
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.TextFilter}">
@@ -102,9 +108,9 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <fluent:TextBox Width="250" Margin="5" />
+                        <fluent:TextBox Width="250" Margin="5" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter}" />
                         <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"
-                                             SizeDefinition="Small, Small, Small"
+                                             SizeDefinition="Small, Small, Small" IsChecked="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UseRegularExpressions}"
                                              ToolTip="{x:Static properties:Resources.UseRegexp}" />
                     </Grid>
                 </fluent:RibbonGroupBox>

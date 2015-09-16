@@ -24,6 +24,10 @@ namespace logviewer.ui
             this.Templates.AddRange(fromDb.Select(t => t.DisplayName));
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
+            this.UseRegularExpressions = this.settingsProvider.UseRegexp;
+            this.MessageFilter = this.settingsProvider.MessageFilter;
+            this.MinLevel = this.settingsProvider.MinLevel;
+            this.MaxLevel = this.settingsProvider.MaxLevel;
         }
 
         public List<string> MinLevelLabeles { get; private set; } = new List<string>
@@ -57,5 +61,14 @@ namespace logviewer.ui
         public DateTime From { get; set; }
 
         public DateTime To { get; set; }
+
+        public string MessageFilter { get; set; }
+
+        public bool UseRegularExpressions { get; set; }
+
+        public int MinLevel { get; set; }
+
+        public int MaxLevel { get; set; }
+
     }
 }
