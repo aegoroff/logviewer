@@ -55,6 +55,7 @@
                     <fluent:ComboBox x:Name="ButtonSorting"
                                      Header="{x:Static properties:Resources.Sorting}"
                                      SizeDefinition="Middle, Middle, Small"
+                                     SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=SortingOrder}"
                                      IsReadOnly="True"
                                      ItemsSource="{Binding Source={StaticResource Sorting}}" />
                 </fluent:RibbonGroupBox>

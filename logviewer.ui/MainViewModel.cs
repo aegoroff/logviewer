@@ -13,9 +13,8 @@ namespace logviewer.ui
 {
     public class MainViewModel
     {
-        public static MainViewModel Current { get; } = new MainViewModel();
-
-        private readonly SqliteSettingsProvider settingsProvider = new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
+        private readonly SqliteSettingsProvider settingsProvider =
+            new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
 
         private MainViewModel()
         {
@@ -24,11 +23,9 @@ namespace logviewer.ui
             this.Templates.AddRange(fromDb.Select(t => t.DisplayName));
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
-            this.UseRegularExpressions = this.settingsProvider.UseRegexp;
-            this.MessageFilter = this.settingsProvider.MessageFilter;
-            this.MinLevel = this.settingsProvider.MinLevel;
-            this.MaxLevel = this.settingsProvider.MaxLevel;
         }
+
+        public static MainViewModel Current { get; } = new MainViewModel();
 
         public List<string> MinLevelLabeles { get; private set; } = new List<string>
         {
@@ -52,8 +49,8 @@ namespace logviewer.ui
 
         public List<string> Sorting { get; private set; } = new List<string>
         {
-            Resources.SortAsc,
-            Resources.SortDesc
+            Resources.SortDesc,
+            Resources.SortAsc
         };
 
         public List<string> Templates { get; }
@@ -62,13 +59,40 @@ namespace logviewer.ui
 
         public DateTime To { get; set; }
 
-        public string MessageFilter { get; set; }
+        public string MessageFilter
+        {
+            get { return this.settingsProvider.MessageFilter; }
+            set { this.settingsProvider.MessageFilter = value; }
+        }
 
-        public bool UseRegularExpressions { get; set; }
+        public bool UseRegularExpressions
+        {
+            get { return this.settingsProvider.UseRegexp; }
+            set { this.settingsProvider.UseRegexp = value; }
+        }
 
-        public int MinLevel { get; set; }
+        public int MinLevel
+        {
+            get { return this.settingsProvider.MinLevel; }
+            set { this.settingsProvider.MinLevel = value; }
+        }
 
-        public int MaxLevel { get; set; }
+        public int MaxLevel
+        {
+            get { return this.settingsProvider.MaxLevel; }
+            set { this.settingsProvider.MaxLevel = value; }
+        }
 
+        public int SelectedParsingTemplate
+        {
+            get { return this.settingsProvider.SelectedParsingTemplate; }
+            set { this.settingsProvider.SelectedParsingTemplate = value; }
+        }
+
+        public int SortingOrder
+        {
+            get { return this.settingsProvider.Sorting ? 0 : 1; }
+            set { this.settingsProvider.Sorting = value == 0; }
+        }
     }
 }
