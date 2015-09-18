@@ -50,14 +50,16 @@
                                            Header="{x:Static properties:Resources.TemplateSelection}"
                                            Icon="Images\Small\stamp_pattern.png"
                                            LargeIcon="Images\Large\stamp_pattern.png"
-                                           SizeDefinition="Middle, Middle, Small">
-                        <fluent:Gallery 
-                                        x:Name="TemplatesGallery"
-                                        ItemsSource="{Binding Source={StaticResource ParsingTemplates}}"
-                                        Orientation="Vertical"
-                                        SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=SelectedParsingTemplate}"
-                                        MaxItemsInRow="1">
-                        </fluent:Gallery>
+                                           SizeDefinition="Middle, Middle, Small"
+                                           ItemsSource="{Binding Source={StaticResource ParsingTemplates}}">
+                        <fluent:DropDownButton.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="IsChecked" 
+                                        Value="{Binding Path=(logviewer:TemplateCommand.Checked)}"/>
+                                <Setter Property="Header" 
+                                        Value="{Binding Path=(logviewer:TemplateCommand.Text)}"/>
+                            </Style>
+                        </fluent:DropDownButton.ItemContainerStyle>
                     </fluent:DropDownButton>
                     <fluent:ComboBox x:Name="ButtonSorting"
                                      Header="{x:Static properties:Resources.Sorting}"
