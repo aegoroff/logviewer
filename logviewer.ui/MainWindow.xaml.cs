@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Windows;
+using Fluent;
 
 namespace logviewer.ui
 {
@@ -19,6 +20,11 @@ namespace logviewer.ui
         private void OnExitApp(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void OnTemplateSelect(object sender, RoutedEventArgs e)
+        {
+            // TODO: change template selection
         }
     }
 }

@@ -58,6 +58,7 @@
                                         Value="{Binding Path=(logviewer:TemplateCommand.Checked)}"/>
                                 <Setter Property="Header" 
                                         Value="{Binding Path=(logviewer:TemplateCommand.Text)}"/>
+                                <EventSetter Event="Click" Handler="OnTemplateSelect"></EventSetter>
                             </Style>
                         </fluent:DropDownButton.ItemContainerStyle>
                     </fluent:DropDownButton>

@@ -21,10 +21,16 @@ namespace logviewer.ui
             this.Templates = new List<TemplateCommand>();
             var fromDb = this.settingsProvider.ReadAllParsingTemplates();
             var ix = 0;
-            this.Templates.AddRange(fromDb.Select(t => new TemplateCommand
+            this.Templates.AddRange(fromDb.Select(t =>
             {
-                Text = t.DisplayName,
-                Checked = ix++ == this.settingsProvider.SelectedParsingTemplate
+                var result = new TemplateCommand
+                {
+                    Text = t.DisplayName,
+                    Checked = ix == this.settingsProvider.SelectedParsingTemplate,
+                    Index = ix
+                };
+                ++ix;
+                return result;
             }));
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
@@ -105,5 +111,6 @@ namespace logviewer.ui
     {
         public string Text { get; set; }
         public bool Checked { get; set; }
+        public int Index { get; set; }
     }
 }
