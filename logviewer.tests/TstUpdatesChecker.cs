@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core;
-using NMock;
+using Moq;
 using Xunit;
 
 namespace logviewer.tests
@@ -16,12 +16,9 @@ namespace logviewer.tests
     {
         public TstUpdatesChecker()
         {
-            var mockery = new MockFactory();
-            var reader = mockery.CreateMock<IVersionsReader>();
-            this.checker = new UpdatesChecker(reader.MockObject);
-            this.invokeRead = reader.Expects.One.EventBinding<VersionEventArgs>(_ => _.VersionRead += null);
-            this.invokeComplete = reader.Expects.One.EventBinding(_ => _.ReadCompleted += null);
-            reader.Expects.One.Method(_ => _.ReadReleases());
+            this.reader = new Mock<IVersionsReader>();
+            this.checker = new UpdatesChecker(this.reader.Object);
+            this.reader.Setup(_ => _.ReadReleases());
         }
 
         private void Invoke(params Version[] versions)
@@ -31,15 +28,14 @@ namespace logviewer.tests
                 Thread.Sleep(30);
                 foreach (var version in versions)
                 {
-                    this.invokeRead.Invoke(new VersionEventArgs(version, string.Empty));
+                    reader.Raise(_ => _.VersionRead += null, new VersionEventArgs(version, string.Empty));
                 }
-                this.invokeComplete.Invoke();
+                reader.Raise(_ => _.ReadCompleted += null);
             });
         }
 
         private readonly UpdatesChecker checker;
-        private readonly EventInvoker<VersionEventArgs> invokeRead;
-        private readonly EventInvoker invokeComplete;
+        private readonly Mock<IVersionsReader> reader;
         private static readonly Version v1 = new Version(1, 2, 104, 0);
         private static readonly Version v2 = new Version(1, 0);
 

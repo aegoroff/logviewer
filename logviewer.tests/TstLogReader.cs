@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using logviewer.engine;
-using NMock;
+using Moq;
 using Xunit;
 
 namespace logviewer.tests
@@ -27,11 +27,10 @@ namespace logviewer.tests
 
         public TstLogReader()
         {
-            var mockery = new MockFactory();
-            var detector = mockery.CreateMock<ICharsetDetector>();
+            var detector = new Mock<ICharsetDetector>();
             this.stream = new MemoryStream();
             var grokMatcher = new GrokMatcher(NlogGrok);
-            this.reader = new LogReader(detector.MockObject, grokMatcher);
+            this.reader = new LogReader(detector.Object, grokMatcher);
             this.builder = new RulesBuilder(grokMatcher.MessageSchema);
         }
 

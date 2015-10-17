@@ -10,10 +10,10 @@ using System.Text;
 using System.Threading;
 using logviewer.core;
 using logviewer.engine;
+using Moq;
 using Net.Sgoliver.NRtfTree.Util;
-using NMock;
-using NMock.Matchers;
 using Xunit;
+using Xunit.Sdk;
 
 namespace logviewer.tests
 {
@@ -33,22 +33,21 @@ namespace logviewer.tests
             this.completed = false;
             CleanupTestFiles();
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-            this.mockery = new MockFactory();
-            this.view = this.mockery.CreateMock<ILogView>();
-            this.settings = this.mockery.CreateMock<ISettingsProvider>();
+            this.view = new Mock<ILogView>();
+            this.settings = new Mock<ISettingsProvider>();
 
-            this.settings.Expects.One.GetProperty(_ => _.PageSize).WillReturn(100);
-            this.settings.Expects.Any.Method(_ => _.FormatBody(new LogLevel())).WithAnyArguments().WillReturn(new RtfCharFormat());
-            this.settings.Expects.Any.Method(_ => _.FormatHead(new LogLevel())).WithAnyArguments().WillReturn(new RtfCharFormat());
+            this.settings.SetupGet(_ => _.PageSize).Returns(100); // 1
+            this.settings.Setup(_ => _.FormatBody(new LogLevel())).Returns(new RtfCharFormat()); // any
+            this.settings.Setup(_ => _.FormatHead(new LogLevel())).Returns(new RtfCharFormat()); // any
 
             var template = ParsingTemplate(core.ParsingTemplate.Defaults.First().StartMessage);
-            this.settings.Expects.One.Method(_ => _.ReadParsingTemplate()).WillReturn(template);
+            this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template); // 1
 
-            this.controller = new MainController(this.settings.MockObject);
+            this.controller = new MainController(this.settings.Object);
             this.controller.ReadCompleted += this.OnReadCompleted;
-            this.view.Expects.One.Method(_ => _.Initialize());
-            this.view.Expects.One.SetProperty(_ => _.LogInfo).ToAnything();
-            this.controller.SetView(this.view.MockObject);
+            this.view.Setup(_ => _.Initialize()); // 1
+            this.view.SetupGet(_ => _.LogInfo).Returns(It.IsAny<string>()); // 1
+            this.controller.SetView(this.view.Object);
         }
 
         private static ParsingTemplate ParsingTemplate(string startMessage)
@@ -105,7 +104,7 @@ namespace logviewer.tests
             var result = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(4));
             if (!result)
             {
-                throw new ExpectationException("Wait expired");
+                throw new XunitException("Wait expired");
             }
         }
 
@@ -113,7 +112,6 @@ namespace logviewer.tests
 
         private const string TestPath = "f";
         private const string RecentPath = "r";
-        private readonly MockFactory mockery;
         private readonly Mock<ILogView> view;
         private readonly Mock<ISettingsProvider> settings;
         private readonly MainController controller;
@@ -135,6 +133,7 @@ namespace logviewer.tests
             this.controller.TextFilter("5555");
             this.controller.UserRegexp(false);
             this.controller.StartReadLog();
+            this.view.Verify();
             this.WaitReadingComplete();
             Assert.Equal(1, this.controller.MessagesCount);
         }
@@ -241,32 +240,37 @@ namespace logviewer.tests
 
         private void ReadLogExpectations()
         {
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(null)).With(TestPath);
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.One.SetProperty(v => v.HumanReadableLogSize).ToAnything();
-            this.view.Expects.AtLeastOne.SetProperty(v => v.LogInfo).ToAnything();
-            this.view.Expects.AtLeast(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.Exactly(2).Method(v => v.SetFileEncoding(null)).WithAnyArguments();
-            this.view.Expects.AtLeastOne.Method(v => v.SetProgress(new LoadProgress())).WithAnyArguments();
+            this.view.Setup(v => v.SetLoadedFileCapltion(TestPath)); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
+            this.view.SetupSet(v => v.LogPath = It.IsAny<string>()); // 1
+            this.view.SetupSet(v => v.LogInfo = It.IsAny<string>()); // 1+
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 2+
+
+            this.view.Setup(v => v.SetFileEncoding(It.IsAny<string>())); // 2
+            this.view.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // 1+
+            this.settings.Setup(_=>_.FormatHead(It.IsAny<LogLevel>())).Returns(new RtfCharFormat { Font = "Courier New" });
+            this.settings.Setup(_=>_.FormatBody(It.IsAny<LogLevel>())).Returns(new RtfCharFormat { Font = "Courier New" });
         }
 
         [Fact]
         public void ExportRtfFail()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.One.MethodWith(v => v.OpenExport(TestPath + ".rtf")).WillReturn(false);
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
+            this.view.Setup(v => v.OpenExport(TestPath + ".rtf")).Returns(false); // 1
             this.controller.ExportToRtf();
+            this.view.Verify();
         }
 
         [Fact]
         public void ExportRtfSuccess()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.One.MethodWith(v => v.OpenExport(TestPath + ".rtf")).WillReturn(true);
-            this.view.Expects.One.Method(v => v.SaveRtf());
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
+            this.view.Setup(v => v.OpenExport(TestPath + ".rtf")).Returns(true); // 1
+            this.view.Setup(v => v.SaveRtf()); // 1
             this.controller.ExportToRtf();
+            this.view.Verify();
         }
 
         [Theory]
@@ -291,16 +295,16 @@ namespace logviewer.tests
         [Fact]
         public void OpenLogFileCanceled()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.OpenLogFile()).WillReturn(false);
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            this.view.Setup(v => v.OpenLogFile()).Returns(false); // 1
             this.controller.OpenLogFile();
         }
 
         [Fact]
         public void ReadEmptyFile()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
             File.Create(TestPath).Dispose();
             Assert.Throws<ArgumentException>(() => this.controller.StartReadLog());
         }
@@ -308,7 +312,8 @@ namespace logviewer.tests
         [Fact]
         public void ReadEmptyWhenMinGreaterThenMax()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
             this.controller.MinFilter((int)LogLevel.Error);
             this.controller.MaxFilter((int)LogLevel.Info);
             File.Create(TestPath).Dispose();
@@ -318,11 +323,11 @@ namespace logviewer.tests
         [Fact]
         public void ReadFromBadPath()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.No.GetProperty(v => v.LogPath).WillReturn(string.Empty);
-            Assert.Throws<FileNotFoundException>(() => this.controller.StartReadLog());
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
+            this.view.SetupGet(v => v.LogPath).Returns(string.Empty); // 0
+            Assert.Throws<ArgumentException>(() => this.controller.StartReadLog());
         }
 
         [Fact]
@@ -335,9 +340,9 @@ namespace logviewer.tests
             {
                 sb.AppendLine(MessageExamples);
             }
-            this.view.Expects.AtLeastOne.GetProperty(v => v.LogPath).WillReturn(TestPath);
-            this.view.Expects.Exactly(2).Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLoadedFileCapltion(TestPath));
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 2
+            this.view.Setup(v => v.SetLoadedFileCapltion(TestPath)); // 1
             File.WriteAllText(TestPath, sb.ToString());
             this.controller.StartReadLog();
             this.WaitReadingComplete();
@@ -394,25 +399,26 @@ namespace logviewer.tests
         [Fact]
         public void ReadRecentFilesEmpty()
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
+            this.view.Setup(v => v.ClearRecentFilesList()); // 1
+            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
+            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
             this.controller.ReadRecentFiles();
         }
 
         [Fact]
         public void SaveAndReadRecentFilesNoFile()
         {
-            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            using (this.mockery.Ordered())
-            {
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(TestPath);
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.No.MethodWith(v => v.CreateRecentFileItem(TestPath));
-            }
+            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
+            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            //using (this.mockery.Ordered())
+            //{
+                this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1
+                this.view.Setup(v => v.ClearRecentFilesList()); // 1
+                this.view.Setup(v => v.CreateRecentFileItem(TestPath)); // 0
+            //}
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();
         }
@@ -421,17 +427,18 @@ namespace logviewer.tests
         public void SaveAndReadRecentFiles()
         {
             CreateEmpty(f1, f2);
-            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            using (this.mockery.Ordered())
-            {
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f1));
-            }
+            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
+            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
+            //using (this.mockery.Ordered())
+            //{
+                this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
+                this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
+                this.view.Setup(v => v.ClearRecentFilesList()); // 1
+                this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
+                this.view.Setup(v => v.CreateRecentFileItem(f1)); // 1
+            //}
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();
@@ -441,18 +448,19 @@ namespace logviewer.tests
         public void RecentFilesMoreThenLimit()
         {
             CreateEmpty(f1, f2, f3);
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
-            using (this.mockery.Ordered())
-            {
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f3);
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f3));
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
-            }
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
+            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
+            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
+            //using (this.mockery.Ordered())
+            //{
+                this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
+                this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
+                this.view.SetupGet(v => v.LogPath).Returns(f3); // 1
+                this.view.Setup(v => v.ClearRecentFilesList());
+                this.view.Setup(v => v.CreateRecentFileItem(f3)); // 1
+                this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
+            //}
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
@@ -463,17 +471,19 @@ namespace logviewer.tests
         public void RecentFilesMoreThenLimitNoOneFile()
         {
             CreateEmpty(f1, f2);
-            this.settings.Expects.Any.GetProperty(_ => _.KeepLastNFiles).WillReturn(KeepLastNFiles);
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            using (this.mockery.Ordered())
-            {
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f1);
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn(f2);
-                this.view.Expects.One.GetProperty(v => v.LogPath).WillReturn("file_3");
-                this.view.Expects.One.Method(v => v.ClearRecentFilesList());
-                this.view.Expects.One.MethodWith(v => v.CreateRecentFileItem(f2));
-            }
+            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
+            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
+            //using (this.mockery.Ordered())
+            //{
+                this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
+                this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
+                this.view.SetupGet(v => v.LogPath).Returns("file_3"); // 1
+
+                this.view.Setup(v => v.ClearRecentFilesList());
+                this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
+            //}
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
@@ -484,7 +494,8 @@ namespace logviewer.tests
         public void TotalPagesNoMessages()
         {
             // TODO: fix System.IO.IOException:
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+
             Assert.Equal(1, this.controller.TotalPages);
         }
 
@@ -516,21 +527,22 @@ namespace logviewer.tests
         [InlineData(null, false, true)]
         public void FilterValidation(string filter, bool useRegex, bool result)
         {
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             Assert.Equal(result, MainController.IsValidFilter(filter, useRegex));
         }
 
         [Fact]
         public void StartReadingWithinDelay()
         {
-            this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
-            this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
-            this.view.Expects.Any.Method(v => v.SetLoadedFileCapltion(null)).WithAnyArguments();
-            this.view.Expects.Any.Method(v => v.StartReading());
-            this.view.Expects.Any.Method(v => v.SetProgress(new LoadProgress())).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.No.Method(v => v.StartReading());
+            this.settings.SetupSet(_ => _.MessageFilter = "f"); // 2
+            this.settings.SetupGet(_ => _.FullPathToDatabase).Returns(FullPathToTestDb); // any
+
+            this.view.Setup(v => v.AddFilterItems(It.IsAny<string[]>())); // any
+            this.view.Setup(v => v.SetLoadedFileCapltion(It.IsAny<string>()));  // any
+            this.view.Setup(v => v.StartReading()); // Any
+            this.view.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // Any
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            this.view.Setup(v => v.StartReading()); // 0
             this.controller.StartReading("f", false);
             this.controller.StartReading("f", false);
         }
@@ -539,14 +551,14 @@ namespace logviewer.tests
         public void StartReadingOutsideDelay()
         {
             // TODO: fix System.IO.IOException:
-            this.settings.Expects.Exactly(2).SetProperty(_ => _.MessageFilter).To(new EqualMatcher("f"));
-            this.settings.Expects.Any.GetProperty(_ => _.FullPathToDatabase).WillReturn(FullPathToTestDb);
-            this.view.Expects.Any.Method(v => v.AddFilterItems(null)).WithAnyArguments();
-            this.view.Expects.Any.Method(v => v.SetLoadedFileCapltion(null)).WithAnyArguments();
-            this.view.Expects.Any.Method(v => v.StartReading());
-            this.view.Expects.Any.Method(v => v.SetProgress(new LoadProgress())).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.SetLogProgressCustomText(null)).WithAnyArguments();
-            this.view.Expects.One.Method(v => v.StartReading());
+            this.settings.SetupSet(_ => _.MessageFilter = "f"); // 2
+            this.settings.SetupGet(_ => _.FullPathToDatabase).Returns(FullPathToTestDb); // any
+            this.view.Setup(v => v.AddFilterItems(It.IsAny<string[]>())); // any
+            this.view.Setup(v => v.SetLoadedFileCapltion(It.IsAny<string>()));  // any
+            this.view.Setup(v => v.StartReading()); // Any
+            this.view.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // Any
+            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
+            this.view.Setup(v => v.StartReading()); // 1
             this.controller.StartReading("f", false);
             Thread.Sleep(TimeSpan.FromMilliseconds(300));
             Assert.False(this.controller.PendingStart);
