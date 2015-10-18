@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using FluentAssertions;
 using logviewer.core;
 using logviewer.engine;
 using Moq;
@@ -135,7 +136,7 @@ namespace logviewer.tests
             this.controller.StartReadLog();
             this.view.Verify();
             this.WaitReadingComplete();
-            Assert.Equal(1, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(1);
         }
 
         [Theory]
@@ -150,7 +151,7 @@ namespace logviewer.tests
             this.controller.MaxFilter(max);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(count, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(count);
         }
 
         [Theory]
@@ -169,7 +170,7 @@ namespace logviewer.tests
             this.controller.MaxFilter((int)filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(c, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(c);
         }
 
         [Theory, MemberData("MaxDates")]
@@ -182,7 +183,7 @@ namespace logviewer.tests
             this.controller.MaxDate(filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(c, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(c);
         }
 
         [Theory, MemberData("MinDates")]
@@ -195,7 +196,7 @@ namespace logviewer.tests
             this.controller.MinDate(filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(c, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(c);
         }
 
         public static IEnumerable<object[]> MaxDates => new[]
@@ -235,7 +236,7 @@ namespace logviewer.tests
             this.controller.MinFilter((int)filter);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(c, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(c);
         }
 
         private void ReadLogExpectations()
@@ -289,7 +290,7 @@ namespace logviewer.tests
             this.controller.UserRegexp(useRegexp);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(messages, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(messages);
         }
 
         [Fact]
@@ -346,7 +347,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, sb.ToString());
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(2000, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(2000);
         }
 
         void ReadNormalLogInternal(Encoding encoding)
@@ -356,7 +357,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, MessageExamples, encoding);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(2, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -379,7 +380,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, "test log");
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(1, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(1);
         }
         
         [Theory]
@@ -393,7 +394,7 @@ namespace logviewer.tests
             this.controller.MinFilter((int)LogLevel.Info);
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(2, this.controller.MessagesCount);
+            this.controller.MessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -493,10 +494,9 @@ namespace logviewer.tests
         [Fact]
         public void TotalPagesNoMessages()
         {
-            // TODO: fix System.IO.IOException:
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
 
-            Assert.Equal(1, this.controller.TotalPages);
+            this.controller.TotalPages.Should().Be(1);
         }
 
         [Theory]
@@ -515,7 +515,7 @@ namespace logviewer.tests
             File.WriteAllText(TestPath, sb.ToString());
             this.controller.StartReadLog();
             this.WaitReadingComplete();
-            Assert.Equal(pages, this.controller.TotalPages);
+            this.controller.TotalPages.Should().Be(pages);
         }
 
         [Theory]
@@ -528,7 +528,7 @@ namespace logviewer.tests
         public void FilterValidation(string filter, bool useRegex, bool result)
         {
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-            Assert.Equal(result, MainController.IsValidFilter(filter, useRegex));
+            MainController.IsValidFilter(filter, useRegex).Should().Be(result);
         }
 
         [Fact]
@@ -550,7 +550,6 @@ namespace logviewer.tests
         [Fact]
         public void StartReadingOutsideDelay()
         {
-            // TODO: fix System.IO.IOException:
             this.settings.SetupSet(_ => _.MessageFilter = "f"); // 2
             this.settings.SetupGet(_ => _.FullPathToDatabase).Returns(FullPathToTestDb); // any
             this.view.Setup(v => v.AddFilterItems(It.IsAny<string[]>())); // any
@@ -561,7 +560,7 @@ namespace logviewer.tests
             this.view.Setup(v => v.StartReading()); // 1
             this.controller.StartReading("f", false);
             Thread.Sleep(TimeSpan.FromMilliseconds(300));
-            Assert.False(this.controller.PendingStart);
+            this.controller.PendingStart.Should().BeFalse();
         }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using logviewer.core;
 using Moq;
 using Xunit;
@@ -42,9 +43,8 @@ namespace logviewer.tests
         public void EqualLess(Version[] versions)
         {
             this.Invoke(versions);
-            Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
-            Assert.Equal(v1, this.checker.LatestVersion);
-            this.reader.Verify();
+            this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)).Should().BeFalse();
+            this.checker.LatestVersion.Should().Be(v1);
         }
 
         [Fact]
@@ -52,17 +52,16 @@ namespace logviewer.tests
         {
             var v = new Version(2, 0);
             this.Invoke(v1);
-            Assert.False(this.checker.IsUpdatesAvaliable(v));
-            Assert.Equal(v, this.checker.LatestVersion);
-            this.reader.Verify();
+
+            this.checker.IsUpdatesAvaliable(v).Should().BeFalse();
+            this.checker.LatestVersion.Should().Be(v);
         }
 
         [Theory, MemberData("Versions")]
         public void Less(Version[] versions)
         {
             this.Invoke(versions);
-            Assert.True(this.checker.IsUpdatesAvaliable(v2));
-            this.reader.Verify();
+            this.checker.IsUpdatesAvaliable(v2).Should().BeTrue();
         }
 
         public static IEnumerable<object[]> Versions => new []

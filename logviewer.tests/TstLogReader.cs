@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using FluentAssertions;
 using logviewer.engine;
 using Moq;
 using Xunit;
@@ -54,29 +55,23 @@ namespace logviewer.tests
             Action<LogMessage> onRead = delegate(LogMessage message)
             {
                 count++;
-                Assert.False(message.IsEmpty);
+                message.IsEmpty.Should().BeFalse();
             };
 
             var position = this.reader.Read(this.stream, 0, onRead, () => true);
-            Assert.Equal(2, count);
-            Assert.Equal(this.buffer.LongLength, position);
+            count.Should().Be(2);
+            position.Should().Be(this.buffer.LongLength);
         }
 
-        public static IEnumerable<object[]> ValidStreams
+        public static IEnumerable<object[]> ValidStreams => new[]
         {
-            get
-            {
-                return new[]
-                {
-                    new object[] { MessageExamples  },
-                    new object[] { Environment.NewLine + MessageExamples },
-                    new object[] { " " + Environment.NewLine + " " + Environment.NewLine + MessageExamples },
-                    new object[] { MessageExamples + Environment.NewLine },
-                    new object[] { Environment.NewLine + MessageExamples + Environment.NewLine }
+            new object[] { MessageExamples  },
+            new object[] { Environment.NewLine + MessageExamples },
+            new object[] { " " + Environment.NewLine + " " + Environment.NewLine + MessageExamples },
+            new object[] { MessageExamples + Environment.NewLine },
+            new object[] { Environment.NewLine + MessageExamples + Environment.NewLine }
 
-                };
-            }
-        }
+        };
 
         [Fact]
         public void LogFromStreamWithCache()
@@ -87,20 +82,20 @@ namespace logviewer.tests
             Action<LogMessage> onRead = delegate(LogMessage message)
             {
                 count++;
-                Assert.False(message.IsEmpty);
+                message.IsEmpty.Should().BeFalse();
                 message.Cache(this.builder.Rules);
                 var level = (LogLevel)message.IntegerProperty("Level");
                 var date = DateTime.FromFileTime(message.IntegerProperty("Occured"));
                 Assert.InRange(level, LogLevel.Info, LogLevel.Error);
-                Assert.Equal(2008, date.Year);
-                Assert.Equal(12, date.Month);
-                Assert.Equal(27, date.Day);
+                date.Year.Should().Be(2008);
+                date.Month.Should().Be(12);
+                date.Day.Should().Be(27);
             };
 
             
 
             this.reader.Read(this.stream, 0, onRead, () => true);
-            Assert.Equal(2, count);
+            count.Should().Be(2);
         }
 
         [Fact]
@@ -112,11 +107,11 @@ namespace logviewer.tests
             Action<LogMessage> onRead = delegate(LogMessage message)
             {
                 count++;
-                Assert.True(message.IsEmpty);
+                message.IsEmpty.Should().BeTrue();
             };
 
             this.reader.Read(this.stream, 0, onRead, () => false);
-            Assert.Equal(1, count);
+            count.Should().Be(1);
         }
 
         [Fact]
@@ -127,11 +122,11 @@ namespace logviewer.tests
             Action<LogMessage> onRead = delegate(LogMessage message)
             {
                 count++;
-                Assert.True(message.IsEmpty);
+                message.IsEmpty.Should().BeTrue();
             };
 
             this.reader.Read(this.stream, 0, onRead, () => true);
-            Assert.Equal(1, count);
+            count.Should().Be(1);
         }
     }
 }

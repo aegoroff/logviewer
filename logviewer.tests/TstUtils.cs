@@ -2,8 +2,8 @@
 // Created at: 24.10.2012
 // © 2012-2015 Alexander Egorov
 
-using System.Text.RegularExpressions;
 using System.Xml;
+using FluentAssertions;
 using logviewer.core;
 using logviewer.engine;
 using Xunit;
@@ -36,7 +36,7 @@ namespace logviewer.tests
         [InlineData(ulong.MaxValue, "## ### ### ### ### ### ###")]
         public void TestFormatString(ulong value, string format)
         {
-            Assert.Equal(format, value.FormatString());
+            value.FormatString().Should().Be(format);
         }
 
         [Theory]
@@ -47,7 +47,7 @@ namespace logviewer.tests
         [InlineData(101, 0, 100, 100)]
         public void TestSafePercent(int value, int min, int max, int result)
         {
-            Assert.Equal(result, value.ToSafePercent(min, max));
+            value.ToSafePercent(min, max).Should().Be(result);
         }
 
         [Theory]
@@ -66,10 +66,10 @@ namespace logviewer.tests
         public void TestFileSizeNormalize(ulong size, SizeUnit unit, double value, string str, bool bigWithoutBytes)
         {
             var sz = new FileSize(size, bigWithoutBytes);
-            Assert.Equal(size, sz.Bytes);
-            Assert.Equal(unit, sz.Unit);
-            Assert.Equal(value, sz.Value);
-            Assert.True(Regex.IsMatch(sz.Format(), str));
+            sz.Bytes.Should().Be(size);
+            sz.Unit.Should().Be(unit);
+            sz.Value.Should().Be(value);
+            sz.Format().Should().MatchRegex(str);
         }
 
         [Theory]
@@ -85,7 +85,7 @@ namespace logviewer.tests
         [InlineData(5L, 0L, 0)]
         public void TestPercentOf(long value, long total, int percent)
         {
-            Assert.Equal(percent, value.PercentOf(total));
+            value.PercentOf(total).Should().Be(percent);
         }
 
         [Fact]
@@ -100,8 +100,8 @@ namespace logviewer.tests
         {
             var crypt = new AsymCrypt();
             crypt.GenerateKeys();
-            Assert.NotNull(crypt.PrivateKey);
-            Assert.NotNull(crypt.PublicKey);
+            crypt.PrivateKey.Should().NotBeNullOrEmpty();
+            crypt.PublicKey.Should().NotBeNullOrEmpty();
         }
         
         [Fact]
@@ -122,7 +122,7 @@ namespace logviewer.tests
             const string plain = "string";
             var crypted = crypt.Encrypt(plain);
             var decrypted = crypt.Decrypt(crypted);
-            Assert.Equal(plain, decrypted);
+            decrypted.Should().Be(plain);
         }
     }
 }
