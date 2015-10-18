@@ -18,7 +18,6 @@ namespace logviewer.tests
         {
             this.reader = new Mock<IVersionsReader>();
             this.checker = new UpdatesChecker(this.reader.Object);
-            this.reader.Setup(_ => _.ReadReleases());
         }
 
         private void Invoke(params Version[] versions)
@@ -28,9 +27,9 @@ namespace logviewer.tests
                 Thread.Sleep(30);
                 foreach (var version in versions)
                 {
-                    reader.Raise(_ => _.VersionRead += null, new VersionEventArgs(version, string.Empty));
+                    this.reader.Raise(_ => _.VersionRead += null, new VersionEventArgs(version, string.Empty));
                 }
-                reader.Raise(_ => _.ReadCompleted += null);
+                this.reader.Raise(_ => _.ReadCompleted += null, new EventArgs());
             });
         }
 
@@ -45,6 +44,7 @@ namespace logviewer.tests
             this.Invoke(versions);
             Assert.False(this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)));
             Assert.Equal(v1, this.checker.LatestVersion);
+            this.reader.Verify();
         }
 
         [Fact]
@@ -54,6 +54,7 @@ namespace logviewer.tests
             this.Invoke(v1);
             Assert.False(this.checker.IsUpdatesAvaliable(v));
             Assert.Equal(v, this.checker.LatestVersion);
+            this.reader.Verify();
         }
 
         [Theory, MemberData("Versions")]
@@ -61,6 +62,7 @@ namespace logviewer.tests
         {
             this.Invoke(versions);
             Assert.True(this.checker.IsUpdatesAvaliable(v2));
+            this.reader.Verify();
         }
 
         public static IEnumerable<object[]> Versions => new []
@@ -68,7 +70,6 @@ namespace logviewer.tests
             new object[] { new [] { v1 } },
             new object[] { new [] { v2, v1 } },
             new object[] { new [] { v1, v2 } }
-
         };
     }
 }
