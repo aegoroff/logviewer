@@ -174,7 +174,7 @@ namespace logviewer.tests
                 new GrokRule(ParserType.LogLevel, "41", LogLevel.Error),
                 new GrokRule(ParserType.LogLevel, "50", LogLevel.Fatal),
                 new GrokRule(ParserType.LogLevel, "*", LogLevel.Debug));
-            ((LogLevel)this.m.IntegerProperty("level")).Should().Be(result);
+            ((LogLevel)this.m.IntegerProperty("Level")).Should().Be(result);
         }
 
         private void ParseTest(string prop, ParserType type, ParserType parser, string input)

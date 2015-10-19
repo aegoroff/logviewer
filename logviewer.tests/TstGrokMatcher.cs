@@ -179,7 +179,7 @@ namespace logviewer.tests
             var matcher = new GrokMatcher(pattern, RegexOptions.None, output.WriteLine);
             matcher.MessageSchema.Count.Should().Be(semanticCount);
             matcher.CompilationFailed.Should().BeFalse();
-            matcher.Template.Should().Be(pattern);
+            matcher.Template.Should().NotBe(pattern);
         }
 
         [Fact]
