@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using logviewer.engine;
 using Xunit;
 
@@ -25,9 +26,9 @@ namespace logviewer.tests
         {
             this.m.AddLine(H);
             this.m.AddLine(B);
-            Assert.False(this.m.IsEmpty);
-            Assert.Equal(H, this.m.Header);
-            Assert.Equal(B + "\n", this.m.Body);
+            this.m.IsEmpty.Should().BeFalse();
+            this.m.Header.Should().Be(H);
+            this.m.Body.Should().Be(B + "\n");
         }
 
         [Fact]
@@ -36,17 +37,18 @@ namespace logviewer.tests
             this.m.AddLine(H);
             this.m.AddLine(B);
             this.m.Cache(null);
-            Assert.False(this.m.IsEmpty);
-            Assert.Equal(H, this.m.Header);
-            Assert.Equal(B, this.m.Body);
+
+            this.m.IsEmpty.Should().BeFalse();
+            this.m.Header.Should().Be(H);
+            this.m.Body.Should().Be(B);
         }
 
         [Fact]
         public void IsEmpty()
         {
-            Assert.True(this.m.IsEmpty);
-            Assert.Empty(this.m.Body);
-            Assert.Empty(this.m.Header);
+            this.m.IsEmpty.Should().BeTrue();
+            this.m.Header.Should().BeEmpty();
+            this.m.Body.Should().BeEmpty();
         }
         
         [Fact]
@@ -54,19 +56,19 @@ namespace logviewer.tests
         {
             this.m.AddLine(string.Empty);
             this.m.AddLine(string.Empty);
-            Assert.False(this.m.IsEmpty);
-            Assert.Empty(this.m.Header);
-            Assert.Empty(this.m.Body);
-            
+            this.m.IsEmpty.Should().BeFalse();
+            this.m.Header.Should().BeEmpty();
+            this.m.Body.Should().BeEmpty();
+
         }
 
         [Fact]
         public void OnlyHead()
         {
             this.m.AddLine(H);
-            Assert.False(this.m.IsEmpty);
-            Assert.Equal(H, this.m.Header);
-            Assert.Empty(this.m.Body);
+            this.m.IsEmpty.Should().BeFalse();
+            this.m.Header.Should().Be(H);
+            this.m.Body.Should().BeEmpty();
         }
 
         [Fact]
@@ -74,9 +76,9 @@ namespace logviewer.tests
         {
             this.m.AddLine(H);
             this.m.Cache(null);
-            Assert.False(this.m.IsEmpty);
-            Assert.Equal(H, this.m.Header);
-            Assert.Empty(this.m.Body);
+            this.m.IsEmpty.Should().BeFalse();
+            this.m.Header.Should().Be(H);
+            this.m.Body.Should().BeEmpty();
         }
         
         [Theory]
@@ -106,7 +108,7 @@ namespace logviewer.tests
         public void ParseLogLevel(string input, LogLevel result)
         {
             this.ParseTest("level", ParserType.LogLevel, ParserType.LogLevel, input);
-            Assert.Equal(result, (LogLevel)this.m.IntegerProperty("level"));
+            ((LogLevel) this.m.IntegerProperty("level")).Should().Be(result);
         }
 
         [Theory]
@@ -116,7 +118,7 @@ namespace logviewer.tests
         public void ParseDateTime(string input, int y, int month, int d, int h, int min, int sec, int millisecond)
         {
             this.ParseTest("dt", ParserType.Datetime, ParserType.Datetime, input);
-            Assert.Equal(new DateTime(y, month, d, h, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")));
+            DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")).Should().Be(new DateTime(y, month, d, h, min, sec, millisecond, DateTimeKind.Utc));
         }
         
         [Theory]
@@ -125,7 +127,7 @@ namespace logviewer.tests
         public void ParseDateTimeTimezone(string input, int y, int month, int d, int h, int min, int sec, int millisecond, int offset)
         {
             this.ParseTest("dt", ParserType.Datetime, ParserType.Datetime, input);
-            Assert.Equal(new DateTime(y, month, d, h + offset, min, sec, millisecond, DateTimeKind.Utc), DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")));
+            DateTime.FromFileTimeUtc(this.m.IntegerProperty("dt")).Should().Be(new DateTime(y, month, d, h + offset, min, sec, millisecond, DateTimeKind.Utc));
         }
 
         [Theory]
@@ -143,7 +145,7 @@ namespace logviewer.tests
         public void ParseInteger(string input, long result)
         {
             this.ParseTest("integer", ParserType.Interger, ParserType.Interger, input);
-            Assert.Equal(result, this.m.IntegerProperty("integer"));
+            this.m.IntegerProperty("integer").Should().Be(result);
         }
 
         [Theory]
@@ -151,7 +153,7 @@ namespace logviewer.tests
         public void ParseString(string input, string result, ParserType type)
         {
             this.ParseTest("str", type, ParserType.String, input);
-            Assert.Equal(result, this.m.StringProperty("str"));
+            this.m.StringProperty("str").Should().Be(result);
         }
 
         [Theory]
@@ -172,7 +174,7 @@ namespace logviewer.tests
                 new GrokRule(ParserType.LogLevel, "41", LogLevel.Error),
                 new GrokRule(ParserType.LogLevel, "50", LogLevel.Fatal),
                 new GrokRule(ParserType.LogLevel, "*", LogLevel.Debug));
-            Assert.Equal(result, (LogLevel)this.m.IntegerProperty("Level"));
+            ((LogLevel)this.m.IntegerProperty("level")).Should().Be(result);
         }
 
         private void ParseTest(string prop, ParserType type, ParserType parser, string input)
