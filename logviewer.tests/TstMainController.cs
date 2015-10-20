@@ -414,12 +414,11 @@ namespace logviewer.tests
             this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
             this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-            //using (this.mockery.Ordered())
-            //{
-                this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1
-                this.view.Setup(v => v.ClearRecentFilesList()); // 1
-                this.view.Setup(v => v.CreateRecentFileItem(TestPath)); // 0
-            //}
+
+            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1
+            this.view.Setup(v => v.ClearRecentFilesList()); // 1
+            this.view.Setup(v => v.CreateRecentFileItem(TestPath)); // 0
+
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();
         }
@@ -432,14 +431,12 @@ namespace logviewer.tests
             this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
 
-            //using (this.mockery.Ordered())
-            //{
-                this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
-                this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
-                this.view.Setup(v => v.ClearRecentFilesList()); // 1
-                this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
-                this.view.Setup(v => v.CreateRecentFileItem(f1)); // 1
-            //}
+            this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
+            this.view.Setup(v => v.ClearRecentFilesList()); // 1
+            this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
+            this.view.Setup(v => v.CreateRecentFileItem(f1)); // 1
+
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.ReadRecentFiles();
@@ -453,15 +450,14 @@ namespace logviewer.tests
 
             this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
             this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
-            //using (this.mockery.Ordered())
-            //{
-                this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
-                this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
-                this.view.SetupGet(v => v.LogPath).Returns(f3); // 1
-                this.view.Setup(v => v.ClearRecentFilesList());
-                this.view.Setup(v => v.CreateRecentFileItem(f3)); // 1
-                this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
-            //}
+
+            this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(f3); // 1
+            this.view.Setup(v => v.ClearRecentFilesList());
+            this.view.Setup(v => v.CreateRecentFileItem(f3)); // 1
+            this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
+
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
@@ -476,15 +472,13 @@ namespace logviewer.tests
             this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
 
-            //using (this.mockery.Ordered())
-            //{
-                this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
-                this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
-                this.view.SetupGet(v => v.LogPath).Returns("file_3"); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
+            this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
+            this.view.SetupGet(v => v.LogPath).Returns("file_3"); // 1
 
-                this.view.Setup(v => v.ClearRecentFilesList());
-                this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
-            //}
+            this.view.Setup(v => v.ClearRecentFilesList());
+            this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
+
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
             this.controller.AddCurrentFileToRecentFilesList();
