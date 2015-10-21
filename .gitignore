@@ -11,6 +11,7 @@ _ReSharper.logviewer/
 *.vcxproj.user
 Debug/
 Release/
+logviewer.server/bin/
 dist/
 packages/
 !lib/Debug/
