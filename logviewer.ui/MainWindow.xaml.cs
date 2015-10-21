@@ -24,7 +24,17 @@ namespace logviewer.ui
 
         private void OnTemplateSelect(object sender, RoutedEventArgs e)
         {
-            // TODO: change template selection
+            var src = (MenuItem)e.OriginalSource;
+            var cmd = (TemplateCommand)src.DataContext;
+
+            MainViewModel.Current.Templates.Clear();
+
+            MainViewModel.Current.SelectedParsingTemplate = cmd.Index;
+            var commands = MainViewModel.Current.CreateTemplateCommands();
+            foreach (var command in commands)
+            {
+                MainViewModel.Current.Templates.Add(command);
+            }
         }
     }
 }

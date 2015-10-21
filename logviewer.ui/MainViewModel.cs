@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
-using System.Linq;
 using logviewer.core;
 using logviewer.ui.Properties;
 
@@ -18,22 +18,27 @@ namespace logviewer.ui
 
         private MainViewModel()
         {
-            this.Templates = new List<TemplateCommand>();
+            var templates = this.CreateTemplateCommands();
+            this.Templates = new ObservableCollection<TemplateCommand>(templates);
+
+            this.From = DateTime.MinValue;
+            this.To = DateTime.MaxValue;
+        }
+
+        public IEnumerable<TemplateCommand> CreateTemplateCommands()
+        {
             var fromDb = this.settingsProvider.ReadAllParsingTemplates();
             var ix = 0;
-            this.Templates.AddRange(fromDb.Select(t =>
+            foreach (var t in fromDb)
             {
-                var result = new TemplateCommand
+                yield return new TemplateCommand
                 {
                     Text = t.DisplayName,
                     Checked = ix == this.settingsProvider.SelectedParsingTemplate,
                     Index = ix
                 };
                 ++ix;
-                return result;
-            }));
-            this.From = DateTime.MinValue;
-            this.To = DateTime.MaxValue;
+            }
         }
 
         public static MainViewModel Current { get; } = new MainViewModel();
@@ -64,7 +69,7 @@ namespace logviewer.ui
             Resources.SortAsc
         };
 
-        public List<TemplateCommand> Templates { get; }
+        public ObservableCollection<TemplateCommand> Templates { get; }
 
         public DateTime From { get; set; }
 
