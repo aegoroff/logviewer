@@ -31,10 +31,6 @@ namespace logviewer.core
         {
             try
             {
-                if (this.VersionRead == null)
-                {
-                    return;
-                }
                 var github = new GitHubClient(new ProductHeaderValue(this.project));
                 var releases = github.Release.GetAll(this.account, this.project);
                 releases.Wait();
@@ -52,7 +48,7 @@ namespace logviewer.core
                         {
                             var url = string.Format(DownloadUrlTemplate, this.account, this.project, release.Name, m.Value);
                             var version = new Version(m.Groups[1].Captures[0].Value);
-                            this.VersionRead(this, new VersionEventArgs(version, url));
+                            this.VersionRead?.Invoke(this, new VersionEventArgs(version, url));
                         }
                     }
                     catch (Exception e)
