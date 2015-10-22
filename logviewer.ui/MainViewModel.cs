@@ -16,7 +16,7 @@ namespace logviewer.ui
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly SqliteSettingsProvider settingsProvider =
+        private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
 
         private string logPath;
