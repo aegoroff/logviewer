@@ -6,7 +6,7 @@
     xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="logviewer.ui.MainWindow"
-    Title="Log Viewer" Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
+    Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption}" Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Window.Resources>
         <CollectionViewSource
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MinLevelLabeles}"

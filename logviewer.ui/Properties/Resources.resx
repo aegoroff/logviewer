@@ -177,6 +177,9 @@
   <data name="Log" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="MainWindowCaptionPrefix" xml:space="preserve">
+    <value>Log Viewer</value>
+  </data>
   <data name="MaxLabel" xml:space="preserve">
     <value>Max: </value>
   </data>

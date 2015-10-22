@@ -75,6 +75,10 @@ namespace logviewer.ui
 
         public DateTime To { get; set; }
 
+        public string LogPath { get; set; }
+
+        public string Caption => Resources.MainWindowCaptionPrefix  + (!string.IsNullOrWhiteSpace(this.LogPath) ?  ": " + this.LogPath  : string.Empty);
+
         public string MessageFilter
         {
             get { return this.settingsProvider.MessageFilter; }

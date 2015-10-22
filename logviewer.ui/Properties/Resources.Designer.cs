@@ -241,6 +241,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Viewer.
+        /// </summary>
+        public static string MainWindowCaptionPrefix {
+            get {
+                return ResourceManager.GetString("MainWindowCaptionPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max: .
         /// </summary>
         public static string MaxLabel {
