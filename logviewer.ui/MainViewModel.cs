@@ -5,16 +5,21 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Configuration;
+using System.Runtime.CompilerServices;
 using logviewer.core;
+using logviewer.ui.Annotations;
 using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         private readonly SqliteSettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
+
+        private string logPath;
 
         private MainViewModel()
         {
@@ -23,6 +28,7 @@ namespace logviewer.ui
 
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
+            this.LogPath = string.Empty; // TODO: read from settings
         }
 
         public IEnumerable<TemplateCommand> CreateTemplateCommands()
@@ -75,9 +81,19 @@ namespace logviewer.ui
 
         public DateTime To { get; set; }
 
-        public string LogPath { get; set; }
+        public string LogPath
+        {
+            get { return this.logPath; }
+            set
+            {
+                this.logPath = value;
+                this.Caption = Resources.MainWindowCaptionPrefix +
+                          (!string.IsNullOrWhiteSpace(this.logPath) ? ": " + this.logPath : string.Empty);
+                this.OnPropertyChanged(nameof(this.Caption));
+            }
+        }
 
-        public string Caption => Resources.MainWindowCaptionPrefix  + (!string.IsNullOrWhiteSpace(this.LogPath) ?  ": " + this.LogPath  : string.Empty);
+        public string Caption { get; set; }
 
         public string MessageFilter
         {
@@ -113,6 +129,14 @@ namespace logviewer.ui
         {
             get { return this.settingsProvider.Sorting ? 0 : 1; }
             set { this.settingsProvider.Sorting = value == 0; }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

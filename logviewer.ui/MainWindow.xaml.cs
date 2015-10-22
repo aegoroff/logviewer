@@ -4,6 +4,7 @@
 
 using System.Windows;
 using Fluent;
+using Microsoft.Win32;
 
 namespace logviewer.ui
 {
@@ -34,6 +35,18 @@ namespace logviewer.ui
             foreach (var command in commands)
             {
                 MainViewModel.Current.Templates.Add(command);
+            }
+        }
+
+        private void OnOpenFile(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Log files|*.log|All files|*.*"
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                MainViewModel.Current.LogPath = openFileDialog.FileName;
             }
         }
     }

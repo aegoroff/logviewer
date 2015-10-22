@@ -39,7 +39,7 @@
             <fluent:RibbonTabItem Header="{x:Static properties:Resources.View}">
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.Log}">
                     <fluent:Button x:Name="ButtonOpen" Header="{x:Static properties:Resources.Open}"
-                                   LargeIcon="Images\Large\folder.png" Icon="Images\Small\folder.png" />
+                                   LargeIcon="Images\Large\folder.png" Icon="Images\Small\folder.png" Click="OnOpenFile" />
                     <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh"
                                    Icon="Images\Small\database_refresh.png"
                                    LargeIcon="Images\Large\database_refresh.png" />
