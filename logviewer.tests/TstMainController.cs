@@ -405,6 +405,7 @@ namespace logviewer.tests
             this.view.Setup(v => v.ClearRecentFilesList()); // 1
             this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
             this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
+            this.settings.Setup(s => s.UseRecentFilesStore(It.IsAny<Action<RecentItemsStore>>()));
             this.controller.ReadRecentFiles();
         }
 

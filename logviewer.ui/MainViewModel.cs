@@ -28,7 +28,10 @@ namespace logviewer.ui
 
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
-            this.LogPath = string.Empty; // TODO: read from settings
+            if (this.settingsProvider.OpenLastFile)
+            {
+                this.settingsProvider.UseRecentFilesStore(filesStore => this.LogPath = filesStore.ReadLastUsedItem());
+            }
         }
 
         public IEnumerable<TemplateCommand> CreateTemplateCommands()
@@ -87,13 +90,13 @@ namespace logviewer.ui
             set
             {
                 this.logPath = value;
-                this.Caption = Resources.MainWindowCaptionPrefix +
-                          (!string.IsNullOrWhiteSpace(this.logPath) ? ": " + this.logPath : string.Empty);
+                this.settingsProvider.UseRecentFilesStore(s => s.Add(this.logPath));
                 this.OnPropertyChanged(nameof(this.Caption));
             }
         }
 
-        public string Caption { get; set; }
+        public string Caption => Resources.MainWindowCaptionPrefix +
+                          (!string.IsNullOrWhiteSpace(this.logPath) ? ": " + this.logPath : string.Empty);
 
         public string MessageFilter
         {

@@ -48,6 +48,7 @@ namespace logviewer.core
 
         private const int HeaderFontSize = 10;
         private const int BodyFontSize = 9;
+        private const int KeepLastFilters = 20;
 
         private static readonly Dictionary<LogLevel, Color> defaultColors = new Dictionary<LogLevel, Color>
         {
@@ -410,6 +411,16 @@ namespace logviewer.core
         public RtfCharFormat FormatBody(LogLevel level)
         {
             return this.bodyFormatsMap[level];
+        }
+
+        public void UseRecentFilesStore(Action<RecentItemsStore> action)
+        {
+            this.UseRecentItemsStore(action, "RecentFiles");
+        }
+
+        public void UseRecentFiltersStore(Action<RecentItemsStore> action)
+        {
+            this.UseRecentItemsStore(action, "RecentFilters", KeepLastFilters);
         }
 
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
@@ -812,6 +823,21 @@ namespace logviewer.core
         private static bool GetBoolValue(string key)
         {
             return GetIntValue(key) == 1;
+        }
+
+        private void UseRecentItemsStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
+        {
+            try
+            {
+                using (var itemsStore = new RecentItemsStore(this, table, maxItems))
+                {
+                    action(itemsStore);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Debug(e);
+            }
         }
     }
 }

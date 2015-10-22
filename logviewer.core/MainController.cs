@@ -55,7 +55,7 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        private const int KeepLastFilters = 20;
+        
         private const int CheckUpdatesEveryDays = 7;
         private DateTime minDate = DateTime.MinValue;
         private DateTime maxDate = DateTime.MaxValue;
@@ -411,7 +411,7 @@ namespace logviewer.core
         {
             string[] items = null;
 
-            this.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
+            this.settings.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -773,9 +773,7 @@ namespace logviewer.core
 
             var lastOpenedFile = string.Empty;
 
-            Action<RecentItemsStore> method =
-                delegate(RecentItemsStore filesStore) { lastOpenedFile = filesStore.ReadLastUsedItem(); };
-            this.UseRecentFilesStore(method);
+            this.settings.UseRecentFilesStore(filesStore => lastOpenedFile = filesStore.ReadLastUsedItem());
 
             if (!string.IsNullOrWhiteSpace(lastOpenedFile))
             {
@@ -787,7 +785,7 @@ namespace logviewer.core
         {
             IEnumerable<string> files = null;
 
-            this.UseRecentFilesStore(delegate(RecentItemsStore filesStore) { files = filesStore.ReadItems(); });
+            this.settings.UseRecentFilesStore(filesStore => files = filesStore.ReadItems());
 
             this.view.ClearRecentFilesList();
 
@@ -808,7 +806,7 @@ namespace logviewer.core
                     notExistFiles.Add(item);
                 }
             }
-            this.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
+            this.settings.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
         }
 
         public void ReadTemplates()
@@ -830,31 +828,6 @@ namespace logviewer.core
         {
             this.settings.SelectedParsingTemplate = index;
             this.SetCurrentParsingTemplate();
-        }
-
-        private void UseRecentFilesStore(Action<RecentItemsStore> action)
-        {
-            this.UseRecentFiltersStore(action, "RecentFiles");
-        }
-        
-        private void UseRecentFiltersStore(Action<RecentItemsStore> action)
-        {
-            this.UseRecentFiltersStore(action, "RecentFilters", KeepLastFilters);
-        }
-        
-        private void UseRecentFiltersStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
-        {
-            try
-            {
-                using (var itemsStore = new RecentItemsStore(this.settings, table, maxItems))
-                {
-                    action(itemsStore);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Instance.Debug(e);
-            }
         }
 
         public void UpdateSettings(bool refresh)
@@ -880,7 +853,7 @@ namespace logviewer.core
 
         public void AddCurrentFileToRecentFilesList()
         {
-            this.UseRecentFilesStore(s => s.Add(this.view.LogPath));
+            this.settings.UseRecentFilesStore(s => s.Add(this.view.LogPath));
         }
 
         public void OpenLogFile()
