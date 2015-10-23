@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Windows;
+using System.Windows.Input;
 using Fluent;
 using Microsoft.Win32;
 
@@ -38,7 +39,7 @@ namespace logviewer.ui
             }
         }
 
-        private void OnOpenFile(object sender, RoutedEventArgs e)
+        private void OnOpenFile(object sender, ExecutedRoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {

@@ -21,6 +21,10 @@
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Sorting}"
             x:Key="Sorting" />
     </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OnOpenFile"></CommandBinding>
+        <CommandBinding Command="Close" Executed="OnExitApp"></CommandBinding>
+    </Window.CommandBindings>
     <Grid>
         <fluent:Ribbon x:Name="Ribbon">
             <fluent:Ribbon.Menu>
@@ -30,8 +34,7 @@
                         <fluent:Button x:Name="ButtonExport" Header="{x:Static properties:Resources.Export}"
                                        LargeIcon="Images\Large\report_go.png" Icon="Images\Small\report_go.png" />
                         <fluent:Button x:Name="ButtonCloseApp" Header="{x:Static properties:Resources.Close}"
-                                       LargeIcon="Images\Large\cancel.png" Icon="Images\Small\cancel.png"
-                                       Click="OnExitApp" />
+                                       LargeIcon="Images\Large\cancel.png" Icon="Images\Small\cancel.png" Command="Close"/>
                     </fluent:BackstageTabControl>
                 </fluent:Backstage>
             </fluent:Ribbon.Menu>
@@ -39,7 +42,7 @@
             <fluent:RibbonTabItem Header="{x:Static properties:Resources.View}">
                 <fluent:RibbonGroupBox Header="{x:Static properties:Resources.Log}">
                     <fluent:Button x:Name="ButtonOpen" Header="{x:Static properties:Resources.Open}"
-                                   LargeIcon="Images\Large\folder.png" Icon="Images\Small\folder.png" Click="OnOpenFile" />
+                                   LargeIcon="Images\Large\folder.png" Icon="Images\Small\folder.png" Command="Open"/>
                     <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh"
                                    Icon="Images\Small\database_refresh.png"
                                    LargeIcon="Images\Large\database_refresh.png" />
