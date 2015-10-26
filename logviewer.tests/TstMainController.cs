@@ -25,7 +25,6 @@ namespace logviewer.tests
         private const string f2 = "2";
         private const string f3 = "3";
         private const string SettingsDb = "test.db";
-        private const int KeepLastNFiles = 2;
 
         #region Setup/Teardown
 
@@ -86,16 +85,6 @@ namespace logviewer.tests
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                }
-            }
-        }
-        
-        private static void CreateEmpty(params string[] files)
-        {
-            foreach (var file in files)
-            {
-                using (File.Open(file, FileMode.Create))
-                {
                 }
             }
         }
@@ -395,95 +384,6 @@ namespace logviewer.tests
             this.controller.StartReadLog();
             this.WaitReadingComplete();
             this.controller.MessagesCount.Should().Be(2);
-        }
-
-        [Fact]
-        public void ReadRecentFilesEmpty()
-        {
-            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-
-            this.view.Setup(v => v.ClearRecentFilesList()); // 1
-            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
-            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
-            this.settings.Setup(s => s.UseRecentFilesStore(It.IsAny<Action<RecentItemsStore>>()));
-            this.controller.ReadRecentFiles();
-        }
-
-        [Fact]
-        public void SaveAndReadRecentFilesNoFile()
-        {
-            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
-            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
-            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-
-            this.view.SetupGet(v => v.LogPath).Returns(TestPath); // 1
-            this.view.Setup(v => v.ClearRecentFilesList()); // 1
-            this.view.Setup(v => v.CreateRecentFileItem(TestPath)); // 0
-
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.ReadRecentFiles();
-        }
-
-        [Fact]
-        public void SaveAndReadRecentFiles()
-        {
-            CreateEmpty(f1, f2);
-            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
-            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
-            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-
-            this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
-            this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
-            this.view.Setup(v => v.ClearRecentFilesList()); // 1
-            this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
-            this.view.Setup(v => v.CreateRecentFileItem(f1)); // 1
-
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.ReadRecentFiles();
-        }
-        
-        [Fact]
-        public void RecentFilesMoreThenLimit()
-        {
-            CreateEmpty(f1, f2, f3);
-            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-
-            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
-            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
-
-            this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
-            this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
-            this.view.SetupGet(v => v.LogPath).Returns(f3); // 1
-            this.view.Setup(v => v.ClearRecentFilesList());
-            this.view.Setup(v => v.CreateRecentFileItem(f3)); // 1
-            this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
-
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.ReadRecentFiles();
-        }
-        
-        [Fact]
-        public void RecentFilesMoreThenLimitNoOneFile()
-        {
-            CreateEmpty(f1, f2);
-            this.settings.SetupGet(v => v.KeepLastNFiles).Returns(KeepLastNFiles); // Any
-            this.settings.SetupGet(v => v.FullPathToDatabase).Returns(FullPathToTestDb); // Any
-            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-
-            this.view.SetupGet(v => v.LogPath).Returns(f1); // 1
-            this.view.SetupGet(v => v.LogPath).Returns(f2); // 1
-            this.view.SetupGet(v => v.LogPath).Returns("file_3"); // 1
-
-            this.view.Setup(v => v.ClearRecentFilesList());
-            this.view.Setup(v => v.CreateRecentFileItem(f2)); // 1
-
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.AddCurrentFileToRecentFilesList();
-            this.controller.ReadRecentFiles();
         }
 
         [Fact]

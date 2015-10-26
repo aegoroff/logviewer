@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
@@ -14,9 +15,11 @@ namespace logviewer.tests
     [Collection("SerialTests")]
     public class TstSqliteSettingsProvider : IDisposable
     {
+        private const int KeepLastNFilesCount = 2;
+
         public TstSqliteSettingsProvider()
         {
-            this.provider = new SqliteSettingsProvider(dbPath, 100, 5);
+            this.provider = new SqliteSettingsProvider(dbPath, 100, KeepLastNFilesCount);
         }
 
         public void Dispose()
@@ -33,7 +36,7 @@ namespace logviewer.tests
         [Fact]
         public void KeepLastNFiles()
         {
-            this.provider.KeepLastNFiles.Should().Be(5);
+            this.provider.KeepLastNFiles.Should().Be(KeepLastNFilesCount);
         }
 
         [Fact]
@@ -76,7 +79,7 @@ namespace logviewer.tests
         [Fact]
         public void SecondSettingsObjectOnTheSameFile()
         {
-            var secondProvider = new SqliteSettingsProvider(dbPath, 100, 5);
+            var secondProvider = new SqliteSettingsProvider(dbPath, 100, KeepLastNFilesCount);
             secondProvider.PageSize.Should().Be(100);
             var template = secondProvider.ReadParsingTemplate();
             template.Name.Should().Be(ParsingTemplate.Defaults.First().Name);
@@ -177,6 +180,53 @@ namespace logviewer.tests
             templates.Count.Should().Be(10);
             var template = this.provider.ReadParsingTemplate(templates.Count - 1);
             template.Name.Should().Be(newTemplate1.Name);
+        }
+
+        [Fact]
+        public void ReadRecentFilesEmpty()
+        {
+            IEnumerable<string> files = null;
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void SaveAndReadRecentFilesOneFile()
+        {
+            const string f = "f1";
+            IEnumerable<string> files = null;
+
+            this.provider.UseRecentFilesStore(store => store.Add(f));
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEquivalentTo(f);
+        }
+
+        [Fact]
+        public void SaveAndReadRecentFilesManyFiles()
+        {
+            const string f1 = "f1";
+            const string f2 = "f2";
+            IEnumerable<string> files = null;
+
+            this.provider.UseRecentFilesStore(store => store.Add(f1));
+            this.provider.UseRecentFilesStore(store => store.Add(f2));
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEquivalentTo(f1, f2);
+        }
+
+        [Fact]
+        public void RecentFilesMoreThenLimit()
+        {
+            const string f1 = "f1";
+            const string f2 = "f2";
+            const string f3 = "f3";
+            IEnumerable<string> files = null;
+
+            this.provider.UseRecentFilesStore(store => store.Add(f1));
+            this.provider.UseRecentFilesStore(store => store.Add(f2));
+            this.provider.UseRecentFilesStore(store => store.Add(f3));
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEquivalentTo(f2, f3);
         }
     }
 }
