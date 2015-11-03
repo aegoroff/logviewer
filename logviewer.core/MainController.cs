@@ -814,8 +814,8 @@ namespace logviewer.core
             this.view.ClearTemplatesList();
             Task.Factory.StartNew(delegate
             {
-                var templates = settings.ReadAllParsingTemplates();
-                var current = settings.SelectedParsingTemplate;
+                var templates = this.settings.ReadAllParsingTemplates();
+                var current = this.settings.SelectedParsingTemplate;
                 foreach (var template in templates)
                 {
                     var t = template;
