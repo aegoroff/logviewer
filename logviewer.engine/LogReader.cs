@@ -62,12 +62,12 @@ namespace logviewer.engine
         /// Reads log from file
         /// </summary>
         /// <param name="logPath">Full path to file</param>
-        /// <param name="onRead">On message complete action</param>
-        /// <param name="canContinue">Continue validator</param>
+        /// <param name="onEachMessageRead">On each log message read completion action or handler. This action may store message within DB or do something else with the message passed.</param>
+        /// <param name="canContinue">Continue validator. It's called on every line read from log to have possibility to cancel log reading</param>
         /// <param name="encoding">File encoding</param>
         /// <param name="offset">file offset</param>
         /// <returns>Detected file encoding</returns>
-        public Encoding Read(string logPath, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
+        public Encoding Read(string logPath, Action<LogMessage> onEachMessageRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
         {
             var length = new FileInfo(logPath).Length;
             if (length == 0)
@@ -99,7 +99,7 @@ namespace logviewer.engine
 
                 using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
-                    this.Read(s, length, onRead, canContinue, srcEncoding);
+                    this.Read(s, length, onEachMessageRead, canContinue, srcEncoding);
                 }
             }
 
@@ -111,11 +111,11 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="stream">Stream to read log from</param>
         /// <param name="length">Stream lendgh if applicable</param>
-        /// <param name="onRead">On message complete action</param>
-        /// <param name="canContinue">Continue validator</param>
+        /// <param name="onEachMessageRead">On each log message read completion action or handler. This action may store message within DB or do something else with the message passed.</param>
+        /// <param name="canContinue">Continue validator. It's called on every line read from log to have possibility to cancel log reading</param>
         /// <param name="encoding">Stream encoding</param>
         /// <returns>Current stream position</returns>
-        public long Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
+        public long Read(Stream stream, long length, Action<LogMessage> onEachMessageRead, Func<bool> canContinue, Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
@@ -168,7 +168,7 @@ namespace logviewer.engine
                     {
                         if (message.HasHeader)
                         {
-                            onRead(message);
+                            onEachMessageRead(message);
                             message = LogMessage.Create();
                         }
                         else
@@ -208,7 +208,7 @@ namespace logviewer.engine
                     Trace.WriteLine(e);
                 }
                 // Add last message
-                onRead(message);
+                onEachMessageRead(message);
             }
             return result;
         }
