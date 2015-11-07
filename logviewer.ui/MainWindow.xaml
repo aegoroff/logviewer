@@ -137,7 +137,7 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <RichTextBox IsReadOnly="True">
+        <RichTextBox IsReadOnly="True" Name="LogView">
             
         </RichTextBox>
     </DockPanel>
