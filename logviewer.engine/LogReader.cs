@@ -178,6 +178,8 @@ namespace logviewer.engine
 
                     compiled = true;
 
+                    // not null properties mean reading first message row that contains all meta information
+                    // and start message criteria
                     if (properties != null)
                     {
                         if (message.HasHeader)
