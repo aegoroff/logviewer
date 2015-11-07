@@ -7,6 +7,7 @@ _ReSharper.logviewer/
 *.pdb
 *.log
 *.DotSettings.user
+*.sln.DotSettings
 *.tokens
 *.vcxproj.user
 Debug/
