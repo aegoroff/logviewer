@@ -20,6 +20,8 @@ namespace logviewer.ui
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
 
         private string logPath;
+        private DateTime to;
+        private DateTime from;
 
         private MainViewModel()
         {
@@ -80,9 +82,25 @@ namespace logviewer.ui
 
         public ObservableCollection<TemplateCommand> Templates { get; }
 
-        public DateTime From { get; set; }
+        public DateTime From
+        {
+            get { return this.from; }
+            set
+            {
+                this.from = value;
+                this.OnPropertyChanged(nameof(this.From));
+            }
+        }
 
-        public DateTime To { get; set; }
+        public DateTime To
+        {
+            get { return this.to; }
+            set
+            {
+                this.to = value;
+                this.OnPropertyChanged(nameof(this.To));
+            }
+        }
 
         public string LogPath
         {
@@ -133,6 +151,8 @@ namespace logviewer.ui
             get { return this.settingsProvider.Sorting ? 0 : 1; }
             set { this.settingsProvider.Sorting = value == 0; }
         }
+
+        public ISettingsProvider SettingsProvider => this.settingsProvider;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

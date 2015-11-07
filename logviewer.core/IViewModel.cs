@@ -2,6 +2,8 @@
 // Created at: 07.11.2015
 // © 2012-2015 Alexander Egorov
 
+using System;
+
 namespace logviewer.core
 {
     public interface IViewModel
@@ -12,5 +14,8 @@ namespace logviewer.core
         string LogPath { get; }
         string MessageFilter { get; }
         bool UseRegularExpressions { get; }
+        ISettingsProvider SettingsProvider { get; }
+        DateTime From { get; set; }
+        DateTime To { get; set; }
     }
 }

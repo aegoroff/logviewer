@@ -39,21 +39,14 @@ namespace logviewer.core
 
         private string currentPath;
 
-        private LogLevel maxFilter = LogLevel.Fatal;
         private GrokMatcher matcher;
         private GrokMatcher filter;
-        private LogLevel minFilter = LogLevel.Trace;
         private int pageSize;
         private bool reverseChronological;
         private LogStore store;
-        private string textFilter;
         private long totalMessages;
-        private bool useRegexp = true;
         private readonly IViewModel viewModel;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-
-        private DateTime minDate = DateTime.MinValue;
-        private DateTime maxDate = DateTime.MaxValue;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -68,10 +61,10 @@ namespace logviewer.core
 
         #region Constructors and Destructors
 
-        public UiController(ISettingsProvider settings, IViewModel viewModel, RegexOptions options = RegexOptions.ExplicitCapture)
+        public UiController(IViewModel viewModel, RegexOptions options = RegexOptions.ExplicitCapture)
         {
             this.CurrentPage = 1;
-            this.settings = settings;
+            this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
             this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
@@ -212,8 +205,7 @@ namespace logviewer.core
                     this.RunOnGuiThread(() =>
                     {
                         this.UpdateRecentFilters(messageFilter);
-                            this.BeginLogReading(this.viewModel.MinLevel, this.viewModel.MaxLevel, this.viewModel.MessageFilter, this.viewModel.SortingOrder == 0,
-                                this.viewModel.UseRegularExpressions);
+                        this.BeginLogReading();
                     });
                 }
                 finally
@@ -243,16 +235,6 @@ namespace logviewer.core
                 Log.Instance.Info(e.Message, e);
                 return false;
             }
-        }
-
-        public void BeginLogReading(int min, int max, string messageFilter, bool reverse, bool regexp)
-        {
-            this.settings.MinLevel = min;
-            this.settings.MaxLevel = max;
-            this.settings.Sorting = reverse;
-            this.CancelPreviousTask();
-            this.Ordering(reverse);
-            this.BeginLogReading();
         }
 
         public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
@@ -287,7 +269,7 @@ namespace logviewer.core
             task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
             task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
             
-            //this.runningTasks.Add(task, this.view.LogPath);
+            this.runningTasks.Add(task, this.viewModel.LogPath);
         }
 
         private void OnComplete(Task task, Action action)
@@ -336,31 +318,6 @@ namespace logviewer.core
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        public int ReadMinLevel()
-        {
-            return this.settings.MinLevel;
-        }
-
-        public int ReadMaxLevel()
-        {
-            return this.settings.MaxLevel;
-        }
-
-        public int ReadSorting()
-        {
-            return this.settings.Sorting ? 0 : 1;
-        }
-
-        public bool ReadUseRegexp()
-        {
-            return this.settings.UseRegexp;
-        }
-
-        public string ReadMessageFilter()
-        {
-            return this.settings.MessageFilter;
-        }
-
         public void UpdateMessageFilter(string value)
         {
             this.settings.MessageFilter = value;
@@ -383,11 +340,6 @@ namespace logviewer.core
             //this.view.AddFilterItems(items);
         }
 
-        public void UpdateUseRegexp(bool value)
-        {
-            this.settings.UseRegexp = value;
-        }
-
         /// <summary>
         ///     Reads log from file
         /// </summary>
@@ -396,7 +348,7 @@ namespace logviewer.core
         public void StartReadLog()
         {
             this.totalReadTimeWatch.Restart();
-            if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
+            if (this.viewModel.MinLevel > this.viewModel.MaxLevel && (LogLevel)this.viewModel.MaxLevel >= LogLevel.Trace)
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
@@ -558,6 +510,8 @@ namespace logviewer.core
             {
                 try
                 {
+                    this.viewModel.From = this.store.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
+                    this.viewModel.To = this.store.SelectDateUsingFunc("max", LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
                     rtf = this.CreateRtf(signalProcess);
                 }
                 catch (Exception e)
@@ -644,11 +598,6 @@ namespace logviewer.core
             this.SetCurrentParsingTemplate();
         }
 
-        private void Ordering(bool reverse)
-        {
-            this.reverseChronological = reverse;
-        }
-
         public void LoadLastOpenedFile()
         {
             if (!this.settings.OpenLastFile)
@@ -660,10 +609,11 @@ namespace logviewer.core
 
             this.settings.UseRecentFilesStore(filesStore => lastOpenedFile = filesStore.ReadLastUsedItem());
 
-            //if (!string.IsNullOrWhiteSpace(lastOpenedFile))
-            //{
-            //    this.view.StartLoadingLog(lastOpenedFile);
-            //}
+            if (!string.IsNullOrWhiteSpace(lastOpenedFile))
+            {
+                this.ClearCache();
+                this.BeginLogReading();
+            }
         }
 
         public void ReadRecentFiles()
@@ -715,7 +665,7 @@ namespace logviewer.core
             }
             if (refresh)
             {
-                this.BeginLogReading((int)this.minFilter, (int)this.maxFilter, this.textFilter, this.reverseChronological, this.useRegexp);
+                this.BeginLogReading();
             }
             this.pageSize = value;
             this.SetPageSize();
@@ -783,8 +733,8 @@ namespace logviewer.core
                 return doc.Rtf;
             }
 
-            this.totalFiltered = this.store.CountMessages(this.minDate, this.maxDate, this.minFilter, this.maxFilter, this.textFilter,
-                this.useRegexp);
+            this.totalFiltered = this.store.CountMessages(this.viewModel.From, this.viewModel.To, (LogLevel)this.viewModel.MinLevel, (LogLevel)this.viewModel.MaxLevel, this.viewModel.MessageFilter,
+                this.viewModel.UseRegularExpressions);
 
             if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
             {
@@ -814,14 +764,14 @@ namespace logviewer.core
                 this.pageSize,
                 onRead,
                 () => this.NotCancelled,
-                this.minDate,
-                this.maxDate,
+                this.viewModel.From,
+                this.viewModel.To,
                 start,
                 this.reverseChronological,
-                this.minFilter,
-                this.maxFilter,
-                this.textFilter,
-                this.useRegexp);
+                (LogLevel)this.viewModel.MinLevel,
+                (LogLevel)this.viewModel.MaxLevel,
+                this.viewModel.MessageFilter,
+                this.viewModel.UseRegularExpressions);
             return doc.Rtf;
         }
 

@@ -5,7 +5,7 @@
     xmlns:logviewer="clr-namespace:logviewer.ui"
     xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    x:Class="logviewer.ui.MainWindow"
+    x:Class="logviewer.ui.MainWindow" Closing="OnClosing" Loaded="OnLoaded"
     Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption}" Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Window.Resources>
         <CollectionViewSource
@@ -138,7 +138,7 @@
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
         <RichTextBox IsReadOnly="True" Name="LogView">
-            
+
         </RichTextBox>
     </DockPanel>
 </fluent:RibbonWindow>
