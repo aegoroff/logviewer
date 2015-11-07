@@ -17,6 +17,7 @@ namespace logviewer.engine
     public struct LogMessage
     {
         private const char NewLine = '\n';
+        private const int DefaultPropertyDicitionaryCapacity = 5;
 
         private static readonly string[] formats =
                     {
@@ -326,8 +327,8 @@ namespace logviewer.engine
             return new LogMessage
             {
                 bodyBuilder = new StringBuilder(),
-                integerProperties = new Dictionary<string, long>(5),
-                stringProperties = new Dictionary<string, string>(5)
+                integerProperties = new Dictionary<string, long>(DefaultPropertyDicitionaryCapacity),
+                stringProperties = new Dictionary<string, string>(DefaultPropertyDicitionaryCapacity)
             };
         }
 
