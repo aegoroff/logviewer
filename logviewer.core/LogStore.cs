@@ -21,9 +21,7 @@ namespace logviewer.core
         private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
-        private string additionalColumnsString;
         private string[] additionalColumns;
-        private string additionalParametersString;
         private readonly bool hasLogLevelProperty;
         private readonly string logLevelProperty;
         private readonly bool hasDateTimeProperty;
@@ -31,6 +29,8 @@ namespace logviewer.core
         private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
         private IDictionary<string, PropertyType> propertyTypesCache;
         private readonly RulesBuilder builder;
+        private string insertPrefix;
+        private string insertSuffix;
 
         #endregion
 
@@ -122,13 +122,13 @@ namespace logviewer.core
             this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable);
             this.Index();
             this.additionalColumns = this.ReadAdditionalColumns(c => c).ToArray();
-            this.additionalColumnsString = this.CreateAdditionalColumnsList();
-            this.additionalParametersString = this.CreateAdditionalColumnsList("@");
             this.propertyTypesCache = new Dictionary<string, PropertyType>();
             foreach (var column in this.additionalColumns)
             {
                 this.propertyTypesCache.Add(column, this.DefinePropertyType(column));
             }
+            this.insertPrefix = $"INSERT INTO Log(Ix, Header, Body{this.CreateAdditionalColumnsList()}) VALUES (";
+            this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})";
         }
 
         #endregion
@@ -166,7 +166,7 @@ namespace logviewer.core
         {
             message.Cache(this.rules);
             // ugly but very fast
-            var cmd = @"INSERT INTO Log(Ix, Header, Body" + this.additionalColumnsString + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersString + ")";
+            var cmd = this.insertPrefix + message.Ix + this.insertSuffix;
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
@@ -205,7 +205,7 @@ namespace logviewer.core
 
             var where = this.Where(min, max, filter, useRegexp, start, finish);
 
-            var query = $"SELECT Header, Body {this.additionalColumnsString} FROM Log {where} ORDER BY Ix {order} LIMIT {limit} OFFSET {offset}";
+            var query = $"SELECT Header, Body {this.CreateAdditionalColumnsList()} FROM Log {where} ORDER BY Ix {order} LIMIT {limit} OFFSET {offset}";
 
             Action<IDbCommand> beforeRead = command => this.AddParameters(command, min, max, filter, useRegexp, start, finish);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
@@ -366,17 +366,20 @@ namespace logviewer.core
             {
                 DatabaseConnection.AddParameter(command, "@Finish", finish.ToFileTimeUtc());
             }
-            if (!string.IsNullOrWhiteSpace(filter))
+            if (string.IsNullOrWhiteSpace(filter))
             {
-                string f = useRegexp ? filter : $"%{filter.Trim('%')}%";
-                DatabaseConnection.AddParameter(command, "@Filter", f);
+                return;
             }
+            var f = useRegexp ? filter : $"%{filter.Trim('%')}%";
+            DatabaseConnection.AddParameter(command, "@Filter", f);
         }
 
         #endregion
 
         #region Methods
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+            MessageId = "connection")]
         private void Dispose(bool disposing)
         {
             if (disposing)

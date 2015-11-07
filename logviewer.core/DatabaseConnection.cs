@@ -8,7 +8,6 @@ using System.Data.SQLite;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using logviewer.engine;
 
 namespace logviewer.core
 {
@@ -39,12 +38,9 @@ namespace logviewer.core
             MessageId = "connection")]
         public void Dispose()
         {
-            this.transaction.Do(tran => tran.Dispose());
-            this.connection.Do(delegate(SQLiteConnection conn)
-            {
-                SafeRunner.Run(conn.Close);
-                SafeRunner.Run(conn.Dispose);
-            });
+            this.transaction?.Dispose();
+            SafeRunner.Run(() => this.connection?.Close());
+            SafeRunner.Run(() => this.connection?.Dispose());
         }
 
         internal void BeginTran()
