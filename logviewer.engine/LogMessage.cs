@@ -18,7 +18,7 @@ namespace logviewer.engine
     {
         private const char NewLine = '\n';
 
-        static readonly string[] formats =
+        private static readonly string[] formats =
                     {
                         "yyyy-MM-dd HH:mm:ss,FFF",
                         "yyyy-MM-dd HH:mm:ss.FFF",
@@ -43,7 +43,7 @@ namespace logviewer.engine
         {
             this.head = header;
             this.body = body;
-            this.ix = 0;
+            this.Ix = 0;
             this.rawProperties = null;
             this.bodyBuilder = null;
             this.integerProperties = new Dictionary<string, long>();
@@ -59,11 +59,7 @@ namespace logviewer.engine
         /// <summary>
         /// Gets or sets message unique index to store it into database for example
         /// </summary>
-        public long Ix
-        {
-            get { return this.ix; }
-            set { this.ix = value; }
-        }
+        public long Ix { get; set; }
 
         /// <summary>
         /// Gets message's head
@@ -149,8 +145,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
         {
             LogLevel level;
             var result = rules.Count > 1
@@ -162,8 +158,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseDateTime(string dataToParse, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseDateTime(string dataToParse, string property)
         {
             DateTime r;
             var success = DateTime.TryParseExact(dataToParse, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
@@ -177,8 +173,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseInteger(string dataToParse, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseInteger(string dataToParse, string property)
         {
             long r;
             var success = long.TryParse(dataToParse, out r);
@@ -221,6 +217,9 @@ namespace logviewer.engine
                         break;
                     case ParserType.Interger:
                         this.ParseInteger(matchedData, property.Key);
+                        break;
+                    case ParserType.String:
+                        this.ParseString(matchedData, property.Key);
                         break;
                     default:
                         this.ParseString(matchedData, property.Key);
@@ -339,7 +338,6 @@ namespace logviewer.engine
         private string body;
         private StringBuilder bodyBuilder;
         private string head;
-        private long ix;
         private IDictionary<string, string> rawProperties;
 
         #endregion

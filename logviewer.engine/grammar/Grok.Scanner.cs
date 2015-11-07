@@ -8,19 +8,13 @@ namespace logviewer.engine.grammar
 {
     internal partial class GrokScanner
     {
-        private Action<string> customErrorOutputMethod = Console.WriteLine;
-
-        internal Action<string> CustomErrorOutputMethod
-        {
-            get { return this.customErrorOutputMethod; }
-            set { this.customErrorOutputMethod = value; }
-        }
+        internal Action<string> CustomErrorOutputMethod { get; set; } = Console.WriteLine;
 
         public override void yyerror(string format, params object[] args)
         {
             base.yyerror(format, args);
             var message = string.Format(format, args);
-            var currentToken = string.Format("current token: '{0}'", this.yytext);
+            var currentToken = $"current token: '{this.yytext}'";
             this.CustomErrorOutputMethod(currentToken);
             this.CustomErrorOutputMethod(string.Empty);
             throw new GrokSyntaxException(message);
