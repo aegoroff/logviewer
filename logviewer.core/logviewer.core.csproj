@@ -101,6 +101,7 @@
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogStore.cs" />
     <Compile Include="MainController.cs" />
+    <Compile Include="Maybe.cs" />
     <Compile Include="ParsingTemplate.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,6 +112,7 @@
     </Compile>
     <Compile Include="PropertyType.cs" />
     <Compile Include="RecentItemsStore.cs" />
+    <Compile Include="SafeRunner.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SqliteSettingsProvider.cs" />
     <Compile Include="SqliteRegEx.cs" />

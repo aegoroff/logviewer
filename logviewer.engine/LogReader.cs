@@ -88,14 +88,14 @@ namespace logviewer.engine
                 }
                 else
                 {
-                    this.EncodingDetectionStarted.Do(handler => handler(this, new EventArgs()));
+                    this.EncodingDetectionStarted?.Invoke(this, new EventArgs());
 
                     using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                     {
                         srcEncoding = this.detector.Detect(s);
                     }
                 }
-                this.EncodingDetectionFinished.Do(handler => handler(this, new EncodingDetectedEventArgs(srcEncoding)));
+                this.EncodingDetectionFinished?.Invoke(this, new EncodingDetectedEventArgs(srcEncoding));
 
                 using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
@@ -151,7 +151,7 @@ namespace logviewer.engine
                     // Occured on first row
                     if (!compiled)
                     {
-                        this.CompilationStarted.Do(handler => handler(this, new EventArgs()));
+                        this.CompilationStarted?.Invoke(this, new EventArgs());
                     }
 
                     var properties = this.matcher.Parse(line);
@@ -159,7 +159,7 @@ namespace logviewer.engine
                     // Occured only after first row
                     if (!compiled)
                     {
-                        this.CompilationFinished.Do(handler => handler(this, new EventArgs()));
+                        this.CompilationFinished?.Invoke(this, new EventArgs());
                     }
 
                     compiled = true;
