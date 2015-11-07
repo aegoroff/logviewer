@@ -16,6 +16,7 @@ namespace logviewer.core
         private readonly SQLiteConnection connection;
         private SQLiteTransaction transaction;
         private readonly SynchronizationContext creationContext;
+        private bool disposed;
 
         internal DatabaseConnection(string databaseFilePath)
         {
@@ -31,6 +32,11 @@ namespace logviewer.core
             this.connection.Open();
         }
 
+        ~DatabaseConnection()
+        {
+            this.DisposeInternal();
+        }
+
         internal bool IsEmpty { get; private set; }
         internal string DatabasePath { get; }
 
@@ -38,9 +44,20 @@ namespace logviewer.core
             MessageId = "connection")]
         public void Dispose()
         {
+            this.DisposeInternal();
+            GC.SuppressFinalize(this);
+        }
+
+        private void DisposeInternal()
+        {
+            if (this.disposed)
+            {
+                return;
+            }
             this.transaction?.Dispose();
             SafeRunner.Run(() => this.connection?.Close());
             SafeRunner.Run(() => this.connection?.Dispose());
+            this.disposed = true;
         }
 
         internal void BeginTran()
