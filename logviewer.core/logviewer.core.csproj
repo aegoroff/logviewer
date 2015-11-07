@@ -82,6 +82,7 @@
     <Compile Include="BaseGuiController.cs" />
     <Compile Include="AsymCrypt.cs" />
     <Compile Include="DefectSender.cs" />
+    <Compile Include="IViewModel.cs" />
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ColorPickResult.cs" />
     <Compile Include="ColumnAttribute.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="LogParseTemplateController.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogStore.cs" />
+    <Compile Include="UiController.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="ParsingTemplate.cs" />
