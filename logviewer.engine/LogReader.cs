@@ -213,8 +213,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private long ReportProgress(Stream stream, long measureStart, TimeSpan elapsed, long total,
-            ref int signalCounter)
+        private long ReportProgress(Stream stream, long measureStart, TimeSpan elapsed, long total, ref int signalCounter)
         {
             var read = stream.Position - measureStart;
             measureStart = stream.Position;
