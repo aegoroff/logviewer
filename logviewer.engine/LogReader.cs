@@ -71,46 +71,38 @@ namespace logviewer.engine
         ///     Continue validator. It's called on every line read from log to have possibility to cancel log
         ///     reading
         /// </param>
-        /// <param name="encoding">File encoding</param>
+        /// <param name="encoding">File encoding. It will be detected automatically if null passed as parameter value</param>
         /// <param name="offset">file offset</param>
         /// <returns>Detected file encoding</returns>
-        public Encoding Read(string logPath, Action<LogMessage> onEachMessageRead, Func<bool> canContinue,
-            Encoding encoding = null, long offset = 0)
+        public void Read(string logPath, Action<LogMessage> onEachMessageRead, Func<bool> canContinue, ref Encoding encoding, long offset = 0)
         {
             var length = new FileInfo(logPath).Length;
             if (length == 0)
             {
-                return null;
+                return;
             }
 
             var mapName = Guid.NewGuid().ToString();
-            Encoding srcEncoding;
             using (
                 var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
                     MemoryMappedFileAccess.Read))
             {
-                if (encoding != null)
-                {
-                    srcEncoding = encoding;
-                }
-                else
+                if (encoding == null)
                 {
                     this.EncodingDetectionStarted?.Invoke(this, new EventArgs());
 
-                    using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
+                    using (var stream = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                     {
-                        srcEncoding = this.detector.Detect(s);
+                        encoding = this.detector.Detect(stream);
                     }
                 }
-                this.EncodingDetectionFinished?.Invoke(this, new EncodingDetectedEventArgs(srcEncoding));
+                this.EncodingDetectionFinished?.Invoke(this, new EncodingDetectedEventArgs(encoding));
 
-                using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
+                using (var stream = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
-                    this.Read(s, length, onEachMessageRead, canContinue, srcEncoding);
+                    this.Read(stream, length, onEachMessageRead, canContinue, encoding);
                 }
             }
-
-            return srcEncoding;
         }
 
         /// <summary>
@@ -127,14 +119,12 @@ namespace logviewer.engine
         ///     reading
         /// </param>
         /// <param name="encoding">Stream encoding</param>
-        /// <returns>Current stream position</returns>
-        public long Read(Stream stream, long length, Action<LogMessage> onEachMessageRead, Func<bool> canContinue,
+        public void Read(Stream stream, long length, Action<LogMessage> onEachMessageRead, Func<bool> canContinue,
             Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
             var sr = new StreamReader(stream, encoding ?? Encoding.UTF8);
-            long result;
             using (sr)
             {
                 var total = length;
@@ -205,11 +195,9 @@ namespace logviewer.engine
 
                     measureStart = this.ReportProgress(stream, measureStart, elapsed, total, ref signalCounter);
                 }
-                result = stream.Position;
                 // Add last message
                 onEachMessageRead(message);
             }
-            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

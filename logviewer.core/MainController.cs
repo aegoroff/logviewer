@@ -530,7 +530,7 @@ namespace logviewer.core
             try
             {
                 this.queuedMessages = 0;
-                var encoding = reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+                reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, ref inputEncoding, offset);
                 this.probeWatch.Stop();
                 var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
@@ -541,9 +541,9 @@ namespace logviewer.core
                     : TimeSpan.FromSeconds(pending / insertRatio);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) &&
-                    encoding != null)
+                    inputEncoding != null)
                 {
-                    this.filesEncodingCache.Add(this.currentPath, encoding);
+                    this.filesEncodingCache.Add(this.currentPath, inputEncoding);
                 }
                 var remainSeconds = remain.Seconds;
                 if (remainSeconds > 0)

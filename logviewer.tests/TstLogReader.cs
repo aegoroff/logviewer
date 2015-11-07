@@ -58,9 +58,8 @@ namespace logviewer.tests
                 message.IsEmpty.Should().BeFalse();
             };
 
-            var position = this.reader.Read(this.stream, 0, onRead, () => true);
+            this.reader.Read(this.stream, 0, onRead, () => true);
             count.Should().Be(2);
-            position.Should().Be(this.buffer.LongLength);
         }
 
         public static IEnumerable<object[]> ValidStreams => new[]
