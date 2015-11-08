@@ -47,7 +47,6 @@ namespace logviewer.core
         private long totalMessages;
         private readonly IViewModel viewModel;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        public event EventHandler<EventArgs> ClearWindow;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -206,7 +205,6 @@ namespace logviewer.core
             {
                 return;
             }
-            this.ClearWindow?.Invoke(this, new EventArgs());
             Task.Factory.StartNew(delegate
             {
                 this.PendingStart = true;

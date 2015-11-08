@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using logviewer.core;
 using DataFormats = System.Windows.DataFormats;
@@ -27,19 +28,17 @@ namespace logviewer.ui
             this.InitializeComponent();
             this.controller = new UiController(MainViewModel.Current);
             this.controller.ReadCompleted += this.OnReadCompleted;
-            this.controller.ClearWindow += this.OnClearWindow;
-        }
-
-        private void OnClearWindow(object sender, EventArgs eventArgs)
-        {
-            this.LogView.Document.Blocks.Clear();
         }
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
             this.controller.ShowLogPageStatistic();
             var stream = new MemoryStream(Encoding.ASCII.GetBytes(e.Rtf));
-            this.LogView.Selection.Load(stream, DataFormats.Rtf);
+            using (stream)
+            {
+                var range = new TextRange(this.LogView.Document.ContentStart, this.LogView.Document.ContentEnd);
+                range.Load(stream, DataFormats.Rtf);
+            }
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)
