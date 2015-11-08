@@ -19,9 +19,11 @@ namespace logviewer.ui
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
+#if !DEBUG
             this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+#endif
         }
-
+#if !DEBUG
         private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             var defectSender = new DefectSender(
@@ -31,5 +33,6 @@ namespace logviewer.ui
             MiniDump.CreateMiniDump();
             task.Wait();
         }
+#endif
     }
 }
