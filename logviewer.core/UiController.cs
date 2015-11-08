@@ -702,18 +702,6 @@ namespace logviewer.core
             this.settings.UseRecentFilesStore(s => s.Add(this.viewModel.LogPath));
         }
 
-        public void OpenLogFile()
-        {
-            //if (!this.view.OpenLogFile())
-            //{
-            //    return;
-            //}
-            //this.ClearCache();
-            //this.CurrentPage = 1;
-            //this.view.LogPath = this.view.LogFileName;
-            //this.view.ReadLog();
-        }
-
         public void ExportToRtf()
         {
             var path = Path.GetFileNameWithoutExtension(this.viewModel.LogPath) + ".rtf";
