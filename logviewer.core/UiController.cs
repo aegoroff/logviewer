@@ -521,12 +521,9 @@ namespace logviewer.core
             {
                 try
                 {
-                    if (this.viewModel.From == DateTime.MinValue)
+                    if (!signalProcess)
                     {
                         this.viewModel.From = this.SelectDateUsingFunc("min");
-                    }
-                    if (this.viewModel.To == DateTime.MaxValue)
-                    {
                         this.viewModel.To = this.SelectDateUsingFunc("max");
                     }
                     rtf = this.CreateRtf(signalProcess);
@@ -591,7 +588,7 @@ namespace logviewer.core
             //    );
         }
 
-        private void OnReadLogProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             //this.OnLogReadProgress(e.UserState);
         }

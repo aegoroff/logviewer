@@ -2,7 +2,6 @@
 // Created at: 04.08.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
