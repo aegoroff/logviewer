@@ -3,10 +3,11 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
+using System.ComponentModel;
 
 namespace logviewer.core
 {
-    public interface IViewModel
+    public interface IViewModel : INotifyPropertyChanged
     {
         int MinLevel { get; }
         int MaxLevel { get; }
@@ -17,5 +18,6 @@ namespace logviewer.core
         ISettingsProvider SettingsProvider { get; }
         DateTime From { get; set; }
         DateTime To { get; set; }
+        bool UiControlsEnabled { get; set; }
     }
 }

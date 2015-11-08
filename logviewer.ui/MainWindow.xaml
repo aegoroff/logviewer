@@ -5,6 +5,7 @@
     xmlns:logviewer="clr-namespace:logviewer.ui"
     xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:swf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     x:Class="logviewer.ui.MainWindow" Closing="OnClosing" Loaded="OnLoaded"
     Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption}" Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Window.Resources>
@@ -45,15 +46,18 @@
                                    LargeIcon="Images\Large\folder.png" Icon="Images\Small\folder.png" Command="Open"/>
                     <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh"
                                    Icon="Images\Small\database_refresh.png"
+                                   IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                                    LargeIcon="Images\Large\database_refresh.png" />
                     <fluent:Button x:Name="ButtonStat" Header="{x:Static properties:Resources.Statistic}"
                                    Icon="Images\Small\chart_pie.png"
+                                   IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                                    LargeIcon="Images\Large\chart_pie.png" SizeDefinition="Middle, Middle, Small" />
                     <fluent:DropDownButton x:Name="ButtonTemplateSelection"
                                            Header="{x:Static properties:Resources.TemplateSelection}"
                                            Icon="Images\Small\stamp_pattern.png"
                                            LargeIcon="Images\Large\stamp_pattern.png"
                                            SizeDefinition="Middle, Middle, Small"
+                                           IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                                            ItemsSource="{Binding Source={StaticResource ParsingTemplates}}">
                         <fluent:DropDownButton.ItemContainerStyle>
                             <Style TargetType="MenuItem">
@@ -69,6 +73,7 @@
                                      Header="{x:Static properties:Resources.Sorting}"
                                      SizeDefinition="Middle, Middle, Small"
                                      SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=SortingOrder}"
+                                     IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                                      IsReadOnly="True"
                                      ItemsSource="{Binding Source={StaticResource Sorting}}" />
                 </fluent:RibbonGroupBox>
@@ -77,6 +82,7 @@
                         x:Name="MinLevel"
                         Header="{x:Static properties:Resources.MinLabel}"
                         SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MinLevel}"
+                        IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                         IsReadOnly="True"
                         Margin="5"
                         ItemsSource="{Binding Source={StaticResource MinLogLevelLabels}}" />
@@ -84,6 +90,7 @@
                         x:Name="MaxLevel"
                         Header="{x:Static properties:Resources.MaxLabel}"
                         SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MaxLevel}"
+                        IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                         IsReadOnly="True"
                         Margin="5"
                         ItemsSource="{Binding Source={StaticResource MaxLogLevelLabels}}" />
@@ -104,6 +111,7 @@
                                 Format="Custom" 
                                 Margin="5"
                                 Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=From}"
+                                IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                                 ShowButtonSpinner="False"
                                 Grid.Column="1" 
                                 Grid.Row="0" />
@@ -111,6 +119,7 @@
                                 Format="Custom" 
                                 Margin="5" 
                                 Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=To}"
+                                IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
                                 ShowButtonSpinner="False"
                                 Grid.Column="1" 
                                 Grid.Row="1" />
@@ -122,10 +131,15 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <fluent:TextBox Width="250" Margin="5" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter}" />
+                        <fluent:TextBox 
+                            Width="250" 
+                            Margin="5" 
+                            Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter}"
+                            IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"/>
                         <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"
                                              SizeDefinition="Small, Small, Small" IsChecked="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UseRegularExpressions}"
-                                             ToolTip="{x:Static properties:Resources.UseRegexp}" />
+                                             ToolTip="{x:Static properties:Resources.UseRegexp}" 
+                                             IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}" />
                     </Grid>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
@@ -137,8 +151,7 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <RichTextBox IsReadOnly="True" Name="LogView">
-
+        <RichTextBox IsReadOnly="True" x:Name="LogView" VerticalScrollBarVisibility="Auto">
         </RichTextBox>
     </DockPanel>
 </fluent:RibbonWindow>

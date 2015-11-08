@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -42,11 +43,11 @@ namespace logviewer.core
         private GrokMatcher matcher;
         private GrokMatcher filter;
         private int pageSize;
-        private bool reverseChronological;
         private LogStore store;
         private long totalMessages;
         private readonly IViewModel viewModel;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
+        public event EventHandler<EventArgs> ClearWindow;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -70,6 +71,20 @@ namespace logviewer.core
             this.prevInput = DateTime.Now;
             this.options = options;
             this.kernel = new StandardKernel(new CoreModule());
+            viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
+        }
+
+        private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            switch (propertyChangedEventArgs.PropertyName)
+            {
+                case nameof(this.viewModel.From):
+                case nameof(this.viewModel.To):
+                case nameof(this.viewModel.MinLevel):
+                case nameof(this.viewModel.MaxLevel):
+                    this.StartReading();
+                    break;
+            }
         }
 
         private void SetCurrentParsingTemplate()
@@ -176,22 +191,22 @@ namespace logviewer.core
 
         public bool PendingStart { get; private set; }
 
-        public void StartReading(string messageFilter, bool regexp)
+        public void StartReading()
         {
-            if (!IsValidFilter(messageFilter, regexp))
+            if (!IsValidFilter(this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions))
             {
                 return;
             }
 
-            this.UpdateMessageFilter(messageFilter);
+            this.UpdateMessageFilter(this.viewModel.MessageFilter);
 
             this.prevInput = DateTime.Now;
 
-            if (this.PendingStart)
+            if (this.PendingStart || !this.viewModel.UiControlsEnabled)
             {
                 return;
             }
-
+            this.ClearWindow?.Invoke(this, new EventArgs());
             Task.Factory.StartNew(delegate
             {
                 this.PendingStart = true;
@@ -202,11 +217,8 @@ namespace logviewer.core
                         var diff = DateTime.Now - this.prevInput;
                         return diff > this.filterUpdateDelay;
                     });
-                    this.RunOnGuiThread(() =>
-                    {
-                        this.UpdateRecentFilters(messageFilter);
-                        this.BeginLogReading();
-                    });
+                    this.UpdateRecentFilters(this.viewModel.MessageFilter);
+                    this.BeginLogReading();
                 }
                 finally
                 {
@@ -259,10 +271,10 @@ namespace logviewer.core
             this.cancellation = new CancellationTokenSource();
             var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            Action<Task> onSuccess = obj => this.OnComplete(task, delegate { });
+            Action<Task> onSuccess = obj => this.OnComplete(task, () => {});
             Action<Task> onFailure = delegate
             {
-                //this.OnComplete(task, () => this.RunOnGuiThread(() => this.view.OnFailureRead(errorMessage)));
+                this.OnComplete(task, () => this.viewModel.UiControlsEnabled = true);
             };
 
             task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
@@ -347,6 +359,7 @@ namespace logviewer.core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
         public void StartReadLog()
         {
+            this.viewModel.UiControlsEnabled = false;
             this.totalReadTimeWatch.Restart();
             if (this.viewModel.MinLevel > this.viewModel.MaxLevel && (LogLevel)this.viewModel.MaxLevel >= LogLevel.Trace)
             {
@@ -510,8 +523,14 @@ namespace logviewer.core
             {
                 try
                 {
-                    this.viewModel.From = this.store.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
-                    this.viewModel.To = this.store.SelectDateUsingFunc("max", LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
+                    if (this.viewModel.From == DateTime.MinValue)
+                    {
+                        this.viewModel.From = this.SelectDateUsingFunc("min");
+                    }
+                    if (this.viewModel.To == DateTime.MaxValue)
+                    {
+                        this.viewModel.To = this.SelectDateUsingFunc("max");
+                    }
                     rtf = this.CreateRtf(signalProcess);
                 }
                 catch (Exception e)
@@ -523,22 +542,28 @@ namespace logviewer.core
             var task = Task.Factory.StartNew(action, this.cancellation.Token);
 
             Action successAction = () => this.RunOnGuiThread(() => this.OnSuccessRtfCreate(rtf));
-            //Action failAction = () => this.RunOnGuiThread(() => this.view.OnFailureRead(rtf));
+            Action enableControlsAction = () => this.viewModel.UiControlsEnabled = true;
 
             Action<Task> onSuccess = t => this.OnComplete(t, successAction);
-            //Action<Task> onFailure = t => this.OnComplete(t, failAction);
-            Action<Task> onCancel = t => this.OnComplete(t, () => {});
+            Action<Task> onFailure = t => this.OnComplete(t, enableControlsAction);
+            Action<Task> onCancel = t => this.OnComplete(t, enableControlsAction);
             
             task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
-            //task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
             task.ContinueWith(onCancel, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
             
             this.runningTasks.Add(task, this.viewModel.LogPath);
         }
 
+        private DateTime SelectDateUsingFunc(string func)
+        {
+            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
+        }
+
         private void OnSuccessRtfCreate(string rtf)
         {
             this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(rtf)));
+            this.viewModel.UiControlsEnabled = true;
         }
 
         public void ShowElapsedTime()
@@ -609,11 +634,12 @@ namespace logviewer.core
 
             this.settings.UseRecentFilesStore(filesStore => lastOpenedFile = filesStore.ReadLastUsedItem());
 
-            if (!string.IsNullOrWhiteSpace(lastOpenedFile))
+            if (string.IsNullOrWhiteSpace(lastOpenedFile))
             {
-                this.ClearCache();
-                this.BeginLogReading();
+                return;
             }
+            this.ClearCache();
+            this.BeginLogReading();
         }
 
         public void ReadRecentFiles()
@@ -767,7 +793,7 @@ namespace logviewer.core
                 this.viewModel.From,
                 this.viewModel.To,
                 start,
-                this.reverseChronological,
+                this.viewModel.SortingOrder == 0,
                 (LogLevel)this.viewModel.MinLevel,
                 (LogLevel)this.viewModel.MaxLevel,
                 this.viewModel.MessageFilter,

@@ -14,7 +14,7 @@ using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public class MainViewModel : INotifyPropertyChanged, IViewModel
+    public class MainViewModel : IViewModel
     {
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
@@ -22,6 +22,7 @@ namespace logviewer.ui
         private string logPath;
         private DateTime to;
         private DateTime from;
+        private bool uiControlsEnabled;
 
         private MainViewModel()
         {
@@ -34,6 +35,7 @@ namespace logviewer.ui
             {
                 this.settingsProvider.UseRecentFilesStore(filesStore => this.LogPath = filesStore.ReadLastUsedItem());
             }
+            this.uiControlsEnabled = true;
         }
 
         public IEnumerable<TemplateCommand> CreateTemplateCommands()
@@ -102,6 +104,16 @@ namespace logviewer.ui
             }
         }
 
+        public bool UiControlsEnabled
+        {
+            get { return this.uiControlsEnabled; }
+            set
+            {
+                this.uiControlsEnabled = value;
+                this.OnPropertyChanged(nameof(this.UiControlsEnabled));
+            }
+        }
+
         public string LogPath
         {
             get { return this.logPath; }
@@ -119,37 +131,61 @@ namespace logviewer.ui
         public string MessageFilter
         {
             get { return this.settingsProvider.MessageFilter; }
-            set { this.settingsProvider.MessageFilter = value; }
+            set
+            {
+                this.settingsProvider.MessageFilter = value;
+                this.OnPropertyChanged(nameof(this.MessageFilter));
+            }
         }
 
         public bool UseRegularExpressions
         {
             get { return this.settingsProvider.UseRegexp; }
-            set { this.settingsProvider.UseRegexp = value; }
+            set
+            {
+                this.settingsProvider.UseRegexp = value;
+                this.OnPropertyChanged(nameof(this.UseRegularExpressions));
+            }
         }
 
         public int MinLevel
         {
             get { return this.settingsProvider.MinLevel; }
-            set { this.settingsProvider.MinLevel = value; }
+            set
+            {
+                this.settingsProvider.MinLevel = value;
+                this.OnPropertyChanged(nameof(this.MinLevel));
+            }
         }
 
         public int MaxLevel
         {
             get { return this.settingsProvider.MaxLevel; }
-            set { this.settingsProvider.MaxLevel = value; }
+            set
+            {
+                this.settingsProvider.MaxLevel = value;
+                this.OnPropertyChanged(nameof(this.MaxLevel));
+            }
         }
 
         public int SelectedParsingTemplate
         {
             get { return this.settingsProvider.SelectedParsingTemplate; }
-            set { this.settingsProvider.SelectedParsingTemplate = value; }
+            set
+            {
+                this.settingsProvider.SelectedParsingTemplate = value;
+                this.OnPropertyChanged(nameof(this.SelectedParsingTemplate));
+            }
         }
 
         public int SortingOrder
         {
             get { return this.settingsProvider.Sorting ? 0 : 1; }
-            set { this.settingsProvider.Sorting = value == 0; }
+            set
+            {
+                this.settingsProvider.Sorting = value == 0;
+                this.OnPropertyChanged(nameof(this.SortingOrder));
+            }
         }
 
         public ISettingsProvider SettingsProvider => this.settingsProvider;

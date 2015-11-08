@@ -2,14 +2,16 @@
 // Created at: 04.08.2015
 // © 2012-2015 Alexander Egorov
 
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Fluent;
 using logviewer.core;
-using Microsoft.Win32;
+using DataFormats = System.Windows.DataFormats;
+using MenuItem = Fluent.MenuItem;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace logviewer.ui
 {
@@ -25,6 +27,12 @@ namespace logviewer.ui
             this.InitializeComponent();
             this.controller = new UiController(MainViewModel.Current);
             this.controller.ReadCompleted += this.OnReadCompleted;
+            this.controller.ClearWindow += this.OnClearWindow;
+        }
+
+        private void OnClearWindow(object sender, EventArgs eventArgs)
+        {
+            this.LogView.Document.Blocks.Clear();
         }
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
@@ -63,6 +71,7 @@ namespace logviewer.ui
             if (openFileDialog.ShowDialog() == true)
             {
                 MainViewModel.Current.LogPath = openFileDialog.FileName;
+                this.controller.StartReading();
             }
         }
 
