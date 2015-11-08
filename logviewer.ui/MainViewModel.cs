@@ -23,6 +23,9 @@ namespace logviewer.ui
         private DateTime to;
         private DateTime from;
         private bool uiControlsEnabled;
+        private int currentPage;
+        private int totalPages;
+        private long messagesCount;
 
         private MainViewModel()
         {
@@ -111,6 +114,36 @@ namespace logviewer.ui
             {
                 this.uiControlsEnabled = value;
                 this.OnPropertyChanged(nameof(this.UiControlsEnabled));
+            }
+        }
+
+        public int CurrentPage
+        {
+            get { return this.currentPage; }
+            set
+            {
+                this.currentPage = value;
+                this.OnPropertyChanged(nameof(this.CurrentPage));
+            }
+        }
+
+        public int TotalPages
+        {
+            get { return this.totalPages; }
+            set
+            {
+                this.totalPages = value;
+                this.OnPropertyChanged(nameof(this.TotalPages));
+            }
+        }
+
+        public long MessagesCount
+        {
+            get { return this.messagesCount; }
+            set
+            {
+                this.messagesCount = value;
+                this.OnPropertyChanged(nameof(this.MessagesCount));
             }
         }
 

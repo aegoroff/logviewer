@@ -637,40 +637,6 @@ namespace logviewer.core
             this.BeginLogReading();
         }
 
-        public void ReadRecentFiles()
-        {
-            IEnumerable<string> files = null;
-
-            this.settings.UseRecentFilesStore(filesStore => files = filesStore.ReadItems());
-
-            //this.view.ClearRecentFilesList();
-
-            var notExistFiles = new List<string>();
-
-            foreach (
-                var item in
-                    from file in files
-                    where !string.IsNullOrWhiteSpace(file)
-                    select file)
-            {
-                if (File.Exists(item))
-                {
-                    //this.view.CreateRecentFileItem(item);
-                }
-                else
-                {
-                    notExistFiles.Add(item);
-                }
-            }
-            this.settings.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
-        }
-
-        public void ChangeParsingTemplate(int index)
-        {
-            this.settings.SelectedParsingTemplate = index;
-            this.SetCurrentParsingTemplate();
-        }
-
         public void UpdateSettings(bool refresh)
         {
             var template = this.settings.ReadParsingTemplate();
