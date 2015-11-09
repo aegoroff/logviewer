@@ -33,6 +33,7 @@ assembly_info:
   assembly_informational_version: "{version}"
 
 install:
+    - ps: if($env:PfxUri) { Start-FileDownload $env:PfxUri -FileName $env:KeyFile }
     - ps: if($env:SnkUri) { Start-FileDownload $env:SnkUri -FileName $env:LogviewerSnkPath }
     - cmd: nuget restore
 
