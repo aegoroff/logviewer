@@ -20,7 +20,7 @@ environment:
   CertPassword:
     secure: QDWBD+3IIAYVFCfHFY7YCw==
   PfxUri:
-    secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwpxChllc+IbmK6KhExQVE1ae2ut5W3CjeeHjcHRDvlGXs4q2bDPVL455cH3ld6S3R
+    secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwvJe7+ifJ5IqCV7hkdkSzqKcKkuWllqmNDvO5PK+KTTP/2wks9LCpMBSMnIHFnvB/
   SnkUri:
     secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwWkZOmP1fCRP5m2Bclrbc22uOBlleZWaxVycTis9Jb4QCSI2FFddeTQAxehQypUsI
 
@@ -42,20 +42,20 @@ platform: Any CPU
 configuration: Release
 
 before_build:
-   -cmd: msbuild WiX.msbuild /p:Version=%APPVEYOR_BUILD_VERSION%
+   - cmd: msbuild WiX.msbuild /p:Version=%APPVEYOR_BUILD_VERSION%
 
 build:
     project: logviewer.sln
 
 after_build:
-    -cmd: msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /t:Rebuild /p:Configuration=%CONFIGURATION%;Platform=AnyCPU;SnkPath=%LogviewerSnkPath%
+    - cmd: msbuild logviewer.engine\logviewer.engine.csproj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /t:Rebuild /p:Configuration=%CONFIGURATION%;Platform=AnyCPU;SnkPath=%LogviewerSnkPath%
 
 test:
   assemblies:
     - logviewer.tests.dll
 
 after_test:
-    -cmd: nuget pack logviewer.engine\logviewer.engine.nuspec -BasePath logviewer.engine -OutputDirectory logviewer.engine\bin\%CONFIGURATION% -Version %APPVEYOR_BUILD_VERSION%
+    - cmd: nuget pack logviewer.engine\logviewer.engine.nuspec -BasePath logviewer.engine -OutputDirectory logviewer.engine\bin\%CONFIGURATION% -Version %APPVEYOR_BUILD_VERSION%
 
 artifacts:
   - path: logviewer.engine\bin\$(configuration)\*.nupkg
