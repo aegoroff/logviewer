@@ -20,7 +20,7 @@ environment:
   CertPassword:
     secure: QDWBD+3IIAYVFCfHFY7YCw==
   PfxUri:
-    secure: XEuoeeDga1uv8WAMxwl2rmbdz5NiXSGa0B+icHY+pazDW+BERkquE8ZPa1M3HdPNDzRDbvnulfgFDvZaqYh19g==
+    secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwvJe7+ifJ5IqCV7hkdkSzqKcKkuWllqmNDvO5PK+KTTP/2wks9LCpMBSMnIHFnvB/
   SnkUri:
     secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwWkZOmP1fCRP5m2Bclrbc22uOBlleZWaxVycTis9Jb4QCSI2FFddeTQAxehQypUsI
 
