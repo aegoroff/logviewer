@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
 using logviewer.engine;
-using Net.Sgoliver.NRtfTree.Util;
 using Ninject;
 using LogLevel = logviewer.engine.LogLevel;
 
@@ -535,50 +534,12 @@ namespace logviewer.core
             this.provider = new LogProvider(this.store, this.settings) { Filter = messageFilter };
             this.viewModel.UiControlsEnabled = true;
 
-            //var rtf = string.Empty;
-            //Action action = delegate
-            //{
-            //    try
-            //    {
-            //        if (!signalProcess)
-            //        {
-            //            this.viewModel.From = this.SelectDateUsingFunc("min");
-            //            this.viewModel.To = this.SelectDateUsingFunc("max");
-            //        }
-            //        rtf = this.CreateRtf(signalProcess);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        rtf = e.ToString();
-            //        throw;
-            //    }
-            //};
-            //var task = Task.Factory.StartNew(action, this.cancellation.Token);
-
-            //Action successAction = () => this.RunOnGuiThread(() => this.OnSuccessRtfCreate(rtf));
-            //Action enableControlsAction = () => this.viewModel.UiControlsEnabled = true;
-
-            //Action<Task> onSuccess = t => this.OnComplete(t, successAction);
-            //Action<Task> onFailure = t => this.OnComplete(t, enableControlsAction);
-            //Action<Task> onCancel = t => this.OnComplete(t, enableControlsAction);
-
-            //task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
-            //task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
-            //task.ContinueWith(onCancel, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
-
-            //this.runningTasks.Add(task, this.viewModel.LogPath);
             this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(string.Empty)));
         }
 
         private DateTime SelectDateUsingFunc(string func)
         {
             return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
-        }
-
-        private void OnSuccessRtfCreate(string rtf)
-        {
-            this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(rtf)));
-            this.viewModel.UiControlsEnabled = true;
         }
 
         public void ShowElapsedTime()
@@ -719,98 +680,6 @@ namespace logviewer.core
         public LogProvider Provider => this.provider;
 
         private long queuedMessages;
-
-        private string CreateRtf(bool signalProgress = false)
-        {
-            this.byLevel.Clear();
-            var doc = new RtfDocument(Encoding.UTF8);
-
-            if (this.store == null)
-            {
-                return doc.Rtf;
-            }
-
-            this.totalFiltered = this.store.CountMessages(this.viewModel.From, this.viewModel.To, (LogLevel)this.viewModel.MinLevel, (LogLevel)this.viewModel.MaxLevel, this.viewModel.MessageFilter,
-                this.viewModel.UseRegularExpressions);
-
-            if (this.CurrentPage > this.TotalPages || this.CurrentPage <= 0)
-            {
-                this.CurrentPage = 1;
-            }
-
-            var total = this.DisplayedMessages;
-            var fraction = total / 20L;
-            var signalCounter = 1;
-            var count = 0;
-
-            Action<LogMessage> onRead = delegate(LogMessage m)
-            {
-                this.AddMessage(doc, m);
-                ++count;
-                if (!signalProgress || count < signalCounter * fraction)
-                {
-                    return;
-                }
-                ++signalCounter;
-                var percent = (count / (double)total) * 100;
-                this.OnLogReadProgress(LoadProgress.FromPercent((int)percent));
-            };
-
-            var start = (this.CurrentPage - 1) * this.pageSize;
-            this.store.ReadMessages(
-                this.pageSize,
-                onRead,
-                () => this.NotCancelled,
-                this.viewModel.From,
-                this.viewModel.To,
-                start,
-                this.viewModel.SortingOrder == 0,
-                (LogLevel)this.viewModel.MinLevel,
-                (LogLevel)this.viewModel.MaxLevel,
-                this.viewModel.MessageFilter,
-                this.viewModel.UseRegularExpressions);
-            return doc.Rtf;
-        }
-
-        private void OnLogReadProgress(object progress)
-        {
-            this.RunOnGuiThread(delegate
-            {
-                //this.view.SetProgress((LoadProgress)progress);
-                var formatTotal = ((ulong)this.totalMessages).FormatString();
-                var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
-                //this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
-            });
-        }
-
-        private void AddMessage(RtfDocument doc, LogMessage message)
-        {
-            var logLvel = LogLevel.None;
-            if (this.store.HasLogLevelProperty)
-            {
-                logLvel = (LogLevel)message.IntegerProperty(this.store.LogLevelProperty);
-            }
-            if (this.byLevel.ContainsKey(logLvel))
-            {
-                this.byLevel[logLvel] = this.byLevel[logLvel] + 1;
-            }
-            else
-            {
-                this.byLevel.Add(logLvel, 1);
-            }
-
-            doc.AddText(message.Header.Trim(), this.settings.FormatHead(logLvel));
-            doc.AddNewLine();
-
-            var txt = message.Body;
-            if (string.IsNullOrWhiteSpace(txt))
-            {
-                doc.AddNewLine();
-                return;
-            }
-            doc.AddText(txt.Trim(), this.settings.FormatBody(logLvel));
-            doc.AddNewLine(3);
-        }
 
         #endregion
 
