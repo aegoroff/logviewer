@@ -21,6 +21,32 @@
         <CollectionViewSource
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Sorting}"
             x:Key="Sorting" />
+        <Style x:Key="lvStyle" TargetType="{x:Type ListView}">
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
+            <Setter Property="ListView.ItemsSource" Value="{Binding}"/>
+            <Setter Property="ListView.View">
+                <Setter.Value>
+                    <GridView>
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <RichTextBox 
+                                        BorderThickness="0" IsReadOnly="True" Width="Auto" logviewer:RichTextBoxHelper.DocumentRtf="{Binding}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                    <Setter Property="ListView.Cursor" Value="Wait"/>
+                    <Setter Property="ListView.Background" Value="LightGray"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="OnOpenFile"></CommandBinding>
@@ -151,7 +177,7 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <RichTextBox IsReadOnly="True" x:Name="LogView" VerticalScrollBarVisibility="Auto">
-        </RichTextBox>
+
+        <ListView Margin="5" Style="{DynamicResource lvStyle}"/>
     </DockPanel>
 </fluent:RibbonWindow>

@@ -31,13 +31,18 @@ namespace logviewer.ui
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
-            this.controller.ShowLogPageStatistic();
-            var stream = new MemoryStream(Encoding.ASCII.GetBytes(e.Rtf));
-            using (stream)
+            //this.controller.ShowLogPageStatistic();
+            //var stream = new MemoryStream(Encoding.ASCII.GetBytes(e.Rtf));
+            //using (stream)
+            //{
+            //    var range = new TextRange(this.LogView.Document.ContentStart, this.LogView.Document.ContentEnd);
+            //    range.Load(stream, DataFormats.Rtf);
+            //}
+
+            this.controller.RunOnGuiThread(() =>
             {
-                var range = new TextRange(this.LogView.Document.ContentStart, this.LogView.Document.ContentEnd);
-                range.Load(stream, DataFormats.Rtf);
-            }
+                this.DataContext = new VirtualizingCollection<string>(this.controller.Provider);
+            });
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)

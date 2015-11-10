@@ -82,6 +82,7 @@
     <Compile Include="BaseGuiController.cs" />
     <Compile Include="AsymCrypt.cs" />
     <Compile Include="DefectSender.cs" />
+    <Compile Include="IItemsProvider.cs" />
     <Compile Include="IViewModel.cs" />
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ColorPickResult.cs" />
@@ -99,8 +100,10 @@
     <Compile Include="IVersionsReader.cs" />
     <Compile Include="LoggingService.cs" />
     <Compile Include="LogParseTemplateController.cs" />
+    <Compile Include="LogProvider.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogStore.cs" />
+    <Compile Include="MessageFilter.cs" />
     <Compile Include="UiController.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Maybe.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="UpdatesController.cs" />
     <Compile Include="VersionEventArgs.cs" />
     <Compile Include="VersionsReader.cs" />
+    <Compile Include="VirtualizingCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

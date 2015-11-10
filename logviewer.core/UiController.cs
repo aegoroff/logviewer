@@ -44,6 +44,7 @@ namespace logviewer.core
         private GrokMatcher filter;
         private int pageSize;
         private LogStore store;
+        private LogProvider provider;
         private long totalMessages;
         private readonly IViewModel viewModel;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
@@ -516,38 +517,57 @@ namespace logviewer.core
         {
             //this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.CreateRtfInProgress));
 
-            var rtf = string.Empty;
-            Action action = delegate
+            if (!signalProcess)
             {
-                try
-                {
-                    if (!signalProcess)
-                    {
-                        this.viewModel.From = this.SelectDateUsingFunc("min");
-                        this.viewModel.To = this.SelectDateUsingFunc("max");
-                    }
-                    rtf = this.CreateRtf(signalProcess);
-                }
-                catch (Exception e)
-                {
-                    rtf = e.ToString();
-                    throw;
-                }
+                this.viewModel.From = this.SelectDateUsingFunc("min");
+                this.viewModel.To = this.SelectDateUsingFunc("max");
+            }
+
+            var messageFilter = new MessageFilter
+            {
+                Filter = this.viewModel.MessageFilter,
+                Finish = this.viewModel.To,
+                Start = this.viewModel.From,
+                Min = (LogLevel) this.viewModel.MinLevel,
+                Max = (LogLevel) this.viewModel.MaxLevel,
+                UseRegexp = this.viewModel.UseRegularExpressions
             };
-            var task = Task.Factory.StartNew(action, this.cancellation.Token);
+            this.provider = new LogProvider(this.store, this.settings) { Filter = messageFilter };
+            this.viewModel.UiControlsEnabled = true;
 
-            Action successAction = () => this.RunOnGuiThread(() => this.OnSuccessRtfCreate(rtf));
-            Action enableControlsAction = () => this.viewModel.UiControlsEnabled = true;
+            //var rtf = string.Empty;
+            //Action action = delegate
+            //{
+            //    try
+            //    {
+            //        if (!signalProcess)
+            //        {
+            //            this.viewModel.From = this.SelectDateUsingFunc("min");
+            //            this.viewModel.To = this.SelectDateUsingFunc("max");
+            //        }
+            //        rtf = this.CreateRtf(signalProcess);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        rtf = e.ToString();
+            //        throw;
+            //    }
+            //};
+            //var task = Task.Factory.StartNew(action, this.cancellation.Token);
 
-            Action<Task> onSuccess = t => this.OnComplete(t, successAction);
-            Action<Task> onFailure = t => this.OnComplete(t, enableControlsAction);
-            Action<Task> onCancel = t => this.OnComplete(t, enableControlsAction);
-            
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
-            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
-            task.ContinueWith(onCancel, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
-            
-            this.runningTasks.Add(task, this.viewModel.LogPath);
+            //Action successAction = () => this.RunOnGuiThread(() => this.OnSuccessRtfCreate(rtf));
+            //Action enableControlsAction = () => this.viewModel.UiControlsEnabled = true;
+
+            //Action<Task> onSuccess = t => this.OnComplete(t, successAction);
+            //Action<Task> onFailure = t => this.OnComplete(t, enableControlsAction);
+            //Action<Task> onCancel = t => this.OnComplete(t, enableControlsAction);
+
+            //task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+            //task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
+            //task.ContinueWith(onCancel, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
+
+            //this.runningTasks.Add(task, this.viewModel.LogPath);
+            this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(string.Empty)));
         }
 
         private DateTime SelectDateUsingFunc(string func)
@@ -695,6 +715,8 @@ namespace logviewer.core
         private long TotalMessages => this.store?.CountMessages() ?? 0;
 
         public LogStore Store => this.store;
+
+        public LogProvider Provider => this.provider;
 
         private long queuedMessages;
 

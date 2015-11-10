@@ -15,10 +15,10 @@ namespace logviewer.tests
 {
     public class TstLogReader : IDisposable
     {
-        private const string MessageExamples =
+        internal const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        private const string NlogGrok = @"^\[?%{TIMESTAMP_ISO8601:Occured:DateTime}\]?%{DATA}%{LOGLEVEL:Level:LogLevel}%{DATA}";
+        internal const string NlogGrok = @"^\[?%{TIMESTAMP_ISO8601:Occured:DateTime}\]?%{DATA}%{LOGLEVEL:Level:LogLevel}%{DATA}";
 
 
         private readonly LogReader reader;
