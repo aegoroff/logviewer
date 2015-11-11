@@ -215,21 +215,8 @@ namespace logviewer.core
 
         private void BeginLogReading()
         {
-            var errorMessage = string.Empty;
-            Action action = delegate
-            {
-                try
-                {
-                    this.StartReadLog();
-                }
-                catch (Exception e)
-                {
-                    errorMessage = e.ToString();
-                    throw;
-                }
-            };
             this.cancellation = new CancellationTokenSource();
-            var task = Task.Factory.StartNew(action, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            var task = Task.Factory.StartNew(this.StartReadLog, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             Action<Task> onSuccess = obj => this.OnComplete(task, () => {});
             Action<Task> onFailure = delegate
@@ -503,7 +490,7 @@ namespace logviewer.core
             return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
         }
 
-        public void ShowElapsedTime()
+        private void ShowElapsedTime()
         {
             this.totalReadTimeWatch.Stop();
             var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
@@ -546,7 +533,7 @@ namespace logviewer.core
             this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, total, 0, 0, 0, 0, 0, 0, 0);
         }
 
-        public void ResetLogStatistic()
+        private void ResetLogStatistic()
         {
             this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0);
         }
