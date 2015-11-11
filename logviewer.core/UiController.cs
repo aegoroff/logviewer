@@ -79,6 +79,7 @@ namespace logviewer.core
                 case nameof(this.viewModel.MinLevel):
                 case nameof(this.viewModel.MaxLevel):
                 case nameof(this.viewModel.MessageFilter):
+                case nameof(this.viewModel.SortingOrder):
                     this.StartReading();
                     break;
             }
@@ -475,7 +476,8 @@ namespace logviewer.core
                 Start = this.viewModel.From,
                 Min = (LogLevel) this.viewModel.MinLevel,
                 Max = (LogLevel) this.viewModel.MaxLevel,
-                UseRegexp = this.viewModel.UseRegularExpressions
+                UseRegexp = this.viewModel.UseRegularExpressions,
+                Reverse = this.viewModel.SortingOrder == 0
             };
             this.provider = new LogProvider(this.store, this.settings) { Filter = messageFilter };
             this.viewModel.UiControlsEnabled = true;
