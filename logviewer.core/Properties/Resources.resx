@@ -172,7 +172,7 @@
     <value>All log items read. Indexing log in progress ...</value>
   </data>
   <data name="LogInfoFormatString" xml:space="preserve">
-    <value>Total: {1} To display: {8} Displayed: {0}   On the page T:{2}  D:{3}  I:{4}  W:{5}  E:{6}  F:{7}   </value>
+    <value>Total: {0} By level T:{1}  D:{2}  I:{3}  W:{4}  E:{5}  F:{6}</value>
   </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Min level must be less or equal then max level</value>

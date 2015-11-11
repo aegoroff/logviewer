@@ -26,6 +26,11 @@ namespace logviewer.ui
         private int currentPage;
         private int totalPages;
         private long messagesCount;
+        private string logStatistic;
+        private string logSize;
+        private string logEncoding;
+        private int logProgress;
+        private string logProgressText;
 
         private MainViewModel()
         {
@@ -144,6 +149,56 @@ namespace logviewer.ui
             {
                 this.messagesCount = value;
                 this.OnPropertyChanged(nameof(this.MessagesCount));
+            }
+        }
+
+        public string LogStatistic
+        {
+            get { return this.logStatistic; }
+            set
+            {
+                this.logStatistic = value;
+                this.OnPropertyChanged(nameof(this.LogStatistic));
+            }
+        }
+
+        public string LogSize
+        {
+            get { return this.logSize; }
+            set
+            {
+                this.logSize = value;
+                this.OnPropertyChanged(nameof(this.LogSize));
+            }
+        }
+
+        public string LogEncoding
+        {
+            get { return this.logEncoding; }
+            set
+            {
+                this.logEncoding = value;
+                this.OnPropertyChanged(nameof(this.LogEncoding));
+            }
+        }
+
+        public int LogProgress
+        {
+            get { return this.logProgress; }
+            set
+            {
+                this.logProgress = value;
+                this.OnPropertyChanged(nameof(this.LogProgress));
+            }
+        }
+
+        public string LogProgressText
+        {
+            get { return this.logProgressText; }
+            set
+            {
+                this.logProgressText = value;
+                this.OnPropertyChanged(nameof(this.LogProgressText));
             }
         }
 

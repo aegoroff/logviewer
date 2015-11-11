@@ -29,7 +29,7 @@ namespace logviewer.core
 
         #region Constants and Fields
 
-        private readonly Dictionary<LogLevel, int> byLevel = new Dictionary<LogLevel, int>();
+        private readonly Dictionary<LogLevel, ulong> byLevel = new Dictionary<LogLevel, ulong>();
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
@@ -111,7 +111,7 @@ namespace logviewer.core
         {
             if (!this.cancellation.IsCancellationRequested)
             {
-                //this.view.SetLogProgressCustomText(Resources.CancelPrevious);
+                this.viewModel.LogProgressText = Resources.CancelPrevious;
                 SafeRunner.Run(this.cancellation.Cancel);
             }
             this.queue.CleanupPendingTasks();
@@ -352,6 +352,9 @@ namespace logviewer.core
                 return;
             }
 
+            this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
+            this.ResetLogStatistic();
+
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
             if (this.store != null && !append)
             {
@@ -379,33 +382,31 @@ namespace logviewer.core
                 this.queuedMessages = 0;
                 reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, ref inputEncoding, offset);
                 this.probeWatch.Stop();
-                //var elapsed = this.probeWatch.Elapsed;
-                //var pending = Interlocked.Read(ref this.queuedMessages);
-                //var inserted = this.totalMessages - pending;
-                //var insertRatio = inserted / elapsed.TotalSeconds;
-                //var remain = Math.Abs(insertRatio) < 0.00001
-                //    ? TimeSpan.FromSeconds(0)
-                //    : TimeSpan.FromSeconds(pending / insertRatio);
+                var elapsed = this.probeWatch.Elapsed;
+                var pending = Interlocked.Read(ref this.queuedMessages);
+                var inserted = this.totalMessages - pending;
+                var insertRatio = inserted / elapsed.TotalSeconds;
+                var remain = Math.Abs(insertRatio) < 0.00001
+                    ? TimeSpan.FromSeconds(0)
+                    : TimeSpan.FromSeconds(pending / insertRatio);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) &&
                     inputEncoding != null)
                 {
                     this.filesEncodingCache.Add(this.currentPath, inputEncoding);
                 }
-                //var remainSeconds = remain.Seconds;
-                //if (remainSeconds > 0)
-                //{
-                //    this.RunOnGuiThread(
-                //        () => this.view.SetLogProgressCustomText(string.Format(Resources.FinishLoading, remainSeconds)));
-                //}
+                var remainSeconds = remain.Seconds;
+                if (remainSeconds > 0)
+                {
+                    this.viewModel.LogProgressText = string.Format(Resources.FinishLoading, remainSeconds);
+                }
                 // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(
                     () => Interlocked.Read(ref this.queuedMessages) == 0 || this.cancellation.IsCancellationRequested);
             }
             finally
             {
-                //this.RunOnGuiThread(
-                //        () => this.view.SetLogProgressCustomText(Resources.LogIndexing));
+                this.viewModel.LogProgressText = Resources.LogIndexing;
                 this.store.FinishAddMessages();
                 reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 reader.CompilationStarted -= this.OnCompilationStarted;
@@ -413,18 +414,22 @@ namespace logviewer.core
                 reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             }
-
+            for (var i = 0; i < (int)LogLevel.Fatal + 1; i++)
+            {
+                var level = (LogLevel)i;
+                this.byLevel[level] = (ulong)this.store.CountMessages(level, level, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions, true);
+            }
             this.ReadLogFromInternalStore(false);
         }
 
         private void OnCompilationFinished(object sender, EventArgs eventArgs)
         {
-            //this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.PatternCompilationFinished));
+            this.viewModel.LogProgressText = Resources.PatternCompilationFinished;
         }
 
         private void OnCompilationStarted(object sender, EventArgs eventArgs)
         {
-            //this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.PatternCompilation));
+            this.viewModel.LogProgressText = Resources.PatternCompilation;
         }
 
         /// <remarks>
@@ -457,26 +462,18 @@ namespace logviewer.core
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
             this.probeWatch.Restart();
-            //this.RunOnGuiThread(delegate
-            //{
-            //    this.view.SetLogProgressCustomText(string.Empty);
-            //    this.view.SetFileEncoding(e.ToString());
-            //});
+            this.viewModel.LogProgressText = string.Empty;
+            this.viewModel.LogEncoding = e.ToString();
         }
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
         {
-            //this.RunOnGuiThread(delegate
-            //{
-            //    this.view.SetLogProgressCustomText(Resources.EncodingDetectionInProgress);
-            //    this.view.SetFileEncoding(string.Empty);
-            //});
+            this.viewModel.LogEncoding = string.Empty;
+            this.viewModel.LogProgressText = Resources.EncodingDetectionInProgress;
         }
 
         private void ReadLogFromInternalStore(bool signalProcess)
         {
-            //this.RunOnGuiThread(() => this.view.SetLogProgressCustomText(Resources.CreateRtfInProgress));
-
             if (!signalProcess)
             {
                 this.viewModel.From = this.SelectDateUsingFunc("min");
@@ -496,6 +493,8 @@ namespace logviewer.core
             this.viewModel.UiControlsEnabled = true;
 
             this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(string.Empty)));
+            this.ShowLogPageStatistic();
+            this.ShowElapsedTime();
         }
 
         private DateTime SelectDateUsingFunc(string func)
@@ -505,39 +504,46 @@ namespace logviewer.core
 
         public void ShowElapsedTime()
         {
-            //this.view.SetProgress(LoadProgress.FromPercent(100));
             this.totalReadTimeWatch.Stop();
             var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
-            //this.view.SetLogProgressCustomText(text);
+            this.viewModel.LogProgressText = text;
         }
 
         public void ShowLogPageStatistic()
         {
-            //var formatTotal = ((ulong)this.TotalMessages).FormatString();
-            //var formatFiltered = ((ulong)this.totalFiltered).FormatString();
-            //var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+            var formatTotal = ((ulong)this.TotalMessages).FormatString();
+            var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
 
-            //this.view.LogInfo = string.Format(Resources.LogInfoFormatString,
-            //    this.DisplayedMessages,
-            //    total,
-            //    this.CountMessages(LogLevel.Trace),
-            //    this.CountMessages(LogLevel.Debug),
-            //    this.CountMessages(LogLevel.Info),
-            //    this.CountMessages(LogLevel.Warn),
-            //    this.CountMessages(LogLevel.Error),
-            //    this.CountMessages(LogLevel.Fatal),
-            //    this.totalFiltered.ToString(formatFiltered, CultureInfo.CurrentCulture)
-            //    );
+            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString,
+                total,
+                this.CountMessages(LogLevel.Trace),
+                this.CountMessages(LogLevel.Debug),
+                this.CountMessages(LogLevel.Info),
+                this.CountMessages(LogLevel.Warn),
+                this.CountMessages(LogLevel.Error),
+                this.CountMessages(LogLevel.Fatal)
+                );
         }
 
         private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //this.OnLogReadProgress(e.UserState);
+            this.OnLogReadProgress(e.UserState);
+        }
+
+        private void OnLogReadProgress(object progress)
+        {
+            var formatTotal = ((ulong) this.totalMessages).FormatString();
+            var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+
+            var logProgress = (LoadProgress) progress;
+            this.viewModel.LogProgress = logProgress.Percent;
+            this.viewModel.LogProgressText = logProgress.Format();
+            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, total, 0, 0, 0, 0, 0, 0);
         }
 
         public void ResetLogStatistic()
         {
-            //this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public void CancelReading()
@@ -607,14 +613,9 @@ namespace logviewer.core
             //}
         }
 
-        public int CountMessages(LogLevel level)
+        public ulong CountMessages(LogLevel level)
         {
             return this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0;
-        }
-
-        public void SetPageSize()
-        {
-            //this.view.SetPageSize(this.pageSize);
         }
 
         #endregion
@@ -622,7 +623,6 @@ namespace logviewer.core
         #region Methods
 
         private long logSize;
-        private long totalFiltered;
 
         private bool CurrentPathCached => !string.IsNullOrWhiteSpace(this.currentPath) &&
                                           this.currentPath.Equals(this.viewModel.LogPath, StringComparison.CurrentCultureIgnoreCase);

@@ -164,12 +164,54 @@
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
 
-        <ListBox Margin="5" BorderThickness="0" Style="{DynamicResource logControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+        <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock Padding="3" x:Name="LogStatistic" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogStatistic}" />
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Padding="3" x:Name="LogSize" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogSize}" />
+            </StatusBarItem>
+            <Separator Grid.Column="3" />
+            <StatusBarItem Grid.Column="4">
+                <TextBlock Padding="3" x:Name="LogEncoding" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogEncoding}" />
+            </StatusBarItem>
+            
+            <StatusBarItem Grid.Column="5" HorizontalAlignment="Right">
+                <ProgressBar Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgress}" Width="200" Height="16" />
+            </StatusBarItem>
+
+            <StatusBarItem Grid.Column="6">
+                <TextBlock Padding="3" x:Name="LogProgressText" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgressText}" />
+            </StatusBarItem>
+
+        </StatusBar>
+
+        <ListBox DockPanel.Dock="Top" Height="Auto" Margin="5" BorderThickness="0" Style="{DynamicResource logControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch" logviewer:RichTextBoxHelper.DocumentRtf="{Binding}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
     </DockPanel>
 </fluent:RibbonWindow>
