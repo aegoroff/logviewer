@@ -209,7 +209,8 @@
             DockPanel.Dock="Top" 
             Height="Auto" 
             Margin="5" 
-            BorderThickness="0" 
+            BorderThickness="0"
+            IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
             Style="{DynamicResource LogControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
