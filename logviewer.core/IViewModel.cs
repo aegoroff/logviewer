@@ -21,9 +21,6 @@ namespace logviewer.core
         DateTime From { get; set; }
         DateTime To { get; set; }
         bool UiControlsEnabled { get; set; }
-        int CurrentPage { get; set; }
-        int TotalPages { get; set; }
-        long MessagesCount { get; set; }
         string LogStatistic { get; set; }
         string LogSize { get; set; }
         string LogEncoding { get; set; }
