@@ -27,10 +27,7 @@ namespace logviewer.ui
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
-            this.controller.RunOnGuiThread(() =>
-            {
-                this.DataContext = new VirtualizingCollection<string>(this.controller.Provider);
-            });
+            this.controller.CreateCollection(o => this.DataContext = o);
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)

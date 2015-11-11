@@ -16,7 +16,7 @@ namespace logviewer.core
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
         }
 
-        public void RunOnGuiThread(Action action)
+        protected void RunOnGuiThread(Action action)
         {
             this.winformsOrDefaultContext.Post(o => action(), null);
         }

@@ -79,6 +79,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncVirtualizingCollection.cs" />
     <Compile Include="BaseGuiController.cs" />
     <Compile Include="AsymCrypt.cs" />
     <Compile Include="DefectSender.cs" />

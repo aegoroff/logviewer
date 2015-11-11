@@ -26,6 +26,10 @@ namespace logviewer.ui
 
                         // Parse the XAML to a document (or use XamlReader.Parse())
                         var xaml = GetDocumentRtf(richTextBox);
+                        if (string.IsNullOrWhiteSpace(xaml))
+                        {
+                            return;
+                        }
                         var doc = new FlowDocument();
                         var range = new TextRange(doc.ContentStart, doc.ContentEnd);
 

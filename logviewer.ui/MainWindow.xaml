@@ -21,7 +21,7 @@
         <CollectionViewSource
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Sorting}"
             x:Key="Sorting" />
-        <Style x:Key="logControlStyle" TargetType="{x:Type ListBox}">
+        <Style x:Key="LogControlStyle" TargetType="{x:Type ListBox}">
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
@@ -29,7 +29,6 @@
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsLoading}" Value="True">
                     <Setter Property="ListBox.Cursor" Value="Wait"/>
-                    <Setter Property="ListBox.Background" Value="LightGray"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -206,7 +205,12 @@
 
         </StatusBar>
 
-        <ListBox DockPanel.Dock="Top" Height="Auto" Margin="5" BorderThickness="0" Style="{DynamicResource logControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+        <ListBox 
+            DockPanel.Dock="Top" 
+            Height="Auto" 
+            Margin="5" 
+            BorderThickness="0" 
+            Style="{DynamicResource LogControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch" logviewer:RichTextBoxHelper.DocumentRtf="{Binding}" />

@@ -627,6 +627,14 @@ namespace logviewer.core
 
         public LogProvider Provider => this.provider;
 
+        public void CreateCollection(Action<object> assignAction)
+        {
+            this.RunOnGuiThread(() =>
+            {
+                assignAction(new AsyncVirtualizingCollection<string>(this.Provider));
+            });
+        }
+
         private long queuedMessages;
 
         #endregion
