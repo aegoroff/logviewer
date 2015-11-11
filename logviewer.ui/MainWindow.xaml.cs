@@ -75,5 +75,10 @@ namespace logviewer.ui
         {
             this.controller.LoadLastOpenedFile();
         }
+
+        private void OnUpdate(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.controller.StartReading();
+        }
     }
 }

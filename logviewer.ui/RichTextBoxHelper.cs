@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿// Created by: egr
+// Created at: 10.11.2015
+// © 2012-2015 Alexander Egorov
+
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;

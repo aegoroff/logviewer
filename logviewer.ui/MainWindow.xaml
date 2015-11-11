@@ -37,6 +37,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="OnOpenFile"></CommandBinding>
         <CommandBinding Command="Close" Executed="OnExitApp"></CommandBinding>
+        <CommandBinding Command="logviewer:LogviewerCommands.Update" Executed="OnUpdate"></CommandBinding>
     </Window.CommandBindings>
     <DockPanel>
         <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
@@ -59,7 +60,7 @@
                     <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh"
                                    Icon="Images\Small\database_refresh.png"
                                    IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
-                                   LargeIcon="Images\Large\database_refresh.png" />
+                                   LargeIcon="Images\Large\database_refresh.png" Command="logviewer:LogviewerCommands.Update" />
                     <fluent:Button x:Name="ButtonStat" Header="{x:Static properties:Resources.Statistic}"
                                    Icon="Images\Small\chart_pie.png"
                                    IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
