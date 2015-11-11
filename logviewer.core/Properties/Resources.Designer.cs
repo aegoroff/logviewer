@@ -223,7 +223,7 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total: {0} By level T:{1}  D:{2}  I:{3}  W:{4}  E:{5}  F:{6}.
+        ///   Looks up a localized string similar to Total: {0} To display {7}  T: {1}  D: {2}  I: {3}  W: {4}  E: {5}  F: {6}.
         /// </summary>
         internal static string LogInfoFormatString {
             get {

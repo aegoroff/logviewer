@@ -78,6 +78,7 @@ namespace logviewer.core
                 case nameof(this.viewModel.To):
                 case nameof(this.viewModel.MinLevel):
                 case nameof(this.viewModel.MaxLevel):
+                case nameof(this.viewModel.MessageFilter):
                     this.StartReading();
                     break;
             }
@@ -509,20 +510,24 @@ namespace logviewer.core
             this.viewModel.LogProgressText = text;
         }
 
-        public void ShowLogPageStatistic()
+        private void ShowLogPageStatistic()
         {
-            var formatTotal = ((ulong)this.TotalMessages).FormatString();
-            var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
-
             this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString,
-                total,
+                ToHumanReadableString((ulong)this.TotalMessages),
                 this.CountMessages(LogLevel.Trace),
                 this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info),
                 this.CountMessages(LogLevel.Warn),
                 this.CountMessages(LogLevel.Error),
-                this.CountMessages(LogLevel.Fatal)
+                this.CountMessages(LogLevel.Fatal),
+                ToHumanReadableString((ulong)this.Provider.FetchCount())
                 );
+        }
+
+        private static string ToHumanReadableString(ulong value)
+        {
+            var formatTotal = value.FormatString();
+            return value.ToString(formatTotal, CultureInfo.CurrentCulture);
         }
 
         private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -538,12 +543,12 @@ namespace logviewer.core
             var logProgress = (LoadProgress) progress;
             this.viewModel.LogProgress = logProgress.Percent;
             this.viewModel.LogProgressText = logProgress.Format();
-            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, total, 0, 0, 0, 0, 0, 0);
+            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, total, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public void ResetLogStatistic()
         {
-            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0);
+            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public void CancelReading()
@@ -613,9 +618,9 @@ namespace logviewer.core
             //}
         }
 
-        public ulong CountMessages(LogLevel level)
+        public string CountMessages(LogLevel level)
         {
-            return this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0;
+            return ToHumanReadableString(this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0);
         }
 
         #endregion
