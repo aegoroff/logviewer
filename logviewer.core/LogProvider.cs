@@ -55,11 +55,11 @@ namespace logviewer.core
             doc.AddText(message.Header.Trim(), this.settings.FormatHead(logLvel));
 
             var txt = message.Body;
+            doc.AddNewLine();
             if (string.IsNullOrWhiteSpace(txt))
             {
                 return doc.Rtf;
             }
-            doc.AddNewLine();
             doc.AddText(txt.Trim(), this.settings.FormatBody(logLvel));
             doc.AddNewLine();
             return doc.Rtf;

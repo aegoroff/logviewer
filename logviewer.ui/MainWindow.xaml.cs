@@ -3,13 +3,9 @@
 // © 2012-2015 Alexander Egorov
 
 using System.ComponentModel;
-using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using logviewer.core;
-using DataFormats = System.Windows.DataFormats;
 using MenuItem = Fluent.MenuItem;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -31,14 +27,6 @@ namespace logviewer.ui
 
         private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
         {
-            //this.controller.ShowLogPageStatistic();
-            //var stream = new MemoryStream(Encoding.ASCII.GetBytes(e.Rtf));
-            //using (stream)
-            //{
-            //    var range = new TextRange(this.LogView.Document.ContentStart, this.LogView.Document.ContentEnd);
-            //    range.Load(stream, DataFormats.Rtf);
-            //}
-
             this.controller.RunOnGuiThread(() =>
             {
                 this.DataContext = new VirtualizingCollection<string>(this.controller.Provider);

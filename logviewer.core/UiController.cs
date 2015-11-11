@@ -41,7 +41,6 @@ namespace logviewer.core
 
         private GrokMatcher matcher;
         private GrokMatcher filter;
-        private int pageSize;
         private LogStore store;
         private LogProvider provider;
         private long totalMessages;
@@ -63,10 +62,8 @@ namespace logviewer.core
 
         public UiController(IViewModel viewModel, RegexOptions options = RegexOptions.ExplicitCapture)
         {
-            this.CurrentPage = 1;
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
-            this.pageSize = this.settings.PageSize;
             this.prevInput = DateTime.Now;
             this.options = options;
             this.kernel = new StandardKernel(new CoreModule());
@@ -101,42 +98,6 @@ namespace logviewer.core
         private void CreateMessageFilter(string messageFilter)
         {
             this.filter = string.IsNullOrWhiteSpace(messageFilter) ? null : new GrokMatcher(messageFilter);
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        public long MessagesCount
-        {
-            get
-            {
-                var start = (this.CurrentPage - 1) * this.pageSize;
-                return this.totalFiltered - start;
-            }
-        }
-
-        public int CurrentPage { get; set; }
-
-        public int TotalPages
-        {
-            get
-            {
-                if (this.totalFiltered == 0)
-                {
-                    return 1;
-                }
-                return (int)Math.Ceiling(this.totalFiltered / (float)this.pageSize);
-            }
-        }
-
-        public long DisplayedMessages
-        {
-            get
-            {
-                var finish = Math.Min(this.MessagesCount, this.pageSize);
-                return Math.Min(finish, this.totalFiltered);
-            }
         }
 
         #endregion
@@ -552,9 +513,9 @@ namespace logviewer.core
 
         public void ShowLogPageStatistic()
         {
-            var formatTotal = ((ulong)this.TotalMessages).FormatString();
-            var formatFiltered = ((ulong)this.totalFiltered).FormatString();
-            var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+            //var formatTotal = ((ulong)this.TotalMessages).FormatString();
+            //var formatFiltered = ((ulong)this.totalFiltered).FormatString();
+            //var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
 
             //this.view.LogInfo = string.Format(Resources.LogInfoFormatString,
             //    this.DisplayedMessages,
@@ -626,17 +587,10 @@ namespace logviewer.core
                 this.CreateMessageHead(template.StartMessage, template.Compiled);
                 this.CreateMessageFilter(template.Filter);
             }
-            var value = this.settings.PageSize;
-            if (this.pageSize != value)
-            {
-                this.CurrentPage = 1;
-            }
             if (refresh)
             {
                 this.BeginLogReading();
             }
-            this.pageSize = value;
-            this.SetPageSize();
         }
 
         public void AddCurrentFileToRecentFilesList()
