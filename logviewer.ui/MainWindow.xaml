@@ -25,7 +25,7 @@
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
-            <Setter Property="ItemsSource" Value="{Binding}"/>
+            <Setter Property="ItemsSource" Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsLoading}" Value="True">
                     <Setter Property="ListBox.Cursor" Value="Wait"/>

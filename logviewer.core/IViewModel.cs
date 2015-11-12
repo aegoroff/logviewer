@@ -24,5 +24,7 @@ namespace logviewer.core
         string LogStatistic { get; set; }
         string LogSize { get; set; }
         string LogEncoding { get; set; }
+        LogProvider Provider { get; }
+        VirtualizingCollection<string> Datasource { get; }
     }
 }

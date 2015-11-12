@@ -100,6 +100,9 @@ namespace logviewer.core
                         case SQLiteErrorCode.Abort:
                             Log.Instance.Debug(e);
                             break;
+                        case SQLiteErrorCode.Misuse:
+                            Log.Instance.Debug(e);
+                            break;
                         default:
                             throw;
                     }

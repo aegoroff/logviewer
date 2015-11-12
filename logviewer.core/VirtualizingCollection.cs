@@ -30,12 +30,12 @@ namespace logviewer.core
         /// </summary>
         /// <param name="itemsProvider">The items provider.</param>
         /// <param name="pageSize">Size of the page.</param>
-        /// <param name="pageTimeout">The page timeout.</param>
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageTimeout)
+        /// <param name="pageTimeoutMilliseconds">The page timeout.</param>
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageTimeoutMilliseconds)
         {
             this.ItemsProvider = itemsProvider;
             this.PageSize = pageSize;
-            this.PageTimeout = pageTimeout;
+            this.PageTimeoutMilliseconds = pageTimeoutMilliseconds;
         }
 
         /// <summary>
@@ -60,7 +60,6 @@ namespace logviewer.core
 
         #endregion
 
-        #region ItemsProvider
 
         /// <summary>
         ///     Gets the items provider.
@@ -68,33 +67,25 @@ namespace logviewer.core
         /// <value>The items provider.</value>
         public IItemsProvider<T> ItemsProvider { get; }
 
-        #endregion
-
-        #region PageSize
-
         /// <summary>
         ///     Gets the size of the page.
         /// </summary>
         /// <value>The size of the page.</value>
         public int PageSize { get; } = 100;
 
-        #endregion
-
-        #region PageTimeout
-
         /// <summary>
         ///     Gets the page timeout.
         /// </summary>
         /// <value>The page timeout.</value>
-        public long PageTimeout { get; } = 10000;
-
-        #endregion
+        public long PageTimeoutMilliseconds { get; } = 10000;
 
         #region IList<T>, IList
 
         #region Count
 
-        private int count = -1;
+        private const int BadCount = -1;
+
+        private int count = BadCount;
 
         /// <summary>
         ///     Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
@@ -108,7 +99,7 @@ namespace logviewer.core
         {
             get
             {
-                if (this.count == -1)
+                if (this.count == BadCount)
                 {
                     this.LoadCount();
                 }
@@ -157,7 +148,10 @@ namespace logviewer.core
                 {
                     return default(T);
                 }
-
+                if (pageOffset >= this.pages[pageIndex].Count)
+                {
+                    return default(T);
+                }
                 // return requested item
                 return this.pages[pageIndex][pageOffset];
             }
@@ -249,14 +243,13 @@ namespace logviewer.core
         #region Clear
 
         /// <summary>
-        ///     Not supported.
+        /// Removes all elements from collection <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
-        /// </exception>
         public void Clear()
         {
-            throw new NotSupportedException();
+            this.count = BadCount;
+            this.pages.Clear();
+            this.pageTouchTimes.Clear();
         }
 
         #endregion
@@ -436,7 +429,7 @@ namespace logviewer.core
         private readonly Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
 
         /// <summary>
-        ///     Cleans up any stale pages that have not been accessed in the period dictated by PageTimeout.
+        ///     Cleans up any stale pages that have not been accessed in the period dictated by PageTimeoutMilliseconds.
         /// </summary>
         public void CleanUpPages()
         {
@@ -444,7 +437,7 @@ namespace logviewer.core
             foreach (var key in keys)
             {
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                if (key != 0 && (DateTime.Now - this.pageTouchTimes[key]).TotalMilliseconds > this.PageTimeout)
+                if (key != 0 && (DateTime.Now - this.pageTouchTimes[key]).TotalMilliseconds > this.PageTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);

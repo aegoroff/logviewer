@@ -438,8 +438,8 @@ namespace logviewer.tests
             this.view.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // Any
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.view.Setup(v => v.StartReading()); // 0
-            this.controller.StartReading("f", false);
-            this.controller.StartReading("f", false);
+            this.controller.StartReadingCachedLog("f", false);
+            this.controller.StartReadingCachedLog("f", false);
         }
         
         [Fact]
@@ -453,7 +453,7 @@ namespace logviewer.tests
             this.view.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // Any
             this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.view.Setup(v => v.StartReading()); // 1
-            this.controller.StartReading("f", false);
+            this.controller.StartReadingCachedLog("f", false);
             Thread.Sleep(TimeSpan.FromMilliseconds(300));
             this.controller.PendingStart.Should().BeFalse();
         }

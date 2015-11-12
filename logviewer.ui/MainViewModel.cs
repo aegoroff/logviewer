@@ -33,6 +33,8 @@ namespace logviewer.ui
         {
             var templates = this.CreateTemplateCommands();
             this.Templates = new ObservableCollection<TemplateCommand>(templates);
+            this.Provider = new LogProvider(null, this.settingsProvider);
+            this.Datasource = new AsyncVirtualizingCollection<string>(this.Provider);
 
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
@@ -148,6 +150,10 @@ namespace logviewer.ui
                 this.OnPropertyChanged(nameof(this.LogEncoding));
             }
         }
+
+        public LogProvider Provider { get; }
+
+        public VirtualizingCollection<string> Datasource { get; }
 
         public int LogProgress
         {

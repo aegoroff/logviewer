@@ -219,7 +219,7 @@ namespace logviewer.core
 
         public bool PendingStart { get; private set; }
 
-        public void StartReading(string messageFilter, bool regexp)
+        public void StartReadingCachedLog(string messageFilter, bool regexp)
         {
             if (!IsValidFilter(messageFilter, regexp))
             {

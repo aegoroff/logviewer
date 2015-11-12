@@ -2,6 +2,7 @@
 // Created at: 10.11.2015
 // © 2012-2015 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -25,7 +26,6 @@ namespace logviewer.core
         public AsyncVirtualizingCollection(IItemsProvider<T> itemsProvider)
             : base(itemsProvider)
         {
-            this.synchronizationContext = SynchronizationContext.Current;
         }
 
         /// <summary>
@@ -36,7 +36,6 @@ namespace logviewer.core
         public AsyncVirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize)
             : base(itemsProvider, pageSize)
         {
-            this.synchronizationContext = SynchronizationContext.Current;
         }
 
         /// <summary>
@@ -44,27 +43,15 @@ namespace logviewer.core
         /// </summary>
         /// <param name="itemsProvider">The items provider.</param>
         /// <param name="pageSize">Size of the page.</param>
-        /// <param name="pageTimeout">The page timeout.</param>
-        public AsyncVirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageTimeout)
-            : base(itemsProvider, pageSize, pageTimeout)
+        /// <param name="pageTimeoutMilliseconds">The page timeout.</param>
+        public AsyncVirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageTimeoutMilliseconds)
+            : base(itemsProvider, pageSize, pageTimeoutMilliseconds)
         {
-            this.synchronizationContext = SynchronizationContext.Current;
         }
 
         #endregion
 
-        #region SynchronizationContext
-
-        private readonly SynchronizationContext synchronizationContext;
-
-        /// <summary>
-        /// Gets the synchronization context used for UI-related operations. This is obtained as
-        /// the current SynchronizationContext when the AsyncVirtualizingCollection is created.
-        /// </summary>
-        /// <value>The synchronization context.</value>
-        protected SynchronizationContext SynchronizationContext => this.synchronizationContext;
-
-        #endregion
+        private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
 
         #region INotifyCollectionChanged
 
@@ -115,7 +102,7 @@ namespace logviewer.core
         /// <param name="propertyName">Name of the property.</param>
         private void FirePropertyChanged(string propertyName)
         {
-            PropertyChangedEventArgs e = new PropertyChangedEventArgs(propertyName);
+            var e = new PropertyChangedEventArgs(propertyName);
             this.OnPropertyChanged(e);
         }
 
@@ -158,28 +145,15 @@ namespace logviewer.core
         {
             this.Count = 0;
             this.IsLoading = true;
-            ThreadPool.QueueUserWorkItem(this.LoadCountWork);
-        }
+            var task = Task<long>.Factory.StartNew(this.FetchCount);
 
-        /// <summary>
-        /// Performed on background thread.
-        /// </summary>
-        /// <param name="args">None required.</param>
-        private void LoadCountWork(object args)
-        {
-            var count = (int)this.FetchCount();
-            this.SynchronizationContext.Send(this.LoadCountCompleted, count);
-        }
-
-        /// <summary>
-        /// Performed on UI-thread after LoadCountWork.
-        /// </summary>
-        /// <param name="args">Number of items returned.</param>
-        private void LoadCountCompleted(object args)
-        {
-            this.Count = (int)args;
-            this.IsLoading = false;
-            this.FireCollectionReset();
+            Action<Task<long>> continuationAction = delegate(Task<long> t)
+            {
+                this.Count = (int)t.Result;
+                this.IsLoading = false;
+                this.FireCollectionReset();
+            };
+            task.ContinueWith(continuationAction, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 
         /// <summary>
@@ -189,31 +163,16 @@ namespace logviewer.core
         protected override void LoadPage(int index)
         {
             this.IsLoading = true;
-            Task.Factory.StartNew(delegate { this.LoadPageWork(index); }, TaskScheduler.Default);
-        }
+            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(index));
 
-        /// <summary>
-        /// Performed on background thread.
-        /// </summary>
-        /// <param name="pageIndex">Index of the page to load.</param>
-        private void LoadPageWork(int pageIndex)
-        {
-            var page = this.FetchPage(pageIndex);
-            this.SynchronizationContext.Send(this.LoadPageCompleted, new object[]{ pageIndex, page });
-        }
+            Action<Task<IList<T>>> continuationAction = delegate (Task<IList<T>> t)
+            {
+                this.PopulatePage(index, t.Result);
+                this.IsLoading = false;
+                this.FireCollectionReset();
+            };
 
-        /// <summary>
-        /// Performed on UI-thread after LoadPageWork.
-        /// </summary>
-        /// <param name="args">object[] { int pageIndex, IList(T) page }</param>
-        private void LoadPageCompleted(object args)
-        {
-            var pageIndex = (int)((object[]) args)[0];
-            var page = (IList<T>)((object[])args)[1];
-
-            this.PopulatePage(pageIndex, page);
-            this.IsLoading = false;
-            this.FireCollectionReset();
+            task.ContinueWith(continuationAction, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 
         #endregion

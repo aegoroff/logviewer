@@ -42,7 +42,6 @@ namespace logviewer.core
         private GrokMatcher matcher;
         private GrokMatcher filter;
         private LogStore store;
-        private LogProvider provider;
         private long totalMessages;
         private readonly IViewModel viewModel;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
@@ -55,6 +54,7 @@ namespace logviewer.core
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
         private readonly IKernel kernel;
+        private readonly TaskScheduler uiSyncContext;
 
         #endregion
 
@@ -68,6 +68,7 @@ namespace logviewer.core
             this.options = options;
             this.kernel = new StandardKernel(new CoreModule());
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
+            this.uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
         }
 
         private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -80,7 +81,8 @@ namespace logviewer.core
                 case nameof(this.viewModel.MaxLevel):
                 case nameof(this.viewModel.MessageFilter):
                 case nameof(this.viewModel.SortingOrder):
-                    this.StartReading();
+                case nameof(this.viewModel.UseRegularExpressions):
+                    this.StartReadingLogOnTextFilterChange();
                     break;
             }
         }
@@ -153,14 +155,12 @@ namespace logviewer.core
 
         public bool PendingStart { get; private set; }
 
-        public void StartReading()
+        public void StartReadingLogOnTextFilterChange()
         {
             if (!IsValidFilter(this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions))
             {
                 return;
             }
-
-            this.UpdateMessageFilter(this.viewModel.MessageFilter);
 
             this.prevInput = DateTime.Now;
 
@@ -179,7 +179,7 @@ namespace logviewer.core
                         return diff > this.filterUpdateDelay;
                     });
                     this.UpdateRecentFilters(this.viewModel.MessageFilter);
-                    this.BeginLogReading();
+                    this.StartLogReadingTask();
                 }
                 finally
                 {
@@ -210,14 +210,10 @@ namespace logviewer.core
             }
         }
 
-        public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
-            ? this.filesEncodingCache[this.currentPath].EncodingName
-            : string.Empty;
-
-        private void BeginLogReading()
+        private void StartLogReadingTask()
         {
             this.cancellation = new CancellationTokenSource();
-            var task = Task.Factory.StartNew(this.StartReadLog, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            var task = Task.Factory.StartNew(this.DoLogReadingTask, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             Action<Task> onSuccess = obj => this.OnComplete(task, () => {});
             Action<Task> onFailure = delegate
@@ -225,10 +221,10 @@ namespace logviewer.core
                 this.OnComplete(task, () => this.viewModel.UiControlsEnabled = true);
             };
 
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, TaskScheduler.Default);
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
-            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Default);
-            
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.uiSyncContext);
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiSyncContext);
+
             this.runningTasks.Add(task, this.viewModel.LogPath);
         }
 
@@ -273,39 +269,27 @@ namespace logviewer.core
                 {
                     return;
                 }
-                this.BeginLogReading();
+                this.StartLogReadingTask();
             };
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        public void UpdateMessageFilter(string value)
-        {
-            this.settings.MessageFilter = value;
-        }
-
         public void UpdateRecentFilters(string value = null)
         {
-            string[] items = null;
-
             this.settings.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     itemsStore.Add(value);
                 }
-
-                items = itemsStore.ReadItems().ToArray();
             });
-
-            //this.view.AddFilterItems(items);
         }
 
         /// <summary>
         ///     Reads log from file
         /// </summary>
-        /// <returns>Path to RTF document to be loaded into control</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
-        public void StartReadLog()
+        private void DoLogReadingTask()
         {
             this.viewModel.UiControlsEnabled = false;
             this.totalReadTimeWatch.Restart();
@@ -331,7 +315,7 @@ namespace logviewer.core
 
             if (this.CurrentPathCached && !append)
             {
-                this.ReadLogFromInternalStore(true);
+                this.AfterDatabaseCreation(true);
                 return;
             }
 
@@ -408,7 +392,7 @@ namespace logviewer.core
                 var level = (LogLevel)i;
                 this.byLevel[level] = (ulong)this.store.CountMessages(level, level, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions, true);
             }
-            this.ReadLogFromInternalStore(false);
+            this.AfterDatabaseCreation(false);
         }
 
         private void OnCompilationFinished(object sender, EventArgs eventArgs)
@@ -461,15 +445,15 @@ namespace logviewer.core
             this.viewModel.LogProgressText = Resources.EncodingDetectionInProgress;
         }
 
-        private void ReadLogFromInternalStore(bool signalProcess)
+        private void AfterDatabaseCreation(bool cached)
         {
-            if (!signalProcess)
+            if (!cached)
             {
                 this.viewModel.From = this.SelectDateUsingFunc("min");
                 this.viewModel.To = this.SelectDateUsingFunc("max");
             }
 
-            var messageFilter = new MessageFilter
+            this.viewModel.Provider.Filter = new MessageFilter
             {
                 Filter = this.viewModel.MessageFilter,
                 Finish = this.viewModel.To,
@@ -479,10 +463,11 @@ namespace logviewer.core
                 UseRegexp = this.viewModel.UseRegularExpressions,
                 Reverse = this.viewModel.SortingOrder == 0
             };
-            this.provider = new LogProvider(this.store, this.settings) { Filter = messageFilter };
+            this.viewModel.Provider.Store = this.store;
+            this.viewModel.Datasource.Clear();
+
             this.viewModel.UiControlsEnabled = true;
 
-            this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(string.Empty)));
             this.ShowLogPageStatistic();
             this.ShowElapsedTime();
         }
@@ -509,7 +494,7 @@ namespace logviewer.core
                 this.CountMessages(LogLevel.Warn),
                 this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal),
-                ToHumanReadableString((ulong)this.Provider.FetchCount())
+                ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount())
                 );
         }
 
@@ -532,12 +517,17 @@ namespace logviewer.core
             var logProgress = (LoadProgress) progress;
             this.viewModel.LogProgress = logProgress.Percent;
             this.viewModel.LogProgressText = logProgress.Format();
+            this.ChangeTotalOnUi(total);
+        }
+
+        private void ChangeTotalOnUi(string total)
+        {
             this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, total, 0, 0, 0, 0, 0, 0, 0);
         }
 
         private void ResetLogStatistic()
         {
-            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, 0, 0, 0, 0, 0, 0, 0, 0);
+            this.ChangeTotalOnUi("0");
         }
 
         public void CancelReading()
@@ -575,8 +565,14 @@ namespace logviewer.core
             {
                 return;
             }
+            this.ReadNewLog();
+        }
+
+        public void ReadNewLog()
+        {
+            this.CancelPreviousTask();
             this.ClearCache();
-            this.BeginLogReading();
+            this.StartLogReadingTask();
         }
 
         public void UpdateSettings(bool refresh)
@@ -589,22 +585,13 @@ namespace logviewer.core
             }
             if (refresh)
             {
-                this.BeginLogReading();
+                this.StartLogReadingTask();
             }
         }
 
         public void AddCurrentFileToRecentFilesList()
         {
             this.settings.UseRecentFilesStore(s => s.Add(this.viewModel.LogPath));
-        }
-
-        public void ExportToRtf()
-        {
-            var path = Path.GetFileNameWithoutExtension(this.viewModel.LogPath) + ".rtf";
-            //if (this.view.OpenExport(path))
-            //{
-            //    this.view.SaveRtf();
-            //}
         }
 
         public string CountMessages(LogLevel level)
@@ -624,16 +611,6 @@ namespace logviewer.core
         private long TotalMessages => this.store?.CountMessages() ?? 0;
 
         public LogStore Store => this.store;
-
-        public LogProvider Provider => this.provider;
-
-        public void CreateCollection(Action<object> assignAction)
-        {
-            this.RunOnGuiThread(() =>
-            {
-                assignAction(new AsyncVirtualizingCollection<string>(this.Provider));
-            });
-        }
 
         private long queuedMessages;
 

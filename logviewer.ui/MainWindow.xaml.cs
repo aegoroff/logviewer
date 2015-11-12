@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using logviewer.core;
@@ -17,17 +18,20 @@ namespace logviewer.ui
     public partial class MainWindow
     {
         private readonly UiController controller;
+        private readonly FileSystemWatcher logWatch;
 
         public MainWindow()
         {
             this.InitializeComponent();
             this.controller = new UiController(MainViewModel.Current);
-            this.controller.ReadCompleted += this.OnReadCompleted;
+            this.logWatch = new FileSystemWatcher();
+            this.logWatch.Changed += this.OnChangeLog;
         }
 
-        private void OnReadCompleted(object sender, LogReadCompletedEventArgs e)
+        private void WatchLogFile(string path)
         {
-            this.controller.CreateCollection(o => this.DataContext = o);
+            this.logWatch.Path = Path.GetDirectoryName(path);
+            this.logWatch.Filter = Path.GetFileName(path);
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)
@@ -56,26 +60,38 @@ namespace logviewer.ui
             {
                 Filter = "Log files|*.log|All files|*.*"
             };
-            if (openFileDialog.ShowDialog() == true)
+            if (openFileDialog.ShowDialog() != true)
             {
-                MainViewModel.Current.LogPath = openFileDialog.FileName;
-                this.controller.StartReading();
+                return;
             }
+            MainViewModel.Current.LogPath = openFileDialog.FileName;
+            this.controller.ReadNewLog();
+            this.WatchLogFile(MainViewModel.Current.LogPath);
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
+            this.logWatch.Dispose();
             this.controller.Dispose();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.controller.LoadLastOpenedFile();
+            this.WatchLogFile(MainViewModel.Current.LogPath);
         }
 
         private void OnUpdate(object sender, ExecutedRoutedEventArgs e)
         {
-            this.controller.StartReading();
+            this.controller.ReadNewLog();
+        }
+
+        private void OnChangeLog(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                this.controller.UpdateLog(e.FullPath);
+            }
         }
     }
 }

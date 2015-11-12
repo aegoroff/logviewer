@@ -12,44 +12,45 @@ namespace logviewer.core
     public sealed class LogProvider : IItemsProvider<string>, IDisposable
     {
         private readonly ISettingsProvider settings;
-        private readonly LogStore store;
 
         public LogProvider(LogStore store, ISettingsProvider settings)
         {
-            this.store = store;
+            this.Store = store;
             this.settings = settings;
         }
 
         public MessageFilter Filter { get; set; }
 
+        public LogStore Store { get; set; }
+
         public void Dispose()
         {
-            this.store.Dispose();
+            this.Store.Dispose();
         }
 
         public long FetchCount()
         {
-            return this.store.CountMessages(this.Filter.Start, this.Filter.Finish, this.Filter.Min, this.Filter.Max, this.Filter.Filter,
-                this.Filter.UseRegexp, this.Filter.ExcludeNoLevel);
+            return this.Store?.CountMessages(this.Filter.Start, this.Filter.Finish, this.Filter.Min, this.Filter.Max, this.Filter.Filter,
+                this.Filter.UseRegexp, this.Filter.ExcludeNoLevel) ?? 0;
         }
 
         public IList<string> FetchRange(long offset, int limit)
         {
             var result = new List<string>(limit);
-            this.store.ReadMessages(limit, message => result.Add(this.AddMessage(message)), () => true, this.Filter.Start,
+            this.Store?.ReadMessages(limit, message => result.Add(this.CreateRtf(message)), () => true, this.Filter.Start,
                 this.Filter.Finish, offset,
                 this.Filter.Reverse,
                 this.Filter.Min, this.Filter.Max, this.Filter.Filter, this.Filter.UseRegexp);
             return result;
         }
 
-        private string AddMessage(LogMessage message)
+        private string CreateRtf(LogMessage message)
         {
             var doc = new RtfDocument();
             var logLvel = LogLevel.None;
-            if (this.store.HasLogLevelProperty)
+            if (this.Store.HasLogLevelProperty)
             {
-                logLvel = (LogLevel) message.IntegerProperty(this.store.LogLevelProperty);
+                logLvel = (LogLevel) message.IntegerProperty(this.Store.LogLevelProperty);
             }
 
             doc.AddText(message.Header.Trim(), this.settings.FormatHead(logLvel));

@@ -486,7 +486,7 @@ namespace logviewer
         private void StartReadingOnChangeTextFilter()
         {
             this.textFilterChanging = true;
-            this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
+            this.Controller.StartReadingCachedLog(this.filterBox.Text, this.useRegexp.Checked);
         }
 
         private void OnCheckUpdates(object sender, EventArgs e)
