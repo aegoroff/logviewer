@@ -130,7 +130,7 @@ namespace logviewer.core
                 {
                     this.isLoading = value;
                 }
-                this.FirePropertyChanged("IsLoading");
+                this.FirePropertyChanged(nameof(this.IsLoading));
             }
         }
 
