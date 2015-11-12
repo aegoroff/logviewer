@@ -8,17 +8,19 @@ namespace logviewer.ui
 {
     public class LogviewerCommands
     {
-        private static readonly RoutedUICommand update;
-
         static LogviewerCommands()
         {
             var inputs = new InputGestureCollection
             {
                 new KeyGesture(Key.F5, ModifierKeys.None, "F5")
             };
-            update = new RoutedUICommand("Update", "Update", typeof(LogviewerCommands), inputs);
+            Update = new RoutedUICommand("Update", "Update", typeof(LogviewerCommands), inputs);
+            Statistic = new RoutedUICommand("Statistic", "Statistic", typeof(LogviewerCommands));
+            Settings = new RoutedUICommand("Settings", "Settings", typeof(LogviewerCommands));
         }
 
-        public static RoutedUICommand Update => update;
+        public static RoutedUICommand Update { get; }
+        public static RoutedUICommand Statistic { get; }
+        public static RoutedUICommand Settings { get; }
     }
 }

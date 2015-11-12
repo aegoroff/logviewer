@@ -37,6 +37,8 @@
         <CommandBinding Command="Open" Executed="OnOpenFile"></CommandBinding>
         <CommandBinding Command="Close" Executed="OnExitApp"></CommandBinding>
         <CommandBinding Command="logviewer:LogviewerCommands.Update" Executed="OnUpdate"></CommandBinding>
+        <CommandBinding Command="logviewer:LogviewerCommands.Statistic" Executed="OnStatistic"></CommandBinding>
+        <CommandBinding Command="logviewer:LogviewerCommands.Settings" Executed="OnSettings"></CommandBinding>
     </Window.CommandBindings>
     <DockPanel>
         <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
@@ -59,11 +61,13 @@
                     <fluent:Button Header="{x:Static properties:Resources.Refresh}" x:Name="ButtonRefresh"
                                    Icon="Images\Small\database_refresh.png"
                                    IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
-                                   LargeIcon="Images\Large\database_refresh.png" Command="logviewer:LogviewerCommands.Update" />
+                                   LargeIcon="Images\Large\database_refresh.png"
+                                   Command="logviewer:LogviewerCommands.Update" />
                     <fluent:Button x:Name="ButtonStat" Header="{x:Static properties:Resources.Statistic}"
                                    Icon="Images\Small\chart_pie.png"
                                    IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
-                                   LargeIcon="Images\Large\chart_pie.png" SizeDefinition="Middle, Middle, Small" />
+                                   LargeIcon="Images\Large\chart_pie.png" SizeDefinition="Middle, Middle, Small" 
+                                   Command="logviewer:LogviewerCommands.Statistic"/>
                     <fluent:DropDownButton x:Name="ButtonTemplateSelection"
                                            Header="{x:Static properties:Resources.TemplateSelection}"
                                            Icon="Images\Small\stamp_pattern.png"
@@ -158,8 +162,12 @@
 
             <fluent:RibbonTabItem Header="{x:Static properties:Resources.Settings}">
                 <fluent:RibbonGroupBox>
-                    <fluent:Button x:Name="ButtonSettings" Header="{x:Static properties:Resources.Settings}"
-                                   LargeIcon="Images\Large\interface_preferences.png" Icon="Images\Small\interface_preferences.png" />
+                    <fluent:Button 
+                        x:Name="ButtonSettings"
+                        Header="{x:Static properties:Resources.Settings}"
+                        LargeIcon="Images\Large\interface_preferences.png"
+                        Icon="Images\Small\interface_preferences.png"
+                        Command="logviewer:LogviewerCommands.Settings"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>

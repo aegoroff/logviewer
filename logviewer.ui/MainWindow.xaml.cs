@@ -44,9 +44,14 @@ namespace logviewer.ui
             var src = (MenuItem)e.OriginalSource;
             var cmd = (TemplateCommand)src.DataContext;
 
+            ReloadTemplates(cmd.Index);
+        }
+
+        private static void ReloadTemplates(int selected)
+        {
             MainViewModel.Current.Templates.Clear();
 
-            MainViewModel.Current.SelectedParsingTemplate = cmd.Index;
+            MainViewModel.Current.SelectedParsingTemplate = selected;
             var commands = MainViewModel.Current.CreateTemplateCommands();
             foreach (var command in commands)
             {
@@ -92,6 +97,23 @@ namespace logviewer.ui
             {
                 this.controller.UpdateLog(e.FullPath);
             }
+        }
+
+        private void OnStatistic(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new StatisticDlg(this.controller.Store, this.controller.GetLogSize(true), this.controller.CurrentEncoding);
+            dlg.Show(new WindowWrapper(this));
+        }
+
+        private void OnSettings(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new SettingsDlg(MainViewModel.Current.SettingsProvider);
+            using (dlg)
+            {
+                dlg.SetApplyAction(refresh => this.controller.UpdateSettings(refresh));
+                dlg.ShowDialog();
+            }
+            ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
         }
     }
 }

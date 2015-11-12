@@ -44,7 +44,6 @@ namespace logviewer.core
         private LogStore store;
         private long totalMessages;
         private readonly IViewModel viewModel;
-        public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -543,6 +542,10 @@ namespace logviewer.core
         {
             return new FileSize(this.logSize, !showBytes).Format();
         }
+
+        public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
+            ? this.filesEncodingCache[this.currentPath].EncodingName
+            : string.Empty;
 
         public void ClearCache()
         {

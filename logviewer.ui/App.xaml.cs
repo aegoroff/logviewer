@@ -2,12 +2,9 @@
 // Created at: 04.08.2015
 // © 2012-2015 Alexander Egorov
 
-using System.Configuration;
 using System.Globalization;
-using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
-using logviewer.core;
+using Application = System.Windows.Forms.Application;
 
 namespace logviewer.ui
 {
@@ -18,11 +15,17 @@ namespace logviewer.ui
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture;
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
 #if !DEBUG
             this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 #endif
         }
+
 #if !DEBUG
         private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
