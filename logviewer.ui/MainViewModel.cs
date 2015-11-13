@@ -19,6 +19,9 @@ namespace logviewer.ui
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 10, 2000);
 
+        private const int PageTimeoutMilliseconds = 800;
+        private const int PageSize = 64;
+
         private string logPath;
         private DateTime to;
         private DateTime from;
@@ -34,7 +37,7 @@ namespace logviewer.ui
             var templates = this.CreateTemplateCommands();
             this.Templates = new ObservableCollection<TemplateCommand>(templates);
             this.Provider = new LogProvider(null, this.settingsProvider);
-            this.Datasource = new AsyncVirtualizingCollection<string>(this.Provider);
+            this.Datasource = new AsyncVirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
 
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
