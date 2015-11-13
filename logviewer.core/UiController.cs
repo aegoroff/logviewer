@@ -522,6 +522,7 @@ namespace logviewer.core
         private void ChangeTotalOnUi(string total)
         {
             this.viewModel.TotalMessages = total;
+            this.viewModel.ToDisplayMessages = "0";
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
         }
 
