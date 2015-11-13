@@ -31,6 +31,8 @@ namespace logviewer.ui
         private string logEncoding;
         private int logProgress;
         private string logProgressText;
+        private string totalMessages;
+        private string toDisplayMessages;
 
         private MainViewModel()
         {
@@ -121,6 +123,26 @@ namespace logviewer.ui
             {
                 this.uiControlsEnabled = value;
                 this.OnPropertyChanged(nameof(this.UiControlsEnabled));
+            }
+        }
+
+        public string TotalMessages
+        {
+            get { return this.totalMessages; }
+            set
+            {
+                this.totalMessages = value;
+                this.OnPropertyChanged(nameof(this.TotalMessages));
+            }
+        }
+
+        public string ToDisplayMessages
+        {
+            get { return this.toDisplayMessages; }
+            set
+            {
+                this.toDisplayMessages = value;
+                this.OnPropertyChanged(nameof(this.toDisplayMessages));
             }
         }
 

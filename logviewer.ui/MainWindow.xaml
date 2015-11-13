@@ -185,29 +185,49 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
-            <StatusBarItem>
+            <StatusBarItem Grid.Column="0">
+                <Label Padding="3" x:Name="TotalMessagesLabel" Content="{x:Static properties:Resources.Total}" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Padding="3" x:Name="TotalMessages" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=TotalMessages}" />
+            </StatusBarItem>
+            <Separator Grid.Column="2" />
+            <StatusBarItem Grid.Column="3">
+                <Label Padding="3" x:Name="ToDisplayMessagesLabel" Content="{x:Static properties:Resources.Filtered}" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="4">
+                <TextBlock Padding="3" x:Name="ToDisplayMessages" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=ToDisplayMessages}" />
+            </StatusBarItem>
+            <Separator Grid.Column="5" />
+            <StatusBarItem Grid.Column="6">
                 <TextBlock Padding="3" x:Name="LogStatistic" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogStatistic}" />
             </StatusBarItem>
-            <Separator Grid.Column="1" />
-            <StatusBarItem Grid.Column="2">
+            <Separator Grid.Column="7" />
+            <StatusBarItem Grid.Column="8">
                 <TextBlock Padding="3" x:Name="LogSize" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogSize}" />
             </StatusBarItem>
-            <Separator Grid.Column="3" />
-            <StatusBarItem Grid.Column="4">
+            <Separator Grid.Column="9" />
+            <StatusBarItem Grid.Column="10">
                 <TextBlock Padding="3" x:Name="LogEncoding" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogEncoding}" />
             </StatusBarItem>
             
-            <StatusBarItem Grid.Column="5" HorizontalAlignment="Right">
+            <StatusBarItem Grid.Column="11" HorizontalAlignment="Right">
                 <ProgressBar Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgress}" Width="200" Height="16" />
             </StatusBarItem>
 
-            <StatusBarItem Grid.Column="6">
+            <StatusBarItem Grid.Column="12">
                 <TextBlock Padding="3" x:Name="LogProgressText" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgressText}" />
             </StatusBarItem>
 

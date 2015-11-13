@@ -485,15 +485,15 @@ namespace logviewer.core
 
         private void ShowLogPageStatistic()
         {
-            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString,
-                ToHumanReadableString((ulong)this.TotalMessages),
+            this.viewModel.TotalMessages = ToHumanReadableString((ulong) this.TotalMessages);
+            this.viewModel.ToDisplayMessages = ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount());
+            this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
                 this.CountMessages(LogLevel.Trace),
                 this.CountMessages(LogLevel.Debug),
                 this.CountMessages(LogLevel.Info),
                 this.CountMessages(LogLevel.Warn),
                 this.CountMessages(LogLevel.Error),
-                this.CountMessages(LogLevel.Fatal),
-                ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount())
+                this.CountMessages(LogLevel.Fatal)
                 );
         }
 
@@ -521,7 +521,8 @@ namespace logviewer.core
 
         private void ChangeTotalOnUi(string total)
         {
-            this.viewModel.LogStatistic = string.Format(Resources.LogInfoFormatString, total, 0, 0, 0, 0, 0, 0, 0);
+            this.viewModel.TotalMessages = total;
+            this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
         }
 
         private void ResetLogStatistic()

@@ -153,6 +153,9 @@
   <data name="FatalErrorMessageTemplate" xml:space="preserve">
     <value>Произошло необработанное исключение. Дамп записан в {0}</value>
   </data>
+  <data name="Filtered" xml:space="preserve">
+    <value>Показано:</value>
+  </data>
   <data name="From" xml:space="preserve">
     <value>От:</value>
   </data>
@@ -221,6 +224,9 @@
   </data>
   <data name="To" xml:space="preserve">
     <value>До:</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Всего:</value>
   </data>
   <data name="TotalMessages" xml:space="preserve">
     <value>Всего сообщений</value>

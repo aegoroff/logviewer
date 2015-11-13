@@ -232,6 +232,15 @@ namespace logviewer.core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to T: {0}  D: {1}  I: {2}  W: {3}  E: {4}  F: {5}.
+        /// </summary>
+        internal static string LoStatisticFormatString {
+            get {
+                return ResourceManager.GetString("LoStatisticFormatString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min level must be less or equal then max level.
         /// </summary>
         internal static string MinLevelGreaterThenMax {

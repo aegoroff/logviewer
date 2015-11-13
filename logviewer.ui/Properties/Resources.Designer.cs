@@ -196,6 +196,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shown:.
+        /// </summary>
+        public static string Filtered {
+            get {
+                return ResourceManager.GetString("Filtered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to From:.
         /// </summary>
         public static string From {
@@ -417,6 +426,15 @@ namespace logviewer.ui.Properties {
         public static string To {
             get {
                 return ResourceManager.GetString("To", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total:.
+        /// </summary>
+        public static string Total {
+            get {
+                return ResourceManager.GetString("Total", resourceCulture);
             }
         }
         
