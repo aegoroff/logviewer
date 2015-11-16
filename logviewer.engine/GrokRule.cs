@@ -15,9 +15,9 @@ namespace logviewer.engine
     public struct GrokRule
     {
         internal const string DefaultPattern = "*";
-        private readonly string pattern;
-        private readonly ParserType type;
-        private readonly LogLevel level;
+        readonly string pattern;
+        readonly ParserType type;
+        readonly LogLevel level;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance

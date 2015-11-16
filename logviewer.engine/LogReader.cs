@@ -18,8 +18,10 @@ namespace logviewer.engine
     public sealed class LogReader
     {
         private readonly ICharsetDetector detector;
-        private readonly GrokMatcher filter;
-        private readonly GrokMatcher matcher;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private GrokMatcher filter;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private GrokMatcher matcher;
 
         /// <summary>
         ///     Initializes reader

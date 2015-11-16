@@ -19,7 +19,8 @@ namespace logviewer.engine
         private const char NewLine = '\n';
         private const int DefaultPropertyDicitionaryCapacity = 5;
 
-        private static readonly string[] formats =
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private static string[] formats =
                     {
                         "yyyy-MM-dd HH:mm:ss,FFF",
                         "yyyy-MM-dd HH:mm:ss.FFF",

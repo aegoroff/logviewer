@@ -425,8 +425,10 @@ namespace logviewer.core
 
         #region Paging
 
-        private readonly Dictionary<int, IList<T>> pages = new Dictionary<int, IList<T>>();
-        private readonly Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Dictionary<int, IList<T>> pages = new Dictionary<int, IList<T>>();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
 
         /// <summary>
         ///     Cleans up any stale pages that have not been accessed in the period dictated by PageTimeoutMilliseconds.

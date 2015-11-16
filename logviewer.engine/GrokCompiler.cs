@@ -14,8 +14,10 @@ namespace logviewer.engine
     /// </summary>
     internal class GrokCompiler
     {
-        private readonly Action<string> customErrorOutputMethod;
-        private readonly List<Semantic> messageSchema = new List<Semantic>();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Action<string> customErrorOutputMethod;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private List<Semantic> messageSchema = new List<Semantic>();
         private const string MainPattern = "MAIN";
         private string[] patternFiles;
         private const int StreamBufferSize = 0xFFFF;

@@ -16,8 +16,10 @@ namespace logviewer.engine
     public class GrokMatcher
     {
         private Regex regex;
-        private readonly List<Semantic> messageSchema = new List<Semantic>();
-        private readonly Action<string> customErrorOutputMethod;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private List<Semantic> messageSchema = new List<Semantic>();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Action<string> customErrorOutputMethod;
 
         /// <summary>
         /// Init new matcher
