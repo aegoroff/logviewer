@@ -126,10 +126,7 @@ namespace logviewer.core
             }
             set
             {
-                if (value != this.isLoading)
-                {
-                    this.isLoading = value;
-                }
+                this.isLoading = value;
                 this.FirePropertyChanged(nameof(this.IsLoading));
             }
         }
@@ -145,15 +142,13 @@ namespace logviewer.core
         {
             this.Count = 0;
             this.IsLoading = true;
-            var task = Task<long>.Factory.StartNew(this.FetchCount);
 
-            Action<Task<long>> continuationAction = delegate(Task<long> t)
+            Task<long>.Factory.StartNew(this.FetchCount).ContinueWith(delegate (Task<long> t)
             {
                 this.Count = (int)t.Result;
                 this.IsLoading = false;
                 this.FireCollectionReset();
-            };
-            task.ContinueWith(continuationAction, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 
         /// <summary>
@@ -165,14 +160,12 @@ namespace logviewer.core
             this.IsLoading = true;
             var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(index));
 
-            Action<Task<IList<T>>> continuationAction = delegate (Task<IList<T>> t)
+            task.ContinueWith(delegate (Task<IList<T>> t)
             {
                 this.PopulatePage(index, t.Result);
                 this.IsLoading = false;
                 this.FireCollectionReset();
-            };
-
-            task.ContinueWith(continuationAction, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 
         #endregion
