@@ -37,18 +37,6 @@ namespace logviewer.ui
 
                         // Set the document
                         richTextBox.Document = doc;
-
-                        // When the document changes update the source
-                        range.Changed += (obj2, e2) =>
-                        {
-                            if (richTextBox.Document == doc)
-                            {
-                                var buffer = new MemoryStream();
-                                range.Save(buffer, DataFormats.Rtf);
-                                SetDocumentRtf(richTextBox,
-                                    Encoding.ASCII.GetString(buffer.ToArray()));
-                            }
-                        };
                     }
                 });
 
