@@ -2,6 +2,12 @@
 // Created at: 04.08.2015
 // © 2012-2015 Alexander Egorov
 
+#if !DEBUG
+using System.Configuration;
+using System.Windows.Threading;
+using logviewer.core;
+#endif
+
 using System.Globalization;
 using System.Windows;
 using Application = System.Windows.Forms.Application;
