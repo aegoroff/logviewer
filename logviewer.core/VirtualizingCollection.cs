@@ -144,16 +144,13 @@ namespace logviewer.core
                 this.CleanUpPages();
 
                 // defensive check in case of async load
-                if (this.pages[pageIndex] == null)
-                {
-                    return default(T);
-                }
-                if (pageOffset >= this.pages[pageIndex].Count)
+                IList<T> result;
+                if (!this.pages.TryGetValue(pageIndex, out result) || result == null)
                 {
                     return default(T);
                 }
                 // return requested item
-                return this.pages[pageIndex][pageOffset];
+                return pageOffset >= result.Count ? default(T) : result[pageOffset];
             }
             set { throw new NotSupportedException(); }
         }
