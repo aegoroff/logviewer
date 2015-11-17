@@ -145,10 +145,6 @@ namespace logviewer.engine
                     {
                         line = line.Convert(encoding, Encoding.UTF8);
                     }
-                    if (line == null)
-                    {
-                        break;
-                    }
                     if (this.filter != null && this.filter.Match(line))
                     {
                         continue;

@@ -356,12 +356,6 @@ namespace logviewer.tests
         }
 
         [Fact]
-        public void ReadNormalLogWin1251()
-        {
-            this.ReadNormalLogInternal(Encoding.GetEncoding("windows-1251"));
-        }
-
-        [Fact]
         public void ReadNotEmptyLogWithoutMessagesMatch()
         {
             this.ReadLogExpectations();
