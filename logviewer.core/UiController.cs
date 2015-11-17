@@ -54,6 +54,7 @@ namespace logviewer.core
         private readonly RegexOptions options;
         private readonly IKernel kernel;
         private readonly TaskScheduler uiSyncContext;
+        public event EventHandler<EventArgs> ReadCompleted;
 
         #endregion
 
@@ -469,6 +470,7 @@ namespace logviewer.core
 
             this.ShowLogPageStatistic();
             this.ShowElapsedTime();
+            this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
         }
 
         private DateTime SelectDateUsingFunc(string func)
