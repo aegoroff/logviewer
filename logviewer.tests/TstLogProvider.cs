@@ -20,6 +20,7 @@ namespace logviewer.tests
         private readonly LogStore store;
         private static readonly string dbPath = Path.GetTempFileName();
         private readonly LogProvider provider;
+        private readonly LogReader reader;
 
         public TstLogProvider()
         {
@@ -27,27 +28,35 @@ namespace logviewer.tests
             var detector = new Mock<ICharsetDetector>();
             this.stream = new MemoryStream();
             var grokMatcher = new GrokMatcher(TstLogReader.NlogGrok);
-            var reader = new LogReader(detector.Object, grokMatcher);
+            this.reader = new LogReader(detector.Object, grokMatcher);
             this.store = new LogStore(schema: grokMatcher.MessageSchema);
 
+            this.provider = new LogProvider(this.store, settings);
+        }
+
+        private void FillStore()
+        {
             this.CreateStream();
-            this.stream.Seek(0, SeekOrigin.Begin);
+            this.ReadFromStream();
+        }
+
+        private void ReadFromStream()
+        {
             long ix = 0;
-            Action<LogMessage> onRead = delegate (LogMessage message)
+            Action<LogMessage> onRead = delegate(LogMessage message)
             {
                 message.Ix = ix++;
                 this.store.AddMessage(message);
             };
 
-            reader.Read(this.stream, 0, onRead, () => true);
-
-            this.provider = new LogProvider(this.store, settings);
+            this.reader.Read(this.stream, 0, onRead, () => true);
         }
 
         private void CreateStream(string data = TstLogReader.MessageExamples)
         {
             var buffer = Encoding.UTF8.GetBytes(data);
             this.stream.Write(buffer, 0, buffer.Length);
+            this.stream.Seek(0, SeekOrigin.Begin);
         }
 
         public void Dispose()
@@ -60,11 +69,14 @@ namespace logviewer.tests
             }
         }
 
-        public static IEnumerable<object[]> FilterCount => new[]
+        public static IEnumerable<object[]> FilterCases => new[]
         {
             new object[] { new MessageFilter(), 2  },
             new object[] { new MessageFilter { Max = LogLevel.Info }, 1  },
             new object[] { new MessageFilter { Min = LogLevel.Error }, 1  },
+            new object[] { new MessageFilter { Filter = "body 1" }, 1  },
+            new object[] { new MessageFilter { Filter = @"body\s+(\d).*", UseRegexp = true }, 2  },
+            new object[] { new MessageFilter { Filter = @"body\s+(\d).*", UseRegexp = false }, 0  },
             new object[] { new MessageFilter { Max = LogLevel.Debug }, 0  },
             new object[] { new MessageFilter { Min = LogLevel.Fatal }, 0  },
             new object[] { new MessageFilter { Start = DateTime.Parse("2008-12-27 19:40") }, 1  },
@@ -73,16 +85,27 @@ namespace logviewer.tests
             new object[] { new MessageFilter { Finish = new DateTime(2000, 1, 1) }, 0  },
         };
 
-        [Theory, MemberData("FilterCount")]
+        [Theory, MemberData("FilterCases")]
         public void FetchCount(MessageFilter filter, int expectation)
         {
+            this.FillStore();
             this.provider.Filter = filter;
             this.provider.FetchCount().Should().Be(expectation);
+        }
+
+        [Theory, MemberData("FilterCases")]
+        public void FetchRangeFiltered(MessageFilter filter, int expectation)
+        {
+            this.FillStore();
+            this.provider.Filter = filter;
+            var result = this.provider.FetchRange(0, 2);
+            result.Count.Should().Be(expectation);
         }
 
         [Fact]
         public void FetchLimit()
         {
+            this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(0, 1);
             result.Count.Should().Be(1);
@@ -92,6 +115,7 @@ namespace logviewer.tests
         [Fact]
         public void FetchNotZeroOffset()
         {
+            this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(1, 2);
             result.Count.Should().Be(1);
@@ -101,6 +125,7 @@ namespace logviewer.tests
         [Fact]
         public void FetchAll()
         {
+            this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(0, 2);
             result.Count.Should().Be(2);
@@ -111,6 +136,7 @@ namespace logviewer.tests
         [Fact]
         public void FetchFilterLevelMin()
         {
+            this.FillStore();
             this.provider.Filter = new MessageFilter { Min = LogLevel.Error };
             var result = this.provider.FetchRange(0, 2);
             result.Count.Should().Be(1);
@@ -120,10 +146,23 @@ namespace logviewer.tests
         [Fact]
         public void FetchFilterLevelMax()
         {
+            this.FillStore();
             this.provider.Filter = new MessageFilter { Max = LogLevel.Info };
             var result = this.provider.FetchRange(0, 2);
             result.Count.Should().Be(1);
             result[0].Should().MatchRegex("message body 1");
+        }
+
+        [Fact]
+        public void FetchWithoutBody()
+        {
+            this.CreateStream("2008-12-27 19:31:47,250 [4688] INFO h1\n2008-12-27 19:40:11,906 [5272] ERROR h2");
+            this.ReadFromStream();
+            this.provider.Filter = new MessageFilter();
+            var result = this.provider.FetchRange(0, 2);
+            result.Count.Should().Be(2);
+            result[0].Should().NotMatchRegex("message body 1");
+            result[1].Should().NotMatchRegex("message body 2");
         }
     }
 }
