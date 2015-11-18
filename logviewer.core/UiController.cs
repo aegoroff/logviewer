@@ -324,7 +324,7 @@ namespace logviewer.core
             }
 
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
-            this.ResetLogStatistic();
+            this.ChangeTotalOnUi("0");
 
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
             if (this.store != null && !append)
@@ -466,25 +466,6 @@ namespace logviewer.core
 
             this.viewModel.UiControlsEnabled = true;
 
-            this.ShowLogPageStatistic();
-            this.ShowElapsedTime();
-            this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
-        }
-
-        private DateTime SelectDateUsingFunc(string func)
-        {
-            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
-        }
-
-        private void ShowElapsedTime()
-        {
-            this.totalReadTimeWatch.Stop();
-            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
-            this.viewModel.LogProgressText = text;
-        }
-
-        private void ShowLogPageStatistic()
-        {
             this.viewModel.TotalMessages = ToHumanReadableString((ulong) this.TotalMessages);
             this.viewModel.ToDisplayMessages = ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount());
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
@@ -495,6 +476,15 @@ namespace logviewer.core
                 this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal)
                 );
+            this.totalReadTimeWatch.Stop();
+            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
+            this.viewModel.LogProgressText = text;
+            this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
+        }
+
+        private DateTime SelectDateUsingFunc(string func)
+        {
+            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
         }
 
         private static string ToHumanReadableString(ulong value)
@@ -524,11 +514,6 @@ namespace logviewer.core
             this.viewModel.TotalMessages = total;
             this.viewModel.ToDisplayMessages = "0";
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
-        }
-
-        private void ResetLogStatistic()
-        {
-            this.ChangeTotalOnUi("0");
         }
 
         public void CancelReading()
