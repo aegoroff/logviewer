@@ -432,11 +432,16 @@ namespace logviewer.core
         /// </summary>
         public void CleanUpPages()
         {
+            // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating
             var keys = new List<int>(this.pageTouchTimes.Keys);
+
+            // Performance reason. Thanks dotTrace from JetBrains :)
+            var now = DateTime.Now;
             foreach (var key in keys)
             {
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                if (key != 0 && (DateTime.Now - this.pageTouchTimes[key]).TotalMilliseconds > this.PageTimeoutMilliseconds)
+                DateTime lastUsed;
+                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out lastUsed) && (now - lastUsed).TotalMilliseconds > this.PageTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);
