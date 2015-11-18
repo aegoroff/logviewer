@@ -461,10 +461,6 @@ namespace logviewer.core
                 UseRegexp = this.viewModel.UseRegularExpressions,
                 Reverse = this.viewModel.SortingOrder == 0
             };
-            this.viewModel.Provider.Store = this.store;
-            this.viewModel.Datasource.Clear();
-
-            this.viewModel.UiControlsEnabled = true;
 
             this.viewModel.TotalMessages = ToHumanReadableString((ulong) this.TotalMessages);
             this.viewModel.ToDisplayMessages = ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount());
@@ -479,6 +475,10 @@ namespace logviewer.core
             this.totalReadTimeWatch.Stop();
             var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
             this.viewModel.LogProgressText = text;
+
+            this.viewModel.Provider.Store = this.store;
+            this.viewModel.Datasource.Clear();
+            this.viewModel.UiControlsEnabled = true;
             this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
         }
 
