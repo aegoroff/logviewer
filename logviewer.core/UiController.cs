@@ -52,7 +52,6 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
-        private readonly IKernel kernel;
         private readonly TaskScheduler uiSyncContext;
         public event EventHandler<EventArgs> ReadCompleted;
 
@@ -66,7 +65,6 @@ namespace logviewer.core
             this.viewModel = viewModel;
             this.prevInput = DateTime.Now;
             this.options = options;
-            this.kernel = new StandardKernel(new CoreModule());
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
             this.uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
         }
@@ -637,7 +635,6 @@ namespace logviewer.core
             finally
             {
                 this.store.Do(logStore => SafeRunner.Run(logStore.Dispose));
-                this.kernel.Dispose();
             }
         }
     }
