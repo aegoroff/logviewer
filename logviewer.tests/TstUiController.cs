@@ -143,66 +143,6 @@ namespace logviewer.tests
             this.controller.Store.CountMessages().Should().Be(4);
         }
         /*
-        [Theory]
-        [InlineData((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples + "\n2008-12-27 19:42:11,906 [5272] WARN ", 1)]
-        [InlineData((int)LogLevel.Warn, (int)LogLevel.Warn, MessageExamples, 0)]
-        public void MaxAndMaxFilter(int min, int max, string msg, int count)
-        {
-            this.ReadLogExpectations();
-            
-            File.WriteAllText(TestPath, msg);
-            this.controller.MinFilter(min);
-            this.controller.MaxFilter(max);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(count);
-        }
-
-        [Theory]
-        [InlineData(LogLevel.Fatal, 2)]
-        [InlineData(LogLevel.Error, 2)]
-        [InlineData(LogLevel.Warn, 1)]
-        [InlineData(LogLevel.Info, 1)]
-        [InlineData(LogLevel.Debug, 0)]
-        [InlineData(LogLevel.Trace, 0)]
-        public void MaxFilter(LogLevel filter, int c)
-        {
-            File.WriteAllText(TestPath, MessageExamples);
-
-            this.ReadLogExpectations();
-
-            this.controller.MaxFilter((int)filter);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(c);
-        }
-
-        [Theory, MemberData("MaxDates")]
-        public void MaxDate(DateTime filter, int c)
-        {
-            File.WriteAllText(TestPath, MessageExamples);
-
-            this.ReadLogExpectations();
-
-            this.controller.MaxDate(filter);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(c);
-        }
-
-        [Theory, MemberData("MinDates")]
-        public void MinDate(DateTime filter, int c)
-        {
-            File.WriteAllText(TestPath, MessageExamples);
-
-            this.ReadLogExpectations();
-
-            this.controller.MinDate(filter);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(c);
-        }
-
         public static IEnumerable<object[]> MaxDates => new[]
         {
             new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
@@ -216,25 +156,6 @@ namespace logviewer.tests
             new object[] { new DateTime(2008, 12, 27, 19, 52, 0, DateTimeKind.Utc), 0 },
             new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 2 }
         };
-
-        [Theory]
-        [InlineData(LogLevel.Fatal, 0)]
-        [InlineData(LogLevel.Error, 1)]
-        [InlineData(LogLevel.Warn, 1)]
-        [InlineData(LogLevel.Info, 2)]
-        [InlineData(LogLevel.Debug, 2)]
-        [InlineData(LogLevel.Trace, 2)]
-        public void MinFilter(LogLevel filter, int c)
-        {
-            File.WriteAllText(TestPath, MessageExamples);
-
-            this.ReadLogExpectations();
-
-            this.controller.MinFilter((int)filter);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(c);
-        }
 
         [Fact]
         public void ExportRtfFail()
@@ -255,25 +176,6 @@ namespace logviewer.tests
             this.viewModel.Setup(v => v.SaveRtf()); // 1
             this.controller.ExportToRtf();
             this.viewModel.Verify();
-        }
-
-        [Theory]
-        [InlineData(".*5272.*", 1, true)]
-        [InlineData(".*ERROR.*", 1, true)]
-        [InlineData(".*message body 2.*", 1, true)]
-        [InlineData("t[", 0, true)]
-        [InlineData("message body 2", 1, false)]
-        [InlineData("^(?!.*message body 2).*", 1, true)]
-        public void FilterText(string filter, int messages, bool useRegexp)
-        {
-            this.ReadLogExpectations();
-
-            File.WriteAllText(TestPath, MessageExamples);
-            this.controller.TextFilter(filter);
-            this.controller.UserRegexp(useRegexp);
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(messages);
         }
 
         [Fact]
@@ -372,33 +274,6 @@ namespace logviewer.tests
             this.controller.StartReadLog();
             this.WaitReadingComplete();
             this.controller.MessagesCount.Should().Be(2);
-        }
-
-        [Fact]
-        public void TotalPagesNoMessages()
-        {
-            this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-
-            this.controller.TotalPages.Should().Be(1);
-        }
-
-        [Theory]
-        [InlineData(10, 1)]
-        [InlineData(60, 2)]
-        [InlineData(100, 2)]
-        public void PagingTests(int messages, int pages)
-        {
-            var sb = new StringBuilder();
-            for (var i = 0; i < messages; i++)
-            {
-                sb.AppendLine(MessageExamples);
-            }
-            this.ReadLogExpectations();
-
-            File.WriteAllText(TestPath, sb.ToString());
-            this.controller.StartReadLog();
-            this.WaitReadingComplete();
-            this.controller.TotalPages.Should().Be(pages);
         }
 
         [Theory]
