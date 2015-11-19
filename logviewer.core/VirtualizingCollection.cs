@@ -124,7 +124,7 @@ namespace logviewer.core
                 // determine which page and offset within page
                 var pageIndex = index / this.PageSize;
                 var pageOffset = index % this.PageSize;
-                Trace.WriteLine("ix: " + index + " px: " + pageIndex + " po: " + pageOffset);
+                //Trace.WriteLine("ix: " + index + " px: " + pageIndex + " po: " + pageOffset);
 
                 // request primary page
                 this.RequestPage(pageIndex);
