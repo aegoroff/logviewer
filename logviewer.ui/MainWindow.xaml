@@ -242,7 +242,7 @@
             Style="{DynamicResource LogControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch" logviewer:RichTextBoxHelper.DocumentRtf="{Binding}" />
+                    <xctk:RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch" Text="{Binding Mode=OneTime}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

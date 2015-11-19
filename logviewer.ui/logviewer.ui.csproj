@@ -121,7 +121,6 @@
       <DependentUpon>LogParseTemplateControl.cs</DependentUpon>
     </Compile>
     <Compile Include="LogviewerCommands.cs" />
-    <Compile Include="RichTextBoxHelper.cs" />
     <Compile Include="SettingsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
