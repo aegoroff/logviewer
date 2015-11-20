@@ -2,7 +2,6 @@
 // Created at: 10.11.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -78,6 +77,12 @@ namespace logviewer.core
             this.OnCollectionChanged(e);
         }
 
+        private void FireCollectionAdd()
+        {
+            var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add);
+            this.OnCollectionChanged(e);
+        }
+
         #endregion
 
         #region INotifyPropertyChanged
@@ -148,6 +153,7 @@ namespace logviewer.core
                 this.Count = (int)t.Result;
                 this.IsLoading = false;
                 this.FireCollectionReset();
+                //this.FireCollectionAdd();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 
@@ -165,6 +171,18 @@ namespace logviewer.core
                 this.PopulatePage(index, t.Result);
                 this.IsLoading = false;
                 this.FireCollectionReset();
+            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+        }
+
+        protected override void LoadCurrent(long offset)
+        {
+            this.IsLoading = true;
+
+            Task<T>.Factory.StartNew(()=> this.FetchSingle(offset)).ContinueWith(delegate (Task<T> t)
+            {
+                this.Current = t.Result;
+                this.IsLoading = false;
+                this.FireCollectionAdd();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 

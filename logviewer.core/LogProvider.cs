@@ -44,6 +44,16 @@ namespace logviewer.core
             return result;
         }
 
+        public string FetchSingle(long offset)
+        {
+            var result = string.Empty;
+            this.Store?.ReadMessages(1, message => result = this.CreateRtf(message), () => true, this.Filter.Start,
+                this.Filter.Finish, offset,
+                this.Filter.Reverse,
+                this.Filter.Min, this.Filter.Max, this.Filter.Filter, this.Filter.UseRegexp);
+            return result;
+        }
+
         private string CreateRtf(LogMessage message)
         {
             var doc = new RtfDocument();
