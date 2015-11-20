@@ -14,7 +14,7 @@ using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public class MainViewModel : IViewModel
+    public sealed class MainViewModel : IViewModel, IDisposable
     {
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
@@ -279,9 +279,14 @@ namespace logviewer.ui
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            this.Datasource.Dispose();
         }
     }
 
