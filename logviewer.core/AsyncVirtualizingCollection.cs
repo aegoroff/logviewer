@@ -15,10 +15,8 @@ namespace logviewer.core
     /// Derived VirtualizatingCollection, performing loading asychronously.
     /// </summary>
     /// <typeparam name="T">The type of items in the collection</typeparam>
-    public class AsyncVirtualizingCollection<T> : VirtualizingCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
+    public class AsyncVirtualizingCollection<T> : VirtualizingCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable
     {
-        #region Constructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncVirtualizingCollection&lt;T&gt;"/> class.
         /// </summary>
@@ -49,9 +47,8 @@ namespace logviewer.core
         {
         }
 
-        #endregion
-
         private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+        readonly SemaphoreSlim semaphore = new SemaphoreSlim(3, 3);
 
         #region INotifyCollectionChanged
 
@@ -158,10 +155,15 @@ namespace logviewer.core
         protected override void LoadPage(int index)
         {
             this.IsLoading = true;
-            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(index));
+            var task = Task<IList<T>>.Factory.StartNew(() =>
+            {
+                this.semaphore.Wait();
+                return this.FetchPage(index);
+            });
 
             task.ContinueWith(delegate (Task<IList<T>> t)
             {
+                this.semaphore.Release();
                 this.PopulatePage(index, t.Result);
                 this.IsLoading = false;
                 this.FireCollectionReset();
@@ -169,5 +171,10 @@ namespace logviewer.core
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            this.semaphore.Dispose();
+        }
     }
 }
