@@ -128,8 +128,8 @@ namespace logviewer.core
         {
             get
             {
-                this.LoadCurrent(index);
-                return this.current;
+                //this.LoadCurrent(index);
+                //return this.current;
                 
                 // determine which page and offset within page
                 var pageIndex = index / this.PageSize;
@@ -173,17 +173,6 @@ namespace logviewer.core
 
         #endregion
 
-        #region IEnumerator<T>, IEnumerator
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <remarks>
-        ///     This method should be avoided on large collections due to poor performance.
-        /// </remarks>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
-        /// </returns>
         public IEnumerator<T> GetEnumerator()
         {
             for (var i = 0; i < this.Count; i++)
@@ -192,28 +181,11 @@ namespace logviewer.core
             }
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
 
-        #endregion
-
-        #region Add
-
-        /// <summary>
-        ///     Not supported.
-        /// </summary>
-        /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
-        /// </exception>
         public void Add(T item)
         {
             throw new NotSupportedException();
@@ -224,30 +196,15 @@ namespace logviewer.core
             throw new NotSupportedException();
         }
 
-        #endregion
-
-        #region Contains
-
         bool IList.Contains(object value)
         {
             return this.Contains((T) value);
         }
 
-        /// <summary>
-        ///     Not supported.
-        /// </summary>
-        /// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <returns>
-        ///     Always false.
-        /// </returns>
         public bool Contains(T item)
         {
             return false;
         }
-
-        #endregion
-
-        #region Clear
 
         /// <summary>
         /// Removes all elements from collection <see cref="T:System.Collections.Generic.ICollection`1"/>.
@@ -259,42 +216,16 @@ namespace logviewer.core
             this.pageTouchTimes.Clear();
         }
 
-        #endregion
-
-        #region IndexOf
-
         int IList.IndexOf(object value)
         {
             return this.IndexOf((T) value);
         }
 
-        /// <summary>
-        ///     Not supported
-        /// </summary>
-        /// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.IList`1" />.</param>
-        /// <returns>
-        ///     Always -1.
-        /// </returns>
         public int IndexOf(T item)
         {
             return -1;
         }
 
-        #endregion
-
-        #region Insert
-
-        /// <summary>
-        ///     Not supported.
-        /// </summary>
-        /// <param name="index">The zero-based index at which <paramref name="item" /> should be inserted.</param>
-        /// <param name="item">The object to insert into the <see cref="T:System.Collections.Generic.IList`1" />.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="index" /> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1" />.
-        /// </exception>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.IList`1" /> is read-only.
-        /// </exception>
         public void Insert(int index, T item)
         {
             throw new NotSupportedException();
@@ -305,20 +236,6 @@ namespace logviewer.core
             this.Insert(index, (T) value);
         }
 
-        #endregion
-
-        #region Remove
-
-        /// <summary>
-        ///     Not supported.
-        /// </summary>
-        /// <param name="index">The zero-based index of the item to remove.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="index" /> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1" />.
-        /// </exception>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.IList`1" /> is read-only.
-        /// </exception>
         public void RemoveAt(int index)
         {
             throw new NotSupportedException();
@@ -329,52 +246,11 @@ namespace logviewer.core
             throw new NotSupportedException();
         }
 
-        /// <summary>
-        ///     Not supported.
-        /// </summary>
-        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <returns>
-        ///     true if <paramref name="item" /> was successfully removed from the
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if
-        ///     <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </returns>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
-        /// </exception>
         public bool Remove(T item)
         {
             throw new NotSupportedException();
         }
 
-        #endregion
-
-        #region CopyTo
-
-        /// <summary>
-        ///     Not supported.
-        /// </summary>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied
-        ///     from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have
-        ///     zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
-        /// <exception cref="T:System.ArgumentNullException">
-        ///     <paramref name="array" /> is null.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="arrayIndex" /> is less than 0.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentException">
-        ///     <paramref name="array" /> is multidimensional.
-        ///     -or-
-        ///     <paramref name="arrayIndex" /> is equal to or greater than the length of <paramref name="array" />.
-        ///     -or-
-        ///     The number of elements in the source <see cref="T:System.Collections.Generic.ICollection`1" /> is greater than the
-        ///     available space from <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.
-        ///     -or-
-        ///     Type <paramref name="T" /> cannot be cast automatically to the type of the destination <paramref name="array" />.
-        /// </exception>
         public void CopyTo(T[] array, int arrayIndex)
         {
             throw new NotSupportedException();
@@ -385,56 +261,19 @@ namespace logviewer.core
             throw new NotSupportedException();
         }
 
-        #endregion
-
-        #region Misc
-
-        /// <summary>
-        ///     Gets an object that can be used to synchronize access to the <see cref="T:System.Collections.ICollection" />.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     An object that can be used to synchronize access to the <see cref="T:System.Collections.ICollection" />.
-        /// </returns>
         public object SyncRoot => this;
-
-        /// <summary>
-        ///     Gets a value indicating whether access to the <see cref="T:System.Collections.ICollection" /> is synchronized
-        ///     (thread safe).
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     Always false.
-        /// </returns>
         public bool IsSynchronized => false;
-
-        /// <summary>
-        ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     Always true.
-        /// </returns>
         public bool IsReadOnly => true;
 
-        /// <summary>
-        ///     Gets a value indicating whether the <see cref="T:System.Collections.IList" /> has a fixed size.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     Always false.
-        /// </returns>
         public bool IsFixedSize => false;
+
+        #endregion
 
         protected T Current
         {
             get { return this.current; }
             set { this.current = value; }
         }
-
-        #endregion
-
-        #endregion
 
         #region Paging
 

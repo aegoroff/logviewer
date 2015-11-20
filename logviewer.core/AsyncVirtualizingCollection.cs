@@ -2,6 +2,7 @@
 // Created at: 10.11.2015
 // © 2012-2015 Alexander Egorov
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -17,7 +18,7 @@ namespace logviewer.core
     /// <typeparam name="T">The type of items in the collection</typeparam>
     public class AsyncVirtualizingCollection<T> : VirtualizingCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        private IDictionary<int, T> cache = new ConcurrentDictionary<int, T>(); 
+        private readonly IDictionary<int, T> cache = new ConcurrentDictionary<int, T>(); 
         
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncVirtualizingCollection&lt;T&gt;"/> class.
@@ -49,9 +50,9 @@ namespace logviewer.core
         {
         }
 
-        private const int MaxSemaphoreCount = 20;
+        private static readonly int maxSemaphoreCount = Environment.ProcessorCount * 2;
         private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(MaxSemaphoreCount, MaxSemaphoreCount);
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphoreCount, maxSemaphoreCount);
 
         #region INotifyCollectionChanged
 
@@ -164,7 +165,7 @@ namespace logviewer.core
         /// <param name="index">The index.</param>
         protected override void LoadPage(int index)
         {
-            this.IsLoading = true;
+            //this.IsLoading = true;
             var task = Task<IList<T>>.Factory.StartNew(() =>
             {
                 this.semaphore.Wait();
@@ -175,8 +176,9 @@ namespace logviewer.core
             {
                 this.semaphore.Release();
                 this.PopulatePage(index, t.Result);
-                this.IsLoading = false;
-                this.FireCollectionReset();
+                //this.IsLoading = false;
+                var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, t.Result);
+                this.OnCollectionChanged(e);
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
 
             task.ContinueWith(obj => this.semaphore.Release(), CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, TaskScheduler.Default);
