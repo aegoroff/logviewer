@@ -2,7 +2,6 @@
 // Created at: 10.11.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -47,9 +46,7 @@ namespace logviewer.core
         {
         }
 
-        private static readonly int maxSemaphoreCount = Environment.ProcessorCount * 2;
         private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphoreCount, maxSemaphoreCount);
 
         #region INotifyCollectionChanged
 
@@ -73,12 +70,6 @@ namespace logviewer.core
         private void FireCollectionReset()
         {
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-            this.OnCollectionChanged(e);
-        }
-
-        private void FireCollectionAdd()
-        {
-            var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add);
             this.OnCollectionChanged(e);
         }
 
@@ -161,31 +152,16 @@ namespace logviewer.core
         /// <param name="index">The index.</param>
         protected override void LoadPage(int index)
         {
-            var task = Task<IList<T>>.Factory.StartNew(() =>
-            {
-                this.semaphore.Wait();
-                return this.FetchPage(index);
-            });
+            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(index));
 
             task.ContinueWith(delegate (Task<IList<T>> t)
             {
-                this.semaphore.Release();
                 this.PopulatePage(index, t.Result);
                 var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, t.Result);
                 this.OnCollectionChanged(e);
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
-
-            task.ContinueWith(obj => this.semaphore.Release(), CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, TaskScheduler.Default);
         }
 
         #endregion
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                this.semaphore.Dispose();
-            }
-        }
     }
 }

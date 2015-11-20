@@ -5,7 +5,9 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using logviewer.core;
 using MenuItem = Fluent.MenuItem;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
@@ -115,6 +117,36 @@ namespace logviewer.ui
                 dlg.ShowDialog();
             }
             ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
+        }
+
+        private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            var panel = FindVisualChild<VirtualizingStackPanel>(this.LogControlStyle);
+            if (this.LogControlStyle.Items.Count > 0 && panel != null)
+            {
+                int offset = panel.Orientation == Orientation.Horizontal ? (int)panel.HorizontalOffset : (int)panel.VerticalOffset;
+                int limit = panel.Orientation == Orientation.Horizontal ? (int)panel.ViewportWidth : (int)panel.ViewportHeight;
+            }
+        }
+
+        private static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        {
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+
+                var visualChild = child as T;
+                if (visualChild != null)
+                {
+                    return visualChild;
+                }
+                child = FindVisualChild<T>(child);
+                if (child != null)
+                {
+                    return (T)child;
+                }
+            }
+            return null;
         }
     }
 }

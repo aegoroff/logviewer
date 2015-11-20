@@ -26,6 +26,7 @@
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
             <Setter Property="VirtualizingStackPanel.IsContainerVirtualizable" Value="True"/>
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
             <Setter Property="ItemsSource" Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsLoading}" Value="True">
@@ -235,12 +236,16 @@
         </StatusBar>
 
         <ListBox 
+            x:Name="LogControlStyle"
             DockPanel.Dock="Top" 
             Height="Auto" 
-            Margin="5" 
-            BorderThickness="0"
+            Margin="5"
+            BorderThickness="0" 
+            ScrollViewer.ScrollChanged="ScrollViewer_OnScrollChanged"
             IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
-            Style="{DynamicResource LogControlStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+            Style="{DynamicResource LogControlStyle}" 
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+            HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <xctk:RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch" Text="{Binding Mode=OneTime}" />
