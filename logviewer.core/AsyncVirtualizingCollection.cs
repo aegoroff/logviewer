@@ -3,7 +3,6 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -18,8 +17,6 @@ namespace logviewer.core
     /// <typeparam name="T">The type of items in the collection</typeparam>
     public class AsyncVirtualizingCollection<T> : VirtualizingCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        private readonly IDictionary<int, T> cache = new ConcurrentDictionary<int, T>(); 
-        
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncVirtualizingCollection&lt;T&gt;"/> class.
         /// </summary>
@@ -155,7 +152,6 @@ namespace logviewer.core
                 this.Count = (int)t.Result;
                 this.IsLoading = false;
                 this.FireCollectionReset();
-                //this.FireCollectionAdd();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
 
@@ -165,7 +161,6 @@ namespace logviewer.core
         /// <param name="index">The index.</param>
         protected override void LoadPage(int index)
         {
-            //this.IsLoading = true;
             var task = Task<IList<T>>.Factory.StartNew(() =>
             {
                 this.semaphore.Wait();
@@ -176,37 +171,8 @@ namespace logviewer.core
             {
                 this.semaphore.Release();
                 this.PopulatePage(index, t.Result);
-                //this.IsLoading = false;
                 var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, t.Result);
                 this.OnCollectionChanged(e);
-            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
-
-            task.ContinueWith(obj => this.semaphore.Release(), CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, TaskScheduler.Default);
-        }
-
-        protected override void LoadCurrent(long offset)
-        {
-            var cacheKey = (int) offset;
-            if (this.cache.ContainsKey(cacheKey))
-            {
-                this.Current = this.cache[cacheKey];
-                return;
-            }
-            this.IsLoading = true;
-
-            var task = Task<T>.Factory.StartNew(() =>
-            {
-                this.semaphore.Wait();
-                return this.FetchSingle(offset);
-            });
-
-            task.ContinueWith(delegate (Task<T> t)
-            {
-                this.semaphore.Release();
-                this.Current = t.Result;
-                this.cache.Add(cacheKey, t.Result);
-                this.IsLoading = false;
-                this.FireCollectionAdd();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
 
             task.ContinueWith(obj => this.semaphore.Release(), CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, TaskScheduler.Default);

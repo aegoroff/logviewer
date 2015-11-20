@@ -26,7 +26,5 @@ namespace logviewer.core
         /// <param name="limit">The number of items to fetch.</param>
         /// <returns></returns>
         IList<T> FetchRange(long offset, int limit);
-
-        T FetchSingle(long offset);
     }
 }

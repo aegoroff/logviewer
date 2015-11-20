@@ -112,13 +112,6 @@ namespace logviewer.core
 
         #region Indexer
 
-        private T current;
-
-        protected virtual void LoadCurrent(long offset)
-        {
-            this.current = this.FetchSingle(offset);
-        }
-
         /// <summary>
         ///     Gets the item at the specified index. This property will fetch
         ///     the corresponding page from the IItemsProvider if required.
@@ -128,9 +121,6 @@ namespace logviewer.core
         {
             get
             {
-                //this.LoadCurrent(index);
-                //return this.current;
-                
                 // determine which page and offset within page
                 var pageIndex = index / this.PageSize;
                 var pageOffset = index % this.PageSize;
@@ -269,12 +259,6 @@ namespace logviewer.core
 
         #endregion
 
-        protected T Current
-        {
-            get { return this.current; }
-            set { this.current = value; }
-        }
-
         #region Paging
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
@@ -372,11 +356,6 @@ namespace logviewer.core
         protected IList<T> FetchPage(int pageIndex)
         {
             return this.ItemsProvider.FetchRange(pageIndex * this.PageSize, this.PageSize);
-        }
-
-        protected T FetchSingle(long offset)
-        {
-            return this.ItemsProvider.FetchSingle(offset);
         }
 
         /// <summary>
