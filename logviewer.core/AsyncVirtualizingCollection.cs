@@ -48,7 +48,7 @@ namespace logviewer.core
         }
 
         private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
-        readonly SemaphoreSlim semaphore = new SemaphoreSlim(3, 3);
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(3, 3);
 
         #region INotifyCollectionChanged
 
