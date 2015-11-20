@@ -44,6 +44,8 @@ namespace logviewer.core
         private LogStore store;
         private long totalMessages;
         private readonly IViewModel viewModel;
+        private int currentCollectionCount;
+        private const int CountStep = 1000;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -82,7 +84,26 @@ namespace logviewer.core
                 case nameof(this.viewModel.UseRegularExpressions):
                     this.StartReadingLogOnTextFilterChange();
                     break;
+                case nameof(this.viewModel.LastVisible):
+                    this.UpdateCount();
+                    break;
             }
+        }
+
+        private void UpdateCount()
+        {
+            if (this.viewModel.LastVisible == this.totalMessages || this.viewModel.LastVisible < this.currentCollectionCount)
+            {
+                return;
+            }
+            if (this.totalMessages - this.viewModel.LastVisible < CountStep)
+            {
+                this.currentCollectionCount = (int) this.totalMessages;
+                this.viewModel.Datasource.LoadCount(this.currentCollectionCount);
+                return;
+            }
+            this.currentCollectionCount = this.viewModel.LastVisible + CountStep;
+            this.viewModel.Datasource.LoadCount(this.currentCollectionCount);
         }
 
         private void SetCurrentParsingTemplate()
@@ -213,10 +234,10 @@ namespace logviewer.core
             this.cancellation = new CancellationTokenSource();
             var task = Task.Factory.StartNew(this.DoLogReadingTask, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            Action<Task> onSuccess = obj => this.OnComplete(task, () => {});
+            Action<Task> onSuccess = obj => this.OnComplete(task);
             Action<Task> onFailure = delegate
             {
-                this.OnComplete(task, () => this.viewModel.UiControlsEnabled = true);
+                this.OnComplete(task);
             };
 
             task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.uiSyncContext);
@@ -226,11 +247,12 @@ namespace logviewer.core
             this.runningTasks.Add(task, this.viewModel.LogPath);
         }
 
-        private void OnComplete(Task task, Action action)
+        private void OnComplete(Task task)
         {
             try
             {
-                action();
+                this.viewModel.Datasource.LoadCount(Math.Min((int)this.totalMessages, Math.Max(this.currentCollectionCount, CountStep)));
+                this.viewModel.UiControlsEnabled = true;
             }
             finally
             {
@@ -340,6 +362,7 @@ namespace logviewer.core
             if (!append)
             {
                 this.totalMessages = 0;
+                this.currentCollectionCount = 0;
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
             reader.CompilationStarted += this.OnCompilationStarted;
@@ -478,7 +501,6 @@ namespace logviewer.core
 
             this.viewModel.Provider.Store = this.store;
             this.viewModel.Datasource.Clear();
-            this.viewModel.UiControlsEnabled = true;
             this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
         }
 

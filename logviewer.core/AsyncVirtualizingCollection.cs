@@ -67,7 +67,7 @@ namespace logviewer.core
         /// <summary>
         /// Fires the collection reset event.
         /// </summary>
-        private void FireCollectionReset()
+        protected override void FireCollectionReset()
         {
             var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
             this.OnCollectionChanged(e);
@@ -129,22 +129,6 @@ namespace logviewer.core
         #endregion
 
         #region Load overrides
-
-        /// <summary>
-        /// Asynchronously loads the count of items.
-        /// </summary>
-        protected override void LoadCount()
-        {
-            this.Count = 0;
-            this.IsLoading = true;
-
-            Task<long>.Factory.StartNew(this.FetchCount).ContinueWith(delegate (Task<long> t)
-            {
-                this.Count = (int)t.Result;
-                this.IsLoading = false;
-                this.FireCollectionReset();
-            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
-        }
 
         /// <summary>
         /// Asynchronously loads the page.

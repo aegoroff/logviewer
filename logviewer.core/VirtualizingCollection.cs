@@ -83,9 +83,7 @@ namespace logviewer.core
 
         #region Count
 
-        private const int BadCount = -1;
-
-        private int count = BadCount;
+        private int count;
 
         /// <summary>
         ///     Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
@@ -99,13 +97,17 @@ namespace logviewer.core
         {
             get
             {
-                if (this.count == BadCount)
-                {
-                    this.LoadCount();
-                }
                 return this.count;
             }
-            protected set { this.count = value; }
+            private set
+            {
+                this.count = value;
+                this.FireCollectionReset();
+            }
+        }
+
+        protected virtual void FireCollectionReset()
+        {
         }
 
         #endregion
@@ -201,7 +203,6 @@ namespace logviewer.core
         /// </summary>
         public void Clear()
         {
-            this.count = BadCount;
             this.pages.Clear();
             this.pageTouchTimes.Clear();
         }
@@ -330,9 +331,9 @@ namespace logviewer.core
         /// <summary>
         ///     Loads the count of items.
         /// </summary>
-        protected virtual void LoadCount()
+        public virtual void LoadCount(int itemsCount)
         {
-            this.Count = (int)this.FetchCount();
+            this.Count = itemsCount;
         }
 
         /// <summary>
@@ -356,15 +357,6 @@ namespace logviewer.core
         protected IList<T> FetchPage(int pageIndex)
         {
             return this.ItemsProvider.FetchRange(pageIndex * this.PageSize, this.PageSize);
-        }
-
-        /// <summary>
-        ///     Fetches the count of itmes from the IItemsProvider.
-        /// </summary>
-        /// <returns></returns>
-        protected long FetchCount()
-        {
-            return this.ItemsProvider.FetchCount();
         }
 
         #endregion

@@ -122,11 +122,14 @@ namespace logviewer.ui
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var panel = FindVisualChild<VirtualizingStackPanel>(this.LogControlStyle);
-            if (this.LogControlStyle.Items.Count > 0 && panel != null)
+            if (this.LogControlStyle.Items.Count <= 0 || panel == null)
             {
-                int offset = panel.Orientation == Orientation.Horizontal ? (int)panel.HorizontalOffset : (int)panel.VerticalOffset;
-                int limit = panel.Orientation == Orientation.Horizontal ? (int)panel.ViewportWidth : (int)panel.ViewportHeight;
+                return;
             }
+            var offset = panel.Orientation == Orientation.Horizontal ? (int)panel.HorizontalOffset : (int)panel.VerticalOffset;
+            var limit = panel.Orientation == Orientation.Horizontal ? (int)panel.ViewportWidth : (int)panel.ViewportHeight;
+            MainViewModel.Current.FirstVisible = offset;
+            MainViewModel.Current.LastVisible = offset + limit;
         }
 
         private static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject

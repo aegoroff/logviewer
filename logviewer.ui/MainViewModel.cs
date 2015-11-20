@@ -19,8 +19,8 @@ namespace logviewer.ui
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
 
-        private const int PageTimeoutMilliseconds =30 * 1000;
-        private const int PageSize = 5000;
+        private const int PageTimeoutMilliseconds =60 * 1000;
+        private const int PageSize = 100;
 
         private string logPath;
         private DateTime to;
@@ -33,6 +33,8 @@ namespace logviewer.ui
         private string logProgressText;
         private string totalMessages;
         private string toDisplayMessages;
+        private int firstVisible;
+        private int lastVisible;
 
         private MainViewModel()
         {
@@ -179,6 +181,26 @@ namespace logviewer.ui
         public LogProvider Provider { get; }
 
         public VirtualizingCollection<string> Datasource { get; }
+
+        public int FirstVisible
+        {
+            get { return this.firstVisible; }
+            set
+            {
+                this.firstVisible = value;
+                this.OnPropertyChanged(nameof(this.FirstVisible));
+            }
+        }
+
+        public int LastVisible
+        {
+            get { return this.lastVisible; }
+            set
+            {
+                this.lastVisible = value;
+                this.OnPropertyChanged(nameof(this.LastVisible));
+            }
+        }
 
         public int LogProgress
         {
