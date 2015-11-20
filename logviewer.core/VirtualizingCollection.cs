@@ -21,7 +21,7 @@ namespace logviewer.core
     ///     data bound to a suitable ItemsControl.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
-    public class VirtualizingCollection<T> : IList<T>, IList
+    public class VirtualizingCollection<T> : IList<T>, IList, IDisposable
     {
         #region Constructors
 
@@ -530,5 +530,20 @@ namespace logviewer.core
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~VirtualizingCollection()
+        {
+            this.Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace logviewer.core
     /// Derived VirtualizatingCollection, performing loading asychronously.
     /// </summary>
     /// <typeparam name="T">The type of items in the collection</typeparam>
-    public class AsyncVirtualizingCollection<T> : VirtualizingCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, IDisposable
+    public class AsyncVirtualizingCollection<T> : VirtualizingCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncVirtualizingCollection&lt;T&gt;"/> class.
@@ -174,9 +174,12 @@ namespace logviewer.core
 
         #endregion
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            this.semaphore.Dispose();
+            if (disposing)
+            {
+                this.semaphore.Dispose();
+            }
         }
     }
 }
