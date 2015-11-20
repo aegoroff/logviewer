@@ -2,7 +2,6 @@
 // Created at: 10.11.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
