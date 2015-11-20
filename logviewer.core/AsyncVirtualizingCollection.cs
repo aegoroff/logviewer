@@ -168,6 +168,8 @@ namespace logviewer.core
                 this.IsLoading = false;
                 this.FireCollectionReset();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+
+            task.ContinueWith(obj => this.semaphore.Release(), CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, TaskScheduler.Default);
         }
 
         #endregion
