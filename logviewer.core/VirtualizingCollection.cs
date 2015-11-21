@@ -32,14 +32,14 @@ namespace logviewer.core
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageCacheTimeoutMilliseconds)
         {
             this.ItemsProvider = itemsProvider;
-            this.PageSize = pageSize;
+            this.pageSize = pageSize;
             this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
         }
 
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize)
         {
             this.ItemsProvider = itemsProvider;
-            this.PageSize = pageSize;
+            this.pageSize = pageSize;
         }
 
         public VirtualizingCollection(IItemsProvider<T> itemsProvider)
@@ -51,7 +51,11 @@ namespace logviewer.core
 
         public IItemsProvider<T> ItemsProvider { get; }
 
-        public int PageSize { get; } = 100;
+        public int PageSize
+        {
+            // ReSharper disable once ConvertPropertyToExpressionBody
+            get { return this.pageSize; }
+        }
 
         public long PageCacheTimeoutMilliseconds { get; } = 10000;
 
@@ -113,13 +117,22 @@ namespace logviewer.core
         /// <summary>
         /// First visible collection element
         /// </summary>
-        public int FirstVisible { get; set; }
+        // ReSharper disable once ConvertToAutoProperty
+        public int FirstVisible
+        {
+            get { return this.firstVisible; }
+            set { this.firstVisible = value; }
+        }
 
         /// <summary>
         /// Last visible collection element
         /// </summary>
-        public int LastVisible { get; set; }
-        
+        // ReSharper disable once ConvertToAutoProperty
+        public int LastVisible
+        {
+            get { return this.lastVisible; }
+            set { this.lastVisible = value; }
+        }
 
         #region IList<T>, IList
 
@@ -154,11 +167,11 @@ namespace logviewer.core
             get
             {
                 // determine which page and offset within page
-                var pageIndex = index / this.PageSize;
-                var pageOffset = index % this.PageSize;
+                var pageIndex = index / this.pageSize;
+                var pageOffset = index % this.pageSize;
 
                 // do not load invisible. Because WPF try to iterate all collection on Reset event
-                if (index >= this.FirstVisible && index <= this.LastVisible)
+                if (index >= this.firstVisible && index <= this.lastVisible)
                 {
                     // request primary page
                     this.RequestPage(pageIndex);
@@ -284,6 +297,9 @@ namespace logviewer.core
         private Dictionary<int, IList<T>> pages = new Dictionary<int, IList<T>>();
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
+        private readonly int pageSize = 100;
+        private int firstVisible;
+        private int lastVisible;
 
         /// <summary>
         ///     Cleans up any stale pages that have not been accessed in the period dictated by PageCacheTimeoutMilliseconds.
