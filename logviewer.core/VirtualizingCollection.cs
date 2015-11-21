@@ -105,13 +105,17 @@ namespace logviewer.core
 
         private void LoadPage(int pageIndex)
         {
+            this.IsLoading = true;
             var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(pageIndex));
 
             task.ContinueWith(delegate (Task<IList<T>> t)
             {
                 this.PopulatePage(pageIndex, t.Result);
                 this.FireCollectionReset();
+                this.IsLoading = false;
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+
+            task.ContinueWith(obj => this.IsLoading = false, CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, this.uiSyncContext);
         }
 
         /// <summary>
