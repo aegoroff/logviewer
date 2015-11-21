@@ -162,7 +162,6 @@ namespace logviewer.core
                     this.RequestPage(pageIndex - 1);
                 }
 
-                // remove stale pages
                 this.CleanUpPages();
 
                 // defensive check in case of async load
@@ -171,7 +170,6 @@ namespace logviewer.core
                 {
                     return default(T);
                 }
-                // return requested item
                 return pageOffset >= result.Count ? default(T) : result[pageOffset];
             }
             set { throw new NotSupportedException(); }
@@ -218,11 +216,9 @@ namespace logviewer.core
             return false;
         }
 
-        /// <summary>
-        /// Removes all elements from collection <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </summary>
         public void Clear()
         {
+            this.count = 0;
             this.pages.Clear();
             this.pageTouchTimes.Clear();
         }
