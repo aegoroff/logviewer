@@ -335,8 +335,8 @@ namespace logviewer.engine
 
         #region Constants and Fields
 
-        private IDictionary<string, long> integerProperties; 
-        private IDictionary<string, string> stringProperties; 
+        private Dictionary<string, long> integerProperties; 
+        private Dictionary<string, string> stringProperties; 
         private string body;
         private StringBuilder bodyBuilder;
         private string head;
