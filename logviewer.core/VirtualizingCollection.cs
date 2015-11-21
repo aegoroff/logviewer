@@ -5,7 +5,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace logviewer.core
 {
@@ -21,38 +25,23 @@ namespace logviewer.core
     ///     data bound to a suitable ItemsControl.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
-    public class VirtualizingCollection<T> : IList<T>, IList, IDisposable
+    public sealed class VirtualizingCollection<T> : IList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged
     {
         #region Constructors
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="VirtualizingCollection&lt;T&gt;" /> class.
-        /// </summary>
-        /// <param name="itemsProvider">The items provider.</param>
-        /// <param name="pageSize">Size of the page.</param>
-        /// <param name="pageTimeoutMilliseconds">The page timeout.</param>
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageTimeoutMilliseconds)
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageCacheTimeoutMilliseconds)
         {
             this.ItemsProvider = itemsProvider;
             this.PageSize = pageSize;
-            this.PageTimeoutMilliseconds = pageTimeoutMilliseconds;
+            this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="VirtualizingCollection&lt;T&gt;" /> class.
-        /// </summary>
-        /// <param name="itemsProvider">The items provider.</param>
-        /// <param name="pageSize">Size of the page.</param>
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize)
         {
             this.ItemsProvider = itemsProvider;
             this.PageSize = pageSize;
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="VirtualizingCollection&lt;T&gt;" /> class.
-        /// </summary>
-        /// <param name="itemsProvider">The items provider.</param>
         public VirtualizingCollection(IItemsProvider<T> itemsProvider)
         {
             this.ItemsProvider = itemsProvider;
@@ -60,24 +49,67 @@ namespace logviewer.core
 
         #endregion
 
-
-        /// <summary>
-        ///     Gets the items provider.
-        /// </summary>
-        /// <value>The items provider.</value>
         public IItemsProvider<T> ItemsProvider { get; }
 
-        /// <summary>
-        ///     Gets the size of the page.
-        /// </summary>
-        /// <value>The size of the page.</value>
         public int PageSize { get; } = 100;
 
-        /// <summary>
-        ///     Gets the page timeout.
-        /// </summary>
-        /// <value>The page timeout.</value>
-        public long PageTimeoutMilliseconds { get; } = 10000;
+        public long PageCacheTimeoutMilliseconds { get; } = 10000;
+
+        private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            this.CollectionChanged?.Invoke(this, e);
+        }
+
+        private void FireCollectionReset()
+        {
+            var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+            this.OnCollectionChanged(e);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            this.PropertyChanged?.Invoke(this, e);
+        }
+
+        private void FirePropertyChanged(string propertyName)
+        {
+            var e = new PropertyChangedEventArgs(propertyName);
+            this.OnPropertyChanged(e);
+        }
+
+        private bool isLoading;
+
+        public bool IsLoading
+        {
+            get
+            {
+                return this.isLoading;
+            }
+            set
+            {
+                this.isLoading = value;
+                this.FirePropertyChanged(nameof(this.IsLoading));
+            }
+        }
+
+        private void LoadPage(int index)
+        {
+            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(index));
+
+            task.ContinueWith(delegate (Task<IList<T>> t)
+            {
+                this.PopulatePage(index, t.Result);
+                var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, t.Result);
+                this.OnCollectionChanged(e);
+            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+        }
 
         #region IList<T>, IList
 
@@ -85,15 +117,7 @@ namespace logviewer.core
 
         private int count;
 
-        /// <summary>
-        ///     Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        ///     The first time this property is accessed, it will fetch the count from the IItemsProvider.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </returns>
-        public virtual int Count
+        public int Count
         {
             get
             {
@@ -104,10 +128,6 @@ namespace logviewer.core
                 this.count = value;
                 this.FireCollectionReset();
             }
-        }
-
-        protected virtual void FireCollectionReset()
-        {
         }
 
         #endregion
@@ -268,7 +288,7 @@ namespace logviewer.core
         private Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
 
         /// <summary>
-        ///     Cleans up any stale pages that have not been accessed in the period dictated by PageTimeoutMilliseconds.
+        ///     Cleans up any stale pages that have not been accessed in the period dictated by PageCacheTimeoutMilliseconds.
         /// </summary>
         public void CleanUpPages()
         {
@@ -281,7 +301,7 @@ namespace logviewer.core
             {
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
                 DateTime lastUsed;
-                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out lastUsed) && (now - lastUsed).TotalMilliseconds > this.PageTimeoutMilliseconds)
+                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out lastUsed) && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);
@@ -295,7 +315,7 @@ namespace logviewer.core
         /// </summary>
         /// <param name="pageIndex">Index of the page.</param>
         /// <param name="page">The page.</param>
-        protected virtual void PopulatePage(int pageIndex, IList<T> page)
+        private void PopulatePage(int pageIndex, IList<T> page)
         {
             Trace.WriteLine("Page populated: " + pageIndex);
             if (this.pages.ContainsKey(pageIndex))
@@ -309,7 +329,7 @@ namespace logviewer.core
         ///     and updating the page touch time.
         /// </summary>
         /// <param name="pageIndex">Index of the page.</param>
-        protected virtual void RequestPage(int pageIndex)
+        private void RequestPage(int pageIndex)
         {
             if (!this.pages.ContainsKey(pageIndex))
             {
@@ -326,54 +346,17 @@ namespace logviewer.core
 
         #endregion
 
-        #region Load methods
-
         /// <summary>
         ///     Loads the count of items.
         /// </summary>
-        public virtual void LoadCount(int itemsCount)
+        public void LoadCount(int itemsCount)
         {
             this.Count = itemsCount;
         }
 
-        /// <summary>
-        ///     Loads the page of items.
-        /// </summary>
-        /// <param name="pageIndex">Index of the page.</param>
-        protected virtual void LoadPage(int pageIndex)
-        {
-            this.PopulatePage(pageIndex, this.FetchPage(pageIndex));
-        }
-
-        #endregion
-
-        #region Fetch methods
-
-        /// <summary>
-        ///     Fetches the requested page from the IItemsProvider.
-        /// </summary>
-        /// <param name="pageIndex">Index of the page.</param>
-        /// <returns></returns>
-        protected IList<T> FetchPage(int pageIndex)
+        private IList<T> FetchPage(int pageIndex)
         {
             return this.ItemsProvider.FetchRange(pageIndex * this.PageSize, this.PageSize);
-        }
-
-        #endregion
-
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~VirtualizingCollection()
-        {
-            this.Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
         }
     }
 }

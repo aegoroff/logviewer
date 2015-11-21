@@ -486,6 +486,14 @@ namespace logviewer.core
             };
 
             this.viewModel.TotalMessages = ToHumanReadableString((ulong) this.TotalMessages);
+            
+            this.totalReadTimeWatch.Stop();
+            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
+            this.viewModel.LogProgressText = text;
+
+            this.viewModel.Provider.Store = this.store;
+            this.viewModel.Datasource.Clear();
+
             this.viewModel.ToDisplayMessages = ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount());
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
                 this.CountMessages(LogLevel.Trace),
@@ -495,12 +503,7 @@ namespace logviewer.core
                 this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal)
                 );
-            this.totalReadTimeWatch.Stop();
-            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
-            this.viewModel.LogProgressText = text;
 
-            this.viewModel.Provider.Store = this.store;
-            this.viewModel.Datasource.Clear();
             this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
         }
 

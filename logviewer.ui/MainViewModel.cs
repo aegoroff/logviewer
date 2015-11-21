@@ -14,7 +14,7 @@ using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public sealed class MainViewModel : IViewModel, IDisposable
+    public sealed class MainViewModel : IViewModel
     {
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
@@ -41,7 +41,7 @@ namespace logviewer.ui
             var templates = this.CreateTemplateCommands();
             this.Templates = new ObservableCollection<TemplateCommand>(templates);
             this.Provider = new LogProvider(null, this.settingsProvider);
-            this.Datasource = new AsyncVirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
+            this.Datasource = new VirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
 
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
@@ -304,11 +304,6 @@ namespace logviewer.ui
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void Dispose()
-        {
-            this.Datasource.Dispose();
         }
     }
 

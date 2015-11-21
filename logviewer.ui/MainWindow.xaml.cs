@@ -38,7 +38,6 @@ namespace logviewer.ui
 
         private void OnExitApp(object sender, RoutedEventArgs e)
         {
-            MainViewModel.Current.Dispose();
             this.Close();
         }
 
