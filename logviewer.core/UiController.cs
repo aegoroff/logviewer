@@ -92,6 +92,7 @@ namespace logviewer.core
 
         private void UpdateCount()
         {
+            Trace.WriteLine("First visible: " + this.viewModel.FirstVisible + " | Last visible: " + this.viewModel.LastVisible);
             if (this.viewModel.LastVisible == this.totalMessages || this.viewModel.LastVisible < this.currentCollectionCount)
             {
                 return;
