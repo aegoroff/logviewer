@@ -113,9 +113,14 @@ namespace logviewer.core
                 this.PopulatePage(pageIndex, t.Result);
                 this.FireCollectionReset();
                 this.IsLoading = false;
+                task.Dispose();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
 
-            task.ContinueWith(obj => this.IsLoading = false, CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, this.uiSyncContext);
+            task.ContinueWith(obj =>
+            {
+                task.Dispose();
+                return this.IsLoading = false;
+            }, CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, this.uiSyncContext);
         }
 
         /// <summary>
