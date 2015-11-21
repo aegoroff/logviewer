@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using logviewer.core.Properties;
 using logviewer.engine;
-using Ninject;
 using LogLevel = logviewer.engine.LogLevel;
 
 
@@ -44,8 +43,6 @@ namespace logviewer.core
         private LogStore store;
         private long totalMessages;
         private readonly IViewModel viewModel;
-        private int currentCollectionCount;
-        private const int CountStep = 1000;
 
         private readonly ProducerConsumerQueue queue =
             new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -92,19 +89,8 @@ namespace logviewer.core
 
         private void UpdateCount()
         {
-            Trace.WriteLine("First visible: " + this.viewModel.FirstVisible + " | Last visible: " + this.viewModel.LastVisible);
-            if (this.viewModel.LastVisible == this.totalMessages || this.viewModel.LastVisible < this.currentCollectionCount)
-            {
-                return;
-            }
-            if (this.totalMessages - this.viewModel.LastVisible < CountStep)
-            {
-                this.currentCollectionCount = (int) this.totalMessages;
-                this.viewModel.Datasource.LoadCount(this.currentCollectionCount);
-                return;
-            }
-            this.currentCollectionCount = this.viewModel.LastVisible + CountStep;
-            this.viewModel.Datasource.LoadCount(this.currentCollectionCount);
+            this.viewModel.Datasource.LastVisible = this.viewModel.LastVisible;
+            this.viewModel.Datasource.FirstVisible = this.viewModel.FirstVisible;
         }
 
         private void SetCurrentParsingTemplate()
@@ -252,7 +238,7 @@ namespace logviewer.core
         {
             try
             {
-                this.viewModel.Datasource.LoadCount(Math.Min((int)this.totalMessages, Math.Max(this.currentCollectionCount, CountStep)));
+                this.viewModel.Datasource.LoadCount((int)this.viewModel.Provider.FetchCount());
                 this.viewModel.UiControlsEnabled = true;
             }
             finally
@@ -363,7 +349,6 @@ namespace logviewer.core
             if (!append)
             {
                 this.totalMessages = 0;
-                this.currentCollectionCount = 0;
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
             reader.CompilationStarted += this.OnCompilationStarted;

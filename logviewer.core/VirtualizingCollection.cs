@@ -99,17 +99,27 @@ namespace logviewer.core
             }
         }
 
-        private void LoadPage(int index)
+        private void LoadPage(int pageIndex)
         {
-            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(index));
+            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(pageIndex));
 
             task.ContinueWith(delegate (Task<IList<T>> t)
             {
-                this.PopulatePage(index, t.Result);
-                var e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, t.Result);
-                this.OnCollectionChanged(e);
+                this.PopulatePage(pageIndex, t.Result);
+                this.FireCollectionReset();
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
         }
+
+        /// <summary>
+        /// First visible collection element
+        /// </summary>
+        public int FirstVisible { get; set; }
+
+        /// <summary>
+        /// Last visible collection element
+        /// </summary>
+        public int LastVisible { get; set; }
+        
 
         #region IList<T>, IList
 
@@ -147,22 +157,14 @@ namespace logviewer.core
                 var pageIndex = index / this.PageSize;
                 var pageOffset = index % this.PageSize;
 
-                // request primary page
-                this.RequestPage(pageIndex);
-
-                // if accessing upper 50% then request next page
-                if (pageOffset > this.PageSize / 2 && pageIndex < this.Count / this.PageSize)
+                // do not load invisible. Because WPF try to iterate all collection on Reset event
+                if (index >= this.FirstVisible && index <= this.LastVisible)
                 {
-                    this.RequestPage(pageIndex + 1);
-                }
+                    // request primary page
+                    this.RequestPage(pageIndex);
 
-                // if accessing lower 50% then request prev page
-                if (pageOffset < this.PageSize / 2 && pageIndex > 0)
-                {
-                    this.RequestPage(pageIndex - 1);
+                    this.CleanUpPages();
                 }
-
-                this.CleanUpPages();
 
                 // defensive check in case of async load
                 IList<T> result;
@@ -324,7 +326,6 @@ namespace logviewer.core
         ///     Makes a request for the specified page, creating the necessary slots in the dictionary,
         ///     and updating the page touch time.
         /// </summary>
-        /// <param name="pageIndex">Index of the page.</param>
         private void RequestPage(int pageIndex)
         {
             if (!this.pages.ContainsKey(pageIndex))

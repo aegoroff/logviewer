@@ -19,7 +19,7 @@ namespace logviewer.ui
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
 
-        private const int PageTimeoutMilliseconds =60 * 1000;
+        private const int PageTimeoutMilliseconds = 60 * 1000;
         private const int PageSize = 100;
 
         private string logPath;
