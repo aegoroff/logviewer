@@ -27,7 +27,7 @@ namespace logviewer.core
         private readonly bool hasDateTimeProperty;
         private readonly string dateTimeProperty;
         private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
-        private IDictionary<string, PropertyType> propertyTypesCache;
+        private Dictionary<string, PropertyType> propertyTypesCache;
         private readonly RulesBuilder builder;
         private string insertPrefix;
         private string insertSuffix;
@@ -211,11 +211,13 @@ namespace logviewer.core
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
-                foreach (var column in this.additionalColumns)
+                // ReSharper disable once ForCanBeConvertedToForeach
+                for (var ix = 0; ix < this.additionalColumns.Length; ix++)
                 {
+                    var column = this.additionalColumns[ix];
                     if (this.propertyTypesCache[column] == PropertyType.Integer)
                     {
-                        msg.UpdateIntegerProperty(column, (long)rdr[column]);
+                        msg.UpdateIntegerProperty(column, (long) rdr[column]);
                     }
                     else
                     {
@@ -370,7 +372,7 @@ namespace logviewer.core
             {
                 return;
             }
-            var f = useRegexp ? filter : $"%{filter.Trim('%')}%";
+            var f = useRegexp ? filter : "%" + filter.Trim('%') + "%";
             DatabaseConnection.AddParameter(command, "@Filter", f);
         }
 
