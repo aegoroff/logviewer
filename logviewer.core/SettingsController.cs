@@ -32,10 +32,10 @@ namespace logviewer.core
             this.settings = settings;
             this.parsingTemplateIndex = settings.SelectedParsingTemplate;
             this.updateColorActions = new Dictionary<LogLevel, Action<Color>>(this.InitializeUpdateActions());
-            this.view.SelectedTemplateController.TemplateChangeSuccess += SelectedTemplateControllerOnTemplateChangeSuccess;
-            this.view.SelectedTemplateController.TemplateChangeFailure += SelectedTemplateControllerOnTemplateChangeFailure;
-            this.view.NewTemplateController.TemplateChangeSuccess += NewTemplateControllerOnTemplateChangeSuccess;
-            this.view.NewTemplateController.TemplateChangeFailure += NewTemplateControllerOnTemplateChangeFailure;
+            this.view.SelectedTemplateController.TemplateChangeSuccess += this.SelectedTemplateControllerOnTemplateChangeSuccess;
+            this.view.SelectedTemplateController.TemplateChangeFailure += this.SelectedTemplateControllerOnTemplateChangeFailure;
+            this.view.NewTemplateController.TemplateChangeSuccess += this.NewTemplateControllerOnTemplateChangeSuccess;
+            this.view.NewTemplateController.TemplateChangeFailure += this.NewTemplateControllerOnTemplateChangeFailure;
         }
 
         private void NewTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
@@ -75,7 +75,7 @@ namespace logviewer.core
         {
             this.view.ShowNewParsingTemplateForm(false);
             
-            Task.Factory.StartNew(delegate
+            var task = Task.Factory.StartNew(delegate
             {
                 this.formData.OpenLastFile = this.settings.OpenLastFile;
                 this.formData.AutoRefreshOnFileChange = this.settings.AutoRefreshOnFileChange;
@@ -83,7 +83,7 @@ namespace logviewer.core
                 this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
 
                 this.templateList = this.settings.ReadParsingTemplateList();
-                if (this.parsingTemplateIndex > templateList.Count - 1)
+                if (this.parsingTemplateIndex > this.templateList.Count - 1)
                 {
                     this.parsingTemplateIndex = 0;
                 }
@@ -92,23 +92,24 @@ namespace logviewer.core
                 {
                     this.formData.Colors.Add(logLevel, this.settings.ReadColor(logLevel));
                 }
-                this.RunOnGuiThread(delegate
+            });
+
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            {
+                this.view.LoadFormData(this.formData);
+                this.view.LoadParsingTemplate(this.template);
+                this.view.EnableSave(false);
+                foreach (var name in this.templateList)
                 {
-                    this.view.LoadFormData(this.formData);
-                    this.view.LoadParsingTemplate(this.template);
-                    this.view.EnableSave(false);
-                    foreach (var name in this.templateList)
-                    {
-                        this.view.AddTemplateName(name);
-                    }
-                    foreach (var color in this.formData.Colors)
-                    {
-                        this.updateColorActions[color.Key](color.Value);
-                    }
-                    this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
-                    this.view.EnableResetColors(this.IsColorsChanged);
-                    this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
-                });
+                    this.view.AddTemplateName(name);
+                }
+                foreach (var color in this.formData.Colors)
+                {
+                    this.updateColorActions[color.Key](color.Value);
+                }
+                this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
+                this.view.EnableResetColors(this.IsColorsChanged);
+                this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
             });
         }
 
@@ -116,41 +117,36 @@ namespace logviewer.core
         {
             this.view.EnableSave(false);
             this.view.EnableChangeOrClose(false);
-            Task.Factory.StartNew(delegate
+            var task = Task.Factory.StartNew(delegate
             {
-                try
+                int pageSize;
+                if (int.TryParse(this.formData.PageSize, out pageSize))
                 {
-                    int pageSize;
-                    if (int.TryParse(this.formData.PageSize, out pageSize))
+                    if (this.settings.PageSize != pageSize)
                     {
-                        if (this.settings.PageSize != pageSize)
-                        {
-                            this.RefreshOnClose = true;
-                        }
-                        this.settings.PageSize = pageSize;
+                        this.RefreshOnClose = true;
                     }
-                    int value;
-                    if (int.TryParse(this.formData.KeepLastNFiles, out value))
-                    {
-                        this.settings.KeepLastNFiles = value;
-                    }
-                    this.settings.OpenLastFile = this.formData.OpenLastFile;
-                    this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
-                    this.settings.UpdateParsingTemplate(this.template);
+                    this.settings.PageSize = pageSize;
+                }
+                int value;
+                if (int.TryParse(this.formData.KeepLastNFiles, out value))
+                {
+                    this.settings.KeepLastNFiles = value;
+                }
+                this.settings.OpenLastFile = this.formData.OpenLastFile;
+                this.settings.AutoRefreshOnFileChange = this.formData.AutoRefreshOnFileChange;
+                this.settings.UpdateParsingTemplate(this.template);
 
-                    foreach (var pair in this.formData.Colors)
-                    {
-                        this.settings.UpdateColor(pair.Key, pair.Value);
-                    }
-                }
-                finally
+                foreach (var pair in this.formData.Colors)
                 {
-                    this.RunOnGuiThread(() =>
-                    {
-                        this.view.EnableChangeOrClose(true);
-                        this.view.EnableResetColors(this.IsColorsChanged);
-                    });
+                    this.settings.UpdateColor(pair.Key, pair.Value);
                 }
+            });
+
+            this.CompleteTask(task, TaskContinuationOptions.None, delegate
+            {
+                this.view.EnableChangeOrClose(true);
+                this.view.EnableResetColors(this.IsColorsChanged);
             });
         }
 
@@ -237,50 +233,52 @@ namespace logviewer.core
             this.view.ShowNewParsingTemplateForm(false);
             var t = this.view.NewParsingTemplateData;
             t.Index = this.templateList.Count;
-            Task.Factory.StartNew(delegate
+            IList<string> newList = null;
+            var task = Task.Factory.StartNew(delegate
             {
                 this.settings.InsertParsingTemplate(t);
-                var newList = this.settings.ReadParsingTemplateList();
-                this.RunOnGuiThread(delegate
+                newList = this.settings.ReadParsingTemplateList();
+            });
+
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            {
+                for (var i = t.Index; i < newList.Count; i++)
                 {
-                    for (var i = t.Index; i < newList.Count; i++)
-                    {
-                        this.view.AddTemplateName(newList[i]);
-                        this.templateList.Add(newList[i]);
-                    }
-                });
+                    this.view.AddTemplateName(newList[i]);
+                    this.templateList.Add(newList[i]);
+                }
             });
         }
 
         public void RemoveSelectedParsingTemplate()
         {
-            if (!view.ShowWarning(Resources.DeleteCurrentTemplateCaption, Resources.DeleteCurrentTemplateMessage))
+            if (!this.view.ShowWarning(Resources.DeleteCurrentTemplateCaption, Resources.DeleteCurrentTemplateMessage))
             {
                 return;
             }
-            Task.Factory.StartNew(delegate
+            var task = Task.Factory.StartNew(delegate
             {
                 this.settings.DeleteParsingTemplate(this.parsingTemplateIndex);
                 this.templateList.RemoveAt(this.parsingTemplateIndex);
-                this.RunOnGuiThread(() =>
-                {
-                    this.view.RemoveParsingTemplateName(this.parsingTemplateIndex);
-                    this.view.SelectParsingTemplate(this.parsingTemplateIndex - 1);
-                });
+            });
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            {
+                this.view.RemoveParsingTemplateName(this.parsingTemplateIndex);
+                this.view.SelectParsingTemplate(this.parsingTemplateIndex - 1);
             });
         }
 
         public void RestoreDefaultTemplates()
         {
-            if (!view.ShowWarning(Resources.RestoreDefaultTemplateCaption, Resources.RestoreDefaultTemplateText))
+            if (!this.view.ShowWarning(Resources.RestoreDefaultTemplateCaption, Resources.RestoreDefaultTemplateText))
             {
                 return;
             }
             this.view.EnableChangeOrClose(false);
-            Task.Factory.StartNew(delegate
+            var task = Task.Factory.StartNew(delegate
             {
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
-                var lastIx = settings.ReadAllParsingTemplates().Count - 1;
+                var lastIx = this.settings.ReadAllParsingTemplates().Count - 1;
 
                 for (int i = lastIx; i >= 0; i--)
                 {
@@ -295,32 +293,31 @@ namespace logviewer.core
                 this.templateList = this.settings.ReadParsingTemplateList();
                 this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
-
-                this.RunOnGuiThread(delegate
-                {
-                    this.view.RemoveAllParsingTemplateNames();
-                    foreach (var name in this.templateList)
-                    {
-                        this.view.AddTemplateName(name);
-                    }
-                    this.view.SelectParsingTemplate(0);
-                    this.view.LoadParsingTemplate(this.template);
-                    this.view.EnableChangeOrClose(true);
-                    this.view.EnableRemoveTemplateControl(false);
-                    this.view.EnableSave(false);
-                });
             });
 
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            {
+                this.view.RemoveAllParsingTemplateNames();
+                foreach (var name in this.templateList)
+                {
+                    this.view.AddTemplateName(name);
+                }
+                this.view.SelectParsingTemplate(0);
+                this.view.LoadParsingTemplate(this.template);
+                this.view.EnableChangeOrClose(true);
+                this.view.EnableRemoveTemplateControl(false);
+                this.view.EnableSave(false);
+            });
         }
 
         public void StartAddNewParsingTemplate()
         {
-            view.ShowNewParsingTemplateForm(true);
+            this.view.ShowNewParsingTemplateForm(true);
         }
         
         public void CancelNewParsingTemplate()
         {
-            view.ShowNewParsingTemplateForm(false);
+            this.view.ShowNewParsingTemplateForm(false);
         }
 
         public void LoadParsingTemplate(int index)
@@ -331,17 +328,19 @@ namespace logviewer.core
             }
             this.parsingTemplateIndex = index;
 
-            Task.Factory.StartNew(delegate
+            this.view.EnableChangeOrClose(false);
+
+            var task = Task.Factory.StartNew(delegate
             {
-                this.RunOnGuiThread(() => this.view.EnableChangeOrClose(false));
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
-                this.RunOnGuiThread(delegate
-                {
-                    this.view.LoadParsingTemplate(this.template);
-                    this.view.EnableChangeOrClose(true);
-                    this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
-                    this.view.EnableSave(false);
-                });
+            });
+
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            {
+                this.view.LoadParsingTemplate(this.template);
+                this.view.EnableChangeOrClose(true);
+                this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
+                this.view.EnableSave(false);
             });
         }
     }

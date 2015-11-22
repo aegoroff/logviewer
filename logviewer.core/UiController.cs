@@ -51,7 +51,6 @@ namespace logviewer.core
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
-        private readonly TaskScheduler uiSyncContext;
         public event EventHandler<EventArgs> ReadCompleted;
 
         #endregion
@@ -65,7 +64,6 @@ namespace logviewer.core
             this.prevInput = DateTime.Now;
             this.options = options;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
-            this.uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
         }
 
         private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -227,9 +225,9 @@ namespace logviewer.core
                 this.OnComplete(task);
             };
 
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.uiSyncContext);
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
-            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.uiSyncContext);
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.UiSyncContext);
+            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.UiSyncContext);
+            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
 
             this.runningTasks.Add(task, this.viewModel.LogPath);
         }

@@ -61,11 +61,15 @@ namespace logviewer.core
             {
                 this.view.ShowInvalidTemplateError(Resources.InvalidTemplate, control);
                 this.TemplateChangeFailure.Do(handler => handler(this, new EventArgs()));
-                Task.Factory.StartNew(delegate
+                var task = Task.Factory.StartNew(delegate
                 {
                     Thread.Sleep(millisecondsToShowTooltip);
-                    this.RunOnGuiThread(() => this.view.HideInvalidTemplateError(control));
                 });
+
+                this.CompleteTask(
+                    task, 
+                    TaskContinuationOptions.OnlyOnRanToCompletion,
+                    delegate { this.view.HideInvalidTemplateError(control); });
                 return;
             }
             assignAction(value);
