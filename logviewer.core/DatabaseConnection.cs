@@ -93,25 +93,28 @@ namespace logviewer.core
                         }
                     }
                 }
-                catch (SQLiteException e)
+                catch (SQLiteException e) when(HandleSqlException(e))
                 {
-                    switch (e.ResultCode)
-                    {
-                        case SQLiteErrorCode.Abort:
-                            Log.Instance.Debug(e);
-                            break;
-                        case SQLiteErrorCode.Misuse:
-                            Log.Instance.Debug(e);
-                            break;
-                        default:
-                            throw;
-                    }
+                    Log.Instance.Debug(e);
                 }
                 catch (ObjectDisposedException e)
                 {
                     Log.Instance.Debug(e);
                 }
             });
+        }
+
+        private static bool HandleSqlException(SQLiteException e)
+        {
+            switch (e.ResultCode)
+            {
+                case SQLiteErrorCode.Abort:
+                    return true;
+                case SQLiteErrorCode.Misuse:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         internal void ExecuteReader(Action<IDataReader> onRead, string query, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
