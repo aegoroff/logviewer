@@ -4,7 +4,6 @@
 
 using System.IO;
 using System.Text;
-using logviewer.engine;
 using Ude;
 using ICharsetDetector = logviewer.engine.ICharsetDetector;
 
