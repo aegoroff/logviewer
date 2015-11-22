@@ -45,6 +45,7 @@ namespace logviewer.ui
             this.Templates = new ObservableCollection<TemplateCommand>(templates);
             this.Provider = new LogProvider(null, this.settingsProvider);
             this.Datasource = new VirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
+            this.Datasource.PropertyChanged += this.DatasourceOnPropertyChanged;
 
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
@@ -53,6 +54,15 @@ namespace logviewer.ui
                 this.settingsProvider.UseRecentFilesStore(filesStore => this.LogPath = filesStore.ReadLastUsedItem());
             }
             this.uiControlsEnabled = true;
+        }
+
+        private void DatasourceOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (!propertyChangedEventArgs.PropertyName.Equals(nameof(this.Datasource.IsLoading)))
+            {
+                return;
+            }
+            this.LogProgressText = this.Datasource.IsLoading ? Resources.LoadingPage : Resources.LoadingPageCompleted;
         }
 
         public IEnumerable<TemplateCommand> CreateTemplateCommands()

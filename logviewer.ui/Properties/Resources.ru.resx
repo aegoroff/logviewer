@@ -171,6 +171,12 @@
   <data name="LevelFilter" xml:space="preserve">
     <value>Фильтр по уровню</value>
   </data>
+  <data name="LoadingPage" xml:space="preserve">
+    <value>Загрузка страницы ...</value>
+  </data>
+  <data name="LoadingPageCompleted" xml:space="preserve">
+    <value>Страница успешно загружена</value>
+  </data>
   <data name="Log" xml:space="preserve">
     <value>Журнал</value>
   </data>

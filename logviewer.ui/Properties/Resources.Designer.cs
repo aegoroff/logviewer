@@ -259,6 +259,24 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loaging page ....
+        /// </summary>
+        public static string LoadingPage {
+            get {
+                return ResourceManager.GetString("LoadingPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page loaded successfully.
+        /// </summary>
+        public static string LoadingPageCompleted {
+            get {
+                return ResourceManager.GetString("LoadingPageCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log.
         /// </summary>
         public static string Log {

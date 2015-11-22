@@ -183,6 +183,12 @@
   <data name="LevelFilter" xml:space="preserve">
     <value>Level filter</value>
   </data>
+  <data name="LoadingPage" xml:space="preserve">
+    <value>Loaging page ...</value>
+  </data>
+  <data name="LoadingPageCompleted" xml:space="preserve">
+    <value>Page loaded successfully</value>
+  </data>
   <data name="Log" xml:space="preserve">
     <value>Log</value>
   </data>
