@@ -190,11 +190,11 @@ namespace logviewer.core
 
                 // defensive check in case of async load
                 IList<T> result;
-                if (!this.pages.TryGetValue(pageIndex, out result) || result == null)
+                if (this.pages.TryGetValue(pageIndex, out result) && result != null)
                 {
-                    return default(T);
+                    return result[pageOffset];
                 }
-                return pageOffset >= result.Count ? default(T) : result[pageOffset];
+                return default(T);
             }
             set { throw new NotSupportedException(); }
         }
