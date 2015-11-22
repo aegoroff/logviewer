@@ -174,7 +174,7 @@
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
 
-        <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+        <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="0">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -239,7 +239,7 @@
             x:Name="LogControlStyle"
             DockPanel.Dock="Top" 
             Height="Auto" 
-            Margin="5"
+            Margin="0"
             BorderThickness="0" 
             ScrollViewer.ScrollChanged="ScrollViewer_OnScrollChanged"
             IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
