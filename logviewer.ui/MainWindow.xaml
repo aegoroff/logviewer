@@ -289,7 +289,6 @@
         </DockPanel>
         <xctk:BusyIndicator
             x:Name="BusyIndicator"
-            DockPanel.Dock="Top"
             Grid.Row="0"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
