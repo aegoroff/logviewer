@@ -7,12 +7,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("logviewer.ui")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("logviewer")]
+[assembly: AssemblyDescription("A simple application for convenient working with application text logs.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("logviewer.ui")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Alexander Egorov")]
+[assembly: AssemblyProduct("logviewer")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
