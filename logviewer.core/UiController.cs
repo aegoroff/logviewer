@@ -273,7 +273,10 @@ namespace logviewer.core
         {
             try
             {
-                this.viewModel.Datasource.LoadCount((int)this.viewModel.Provider.FetchCount());
+                if (!this.cancellation.IsCancellationRequested)
+                {
+                    this.viewModel.Datasource.LoadCount((int) this.viewModel.Provider.FetchCount());
+                }
                 this.viewModel.UiControlsEnabled = true;
             }
             finally
@@ -489,6 +492,10 @@ namespace logviewer.core
 
         private void AfterDatabaseCreation(bool cached)
         {
+            if (this.cancellation.IsCancellationRequested)
+            {
+                return;
+            }
             if (!cached)
             {
                 this.viewModel.From = this.SelectDateUsingFunc("min");
@@ -606,6 +613,7 @@ namespace logviewer.core
 
         public void ReadNewLog()
         {
+            this.CancelReading();
             this.CancelPreviousTask();
             this.ClearCache();
             this.StartLogReadingTask();
