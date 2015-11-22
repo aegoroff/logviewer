@@ -41,7 +41,7 @@ namespace logviewer.core
                     Credentials = new Credentials(crypt.Decrypt(Token))
                 };
                 var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                var title = string.Format("Unhandled exception occured on {0} at {1:s}. App version: {2}", Environment.MachineName, DateTime.UtcNow, version);
+                var title = $"Unhandled exception occured on {Environment.MachineName} at {DateTime.UtcNow:s}. App version: {version}";
                 var createIssue = new NewIssue(title)
                 {
                     Body = exception.ToString()

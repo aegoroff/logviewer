@@ -125,7 +125,7 @@ namespace logviewer
         public static void CreateMiniDump()
         {
             var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                string.Format(@"LOGVIEWER_CRASH_DUMP_{0}_{1}.dmp", DateTime.Today.ToShortDateString(), DateTime.Now.Ticks));
+                $@"LOGVIEWER_CRASH_DUMP_{DateTime.Today.ToShortDateString()}_{DateTime.Now.Ticks}.dmp");
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Write))
             {

@@ -7,10 +7,12 @@ _ReSharper.logviewer/
 *.pdb
 *.log
 *.DotSettings.user
+*.sln.DotSettings
 *.tokens
 *.vcxproj.user
 Debug/
 Release/
+logviewer.server/bin/
 dist/
 packages/
 !lib/Debug/

@@ -21,16 +21,16 @@ namespace logviewer.core
         private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
         private const int PageSize = 1024;
         private readonly DatabaseConnection connection;
-        private string additionalColumnsString;
         private string[] additionalColumns;
-        private string additionalParametersString;
         private readonly bool hasLogLevelProperty;
         private readonly string logLevelProperty;
         private readonly bool hasDateTimeProperty;
         private readonly string dateTimeProperty;
         private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
-        private IDictionary<string, PropertyType> propertyTypesCache;
+        private Dictionary<string, PropertyType> propertyTypesCache;
         private readonly RulesBuilder builder;
+        private string insertPrefix;
+        private string insertSuffix;
 
         #endregion
 
@@ -83,17 +83,11 @@ namespace logviewer.core
         }
 
 
-        public string DatabasePath { get; private set; }
+        public string DatabasePath { get; }
 
-        public bool HasLogLevelProperty
-        {
-            get { return this.hasLogLevelProperty; }
-        }
+        public bool HasLogLevelProperty => this.hasLogLevelProperty;
 
-        public string LogLevelProperty
-        {
-            get { return this.logLevelProperty; }
-        }
+        public string LogLevelProperty => this.logLevelProperty;
 
         private void CreateTables(long dbSize)
         {
@@ -101,21 +95,11 @@ namespace logviewer.core
             {
                 return;
             }
-            const string createTableTemplate = @"
-                        CREATE TABLE IF NOT EXISTS Log (
-                                 Ix INTEGER PRIMARY KEY,
-                                 Header TEXT  NOT NULL,
-                                 Body  TEXT
-                                 {0}
-                        );
-                    ";
 
             const string syncOff = @"PRAGMA synchronous = OFF;";
             const string journal = @"PRAGMA journal_mode = OFF;";
-            const string cacheTemplate = @"PRAGMA cache_size = {0};";
             const string temp = @"PRAGMA temp_store = MEMORY;";
             const string encode = @"PRAGMA encoding = 'UTF-8';";
-            const string mmapTemplate = @"PRAGMA mmap_size={0};";
 
             var freePages = new ComputerInfo().AvailablePhysicalMemory / PageSize;
             var sqliteAvailablePages = (int)(freePages * 0.2);
@@ -125,19 +109,26 @@ namespace logviewer.core
             var colums = string.Join(",", this.CreateAdditionalColumns());
             var additionalCreate = string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
 
-            var mmap = string.Format(mmapTemplate, dbSize);
-            var cache = string.Format(cacheTemplate, pages);
-            var createTable = string.Format(createTableTemplate, additionalCreate);
+            var mmap = $@"PRAGMA mmap_size={dbSize};";
+            var cache = $@"PRAGMA cache_size = {pages};";
+            var createTable =$@"
+                        CREATE TABLE IF NOT EXISTS Log (
+                                 Ix INTEGER PRIMARY KEY,
+                                 Header TEXT  NOT NULL,
+                                 Body  TEXT
+                                 {additionalCreate}
+                        );
+                    ";
             this.connection.ExecuteNonQuery(syncOff, journal, cache, temp, encode, mmap, createTable);
             this.Index();
             this.additionalColumns = this.ReadAdditionalColumns(c => c).ToArray();
-            this.additionalColumnsString = this.CreateAdditionalColumnsList();
-            this.additionalParametersString = this.CreateAdditionalColumnsList("@");
             this.propertyTypesCache = new Dictionary<string, PropertyType>();
             foreach (var column in this.additionalColumns)
             {
                 this.propertyTypesCache.Add(column, this.DefinePropertyType(column));
             }
+            this.insertPrefix = $"INSERT INTO Log(Ix, Header, Body{this.CreateAdditionalColumnsList()}) VALUES (";
+            this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})";
         }
 
         #endregion
@@ -175,7 +166,7 @@ namespace logviewer.core
         {
             message.Cache(this.rules);
             // ugly but very fast
-            var cmd = @"INSERT INTO Log(Ix, Header, Body" + this.additionalColumnsString + ") VALUES (" + message.Ix + ", @Header, @Body " + this.additionalParametersString + ")";
+            var cmd = this.insertPrefix + message.Ix + this.insertSuffix;
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
                 DatabaseConnection.AddParameter(command, "@Header", message.Header);
@@ -213,19 +204,20 @@ namespace logviewer.core
             var order = reverse ? "DESC" : "ASC";
 
             var where = this.Where(min, max, filter, useRegexp, start, finish);
-            
-            var query = string.Format("SELECT Header, Body {4} FROM Log {3} ORDER BY Ix {0} LIMIT {1} OFFSET {2}",
-                order, limit, offset,
-                where, this.additionalColumnsString);
+
+            var query = $"SELECT Header, Body {this.CreateAdditionalColumnsList()} FROM Log {where} ORDER BY Ix {order} LIMIT {limit} OFFSET {offset}";
+
             Action<IDbCommand> beforeRead = command => this.AddParameters(command, min, max, filter, useRegexp, start, finish);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
-                foreach (var column in this.additionalColumns)
+                // ReSharper disable once ForCanBeConvertedToForeach
+                for (var ix = 0; ix < this.additionalColumns.Length; ix++)
                 {
+                    var column = this.additionalColumns[ix];
                     if (this.propertyTypesCache[column] == PropertyType.Integer)
                     {
-                        msg.UpdateIntegerProperty(column, (long)rdr[column]);
+                        msg.UpdateIntegerProperty(column, (long) rdr[column]);
                     }
                     else
                     {
@@ -269,7 +261,7 @@ namespace logviewer.core
             }
 
             var where = this.Where(min, max, filter, useRegexp, start, finish);
-            var query = string.Format(@"SELECT count(1) FROM Log {0}", where);
+            var query = $@"SELECT count(1) FROM Log {@where}";
             Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, start, finish);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
@@ -286,7 +278,8 @@ namespace logviewer.core
             }
             
             var where = this.Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
-            var query = string.Format(@"SELECT {2}({0}) FROM Log {1}", this.dateTimeProperty, where, func);
+            var query = $@"SELECT {func}({this.dateTimeProperty}) FROM Log {where}";
+
             Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return DateTime.FromFileTime(result);
@@ -348,7 +341,7 @@ namespace logviewer.core
         private static string FilterClause(string filter, bool useRegexp)
         {
             var comparer = useRegexp ? "REGEXP" : "LIKE";
-            var func = string.Format("(Header || Body) {0} @Filter", comparer);
+            var func = $"(Header || Body) {comparer} @Filter";
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
@@ -375,25 +368,25 @@ namespace logviewer.core
             {
                 DatabaseConnection.AddParameter(command, "@Finish", finish.ToFileTimeUtc());
             }
-            if (!string.IsNullOrWhiteSpace(filter))
+            if (string.IsNullOrWhiteSpace(filter))
             {
-                string f = useRegexp ? filter : string.Format("%{0}%", filter.Trim('%'));
-                DatabaseConnection.AddParameter(command, "@Filter", f);
+                return;
             }
+            var f = useRegexp ? filter : "%" + filter.Trim('%') + "%";
+            DatabaseConnection.AddParameter(command, "@Filter", f);
         }
 
         #endregion
 
         #region Methods
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+            MessageId = "connection")]
         private void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (this.connection != null)
-                {
-                    this.connection.Dispose();
-                }
+                this.connection?.Dispose();
                 if (File.Exists(this.DatabasePath))
                 {
                     File.Delete(this.DatabasePath);

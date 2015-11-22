@@ -22,16 +22,10 @@ namespace logviewer.install.mca
                 { TempAppConfigFile, Path.Combine(AppPath, AppConfig) }
             };
 
-        private static string TempAppConfigFile
-        {
-            get { return Path.Combine(Path.GetTempPath(), AppConfig); }
-        }
+        private static string TempAppConfigFile => Path.Combine(Path.GetTempPath(), AppConfig);
 
-        private static string AppPath
-        {
-            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), Product); }
-        }
-        
+        private static string AppPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), Product);
+
         [CustomAction]
         public static ActionResult KeepConfigurationFiles(Session session)
         {
@@ -143,7 +137,7 @@ namespace logviewer.install.mca
 
             var srcDict =
                 srcNodes.Cast<XmlNode>()
-                        .Where(setting => setting.Attributes != null && setting.Attributes[keyAttr] != null && setting.Attributes[valueAttr] != null)
+                        .Where(setting => setting.Attributes?[keyAttr] != null && setting.Attributes[valueAttr] != null)
                         .ToDictionary(setting => setting.Attributes[keyAttr].Value,
                                       setting => setting.Attributes[valueAttr].Value);
 
@@ -168,7 +162,7 @@ namespace logviewer.install.mca
             foreach (
                 var node in
                     from XmlNode setting in tgtNodes
-                    where setting.Attributes != null && setting.Attributes[keyAttr] != null && setting.Attributes[valueAttr] != null
+                    where setting.Attributes?[keyAttr] != null && setting.Attributes[valueAttr] != null
                     where srcDict.ContainsKey(setting.Attributes[keyAttr].Value)
                     select setting)
             {

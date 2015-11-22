@@ -48,6 +48,7 @@ namespace logviewer.core
 
         private const int HeaderFontSize = 10;
         private const int BodyFontSize = 9;
+        private const int KeepLastFilters = 20;
 
         private static readonly Dictionary<LogLevel, Color> defaultColors = new Dictionary<LogLevel, Color>
         {
@@ -73,9 +74,9 @@ namespace logviewer.core
 
             this.upgrades.Add(Upgrade1);
             this.upgrades.Add(Upgrade2);
-            this.upgrades.Add(Upgrade3);
-            this.upgrades.Add(Upgrade4);
-            this.upgrades.Add(Upgrade5);
+            this.upgrades.Add(this.Upgrade3);
+            this.upgrades.Add(this.Upgrade4);
+            this.upgrades.Add(this.Upgrade5);
 
             this.CreateTables();
             this.MigrateFromRegistry();
@@ -110,10 +111,7 @@ namespace logviewer.core
             return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);
         }
 
-        public IDictionary<LogLevel, Color> DefaultColors
-        {
-            get { return defaultColors; }
-        }
+        public IDictionary<LogLevel, Color> DefaultColors => defaultColors;
 
         public int SelectedParsingTemplate
         {
@@ -132,15 +130,9 @@ namespace logviewer.core
             this.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
-        private static RegistryKey RegistryKey
-        {
-            get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
-        }
+        private static RegistryKey RegistryKey => GetRegKey(RegistryKeyBase + OptionsSectionName);
 
-        private static bool MigrationNeeded
-        {
-            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
-        }
+        private static bool MigrationNeeded => Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null;
 
         public static string ApplicationFolder
         {
@@ -214,24 +206,22 @@ namespace logviewer.core
             set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
 
-        public string FullPathToDatabase
-        {
-            get { return this.settingsDatabaseFilePath; }
-        }
+        public string FullPathToDatabase => this.settingsDatabaseFilePath;
 
         public void UpdateParsingTemplate(ParsingTemplate template)
         {
-            var propertiesSet = string.Join(",", from string member in parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
+            var propertiesSet = string.Join(",", from string member in this.parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
 
-            const string cmd = @"
+            this.ExecuteNonQuery(
+                $@"
                     UPDATE
                         ParsingTemplates
                     SET
-                        {0}
+                        {
+                    propertiesSet}
                     WHERE
                         Ix = @Ix
-                    ";
-            this.ExecuteNonQuery(string.Format(cmd, propertiesSet), command => AddParsingTemplateIntoCommand(command, template));
+                    ", command => this.AddParsingTemplateIntoCommand(command, template));
         }
 
         private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
@@ -262,7 +252,7 @@ namespace logviewer.core
             Action<IDataReader> onRead = rdr => result.Add(rdr[0] as string);
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
 
-            ExecuteQuery(action);
+            this.ExecuteQuery(action);
 
             return result;
         }
@@ -284,23 +274,14 @@ namespace logviewer.core
             Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string, StartMessage = rdr[2] as string });
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
 
-            ExecuteQuery(action);
+            this.ExecuteQuery(action);
 
             return result;
         }
 
         public ParsingTemplate ReadParsingTemplate(int index)
         {
-            var propertiesGet = string.Join(",", from level in parsingTemplatePropertiesNames select level);
-            
-            const string cmd = @"
-                    SELECT
-                        {0}
-                    FROM
-                        ParsingTemplates
-                    WHERE
-                        Ix = @Ix
-                    ";
+            var propertiesGet = string.Join(",", from level in this.parsingTemplatePropertiesNames select level);
 
             var result = new ParsingTemplate { Index = index };
 
@@ -323,9 +304,17 @@ namespace logviewer.core
                 }
             };
 
-            var query = string.Format(cmd, propertiesGet);
+            var query =
+                    $@"
+                    SELECT
+                        {propertiesGet}
+                    FROM
+                        ParsingTemplates
+                    WHERE
+                        Ix = @Ix
+                    ";
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, query, beforeRead);
-            ExecuteQuery(action);
+            this.ExecuteQuery(action);
 
             return result;
         }
@@ -337,25 +326,25 @@ namespace logviewer.core
 
         public void InsertParsingTemplate(ParsingTemplate template)
         {
-            var propertiesColumns = string.Join(",", from level in parsingTemplatePropertiesNames select level);
-            var propertiesParams = string.Join(",", from level in parsingTemplatePropertiesNames select "@" + level);
-            
-            const string cmd = @"
+            var propertiesColumns = string.Join(",", from level in this.parsingTemplatePropertiesNames select level);
+            var propertiesParams = string.Join(",", from level in this.parsingTemplatePropertiesNames select "@" + level);
+
+            var query =
+                    $@"
                     INSERT INTO ParsingTemplates (
                         Ix, 
-                        {0}
+                        {propertiesColumns}
                     )
                     VALUES (
                         @Ix,
-                        {1}
+                        {propertiesParams}
                     )";
-            var query = string.Format(cmd, propertiesColumns, propertiesParams);
-            this.ExecuteNonQuery(query, command => AddParsingTemplateIntoCommand(command, template));
+            this.ExecuteNonQuery(query, command => this.AddParsingTemplateIntoCommand(command, template));
         }
         
         public void DeleteParsingTemplate(int ix)
         {
-            var query = string.Format(@"DELETE FROM ParsingTemplates WHERE Ix = {0}", ix);
+            var query = $@"DELETE FROM ParsingTemplates WHERE Ix = {ix}";
 
             const string selectIndexesCmd = @"
                     SELECT
@@ -388,7 +377,7 @@ namespace logviewer.core
                 indexesToUpdate.Add((long)rdr[0]);
             };
 
-            ExecuteQuery(delegate(DatabaseConnection connection)
+            this.ExecuteQuery(delegate(DatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -416,12 +405,22 @@ namespace logviewer.core
 
         public RtfCharFormat FormatHead(LogLevel level)
         {
-            return headerFormatsMap[level];
+            return this.headerFormatsMap[level];
         }
 
         public RtfCharFormat FormatBody(LogLevel level)
         {
-            return bodyFormatsMap[level];
+            return this.bodyFormatsMap[level];
+        }
+
+        public void UseRecentFilesStore(Action<RecentItemsStore> action)
+        {
+            this.UseRecentItemsStore(action, "RecentFiles");
+        }
+
+        public void UseRecentFiltersStore(Action<RecentItemsStore> action)
+        {
+            this.UseRecentItemsStore(action, "RecentFilters", KeepLastFilters);
         }
 
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
@@ -460,14 +459,12 @@ namespace logviewer.core
 
         private string ParsingTeplateCreateCmd()
         {
-            var propertiesCreate = string.Join(", ", ParsingTemplateColumnsDefinition());
-            const string parsingTemplates = @"
-                        CREATE TABLE IF NOT EXISTS ParsingTemplates (
+            var propertiesCreate = string.Join(", ", this.ParsingTemplateColumnsDefinition());
+            return $@"CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
-                                 {0}
+                                 {propertiesCreate}
                         );
                     ";
-            return string.Format(parsingTemplates, propertiesCreate);
         }
 
         IEnumerable<string> ParsingTemplateColumnsDefinition()
@@ -491,7 +488,7 @@ namespace logviewer.core
         {
             var since = (int)this.SchemaVersion;
 
-            ExecuteQuery(delegate(DatabaseConnection connection)
+            this.ExecuteQuery(delegate(DatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -606,7 +603,7 @@ namespace logviewer.core
 
         private void ExecuteNonQuery(params string[] queries)
         {
-            ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
+            this.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
         }
 
         private T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
@@ -616,13 +613,13 @@ namespace logviewer.core
             {
                 result = connection.ExecuteScalar<T>(query, actionBeforeExecute);
             };
-            ExecuteQuery(action);
+            this.ExecuteQuery(action);
             return result;
         }
 
         private void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
-            ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
+            this.ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
         }
         
         private void ExecuteQuery(Action<DatabaseConnection> action)
@@ -714,7 +711,7 @@ namespace logviewer.core
                         Option = @Option
                     ";
 
-            var query = string.Format(@"SELECT count(1) FROM {0} WHERE Option = @Option", table);
+            var query = $@"SELECT count(1) FROM {table} WHERE Option = @Option";
             var exist = this.ExecuteScalar<long>(query,
                 command => DatabaseConnection.AddParameter(command, "@Option", option)) > 0;
 
@@ -725,7 +722,7 @@ namespace logviewer.core
                 DatabaseConnection.AddParameter(command, "@Value", value);
             };
 
-            ExecuteNonQuery(string.Format(exist ? updateCmd : insertCmd, table), action);
+            this.ExecuteNonQuery(string.Format(exist ? updateCmd : insertCmd, table), action);
         }
 
         private string ReadStringOption(string option, string defaultValue = null)
@@ -761,7 +758,7 @@ namespace logviewer.core
 
             Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Option", option);
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(cmd, table), beforeRead);
-            ExecuteQuery(action);
+            this.ExecuteQuery(action);
 
 
             if (read)
@@ -779,7 +776,7 @@ namespace logviewer.core
 
             action("@Ix", template.Index);
 
-            foreach (var column in parsingTemplateProperties)
+            foreach (var column in this.parsingTemplateProperties)
             {
                 var value = column.GetValue(template, null);
                 var attr = GetColumnAttribute(column);
@@ -826,6 +823,21 @@ namespace logviewer.core
         private static bool GetBoolValue(string key)
         {
             return GetIntValue(key) == 1;
+        }
+
+        private void UseRecentItemsStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
+        {
+            try
+            {
+                using (var itemsStore = new RecentItemsStore(this, table, maxItems))
+                {
+                    action(itemsStore);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Debug(e);
+            }
         }
     }
 }

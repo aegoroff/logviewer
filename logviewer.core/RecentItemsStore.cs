@@ -24,19 +24,17 @@ namespace logviewer.core
 
         private void CreateTables()
         {
-            const string createTable = @"
-                        CREATE TABLE IF NOT EXISTS {0} (
+            string createTable = $@"CREATE TABLE IF NOT EXISTS {this.tableName} (
                                  Item TEXT PRIMARY KEY,
                                  UsedAt INTEGER  NOT NULL
-                        );
-                    ";
-            string createItemIndex = string.Format("CREATE INDEX IF NOT EXISTS IX_Item ON {0} (Item)", tableName);
-            this.connection.ExecuteNonQuery(string.Format(createTable, tableName), createItemIndex);
+                        );";
+            string createItemIndex = $"CREATE INDEX IF NOT EXISTS IX_Item ON {this.tableName} (Item)";
+            this.connection.ExecuteNonQuery(createTable, createItemIndex);
         }
 
         public void Add(string item)
         {
-            var result = this.connection.ExecuteScalar<long>(string.Format(@"SELECT count(1) FROM {0} WHERE Item = @Item", tableName), AddItem(item));
+            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = @Item", AddItem(item));
 
             Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
             {
@@ -46,13 +44,13 @@ namespace logviewer.core
 
             if (result > 0)
             {
-                query(string.Format("Update {0} SET UsedAt = @UsedAt WHERE Item = @Item", tableName));
+                query($"Update {this.tableName} SET UsedAt = @UsedAt WHERE Item = @Item");
                 return;
             }
 
-            query(string.Format(@"INSERT INTO {0}(Item, UsedAt) VALUES (@Item, @UsedAt)", tableName));
+            query($@"INSERT INTO {this.tableName}(Item, UsedAt) VALUES (@Item, @UsedAt)");
             
-            result = this.connection.ExecuteScalar<long>(string.Format("SELECT count(1) FROM {0}", tableName));
+            result = this.connection.ExecuteScalar<long>($"SELECT count(1) FROM {this.tableName}");
 
             if (result <= this.maxItems)
             {
@@ -63,7 +61,7 @@ namespace logviewer.core
                     WHERE UsedAt IN (
                         SELECT UsedAt FROM {1} ORDER BY UsedAt ASC LIMIT {0}
                 )";
-            var cmdDelete = string.Format(deleteTemplate, result - this.maxItems, tableName);
+            var cmdDelete = string.Format(deleteTemplate, result - this.maxItems, this.tableName);
             this.connection.ExecuteNonQuery(cmdDelete);
         }
 
@@ -74,7 +72,7 @@ namespace logviewer.core
 
         public void Remove(params string[] items)
         {
-            string cmd = string.Format(@"DELETE FROM {0} WHERE Item = @Item", tableName);
+            string cmd = $@"DELETE FROM {this.tableName} WHERE Item = @Item";
 
             this.connection.BeginTran();
             foreach (var file in items)
@@ -92,7 +90,8 @@ namespace logviewer.core
         public IEnumerable<string> ReadItems()
         {
             var result = new List<string>(this.maxItems);
-            this.connection.ExecuteReader(reader => result.Add(reader[0] as string), string.Format("SELECT Item FROM {0} ORDER BY UsedAt DESC", tableName));
+            this.connection.ExecuteReader(reader => result.Add(reader[0] as string),
+                $"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC");
             return result;
         }
         
@@ -103,7 +102,7 @@ namespace logviewer.core
             {
                 result = reader[0] as string;
             };
-            this.connection.ExecuteReader(onRead, string.Format("SELECT Item FROM {0} ORDER BY UsedAt DESC LIMIT 1", tableName));
+            this.connection.ExecuteReader(onRead, $"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1");
             return result;
         }
 

@@ -14,8 +14,8 @@
     <files>
         <file src="grok.patterns" target="content\grok.patterns" />
         <file src="webservers.patterns" target="content\webservers.patterns" />
-        <file src="bin\Release\logviewer.engine.dll" target="lib\net45\logviewer.engine.dll" />
-        <file src="bin\Release\logviewer.engine.XML" target="lib\net45\logviewer.engine.XML" />
-        <file src="Install.ps1" target="tools\net45\Install.ps1" />
+        <file src="bin\Release\logviewer.engine.dll" target="lib\net46\logviewer.engine.dll" />
+        <file src="bin\Release\logviewer.engine.XML" target="lib\net46\logviewer.engine.XML" />
+        <file src="Install.ps1" target="tools\net46\Install.ps1" />
     </files>
 </package>

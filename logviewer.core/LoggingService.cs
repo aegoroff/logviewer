@@ -18,10 +18,7 @@ namespace logviewer.core
         {
         }
 
-        public static Log Instance
-        {
-            get { return instance; }
-        }
+        public static Log Instance => instance;
     }
 
     /// <summary>
@@ -350,7 +347,7 @@ namespace logviewer.core
         {
             if (loggerName == null)
             {
-                throw new ArgumentNullException("loggerName");
+                throw new ArgumentNullException(nameof(loggerName));
             }
 
             return LogManager.GetLogger(loggerName);

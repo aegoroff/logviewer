@@ -8,7 +8,6 @@ using System.Data.SQLite;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using logviewer.engine;
 
 namespace logviewer.core
 {
@@ -17,6 +16,7 @@ namespace logviewer.core
         private readonly SQLiteConnection connection;
         private SQLiteTransaction transaction;
         private readonly SynchronizationContext creationContext;
+        private bool disposed;
 
         internal DatabaseConnection(string databaseFilePath)
         {
@@ -32,19 +32,32 @@ namespace logviewer.core
             this.connection.Open();
         }
 
+        ~DatabaseConnection()
+        {
+            this.DisposeInternal();
+        }
+
         internal bool IsEmpty { get; private set; }
-        internal string DatabasePath { get; private set; }
+        internal string DatabasePath { get; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
         public void Dispose()
         {
-            this.transaction.Do(tran => tran.Dispose());
-            this.connection.Do(delegate(SQLiteConnection conn)
+            this.DisposeInternal();
+            GC.SuppressFinalize(this);
+        }
+
+        private void DisposeInternal()
+        {
+            if (this.disposed)
             {
-                SafeRunner.Run(conn.Close);
-                SafeRunner.Run(conn.Dispose);
-            });
+                return;
+            }
+            this.transaction?.Dispose();
+            SafeRunner.Run(() => this.connection?.Close());
+            SafeRunner.Run(() => this.connection?.Dispose());
+            this.disposed = true;
         }
 
         internal void BeginTran()
@@ -87,6 +100,9 @@ namespace logviewer.core
                         case SQLiteErrorCode.Abort:
                             Log.Instance.Debug(e);
                             break;
+                        case SQLiteErrorCode.Misuse:
+                            Log.Instance.Debug(e);
+                            break;
                         default:
                             throw;
                     }
@@ -114,13 +130,13 @@ namespace logviewer.core
             }, query);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ExecuteInCreationContext(Action method)
         {
             this.creationContext.Send(o => method(), null);
         }
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         internal static void AddParameter<T>(IDbCommand cmd, string name, T value)
         {
             var parameter = SQLiteFactory.Instance.CreateParameter();
@@ -150,10 +166,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    if (actionBeforeExecute != null)
-                    {
-                        actionBeforeExecute(command);
-                    }
+                    actionBeforeExecute?.Invoke(command);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)

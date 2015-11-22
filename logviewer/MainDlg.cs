@@ -34,10 +34,7 @@ namespace logviewer
 
         public string LogPath { get; set; }
 
-        public string LogFileName
-        {
-            get { return this.openFileDialog1.FileName; }
-        }
+        public string LogFileName => this.openFileDialog1.FileName;
 
         public string HumanReadableLogSize
         {
@@ -159,7 +156,7 @@ namespace logviewer
 
         public void SetLoadedFileCapltion(string path)
         {
-            this.Text = string.Format("{0}: {1}", this.originalCapion, path);
+            this.Text = $"{this.originalCapion}: {path}";
         }
 
         public void SetFileEncoding(string encoding)
@@ -489,7 +486,7 @@ namespace logviewer
         private void StartReadingOnChangeTextFilter()
         {
             this.textFilterChanging = true;
-            this.Controller.StartReading(this.filterBox.Text, this.useRegexp.Checked);
+            this.Controller.StartReadingCachedLog(this.filterBox.Text, this.useRegexp.Checked);
         }
 
         private void OnCheckUpdates(object sender, EventArgs e)

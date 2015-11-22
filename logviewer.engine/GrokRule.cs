@@ -15,9 +15,9 @@ namespace logviewer.engine
     public struct GrokRule
     {
         internal const string DefaultPattern = "*";
-        private readonly string pattern;
-        private readonly ParserType type;
-        private readonly LogLevel level;
+        readonly string pattern;
+        readonly ParserType type;
+        readonly LogLevel level;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance
@@ -35,26 +35,17 @@ namespace logviewer.engine
         /// <summary>
         /// Gets or sets data pattern that will be cast to type
         /// </summary>
-        public string Pattern
-        {
-            get { return this.pattern; }
-        }
+        public string Pattern => this.pattern;
 
         /// <summary>
         /// Gets target casting type
         /// </summary>
-        public ParserType Type
-        {
-            get { return this.type; }
-        }
+        public ParserType Type => this.type;
 
         /// <summary>
         /// Gets target log level
         /// </summary>
-        public LogLevel Level
-        {
-            get { return this.level; }
-        }
+        public LogLevel Level => this.level;
 
         /// <summary>
         /// Compares this instance with instance specified
@@ -91,7 +82,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return this.pattern.Return(s => s.GetHashCode(), 0);
+            return this.pattern?.GetHashCode() ?? 0;
         }
 
         /// <summary>

@@ -24,10 +24,7 @@ namespace logviewer.core
         [Column("Compiled")]
         public bool Compiled { get; set; }
 
-        public bool IsEmpty
-        {
-            get { return this.StartMessage == null; }
-        }
+        public bool IsEmpty => this.StartMessage == null;
 
         public string DisplayName
         {

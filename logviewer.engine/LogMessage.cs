@@ -17,8 +17,10 @@ namespace logviewer.engine
     public struct LogMessage
     {
         private const char NewLine = '\n';
+        private const int DefaultPropertyDicitionaryCapacity = 5;
 
-        static readonly string[] formats =
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private static string[] formats =
                     {
                         "yyyy-MM-dd HH:mm:ss,FFF",
                         "yyyy-MM-dd HH:mm:ss.FFF",
@@ -43,7 +45,7 @@ namespace logviewer.engine
         {
             this.head = header;
             this.body = body;
-            this.ix = 0;
+            this.Ix = 0;
             this.rawProperties = null;
             this.bodyBuilder = null;
             this.integerProperties = new Dictionary<string, long>();
@@ -53,53 +55,31 @@ namespace logviewer.engine
         /// <summary>
         /// Gets whether the message empty or not.
         /// </summary>
-        public bool IsEmpty
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
-                       this.bodyBuilder.Length == 0;
-            }
-        }
+        public bool IsEmpty => string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
+                               this.bodyBuilder.Length == 0;
 
         /// <summary>
         /// Gets or sets message unique index to store it into database for example
         /// </summary>
-        public long Ix
-        {
-            get { return this.ix; }
-            set { this.ix = value; }
-        }
+        public long Ix { get; set; }
 
         /// <summary>
         /// Gets message's head
         /// </summary>
-        public string Header
-        {
-            get { return this.head ?? string.Empty; }
-        }
+        public string Header => this.head ?? string.Empty;
 
         /// <summary>
         /// Gets message's body (without header)
         /// </summary>
-        public string Body
-        {
-            get
-            {
-                return this.body ??
-                       (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
-                           ? string.Empty
-                           : this.bodyBuilder.ToString());
-            }
-        }
+        public string Body => this.body ??
+                              (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
+                                  ? string.Empty
+                                  : this.bodyBuilder.ToString());
 
         /// <summary>
         /// Gets whether the message has header
         /// </summary>
-        public bool HasHeader
-        {
-            get { return this.rawProperties != null; }
-        }
+        public bool HasHeader => this.rawProperties != null;
 
         /// <summary>
         /// Add line to the message (the first line will be header the others will be considered as body)
@@ -167,8 +147,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
         {
             LogLevel level;
             var result = rules.Count > 1
@@ -180,8 +160,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseDateTime(string dataToParse, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseDateTime(string dataToParse, string property)
         {
             DateTime r;
             var success = DateTime.TryParseExact(dataToParse, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
@@ -195,8 +175,8 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseInteger(string dataToParse, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseInteger(string dataToParse, string property)
         {
             long r;
             var success = long.TryParse(dataToParse, out r);
@@ -239,6 +219,9 @@ namespace logviewer.engine
                         break;
                     case ParserType.Interger:
                         this.ParseInteger(matchedData, property.Key);
+                        break;
+                    case ParserType.String:
+                        this.ParseString(matchedData, property.Key);
                         break;
                     default:
                         this.ParseString(matchedData, property.Key);
@@ -345,19 +328,18 @@ namespace logviewer.engine
             return new LogMessage
             {
                 bodyBuilder = new StringBuilder(),
-                integerProperties = new Dictionary<string, long>(5),
-                stringProperties = new Dictionary<string, string>(5)
+                integerProperties = new Dictionary<string, long>(DefaultPropertyDicitionaryCapacity),
+                stringProperties = new Dictionary<string, string>(DefaultPropertyDicitionaryCapacity)
             };
         }
 
         #region Constants and Fields
 
-        private IDictionary<string, long> integerProperties; 
-        private IDictionary<string, string> stringProperties; 
+        private Dictionary<string, long> integerProperties; 
+        private Dictionary<string, string> stringProperties; 
         private string body;
         private StringBuilder bodyBuilder;
         private string head;
-        private long ix;
         private IDictionary<string, string> rawProperties;
 
         #endregion

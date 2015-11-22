@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -56,7 +55,7 @@ namespace logviewer.core
         private bool useRegexp = true;
         private ILogView view;
         public event EventHandler<LogReadCompletedEventArgs> ReadCompleted;
-        private const int KeepLastFilters = 20;
+        
         private const int CheckUpdatesEveryDays = 7;
         private DateTime minDate = DateTime.MinValue;
         private DateTime maxDate = DateTime.MaxValue;
@@ -83,7 +82,6 @@ namespace logviewer.core
             this.options = options;
             this.kernel = new StandardKernel(new CoreModule());
             this.SetCurrentParsingTemplate();
-            SQLiteFunction.RegisterFunction(typeof (SqliteRegEx));
         }
 
         private void SetCurrentParsingTemplate()
@@ -95,7 +93,7 @@ namespace logviewer.core
 
         private void CreateMessageHead(string startMessagePattern, bool compiled)
         {
-            this.matcher = new GrokMatcher(startMessagePattern, compiled ? options | RegexOptions.Compiled : options);
+            this.matcher = new GrokMatcher(startMessagePattern, compiled ? this.options | RegexOptions.Compiled : this.options);
         }
         
         private void CreateMessageFilter(string messageFilter)
@@ -143,10 +141,7 @@ namespace logviewer.core
 
         #region Public Methods and Operators
 
-        private bool NotCancelled
-        {
-            get { return !this.cancellation.IsCancellationRequested; }
-        }
+        private bool NotCancelled => !this.cancellation.IsCancellationRequested;
 
         public void InitializeLogger()
         {
@@ -224,7 +219,7 @@ namespace logviewer.core
 
         public bool PendingStart { get; private set; }
 
-        public void StartReading(string messageFilter, bool regexp)
+        public void StartReadingCachedLog(string messageFilter, bool regexp)
         {
             if (!IsValidFilter(messageFilter, regexp))
             {
@@ -299,15 +294,9 @@ namespace logviewer.core
             this.BeginLogReading();
         }
 
-        public string CurrentEncoding
-        {
-            get
-            {
-                return this.filesEncodingCache.ContainsKey(this.currentPath)
-                    ? this.filesEncodingCache[this.currentPath].EncodingName
-                    : string.Empty;
-            }
-        }
+        public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
+            ? this.filesEncodingCache[this.currentPath].EncodingName
+            : string.Empty;
 
         private void BeginLogReading()
         {
@@ -422,7 +411,7 @@ namespace logviewer.core
         {
             string[] items = null;
 
-            this.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
+            this.settings.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -480,7 +469,7 @@ namespace logviewer.core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
         public void StartReadLog()
         {
-            totalReadTimeWatch.Restart();
+            this.totalReadTimeWatch.Restart();
             if (this.minFilter > this.maxFilter && this.maxFilter >= LogLevel.Trace)
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
@@ -532,7 +521,7 @@ namespace logviewer.core
                 this.totalMessages = 0;
             }
             reader.ProgressChanged += this.OnReadLogProgressChanged;
-            reader.CompilationStarted += OnCompilationStarted;
+            reader.CompilationStarted += this.OnCompilationStarted;
             reader.CompilationFinished += this.OnCompilationFinished;
             reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
@@ -541,7 +530,7 @@ namespace logviewer.core
             try
             {
                 this.queuedMessages = 0;
-                var encoding = reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, inputEncoding, offset);
+                reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, ref inputEncoding, offset);
                 this.probeWatch.Stop();
                 var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
@@ -552,9 +541,9 @@ namespace logviewer.core
                     : TimeSpan.FromSeconds(pending / insertRatio);
 
                 if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) &&
-                    encoding != null)
+                    inputEncoding != null)
                 {
-                    this.filesEncodingCache.Add(this.currentPath, encoding);
+                    this.filesEncodingCache.Add(this.currentPath, inputEncoding);
                 }
                 var remainSeconds = remain.Seconds;
                 if (remainSeconds > 0)
@@ -784,9 +773,7 @@ namespace logviewer.core
 
             var lastOpenedFile = string.Empty;
 
-            Action<RecentItemsStore> method =
-                delegate(RecentItemsStore filesStore) { lastOpenedFile = filesStore.ReadLastUsedItem(); };
-            this.UseRecentFilesStore(method);
+            this.settings.UseRecentFilesStore(filesStore => lastOpenedFile = filesStore.ReadLastUsedItem());
 
             if (!string.IsNullOrWhiteSpace(lastOpenedFile))
             {
@@ -798,7 +785,7 @@ namespace logviewer.core
         {
             IEnumerable<string> files = null;
 
-            this.UseRecentFilesStore(delegate(RecentItemsStore filesStore) { files = filesStore.ReadItems(); });
+            this.settings.UseRecentFilesStore(filesStore => files = filesStore.ReadItems());
 
             this.view.ClearRecentFilesList();
 
@@ -819,7 +806,7 @@ namespace logviewer.core
                     notExistFiles.Add(item);
                 }
             }
-            this.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
+            this.settings.UseRecentFilesStore(s => s.Remove(notExistFiles.ToArray()));
         }
 
         public void ReadTemplates()
@@ -827,8 +814,8 @@ namespace logviewer.core
             this.view.ClearTemplatesList();
             Task.Factory.StartNew(delegate
             {
-                var templates = settings.ReadAllParsingTemplates();
-                var current = settings.SelectedParsingTemplate;
+                var templates = this.settings.ReadAllParsingTemplates();
+                var current = this.settings.SelectedParsingTemplate;
                 foreach (var template in templates)
                 {
                     var t = template;
@@ -841,31 +828,6 @@ namespace logviewer.core
         {
             this.settings.SelectedParsingTemplate = index;
             this.SetCurrentParsingTemplate();
-        }
-
-        private void UseRecentFilesStore(Action<RecentItemsStore> action)
-        {
-            UseRecentFiltersStore(action, "RecentFiles");
-        }
-        
-        private void UseRecentFiltersStore(Action<RecentItemsStore> action)
-        {
-            UseRecentFiltersStore(action, "RecentFilters", KeepLastFilters);
-        }
-        
-        private void UseRecentFiltersStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
-        {
-            try
-            {
-                using (var itemsStore = new RecentItemsStore(this.settings, table, maxItems))
-                {
-                    action(itemsStore);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Instance.Debug(e);
-            }
         }
 
         public void UpdateSettings(bool refresh)
@@ -891,7 +853,7 @@ namespace logviewer.core
 
         public void AddCurrentFileToRecentFilesList()
         {
-            this.UseRecentFilesStore(s => s.Add(this.view.LogPath));
+            this.settings.UseRecentFilesStore(s => s.Add(this.view.LogPath));
         }
 
         public void OpenLogFile()
@@ -938,24 +900,12 @@ namespace logviewer.core
         private long logSize;
         private long totalFiltered;
 
-        private bool CurrentPathCached
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(this.currentPath) &&
-                       this.currentPath.Equals(this.view.LogPath, StringComparison.CurrentCultureIgnoreCase);
-            }
-        }
+        private bool CurrentPathCached => !string.IsNullOrWhiteSpace(this.currentPath) &&
+                                          this.currentPath.Equals(this.view.LogPath, StringComparison.CurrentCultureIgnoreCase);
 
-        private long TotalMessages
-        {
-            get { return this.store != null ? this.store.CountMessages() : 0; }
-        }
+        private long TotalMessages => this.store?.CountMessages() ?? 0;
 
-        public LogStore Store
-        {
-            get { return this.store; }
-        }
+        public LogStore Store => this.store;
 
         private long queuedMessages;
 

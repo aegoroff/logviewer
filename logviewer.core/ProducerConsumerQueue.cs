@@ -55,11 +55,8 @@ namespace logviewer.core
             }
         }
 
-        public int WorkersCount
-        {
-            get { return this.workers.Length; }
-        }
-        
+        public int WorkersCount => this.workers.Length;
+
         public void EnqueueItem(Action item)
         {
             // memory: Freeze queue filling until pending count less then MaxQueueCountBeforeEnqueueDelay and then increase queue length

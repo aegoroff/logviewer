@@ -20,7 +20,7 @@
         </BootstrapperApplicationRef>
 
 	    <Chain>
-            <PackageGroupRef Id="NetFx45Redist"/>
+            <PackageGroupRef Id="NetFx46Redist"/>
             <RollbackBoundary />
             <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
 		</Chain>

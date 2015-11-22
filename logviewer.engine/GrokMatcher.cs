@@ -16,8 +16,10 @@ namespace logviewer.engine
     public class GrokMatcher
     {
         private Regex regex;
-        private readonly List<Semantic> messageSchema = new List<Semantic>();
-        private readonly Action<string> customErrorOutputMethod;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private List<Semantic> messageSchema = new List<Semantic>();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Action<string> customErrorOutputMethod;
 
         /// <summary>
         /// Init new matcher
@@ -88,10 +90,7 @@ namespace logviewer.engine
         /// <summary>
         /// Message schema - all possible properties and casting rules
         /// </summary>
-        public ICollection<Semantic> MessageSchema
-        {
-            get { return this.messageSchema; }
-        }
+        public ICollection<Semantic> MessageSchema => this.messageSchema;
 
         /// <summary>
         /// Checks line matching the pattern

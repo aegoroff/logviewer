@@ -36,10 +36,7 @@ namespace logviewer.engine
         /// <summary>
         /// Gets rules dictionary that has been built from the schema
         /// </summary>
-        public IDictionary<SemanticProperty, ISet<GrokRule>> Rules
-        {
-            get { return this.rules; }
-        }
+        public IDictionary<SemanticProperty, ISet<GrokRule>> Rules => this.rules;
 
         /// <summary>
         /// Defines parser type of the property specified

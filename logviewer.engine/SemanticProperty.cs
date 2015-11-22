@@ -12,7 +12,6 @@ namespace logviewer.engine
     public struct SemanticProperty
     {
         private readonly string name;
-        private readonly ParserType parser;
 
         /// <summary>
         /// Initializes new <see cref="SemanticProperty"/> instance using name and parser type specified
@@ -22,7 +21,7 @@ namespace logviewer.engine
         public SemanticProperty(string name, ParserType parser)
         {
             this.name = name;
-            this.parser = parser;
+            this.Parser = parser;
         }
 
         /// <summary>
@@ -38,18 +37,12 @@ namespace logviewer.engine
         /// <summary>
         /// Gets property name
         /// </summary>
-        public string Name
-        {
-            get { return this.name; }
-        }
+        public string Name => this.name;
 
         /// <summary>
         /// Gets property parser type
         /// </summary>
-        public ParserType Parser
-        {
-            get { return this.parser; }
-        }
+        public ParserType Parser { get; }
 
         /// <summary>
         /// Compares this instance with instance specified
@@ -86,7 +79,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            return this.name.Return(s => s.GetHashCode(), 0);
+            return this.name?.GetHashCode() ?? 0;
         }
 
         /// <summary>

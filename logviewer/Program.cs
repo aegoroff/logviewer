@@ -28,13 +28,13 @@ namespace logviewer
         private static void Main(string[] args)
         {
             var arguments = Parser.ParseIntoOrShowUsage<ProgramArguments>(args);
-            if (arguments != null && arguments.ProjectKey != null && arguments.ResultFile != null)
+            if (arguments?.ProjectKey != null && arguments.ResultFile != null)
             {
                 var crypt = new AsymCrypt();
                 crypt.GenerateKeys();
                 var crypted = crypt.Encrypt(arguments.ProjectKey);
-                var key = string.Format("Private key:\r\n{0}\r\n\r\n", crypt.PrivateKey);
-                var token = string.Format("Encrypted token:\r\n{0}", crypted);
+                var key = $"Private key:\r\n{crypt.PrivateKey}\r\n\r\n";
+                var token = $"Encrypted token:\r\n{crypted}";
                 File.WriteAllText(arguments.ResultFile, key + token);
                 return;
             }

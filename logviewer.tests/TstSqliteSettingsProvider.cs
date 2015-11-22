@@ -3,8 +3,10 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FluentAssertions;
 using logviewer.core;
 using Xunit;
 
@@ -13,9 +15,11 @@ namespace logviewer.tests
     [Collection("SerialTests")]
     public class TstSqliteSettingsProvider : IDisposable
     {
+        private const int KeepLastNFilesCount = 2;
+
         public TstSqliteSettingsProvider()
         {
-            this.provider = new SqliteSettingsProvider(dbPath, 100, 5);
+            this.provider = new SqliteSettingsProvider(dbPath, 100, KeepLastNFilesCount);
         }
 
         public void Dispose()
@@ -32,75 +36,75 @@ namespace logviewer.tests
         [Fact]
         public void KeepLastNFiles()
         {
-            Assert.Equal(5, this.provider.KeepLastNFiles);
+            this.provider.KeepLastNFiles.Should().Be(KeepLastNFilesCount);
         }
 
         [Fact]
         public void PageSize()
         {
-            Assert.Equal(100, this.provider.PageSize);
+            this.provider.PageSize.Should().Be(100);
         }
 
         [Fact]
         public void ReadParsingTemplate()
         {
-            ParsingTemplate template = this.provider.ReadParsingTemplate();
-            Assert.Equal(0, template.Index);
-            Assert.Equal(TstMainController.MessageStart, template.StartMessage);
+            var template = this.provider.ReadParsingTemplate();
+            template.Index.Should().Be(0);
+            template.StartMessage.Should().Be(TstMainController.MessageStart);
         }
 
         [Fact]
         public void UpdateParsingTemplate()
         {
-            ParsingTemplate template = this.provider.ReadParsingTemplate();
+            var template = this.provider.ReadParsingTemplate();
             template.StartMessage += "1";
             this.provider.UpdateParsingTemplate(template);
-            ParsingTemplate template1 = this.provider.ReadParsingTemplate();
-            Assert.Equal(TstMainController.MessageStart + "1", template1.StartMessage);
+            var template1 = this.provider.ReadParsingTemplate();
+            template1.StartMessage.Should().Be(TstMainController.MessageStart + "1");
         }
         
         [Fact]
         public void UpdateParsingTemplateWithFilter()
         {
             const string filter = "^#%{DATA}";
-            ParsingTemplate template = this.provider.ReadParsingTemplate();
+            var template = this.provider.ReadParsingTemplate();
             template.StartMessage += "1";
             template.Filter = filter;
             this.provider.UpdateParsingTemplate(template);
-            ParsingTemplate template1 = this.provider.ReadParsingTemplate();
-            Assert.Equal(TstMainController.MessageStart + "1", template1.StartMessage);
-            Assert.Equal(filter, template1.Filter);
+            var template1 = this.provider.ReadParsingTemplate();
+            template1.StartMessage.Should().Be(TstMainController.MessageStart + "1");
+            template1.Filter.Should().Be(filter);
         }
 
         [Fact]
         public void SecondSettingsObjectOnTheSameFile()
         {
-            var secondProvider = new SqliteSettingsProvider(dbPath, 100, 5);
-            Assert.Equal(100, secondProvider.PageSize);
-            ParsingTemplate template = secondProvider.ReadParsingTemplate();
-            Assert.Equal(ParsingTemplate.Defaults.First().Name, template.Name);
+            var secondProvider = new SqliteSettingsProvider(dbPath, 100, KeepLastNFilesCount);
+            secondProvider.PageSize.Should().Be(100);
+            var template = secondProvider.ReadParsingTemplate();
+            template.Name.Should().Be(ParsingTemplate.Defaults.First().Name);
         }
 
         [Fact]
         public void ReadParsingTemplateList()
         {
             var list = this.provider.ReadParsingTemplateList();
-            Assert.Equal(9, list.Count());
+            list.Count.Should().Be(9);
         }
         
         [Fact]
         public void ReadAllParsingTemplates()
         {
             var list = this.provider.ReadAllParsingTemplates();
-            Assert.Equal(9, list.Count());
+            list.Count.Should().Be(9);
         }
 
         [Fact]
         public void AutoRefreshTest()
         {
-            Assert.False(this.provider.AutoRefreshOnFileChange);
+            this.provider.AutoRefreshOnFileChange.Should().BeFalse();
             this.provider.AutoRefreshOnFileChange = true;
-            Assert.True(this.provider.AutoRefreshOnFileChange);
+            this.provider.AutoRefreshOnFileChange.Should().BeTrue();
         }
         
         [Fact]
@@ -108,21 +112,22 @@ namespace logviewer.tests
         {
             var now = DateTime.UtcNow;
             var last = this.provider.LastUpdateCheckTime;
-            Assert.Equal(now.Year, last.Year);
-            Assert.Equal(now.Month, last.Month);
-            Assert.Equal(now.Day, last.Day);
-            Assert.Equal(now.Hour, last.Hour);
-            Assert.Equal(now.Minute, last.Minute);
+            last.Year.Should().Be(now.Year);
+            last.Month.Should().Be(now.Month);
+            last.Day.Should().Be(now.Day);
+            last.Hour.Should().Be(now.Hour);
+            last.Minute.Should().Be(now.Minute);
+
             var newValue = new DateTime(2014, 1, 10).ToUniversalTime();
             this.provider.LastUpdateCheckTime = newValue;
-            Assert.Equal(newValue, this.provider.LastUpdateCheckTime);
+            this.provider.LastUpdateCheckTime.Should().Be(newValue);
         }
 
         [Fact]
         public void InsertParsingTemplate()
         {
             var templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(9, templates.Count);
+            templates.Count.Should().Be(9);
             var newTemplate = new ParsingTemplate
             {
                 Index = templates.Count, 
@@ -131,28 +136,28 @@ namespace logviewer.tests
             };
             this.provider.InsertParsingTemplate(newTemplate);
             templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(10, templates.Count);
+            templates.Count.Should().Be(10);
             var template = this.provider.ReadParsingTemplate(newTemplate.Index);
-            Assert.Equal(newTemplate.Index, template.Index);
-            Assert.Equal("second", template.Name);
-            Assert.Equal("%{DATA}", template.StartMessage);
+            template.Index.Should().Be(newTemplate.Index);
+            template.Name.Should().Be("second");
+            template.StartMessage.Should().Be("%{DATA}");
         }
         
         [Fact]
         public void RemoveParsingTemplate()
         {
             var templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(9, templates.Count);
+            templates.Count.Should().Be(9);
             this.provider.DeleteParsingTemplate(8);
             templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(8, templates.Count);
+            templates.Count.Should().Be(8);
         }
         
         [Fact]
         public void RemoveParsingTemplateFromMiddle()
         {
             var templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(9, templates.Count);
+            templates.Count.Should().Be(9);
             var newTemplate = new ParsingTemplate
             {
                 Index = templates.Count, 
@@ -169,12 +174,59 @@ namespace logviewer.tests
             this.provider.InsertParsingTemplate(newTemplate);
             this.provider.InsertParsingTemplate(newTemplate1);
             templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(11, templates.Count);
+            templates.Count.Should().Be(11);
             this.provider.DeleteParsingTemplate(newTemplate.Index);
             templates = this.provider.ReadParsingTemplateList();
-            Assert.Equal(10, templates.Count);
-            ParsingTemplate template = this.provider.ReadParsingTemplate(templates.Count - 1);
-            Assert.Equal(newTemplate1.Name, template.Name);
+            templates.Count.Should().Be(10);
+            var template = this.provider.ReadParsingTemplate(templates.Count - 1);
+            template.Name.Should().Be(newTemplate1.Name);
+        }
+
+        [Fact]
+        public void ReadRecentFilesEmpty()
+        {
+            IEnumerable<string> files = null;
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void SaveAndReadRecentFilesOneFile()
+        {
+            const string f = "f1";
+            IEnumerable<string> files = null;
+
+            this.provider.UseRecentFilesStore(store => store.Add(f));
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEquivalentTo(f);
+        }
+
+        [Fact]
+        public void SaveAndReadRecentFilesManyFiles()
+        {
+            const string f1 = "f1";
+            const string f2 = "f2";
+            IEnumerable<string> files = null;
+
+            this.provider.UseRecentFilesStore(store => store.Add(f1));
+            this.provider.UseRecentFilesStore(store => store.Add(f2));
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEquivalentTo(f1, f2);
+        }
+
+        [Fact]
+        public void RecentFilesMoreThenLimit()
+        {
+            const string f1 = "f1";
+            const string f2 = "f2";
+            const string f3 = "f3";
+            IEnumerable<string> files = null;
+
+            this.provider.UseRecentFilesStore(store => store.Add(f1));
+            this.provider.UseRecentFilesStore(store => store.Add(f2));
+            this.provider.UseRecentFilesStore(store => store.Add(f3));
+            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            files.Should().BeEquivalentTo(f2, f3);
         }
     }
 }
