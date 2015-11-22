@@ -69,6 +69,7 @@
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.dll" />
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.pdb" />
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.patterns" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.config" Exclude="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.vshost.exe.config"/>
       <PackageFile Include="$(MSBuildProjectDirectory)\..\LICENSE.txt" />
     </ItemGroup>
 	<MakeDir

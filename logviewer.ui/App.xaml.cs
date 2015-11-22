@@ -21,15 +21,14 @@ namespace logviewer.ui
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+#if !DEBUG
+            this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+#endif
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-#if !DEBUG
-            this.DispatcherUnhandledException += OnDispatcherUnhandledException;
-#endif
         }
 
 #if !DEBUG
