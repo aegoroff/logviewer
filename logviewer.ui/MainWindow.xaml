@@ -292,7 +292,7 @@
             Grid.Row="0"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
-            IsBusy="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource.IsLoading}"
+            IsBusy="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource.IsLoading, IsAsync=True}"
             BusyContent="{x:Static properties:Resources.LoadingPage}" />
     </Grid>
 </fluent:RibbonWindow>
