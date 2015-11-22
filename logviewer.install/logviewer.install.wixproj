@@ -69,7 +69,18 @@
   <Target Name="BeforeBuild" DependsOnTargets="UpdateWix">
   </Target>
   <Target Name="CreateFiles">
-    <Exec Command="&quot;$(WixInstallPath)heat.exe&quot; dir &quot;$(ProjectDir)..\logviewer.ui\bin\$(Configuration)&quot; -cg logviewer -gg -sfrag -sreg -dr ProgramFilesFolder -var var.SourcePath -template fragment -out $(ProjectDir)files.wxs" />
+	<HeatDirectory 
+	    ToolPath="$(WixInstallPath)"
+		VerboseOutput="true"
+		GenerateGuidsNow="true"
+		OutputFile="$(ProjectDir)files.wxs"
+		SuppressFragments="true"
+		Directory="$(ProjectDir)..\logviewer.ui\bin\$(Configuration)"
+		ComponentGroupName="logviewer"
+		DirectoryRefId="ProgramFilesFolder"
+		KeepEmptyDirectories="false"
+		PreprocessorVariable="var.SourcePath"
+		SuppressRegistry="true" />
   </Target>
   <Target Name="UpdateWix" DependsOnTargets="CreateFiles">
     <ItemGroup>
