@@ -8,7 +8,7 @@
     x:Class="logviewer.ui.MainWindow"
     Closing="OnClosing"
     Loaded="OnLoaded"
-    Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption, IsAsync=True}" 
+    Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption, IsAsync=True}"
     Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
     <Window.Resources>
         <CollectionViewSource
@@ -24,256 +24,276 @@
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Sorting, IsAsync=True}"
             x:Key="Sorting" />
         <Style x:Key="LogControlStyle" TargetType="{x:Type ListBox}">
-            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
-            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
-            <Setter Property="VirtualizingStackPanel.IsContainerVirtualizable" Value="True"/>
-            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
-            <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-            <Setter Property="ItemsSource" Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource, IsAsync=True}"/>
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
+            <Setter Property="VirtualizingStackPanel.IsContainerVirtualizable" Value="True" />
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="ItemsSource"
+                    Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource, IsAsync=True}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsLoading, IsAsync=True}" Value="True">
-                    <Setter Property="ListBox.Cursor" Value="Wait"/>
+                    <Setter Property="ListBox.Cursor" Value="Wait" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="Open" Executed="OnOpenFile"></CommandBinding>
-        <CommandBinding Command="Close" Executed="OnExitApp"></CommandBinding>
-        <CommandBinding Command="Help" Executed="OnHelp"></CommandBinding>
-        <CommandBinding Command="logviewer:LogviewerCommands.Update" Executed="OnUpdate"></CommandBinding>
-        <CommandBinding Command="logviewer:LogviewerCommands.Statistic" Executed="OnStatistic"></CommandBinding>
-        <CommandBinding Command="logviewer:LogviewerCommands.Settings" Executed="OnSettings"></CommandBinding>
-        <CommandBinding Command="logviewer:LogviewerCommands.Updates" Executed="OnCheckUpdates"></CommandBinding>
+        <CommandBinding Command="Open" Executed="OnOpenFile" />
+        <CommandBinding Command="Close" Executed="OnExitApp" />
+        <CommandBinding Command="Help" Executed="OnHelp" />
+        <CommandBinding Command="logviewer:LogviewerCommands.Update" Executed="OnUpdate" />
+        <CommandBinding Command="logviewer:LogviewerCommands.Statistic" Executed="OnStatistic" />
+        <CommandBinding Command="logviewer:LogviewerCommands.Settings" Executed="OnSettings" />
+        <CommandBinding Command="logviewer:LogviewerCommands.Updates" Executed="OnCheckUpdates" />
     </Window.CommandBindings>
-    <DockPanel>
-        <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
-            <fluent:Ribbon.Menu>
-                <fluent:Backstage>
-                    <fluent:BackstageTabControl>
-                        <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}" />
-                        <fluent:Button x:Name="ButtonExport" Header="{x:Static properties:Resources.Export}"
-                                       LargeIcon="Images\Large\report_go.png" Icon="Images\Small\report_go.png" />
-                        <fluent:Button x:Name="ButtonCloseApp" Header="{x:Static properties:Resources.Close}"
-                                       LargeIcon="Images\Large\cancel.png" Icon="Images\Small\cancel.png" Command="Close"/>
-                    </fluent:BackstageTabControl>
-                </fluent:Backstage>
-            </fluent:Ribbon.Menu>
-            <!--Tabs-->
-            <fluent:RibbonTabItem Header="{x:Static properties:Resources.View}">
-                <fluent:RibbonGroupBox Header="{x:Static properties:Resources.Log}">
-                    <fluent:Button x:Name="ButtonOpen" 
-                                   Header="{x:Static properties:Resources.Open}"
-                                   LargeIcon="Images\Large\folder.png" 
-                                   Icon="Images\Small\folder.png"
-                                   Command="Open"/>
-                    <fluent:Button Header="{x:Static properties:Resources.Refresh}"
-                                   x:Name="ButtonRefresh"
-                                   Icon="Images\Small\database_refresh.png"
-                                   IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
-                                   LargeIcon="Images\Large\database_refresh.png"
-                                   Command="logviewer:LogviewerCommands.Update" />
-                    <fluent:Button x:Name="ButtonStat"
-                                   Header="{x:Static properties:Resources.Statistic}"
-                                   Icon="Images\Small\chart_pie.png"
-                                   IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
-                                   LargeIcon="Images\Large\chart_pie.png" SizeDefinition="Middle, Middle, Small" 
-                                   Command="logviewer:LogviewerCommands.Statistic"/>
-                    <fluent:DropDownButton x:Name="ButtonTemplateSelection"
-                                           Header="{x:Static properties:Resources.TemplateSelection}"
-                                           Icon="Images\Small\stamp_pattern.png"
-                                           LargeIcon="Images\Large\stamp_pattern.png"
-                                           SizeDefinition="Middle, Middle, Small"
-                                           IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
-                                           ItemsSource="{Binding Source={StaticResource ParsingTemplates}, IsAsync=True}">
-                        <fluent:DropDownButton.ItemContainerStyle>
-                            <Style TargetType="MenuItem">
-                                <Setter Property="IsChecked" 
-                                        Value="{Binding Path=(logviewer:TemplateCommand.Checked), IsAsync=True}"/>
-                                <Setter Property="Header" 
-                                        Value="{Binding Path=(logviewer:TemplateCommand.Text), IsAsync=True}"/>
-                                <EventSetter Event="Click" Handler="OnTemplateSelect"></EventSetter>
-                            </Style>
-                        </fluent:DropDownButton.ItemContainerStyle>
-                    </fluent:DropDownButton>
-                    <fluent:ComboBox x:Name="ButtonSorting"
-                                     Header="{x:Static properties:Resources.Sorting}"
-                                     SizeDefinition="Middle, Middle, Small"
-                                     SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=SortingOrder, IsAsync=True}"
-                                     IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
-                                     IsReadOnly="True"
-                                     ItemsSource="{Binding Source={StaticResource Sorting}, IsAsync=True}" />
-                </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="{x:Static properties:Resources.LevelFilter}">
-                    <fluent:ComboBox
-                        x:Name="MinLevel"
-                        Header="{x:Static properties:Resources.MinLabel}"
-                        SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MinLevel, IsAsync=True}"
-                        IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
-                        IsReadOnly="True"
-                        Margin="5"
-                        ItemsSource="{Binding Source={StaticResource MinLogLevelLabels}, IsAsync=True}" />
-                    <fluent:ComboBox
-                        x:Name="MaxLevel"
-                        Header="{x:Static properties:Resources.MaxLabel}"
-                        SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MaxLevel, IsAsync=True}"
-                        IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
-                        IsReadOnly="True"
-                        Margin="5"
-                        ItemsSource="{Binding Source={StaticResource MaxLogLevelLabels}, IsAsync=True}" />
-                </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="{x:Static properties:Resources.DateFilter}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Label Content="{x:Static properties:Resources.From}" Grid.Column="0" Grid.Row="0" />
-                        <Label Content="{x:Static properties:Resources.To}" Grid.Column="0" Grid.Row="1" />
-                        <xctk:DateTimePicker 
-                                Format="Custom" 
+    <Grid>
+        <DockPanel Grid.Row="0">
+            <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
+                <fluent:Ribbon.Menu>
+                    <fluent:Backstage>
+                        <fluent:BackstageTabControl>
+                            <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}" />
+                            <fluent:Button x:Name="ButtonExport" Header="{x:Static properties:Resources.Export}"
+                                           LargeIcon="Images\Large\report_go.png" Icon="Images\Small\report_go.png" />
+                            <fluent:Button x:Name="ButtonCloseApp" Header="{x:Static properties:Resources.Close}"
+                                           LargeIcon="Images\Large\cancel.png" Icon="Images\Small\cancel.png"
+                                           Command="Close" />
+                        </fluent:BackstageTabControl>
+                    </fluent:Backstage>
+                </fluent:Ribbon.Menu>
+                <!--Tabs-->
+                <fluent:RibbonTabItem Header="{x:Static properties:Resources.View}">
+                    <fluent:RibbonGroupBox Header="{x:Static properties:Resources.Log}">
+                        <fluent:Button x:Name="ButtonOpen"
+                                       Header="{x:Static properties:Resources.Open}"
+                                       LargeIcon="Images\Large\folder.png"
+                                       Icon="Images\Small\folder.png"
+                                       Command="Open" />
+                        <fluent:Button Header="{x:Static properties:Resources.Refresh}"
+                                       x:Name="ButtonRefresh"
+                                       Icon="Images\Small\database_refresh.png"
+                                       IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
+                                       LargeIcon="Images\Large\database_refresh.png"
+                                       Command="logviewer:LogviewerCommands.Update" />
+                        <fluent:Button x:Name="ButtonStat"
+                                       Header="{x:Static properties:Resources.Statistic}"
+                                       Icon="Images\Small\chart_pie.png"
+                                       IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
+                                       LargeIcon="Images\Large\chart_pie.png" SizeDefinition="Middle, Middle, Small"
+                                       Command="logviewer:LogviewerCommands.Statistic" />
+                        <fluent:DropDownButton x:Name="ButtonTemplateSelection"
+                                               Header="{x:Static properties:Resources.TemplateSelection}"
+                                               Icon="Images\Small\stamp_pattern.png"
+                                               LargeIcon="Images\Large\stamp_pattern.png"
+                                               SizeDefinition="Middle, Middle, Small"
+                                               IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
+                                               ItemsSource="{Binding Source={StaticResource ParsingTemplates}, IsAsync=True}">
+                            <fluent:DropDownButton.ItemContainerStyle>
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="IsChecked"
+                                            Value="{Binding Path=(logviewer:TemplateCommand.Checked), IsAsync=True}" />
+                                    <Setter Property="Header"
+                                            Value="{Binding Path=(logviewer:TemplateCommand.Text), IsAsync=True}" />
+                                    <EventSetter Event="Click" Handler="OnTemplateSelect" />
+                                </Style>
+                            </fluent:DropDownButton.ItemContainerStyle>
+                        </fluent:DropDownButton>
+                        <fluent:ComboBox x:Name="ButtonSorting"
+                                         Header="{x:Static properties:Resources.Sorting}"
+                                         SizeDefinition="Middle, Middle, Small"
+                                         SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=SortingOrder, IsAsync=True}"
+                                         IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
+                                         IsReadOnly="True"
+                                         ItemsSource="{Binding Source={StaticResource Sorting}, IsAsync=True}" />
+                    </fluent:RibbonGroupBox>
+                    <fluent:RibbonGroupBox Header="{x:Static properties:Resources.LevelFilter}">
+                        <fluent:ComboBox
+                            x:Name="MinLevel"
+                            Header="{x:Static properties:Resources.MinLabel}"
+                            SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MinLevel, IsAsync=True}"
+                            IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
+                            IsReadOnly="True"
+                            Margin="5"
+                            ItemsSource="{Binding Source={StaticResource MinLogLevelLabels}, IsAsync=True}" />
+                        <fluent:ComboBox
+                            x:Name="MaxLevel"
+                            Header="{x:Static properties:Resources.MaxLabel}"
+                            SelectedIndex="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MaxLevel, IsAsync=True}"
+                            IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
+                            IsReadOnly="True"
+                            Margin="5"
+                            ItemsSource="{Binding Source={StaticResource MaxLogLevelLabels}, IsAsync=True}" />
+                    </fluent:RibbonGroupBox>
+                    <fluent:RibbonGroupBox Header="{x:Static properties:Resources.DateFilter}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="{x:Static properties:Resources.From}" Grid.Column="0" Grid.Row="0" />
+                            <Label Content="{x:Static properties:Resources.To}" Grid.Column="0" Grid.Row="1" />
+                            <xctk:DateTimePicker
+                                Format="Custom"
                                 Margin="5"
                                 Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=From, IsAsync=True}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
                                 ShowButtonSpinner="False"
-                                Grid.Column="1" 
+                                Grid.Column="1"
                                 Grid.Row="0" />
-                        <xctk:DateTimePicker 
-                                Format="Custom" 
-                                Margin="5" 
+                            <xctk:DateTimePicker
+                                Format="Custom"
+                                Margin="5"
                                 Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=To, IsAsync=True}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
                                 ShowButtonSpinner="False"
-                                Grid.Column="1" 
+                                Grid.Column="1"
                                 Grid.Row="1" />
-                    </Grid>
-                </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="{x:Static properties:Resources.TextFilter}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <fluent:TextBox 
-                            Width="250" 
-                            Margin="5" 
-                            Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter, IsAsync=True}"
-                            IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"/>
-                        <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"
-                                             SizeDefinition="Small, Small, Small" 
-                                             IsChecked="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UseRegularExpressions, IsAsync=True}"
-                                             ToolTip="{x:Static properties:Resources.UseRegexp}" 
-                                             IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}" />
-                    </Grid>
-                </fluent:RibbonGroupBox>
-            </fluent:RibbonTabItem>
+                        </Grid>
+                    </fluent:RibbonGroupBox>
+                    <fluent:RibbonGroupBox Header="{x:Static properties:Resources.TextFilter}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <fluent:TextBox
+                                Width="250"
+                                Margin="5"
+                                Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter, IsAsync=True}"
+                                IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}" />
+                            <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"
+                                                 SizeDefinition="Small, Small, Small"
+                                                 IsChecked="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UseRegularExpressions, IsAsync=True}"
+                                                 ToolTip="{x:Static properties:Resources.UseRegexp}"
+                                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}" />
+                        </Grid>
+                    </fluent:RibbonGroupBox>
+                </fluent:RibbonTabItem>
 
-            <fluent:RibbonTabItem Header="{x:Static properties:Resources.Settings}">
-                <fluent:RibbonGroupBox>
-                    <fluent:Button 
-                        x:Name="ButtonSettings"
-                        Header="{x:Static properties:Resources.Settings}"
-                        LargeIcon="Images\Large\interface_preferences.png"
-                        Icon="Images\Small\interface_preferences.png"
-                        Command="logviewer:LogviewerCommands.Settings"/>
-                    <fluent:Button 
-                        x:Name="ButtonCheckUpdates"
-                        Header="{x:Static properties:Resources.CheckUpdates}"
-                        LargeIcon="Images\Large\update.png"
-                        Icon="Images\Small\update.png"
-                        Command="logviewer:LogviewerCommands.Updates"/>
-                    <fluent:Button 
-                        x:Name="ButtonAbout"
-                        Header="{x:Static properties:Resources.About}"
-                        LargeIcon="Images\Large\help.png"
-                        Icon="Images\Small\help.png"
-                        Command="Help"/>
-                </fluent:RibbonGroupBox>
-            </fluent:RibbonTabItem>
-        </fluent:Ribbon>
+                <fluent:RibbonTabItem Header="{x:Static properties:Resources.Settings}">
+                    <fluent:RibbonGroupBox>
+                        <fluent:Button
+                            x:Name="ButtonSettings"
+                            Header="{x:Static properties:Resources.Settings}"
+                            LargeIcon="Images\Large\interface_preferences.png"
+                            Icon="Images\Small\interface_preferences.png"
+                            Command="logviewer:LogviewerCommands.Settings" />
+                        <fluent:Button
+                            x:Name="ButtonCheckUpdates"
+                            Header="{x:Static properties:Resources.CheckUpdates}"
+                            LargeIcon="Images\Large\update.png"
+                            Icon="Images\Small\update.png"
+                            Command="logviewer:LogviewerCommands.Updates" />
+                        <fluent:Button
+                            x:Name="ButtonAbout"
+                            Header="{x:Static properties:Resources.About}"
+                            LargeIcon="Images\Large\help.png"
+                            Icon="Images\Small\help.png"
+                            Command="Help" />
+                    </fluent:RibbonGroupBox>
+                </fluent:RibbonTabItem>
+            </fluent:Ribbon>
 
-        <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="0">
-            <StatusBar.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </StatusBar.ItemsPanel>
-            <StatusBarItem Grid.Column="0">
-                <Label Padding="3" x:Name="TotalMessagesLabel" Content="{x:Static properties:Resources.Total}" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="1">
-                <TextBlock Padding="3" x:Name="TotalMessages" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=TotalMessages, IsAsync=True}" />
-            </StatusBarItem>
-            <Separator Grid.Column="2" />
-            <StatusBarItem Grid.Column="3">
-                <Label Padding="3" x:Name="ToDisplayMessagesLabel" Content="{x:Static properties:Resources.Filtered}" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="4">
-                <TextBlock Padding="3" x:Name="ToDisplayMessages" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=ToDisplayMessages, IsAsync=True}" />
-            </StatusBarItem>
-            <Separator Grid.Column="5" />
-            <StatusBarItem Grid.Column="6">
-                <TextBlock Padding="3" x:Name="LogStatistic" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogStatistic, IsAsync=True}" />
-            </StatusBarItem>
-            <Separator Grid.Column="7" />
-            <StatusBarItem Grid.Column="8">
-                <TextBlock Padding="3" x:Name="LogSize" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogSize, IsAsync=True}" />
-            </StatusBarItem>
-            <Separator Grid.Column="9" />
-            <StatusBarItem Grid.Column="10">
-                <TextBlock Padding="3" x:Name="LogEncoding" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogEncoding, IsAsync=True}" />
-            </StatusBarItem>
-            
-            <StatusBarItem Grid.Column="11" HorizontalAlignment="Right">
-                <ProgressBar Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgress, IsAsync=True}" Width="200" Height="16" />
-            </StatusBarItem>
+            <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="0">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem Grid.Column="0">
+                    <Label Padding="3" x:Name="TotalMessagesLabel" Content="{x:Static properties:Resources.Total}" />
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="1">
+                    <TextBlock Padding="3" x:Name="TotalMessages"
+                               Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=TotalMessages, IsAsync=True}" />
+                </StatusBarItem>
+                <Separator Grid.Column="2" />
+                <StatusBarItem Grid.Column="3">
+                    <Label Padding="3" x:Name="ToDisplayMessagesLabel"
+                           Content="{x:Static properties:Resources.Filtered}" />
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="4">
+                    <TextBlock Padding="3" x:Name="ToDisplayMessages"
+                               Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=ToDisplayMessages, IsAsync=True}" />
+                </StatusBarItem>
+                <Separator Grid.Column="5" />
+                <StatusBarItem Grid.Column="6">
+                    <TextBlock Padding="3" x:Name="LogStatistic"
+                               Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogStatistic, IsAsync=True}" />
+                </StatusBarItem>
+                <Separator Grid.Column="7" />
+                <StatusBarItem Grid.Column="8">
+                    <TextBlock Padding="3" x:Name="LogSize"
+                               Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogSize, IsAsync=True}" />
+                </StatusBarItem>
+                <Separator Grid.Column="9" />
+                <StatusBarItem Grid.Column="10">
+                    <TextBlock Padding="3" x:Name="LogEncoding"
+                               Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogEncoding, IsAsync=True}" />
+                </StatusBarItem>
 
-            <StatusBarItem Grid.Column="12">
-                <TextBlock Padding="3" x:Name="LogProgressText" Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgressText, IsAsync=True}" />
-            </StatusBarItem>
+                <StatusBarItem Grid.Column="11" HorizontalAlignment="Right">
+                    <ProgressBar
+                        Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgress, IsAsync=True}"
+                        Width="200" Height="16" />
+                </StatusBarItem>
 
-        </StatusBar>
+                <StatusBarItem Grid.Column="12">
+                    <TextBlock Padding="3" x:Name="LogProgressText"
+                               Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=LogProgressText, IsAsync=True}" />
+                </StatusBarItem>
 
-        <ListBox 
-            x:Name="LogControlStyle"
-            DockPanel.Dock="Top" 
-            Height="Auto" 
-            Margin="0"
-            BorderThickness="0" 
-            ScrollViewer.ScrollChanged="ScrollViewer_OnScrollChanged"
-            IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
-            Style="{DynamicResource LogControlStyle}" 
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-            HorizontalAlignment="Stretch">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <xctk:RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch" Text="{Binding Mode=OneTime, IsAsync=True}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-    </DockPanel>
+            </StatusBar>
+            <ListBox
+                x:Name="LogControlStyle"
+                DockPanel.Dock="Top"
+                Height="Auto"
+                Margin="0"
+                BorderThickness="0"
+                ScrollViewer.ScrollChanged="ScrollViewer_OnScrollChanged"
+                IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled}"
+                Style="{DynamicResource LogControlStyle}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                HorizontalAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <xctk:RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch"
+                                          Text="{Binding Mode=OneTime, IsAsync=True}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+        <xctk:BusyIndicator
+            x:Name="BusyIndicator"
+            DockPanel.Dock="Top"
+            Grid.Row="0"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            IsBusy="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource.IsLoading}"
+            BusyContent="{x:Static properties:Resources.LoadingPage}" />
+    </Grid>
 </fluent:RibbonWindow>
