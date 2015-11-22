@@ -61,11 +61,29 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About {0}.
         /// </summary>
         public static string AboutTemplate {
             get {
                 return ResourceManager.GetString("AboutTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check updates.
+        /// </summary>
+        public static string CheckUpdates {
+            get {
+                return ResourceManager.GetString("CheckUpdates", resourceCulture);
             }
         }
         

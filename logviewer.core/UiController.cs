@@ -52,6 +52,7 @@ namespace logviewer.core
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         private readonly RegexOptions options;
         public event EventHandler<EventArgs> ReadCompleted;
+        private const int CheckUpdatesEveryDays = 7;
 
         #endregion
 
@@ -61,10 +62,13 @@ namespace logviewer.core
         {
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
+            this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
             this.prevInput = DateTime.Now;
             this.options = options;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
         }
+
+        private VersionsReader VersionsReader { get; set; }
 
         private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
@@ -111,6 +115,39 @@ namespace logviewer.core
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// Check updates available
+        /// </summary>
+        /// <param name="manualInvoke">Whether to show no update available in GUI. False by default</param>
+        public void CheckUpdates(bool manualInvoke = false)
+        {
+            if (!manualInvoke)
+            {
+                if (DateTime.UtcNow < this.settings.LastUpdateCheckTime.AddDays(CheckUpdatesEveryDays))
+                {
+                    return;
+                }
+            }
+            var checker = new UpdatesChecker(this.VersionsReader);
+            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
+            Task.Factory.StartNew(delegate
+            {
+                if (!checker.IsUpdatesAvaliable())
+                {
+                    if (manualInvoke)
+                    {
+                        this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
+                    }
+                    return;
+                }
+
+                this.RunOnGuiThread(
+                    () =>
+                        this.viewModel.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion,
+                            checker.LatestVersionUrl));
+            });
+        }
 
         private bool NotCancelled => !this.cancellation.IsCancellationRequested;
 

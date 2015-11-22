@@ -38,9 +38,11 @@
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="OnOpenFile"></CommandBinding>
         <CommandBinding Command="Close" Executed="OnExitApp"></CommandBinding>
+        <CommandBinding Command="Help" Executed="OnHelp"></CommandBinding>
         <CommandBinding Command="logviewer:LogviewerCommands.Update" Executed="OnUpdate"></CommandBinding>
         <CommandBinding Command="logviewer:LogviewerCommands.Statistic" Executed="OnStatistic"></CommandBinding>
         <CommandBinding Command="logviewer:LogviewerCommands.Settings" Executed="OnSettings"></CommandBinding>
+        <CommandBinding Command="logviewer:LogviewerCommands.Updates" Executed="OnCheckUpdates"></CommandBinding>
     </Window.CommandBindings>
     <DockPanel>
         <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
@@ -170,6 +172,18 @@
                         LargeIcon="Images\Large\interface_preferences.png"
                         Icon="Images\Small\interface_preferences.png"
                         Command="logviewer:LogviewerCommands.Settings"/>
+                    <fluent:Button 
+                        x:Name="ButtonCheckUpdates"
+                        Header="{x:Static properties:Resources.CheckUpdates}"
+                        LargeIcon="Images\Large\update.png"
+                        Icon="Images\Small\update.png"
+                        Command="logviewer:LogviewerCommands.Updates"/>
+                    <fluent:Button 
+                        x:Name="ButtonAbout"
+                        Header="{x:Static properties:Resources.About}"
+                        LargeIcon="Images\Large\help.png"
+                        Icon="Images\Small\help.png"
+                        Command="Help"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>

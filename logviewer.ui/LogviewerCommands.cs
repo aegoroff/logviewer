@@ -17,10 +17,12 @@ namespace logviewer.ui
             Update = new RoutedUICommand("Update", "Update", typeof(LogviewerCommands), inputs);
             Statistic = new RoutedUICommand("Statistic", "Statistic", typeof(LogviewerCommands));
             Settings = new RoutedUICommand("Settings", "Settings", typeof(LogviewerCommands));
+            Updates = new RoutedUICommand("Updates", "Updates", typeof(LogviewerCommands));
         }
 
         public static RoutedUICommand Update { get; }
         public static RoutedUICommand Statistic { get; }
         public static RoutedUICommand Settings { get; }
+        public static RoutedUICommand Updates { get; }
     }
 }

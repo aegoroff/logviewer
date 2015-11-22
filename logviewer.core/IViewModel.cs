@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace logviewer.core
 {
-    public interface IViewModel : INotifyPropertyChanged
+    public interface IViewModel : INotifyPropertyChanged, IUpdatable
     {
         int MinLevel { get; }
         int MaxLevel { get; }
@@ -30,5 +30,7 @@ namespace logviewer.core
         VirtualizingCollection<string> Datasource { get; }
         int FirstVisible { get; set; }
         int LastVisible { get; set; }
+        string GithubAccount { get; }
+        string GithubProject { get; }
     }
 }

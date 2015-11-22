@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using logviewer.engine;
 using Octokit;
 
 namespace logviewer.core
@@ -14,7 +13,7 @@ namespace logviewer.core
     {
         private readonly string account;
         private readonly string project;
-        readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private const string DownloadUrlTemplate = "http://github.com/{0}/{1}/releases/download/{2}/{3}";
 

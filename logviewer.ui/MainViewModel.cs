@@ -8,6 +8,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Windows.Forms;
+using System.Windows;
 using logviewer.core;
 using logviewer.ui.Annotations;
 using logviewer.ui.Properties;
@@ -202,6 +205,14 @@ namespace logviewer.ui
             }
         }
 
+        public IVersionsReader VersionsReader { get; set; }
+
+        public string GithubAccount => ConfigurationManager.AppSettings["GitHubAccount"];
+
+        public string GithubProject => ConfigurationManager.AppSettings["GitHubProject"];
+
+        internal IWin32Window Window { get; set; }
+
         public int LogProgress
         {
             get { return this.logProgress; }
@@ -304,6 +315,18 @@ namespace logviewer.ui
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress)
+        {
+            var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
+            var update = new UpdateDlg(m, targetAddress);
+            update.Show(this.Window);
+        }
+
+        public void ShowNoUpdateAvaliable()
+        {
+           System.Windows.MessageBox.Show(Resources.NoUpdateAvailable, Resources.NoUpdateAvailableCaption, MessageBoxButton.OK);
         }
     }
 

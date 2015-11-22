@@ -25,6 +25,7 @@ namespace logviewer.ui
         public MainWindow()
         {
             this.InitializeComponent();
+            MainViewModel.Current.Window = new WindowWrapper(this);
             this.controller = new UiController(MainViewModel.Current);
             this.logWatch = new FileSystemWatcher();
             this.logWatch.Changed += this.OnChangeLog;
@@ -104,7 +105,7 @@ namespace logviewer.ui
         private void OnStatistic(object sender, ExecutedRoutedEventArgs e)
         {
             var dlg = new StatisticDlg(this.controller.Store, this.controller.GetLogSize(true), this.controller.CurrentEncoding);
-            dlg.Show(new WindowWrapper(this));
+            dlg.Show(MainViewModel.Current.Window);
         }
 
         private void OnSettings(object sender, ExecutedRoutedEventArgs e)
@@ -149,6 +150,20 @@ namespace logviewer.ui
                 }
             }
             return null;
+        }
+
+        private void OnCheckUpdates(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.controller.CheckUpdates(true);
+        }
+
+        private void OnHelp(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new AboutDlg();
+            using (dlg)
+            {
+                dlg.ShowDialog();
+            }
         }
     }
 }
