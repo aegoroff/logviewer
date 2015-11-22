@@ -44,10 +44,10 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Import Project="..\WiX.msbuild" />
-  <Target Name="BeforeBuild">
+  <Target Name="BeforeBuild" DependsOnTargets="UpdateWix">
     <ItemGroup>
-      <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.vshost.exe" />
-      <BinFile Include="$(MSBuildProjectDirectory)\..\logviewer\bin\$(Configuration)\**\*.dll" />
+      <BinFile Include="bin\logviewer\**\*.exe" />
+      <BinFile Include="bin\logviewer\**\*.dll" />
     </ItemGroup>
     <PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')">
       <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
@@ -59,23 +59,30 @@
     <Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;%(BinFile.Identity)&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
     <Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
-  <!--
-	To modify your build process, add your task inside one of the targets below and uncomment it.
-	Other similar extension points exist, see Wix.targets.
-	
-	<Target Name="AfterBuild">
-	</Target>
-	-->
-  <Target Name="BeforeBuild" DependsOnTargets="UpdateWix">
+  <Target Name="AfterBuild">
+	<RemoveDir
+            Directories="bin\logviewer" />
   </Target>
   <Target Name="CreateFiles">
+	<ItemGroup>
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.vshost.exe" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.dll" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.pdb" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.patterns" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\LICENSE.txt" />
+    </ItemGroup>
+	<MakeDir
+		Directories="bin\logviewer" Condition="!Exists('bin\logviewer')"/>
+	<Copy
+		SourceFiles="@(PackageFile)"
+		DestinationFiles="@(PackageFile->'bin\logviewer\%(RecursiveDir)%(Filename)%(Extension)')"/>
 	<HeatDirectory 
 	    ToolPath="$(WixInstallPath)"
 		VerboseOutput="true"
 		GenerateGuidsNow="true"
 		OutputFile="$(ProjectDir)files.wxs"
 		SuppressFragments="true"
-		Directory="$(ProjectDir)..\logviewer.ui\bin\$(Configuration)"
+		Directory="bin\logviewer"
 		ComponentGroupName="logviewer"
 		DirectoryRefId="ProgramFilesFolder"
 		KeepEmptyDirectories="false"
@@ -85,19 +92,22 @@
   <Target Name="UpdateWix" DependsOnTargets="CreateFiles">
     <ItemGroup>
       <RegexTransform Include="$(ProjectDir)files.wxs">
-        <Find><![CDATA[Directory\s+Id="(\w+)"\s+Name="(Release|Debug)"]]></Find>
+        <Find><![CDATA[Directory\s+Id="(\w+)"\s+Name="logviewer"]]></Find>
         <ReplaceWith><![CDATA[Directory Id="INSTALLFOLDER" Name="logviewer"]]></ReplaceWith>
+        <Options>Singleline</Options>
+      </RegexTransform>
+	  
+	  <RegexTransform Include="$(ProjectDir)files.wxs">
+        <Find><![CDATA[File\s+Id="\w+"\s+KeyPath="yes"\s+Source="(.+)(logviewer\.ui\.exe|LICENSE\.txt)"]]></Find>
+        <ReplaceWith><![CDATA[File Id="$2" KeyPath="yes" Source="$1$2"]]></ReplaceWith>
+      </RegexTransform>
+	  
+	  <RegexTransform Include="$(ProjectDir)files.wxs">
+        <Find><![CDATA[<Wix(.+?)>(\s*)<Fragment>]]></Find>
+        <ReplaceWith><![CDATA[<Wix$1>$2<%3Finclude "Variables.wxi" %3F><Fragment>]]></ReplaceWith>
         <Options>Singleline</Options>
       </RegexTransform>
     </ItemGroup>
     <RegexTransform Items="@(RegexTransform)" />
-    <ItemGroup>
-      <RegexTransform2 Include="$(ProjectDir)files.wxs">
-        <Find><![CDATA[<Wix(.+?)>(\s*)<Fragment>]]></Find>
-        <ReplaceWith><![CDATA[<Wix$1>$2<%3Finclude "Variables.wxi" %3F><Fragment>]]></ReplaceWith>
-        <Options>Singleline</Options>
-      </RegexTransform2>
-    </ItemGroup>
-    <RegexTransform Items="@(RegexTransform2)" />
   </Target>
 </Project>
