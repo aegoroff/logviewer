@@ -27,7 +27,7 @@
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
             <Setter Property="VirtualizingStackPanel.IsContainerVirtualizable" Value="True" />
-            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
             <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
             <Setter Property="ItemsSource"
                     Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Datasource, IsAsync=True}" />

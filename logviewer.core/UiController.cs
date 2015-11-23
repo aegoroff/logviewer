@@ -83,7 +83,7 @@ namespace logviewer.core
                 case nameof(this.viewModel.UseRegularExpressions):
                     this.StartReadingLogOnTextFilterChange();
                     break;
-                case nameof(this.viewModel.LastVisible):
+                case nameof(this.viewModel.Visible):
                     this.UpdateCount();
                     break;
             }
@@ -91,8 +91,8 @@ namespace logviewer.core
 
         private void UpdateCount()
         {
-            this.viewModel.Datasource.LastVisible = this.viewModel.LastVisible;
-            this.viewModel.Datasource.FirstVisible = this.viewModel.FirstVisible;
+            this.viewModel.Datasource.LastVisible = this.viewModel.Visible.Last;
+            this.viewModel.Datasource.FirstVisible = this.viewModel.Visible.First;
         }
 
         private void SetCurrentParsingTemplate()

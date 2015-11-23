@@ -190,11 +190,16 @@ namespace logviewer.core
 
                 // defensive check in case of async load
                 IList<T> result;
+
                 // Optimization so as not to use dictionary on each call
-                var offset = pageIndex * this.pageSize;
-                var lastInPage = offset + this.pageSize;
-                var indexWithinPage = index >= offset && index <= lastInPage;
-                if (indexWithinPage && this.pages.TryGetValue(pageIndex, out result) && result != null && result.Count > 0)
+                var offset = this.firstVisible - this.pageSize;
+                if (offset < 0)
+                {
+                    offset = 0;
+                }
+                var indexWithinVisibleRange = index >= offset && index <= this.lastVisible + this.pageSize;
+
+                if (indexWithinVisibleRange && this.pages.TryGetValue(pageIndex, out result) && result != null && result.Count > 0)
                 {
                     return result[pageOffset];
                 }

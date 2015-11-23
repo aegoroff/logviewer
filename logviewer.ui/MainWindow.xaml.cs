@@ -128,8 +128,11 @@ namespace logviewer.ui
             }
             var offset = panel.Orientation == Orientation.Horizontal ? (int)panel.HorizontalOffset : (int)panel.VerticalOffset;
             var limit = panel.Orientation == Orientation.Horizontal ? (int)panel.ViewportWidth : (int)panel.ViewportHeight;
-            MainViewModel.Current.FirstVisible = offset;
-            MainViewModel.Current.LastVisible = offset + limit;
+            MainViewModel.Current.Visible = new Range
+            {
+                First = offset,
+                Last = offset + limit
+            };
         }
 
         private static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject

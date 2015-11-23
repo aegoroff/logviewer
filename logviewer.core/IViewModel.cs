@@ -28,9 +28,14 @@ namespace logviewer.core
         string LogEncoding { get; set; }
         LogProvider Provider { get; }
         VirtualizingCollection<string> Datasource { get; }
-        int FirstVisible { get; set; }
-        int LastVisible { get; set; }
+        Range Visible { get; set; }
         string GithubAccount { get; }
         string GithubProject { get; }
+    }
+
+    public struct Range
+    {
+        public int First;
+        public int Last;
     }
 }
