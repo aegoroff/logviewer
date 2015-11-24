@@ -119,28 +119,14 @@ namespace logviewer.core
             task.ContinueWith(obj =>
             {
                 task.Dispose();
-                return this.IsLoading = false;
+                this.IsLoading = false;
             }, CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, this.uiSyncContext);
         }
 
-        /// <summary>
-        /// First visible collection element
-        /// </summary>
-        // ReSharper disable once ConvertToAutoProperty
-        public int FirstVisible
+        public void ChangeVisible(Range range)
         {
-            get { return this.firstVisible; }
-            set { this.firstVisible = value; }
-        }
-
-        /// <summary>
-        /// Last visible collection element
-        /// </summary>
-        // ReSharper disable once ConvertToAutoProperty
-        public int LastVisible
-        {
-            get { return this.lastVisible; }
-            set { this.lastVisible = value; }
+            this.firstVisible = range.First;
+            this.lastVisible = range.Last;
         }
 
         #region IList<T>, IList
@@ -190,16 +176,7 @@ namespace logviewer.core
 
                 // defensive check in case of async load
                 IList<T> result;
-
-                // Optimization so as not to use dictionary on each call
-                var offset = this.firstVisible - this.pageSize;
-                if (offset < 0)
-                {
-                    offset = 0;
-                }
-                var indexWithinVisibleRange = index >= offset && index <= this.lastVisible + this.pageSize;
-
-                if (indexWithinVisibleRange && this.pages.TryGetValue(pageIndex, out result) && result != null && result.Count > 0)
+                if (this.pages.TryGetValue(pageIndex, out result) && result != null && result.Count > 0)
                 {
                     return result[pageOffset];
                 }

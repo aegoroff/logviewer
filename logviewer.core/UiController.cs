@@ -68,7 +68,7 @@ namespace logviewer.core
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
         }
 
-        private VersionsReader VersionsReader { get; set; }
+        private VersionsReader VersionsReader { get; }
 
         private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
@@ -91,8 +91,7 @@ namespace logviewer.core
 
         private void UpdateCount()
         {
-            this.viewModel.Datasource.LastVisible = this.viewModel.Visible.Last;
-            this.viewModel.Datasource.FirstVisible = this.viewModel.Visible.First;
+            this.viewModel.Datasource.ChangeVisible(this.viewModel.Visible);
         }
 
         private void SetCurrentParsingTemplate()
