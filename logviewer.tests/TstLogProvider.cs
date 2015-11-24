@@ -99,7 +99,7 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = filter;
             var result = this.provider.FetchRange(0, 2);
-            result.Count.Should().Be(expectation);
+            result.Length.Should().Be(expectation);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(0, 1);
-            result.Count.Should().Be(1);
+            result.Length.Should().Be(1);
             result[0].Should().MatchRegex("message body 1");
         }
 
@@ -118,7 +118,7 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(1, 2);
-            result.Count.Should().Be(1);
+            result.Length.Should().Be(1);
             result[0].Should().MatchRegex("message body 2");
         }
 
@@ -128,7 +128,7 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(0, 2);
-            result.Count.Should().Be(2);
+            result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 1");
             result[1].Should().MatchRegex("message body 2");
         }
@@ -139,7 +139,7 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter { Min = LogLevel.Error };
             var result = this.provider.FetchRange(0, 2);
-            result.Count.Should().Be(1);
+            result.Length.Should().Be(1);
             result[0].Should().MatchRegex("message body 2");
         }
 
@@ -149,7 +149,7 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter { Max = LogLevel.Info };
             var result = this.provider.FetchRange(0, 2);
-            result.Count.Should().Be(1);
+            result.Length.Should().Be(1);
             result[0].Should().MatchRegex("message body 1");
         }
 
@@ -160,7 +160,7 @@ namespace logviewer.tests
             this.ReadFromStream();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(0, 2);
-            result.Count.Should().Be(2);
+            result.Length.Should().Be(2);
             result[0].Should().NotMatchRegex("message body 1");
             result[1].Should().NotMatchRegex("message body 2");
         }

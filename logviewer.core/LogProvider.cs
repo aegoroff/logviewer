@@ -3,7 +3,6 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
-using System.Collections.Generic;
 using logviewer.engine;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -34,10 +33,11 @@ namespace logviewer.core
                 this.Filter.UseRegexp, this.Filter.ExcludeNoLevel) ?? 0;
         }
 
-        public IList<string> FetchRange(long offset, int limit)
+        public string[] FetchRange(long offset, int limit)
         {
-            var result = new List<string>(limit);
-            this.Store?.ReadMessages(limit, message => result.Add(this.CreateRtf(message)), () => true, this.Filter.Start,
+            var result = new string[limit];
+            int ix = 0;
+            this.Store?.ReadMessages(limit, message => result[ix++] = this.CreateRtf(message), () => true, this.Filter.Start,
                 this.Filter.Finish, offset,
                 this.Filter.Reverse,
                 this.Filter.Min, this.Filter.Max, this.Filter.Filter, this.Filter.UseRegexp);

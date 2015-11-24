@@ -106,9 +106,9 @@ namespace logviewer.core
         private void LoadPage(int pageIndex)
         {
             this.IsLoading = true;
-            var task = Task<IList<T>>.Factory.StartNew(() => this.FetchPage(pageIndex));
+            var task = Task<T[]>.Factory.StartNew(() => this.FetchPage(pageIndex));
 
-            task.ContinueWith(delegate (Task<IList<T>> t)
+            task.ContinueWith(delegate (Task<T[]> t)
             {
                 this.PopulatePage(pageIndex, t.Result);
                 this.FireCollectionReset();
@@ -144,6 +144,7 @@ namespace logviewer.core
             private set
             {
                 this.count = value;
+                this.pages = new PagesCache<T[]>(this.count / this.PageSize + 1);
                 this.FireCollectionReset();
             }
         }
@@ -175,8 +176,8 @@ namespace logviewer.core
                 }
 
                 // defensive check in case of async load
-                IList<T> result;
-                if (this.pages.TryGetValue(pageIndex, out result) && result != null && result.Count > 0)
+                var result = this.pages[pageIndex];
+                if (result != null && result.Length > 0)
                 {
                     return result[pageOffset];
                 }
@@ -289,7 +290,7 @@ namespace logviewer.core
         #region Paging
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private Dictionary<int, IList<T>> pages = new Dictionary<int, IList<T>>();
+        private IDictionary<int, T[]> pages = new PagesCache<T[]>(0);
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
         private readonly int pageSize = 100;
@@ -324,7 +325,7 @@ namespace logviewer.core
         /// </summary>
         /// <param name="pageIndex">Index of the page.</param>
         /// <param name="page">The page.</param>
-        private void PopulatePage(int pageIndex, IList<T> page)
+        private void PopulatePage(int pageIndex, T[] page)
         {
             Trace.WriteLine("Page populated: " + pageIndex);
             if (this.pages.ContainsKey(pageIndex))
@@ -341,7 +342,7 @@ namespace logviewer.core
         {
             if (!this.pages.ContainsKey(pageIndex))
             {
-                this.pages.Add(pageIndex, null);
+                this.pages.Add(pageIndex, new T[0]);
                 this.pageTouchTimes.Add(pageIndex, DateTime.Now);
                 Trace.WriteLine("Added page: " + pageIndex);
                 this.LoadPage(pageIndex);
@@ -362,7 +363,7 @@ namespace logviewer.core
             this.Count = itemsCount;
         }
 
-        private IList<T> FetchPage(int pageIndex)
+        private T[] FetchPage(int pageIndex)
         {
             return this.ItemsProvider.FetchRange(pageIndex * this.PageSize, this.PageSize);
         }
