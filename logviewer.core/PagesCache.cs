@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace logviewer.core
 {
@@ -94,10 +95,11 @@ namespace logviewer.core
         {
             get
             {
-                throw new NotImplementedException();
+                var ix = 0;
+                return this.store.Where(v => v != null).Select(v => ix++).ToArray();
             }
         }
 
-        public ICollection<T> Values => this.store;
+        public ICollection<T> Values => this.store.Where(v=> v != null).ToArray();
     }
 }
