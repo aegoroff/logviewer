@@ -188,6 +188,8 @@ namespace logviewer.core
 
                 // defensive check in case of async load
                 T[] result;
+                // IMPORTANT: Strange but null checking is a MUST because sometimes (multithreading)
+                // try returns true but the result is null and app crashed
                 if (this.pages.TryGetValue(pageIndex, out result) && result != null && result.Length > 0)
                 {
                     return result[pageOffset];
