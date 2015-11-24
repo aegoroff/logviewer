@@ -162,6 +162,17 @@ namespace logviewer.core
         {
             get
             {
+                // this ugly construction only for performance reasons. This indexer may be called hundred million times for
+                // 0.5M items collection.
+                return (T)((IList)this)[index];
+            }
+            set { throw new NotSupportedException(); }
+        }
+
+        object IList.this[int index]
+        {
+            get
+            {
                 // determine which page and offset within page
                 var pageIndex = index / this.pageSize;
                 var pageOffset = index % this.pageSize;
@@ -183,12 +194,6 @@ namespace logviewer.core
                 }
                 return default(T);
             }
-            set { throw new NotSupportedException(); }
-        }
-
-        object IList.this[int index]
-        {
-            get { return this[index]; }
             set { throw new NotSupportedException(); }
         }
 
