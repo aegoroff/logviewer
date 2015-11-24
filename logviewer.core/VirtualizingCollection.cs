@@ -196,7 +196,7 @@ namespace logviewer.core
 
         public IEnumerator<T> GetEnumerator()
         {
-            for (var i = 0; i < this.Count; i++)
+            for (var i = 0; i < this.count; i++)
             {
                 yield return this[i];
             }
