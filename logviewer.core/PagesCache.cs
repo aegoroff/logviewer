@@ -61,9 +61,7 @@ namespace logviewer.core
 
         public bool Remove(KeyValuePair<int, T> item)
         {
-            this.store[item.Key] = null;
-            this.indexes[item.Key] = 0;
-            return true;
+            return this.Remove(item.Key);
         }
 
         public int Count { get; }
@@ -87,6 +85,7 @@ namespace logviewer.core
         public bool Remove(int key)
         {
             this.store[key] = null;
+            this.indexes[key] = 0;
             return true;
         }
 
