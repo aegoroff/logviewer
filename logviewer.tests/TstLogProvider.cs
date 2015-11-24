@@ -82,7 +82,7 @@ namespace logviewer.tests
             new object[] { new MessageFilter { Start = DateTime.Parse("2008-12-27 19:40") }, 1  },
             new object[] { new MessageFilter { Finish = DateTime.Parse("2008-12-27 19:40") }, 1  },
             new object[] { new MessageFilter { Start = DateTime.MaxValue }, 0  },
-            new object[] { new MessageFilter { Finish = new DateTime(2000, 1, 1) }, 0  },
+            new object[] { new MessageFilter { Finish = new DateTime(2000, 1, 1) }, 0  }
         };
 
         [Theory, MemberData("FilterCases")]
@@ -99,7 +99,15 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = filter;
             var result = this.provider.FetchRange(0, 2);
-            result.Length.Should().Be(expectation);
+            var lastIndex = expectation - 1;
+            if (lastIndex < 0)
+            {
+                result[0].Should().BeNullOrEmpty();
+            }
+            else
+            {
+                result[lastIndex].Should().NotBeNullOrEmpty();
+            }
         }
 
         [Fact]
@@ -118,8 +126,9 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter();
             var result = this.provider.FetchRange(1, 2);
-            result.Length.Should().Be(1);
+            result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 2");
+            result[1].Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -139,8 +148,9 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter { Min = LogLevel.Error };
             var result = this.provider.FetchRange(0, 2);
-            result.Length.Should().Be(1);
+            result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 2");
+            result[1].Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -149,8 +159,9 @@ namespace logviewer.tests
             this.FillStore();
             this.provider.Filter = new MessageFilter { Max = LogLevel.Info };
             var result = this.provider.FetchRange(0, 2);
-            result.Length.Should().Be(1);
+            result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 1");
+            result[1].Should().BeNullOrEmpty();
         }
 
         [Fact]
