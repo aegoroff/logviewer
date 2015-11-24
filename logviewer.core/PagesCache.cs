@@ -24,7 +24,10 @@ namespace logviewer.core
             // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < this.store.Length; i++)
             {
-                yield return new KeyValuePair<int, T>(i, this.store[i]);
+                if (this.store[i] != null)
+                {
+                    yield return new KeyValuePair<int, T>(i, this.store[i]);
+                }
             }
         }
 
