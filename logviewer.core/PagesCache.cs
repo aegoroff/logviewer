@@ -9,14 +9,16 @@ using System.Linq;
 
 namespace logviewer.core
 {
-    internal class PagesCache<T> : IDictionary<int, T> where T : class
+    internal unsafe class PagesCache<T> : IDictionary<int, T> where T : class
     {
         private T[] store;
+        private int[] indexes;
 
         public PagesCache(int count)
         {
             this.Count = count;
             this.store = new T[count];
+            this.indexes = new int[count];
         }
 
         public IEnumerator<KeyValuePair<int, T>> GetEnumerator()
@@ -38,17 +40,18 @@ namespace logviewer.core
 
         public void Add(KeyValuePair<int, T> item)
         {
-            this.store[item.Key] = item.Value;
+            this.Add(item.Key, item.Value);
         }
 
         public void Clear()
         {
             this.store = new T[this.Count];
+            this.indexes = new int[this.Count];
         }
 
         public bool Contains(KeyValuePair<int, T> item)
         {
-            return this.store[item.Key] != null;
+            return this.indexes[item.Key] > 0;
         }
 
         public void CopyTo(KeyValuePair<int, T>[] array, int arrayIndex)
@@ -59,6 +62,7 @@ namespace logviewer.core
         public bool Remove(KeyValuePair<int, T> item)
         {
             this.store[item.Key] = null;
+            this.indexes[item.Key] = 0;
             return true;
         }
 
@@ -68,12 +72,16 @@ namespace logviewer.core
 
         public bool ContainsKey(int key)
         {
-            return this.store[key] != null;
+            fixed (int* p = this.indexes)
+            {
+                return p[key] > 0;
+            }
         }
 
         public void Add(int key, T value)
         {
             this.store[key] = value;
+            this.indexes[key] = 1;
         }
 
         public bool Remove(int key)
@@ -84,8 +92,16 @@ namespace logviewer.core
 
         public bool TryGetValue(int key, out T value)
         {
+            fixed (int* p = this.indexes)
+            {
+                if (p[key] == 0)
+                {
+                    value = null;
+                    return false;
+                }
+            }
             value = this.store[key];
-            return value != null;
+            return true;
         }
 
         public T this[int key]
