@@ -20,7 +20,11 @@ namespace logviewer.core
 
         public IEnumerator<KeyValuePair<int, T>> GetEnumerator()
         {
-            throw new NotImplementedException();
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            for (var i = 0; i < this.store.Length; i++)
+            {
+                yield return new KeyValuePair<int, T>(i, this.store[i]);
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -88,7 +92,10 @@ namespace logviewer.core
 
         public ICollection<int> Keys
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public ICollection<T> Values => this.store;
