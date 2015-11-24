@@ -187,8 +187,8 @@ namespace logviewer.core
                 }
 
                 // defensive check in case of async load
-                var result = this.pages[pageIndex];
-                if (result != null && result.Length > 0)
+                T[] result;
+                if (this.pages.TryGetValue(pageIndex, out result) && result != null && result.Length > 0)
                 {
                     return result[pageOffset];
                 }
