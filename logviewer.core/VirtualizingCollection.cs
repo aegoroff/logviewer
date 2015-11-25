@@ -144,7 +144,7 @@ namespace logviewer.core
             private set
             {
                 this.count = value;
-                this.pages = new PagesCache<T[]>(this.count / this.PageSize + 1);
+                this.pages = new FixedSizeDictionary<T[]>(this.count / this.PageSize + 1);
                 this.FireCollectionReset();
             }
         }
@@ -295,7 +295,7 @@ namespace logviewer.core
         #region Paging
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private IDictionary<int, T[]> pages = new PagesCache<T[]>(0);
+        private IDictionary<int, T[]> pages = new FixedSizeDictionary<T[]>(0);
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
         private readonly int pageSize = 100;

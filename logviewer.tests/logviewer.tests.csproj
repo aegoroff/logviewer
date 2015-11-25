@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TstFixedSizeDictionary.cs" />
     <Compile Include="TstGrokMatcher.cs" />
     <Compile Include="TstLogProvider.cs" />
     <Compile Include="TstLogReader.cs" />

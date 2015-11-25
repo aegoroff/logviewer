@@ -8,12 +8,17 @@ using System.Collections.Generic;
 
 namespace logviewer.core
 {
-    internal unsafe class PagesCache<T> : IDictionary<int, T>
+    /// <summary>
+    /// This class contains fixed size integer key based dictionary. This implementation is much faster then generic
+    /// dictionary but with some limitations.
+    /// </summary>
+    /// <typeparam name="T">Value type</typeparam>
+    public unsafe class FixedSizeDictionary<T> : IDictionary<int, T>
     {
         private T[] store;
         private int[] indexes;
 
-        public PagesCache(int count)
+        public FixedSizeDictionary(int count)
         {
             this.Count = count;
             this.store = new T[count];
@@ -22,10 +27,9 @@ namespace logviewer.core
 
         public IEnumerator<KeyValuePair<int, T>> GetEnumerator()
         {
-            // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < this.store.Length; i++)
             {
-                if (!Equals(this.store[i], default(T)))
+                if (ContainsKey(i))
                 {
                     yield return new KeyValuePair<int, T>(i, this.store[i]);
                 }
@@ -57,7 +61,7 @@ namespace logviewer.core
         {
             for (var i = arrayIndex; i < array.Length && i < this.store.Length; i++)
             {
-                if (!Equals(this.store[i], default(T)))
+                if (ContainsKey(i))
                 {
                     array[i] = new KeyValuePair<int, T>(i, this.store[i]);
                 }

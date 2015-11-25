@@ -106,7 +106,7 @@
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogStore.cs" />
     <Compile Include="MessageFilter.cs" />
-    <Compile Include="PagesCache.cs" />
+    <Compile Include="FixedSizeDictionary.cs" />
     <Compile Include="UiController.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Maybe.cs" />
