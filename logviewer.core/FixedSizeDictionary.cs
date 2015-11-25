@@ -30,7 +30,7 @@ namespace logviewer.core
         {
             for (var i = 0; i < this.store.Length; i++)
             {
-                if (ContainsKey(i))
+                if (this.ContainsKey(i))
                 {
                     yield return new KeyValuePair<int, T>(i, this.store[i]);
                 }
@@ -62,7 +62,7 @@ namespace logviewer.core
         {
             for (var i = arrayIndex; i < array.Length && i < this.store.Length; i++)
             {
-                if (ContainsKey(i))
+                if (this.ContainsKey(i))
                 {
                     array[i] = new KeyValuePair<int, T>(i, this.store[i]);
                 }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using FluentAssertions;
-
 using logviewer.core;
-
 using Xunit;
 
 namespace logviewer.tests
@@ -31,6 +28,7 @@ namespace logviewer.tests
             instance.Add(key, value);
             instance.Keys.ShouldBeEquivalentTo(new[] { key });
         }
+
         private static void ValuesTest<T>(int key, T value)
         {
             var instance = new FixedSizeDictionary<T>(10);
@@ -124,10 +122,7 @@ namespace logviewer.tests
         public void GetValueOutsidesize()
         {
             var instance = new FixedSizeDictionary<string>(10);
-            Assert.Throws<IndexOutOfRangeException>(delegate
-            {
-                instance[11].Should();
-            });
+            Assert.Throws<IndexOutOfRangeException>(delegate { instance[11].Should(); });
         }
     }
 }
