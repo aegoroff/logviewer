@@ -9,15 +9,15 @@ using System.Collections.Generic;
 namespace logviewer.core
 {
     /// <summary>
-    /// This class contains fixed size integer key based dictionary. This implementation is much faster then generic
-    /// dictionary but with some limitations.
+    ///     This class contains fixed size integer key based dictionary. This implementation is much faster then generic
+    ///     dictionary but with some limitations.
     /// </summary>
     /// <typeparam name="T">Value type</typeparam>
     public unsafe class FixedSizeDictionary<T> : IDictionary<int, T>
     {
-        private T[] store;
-        private int[] indexes;
         private readonly int count;
+        private int[] indexes;
+        private T[] store;
 
         public FixedSizeDictionary(int count)
         {
@@ -30,7 +30,7 @@ namespace logviewer.core
         {
             for (var i = 0; i < this.store.Length; i++)
             {
-                if (this.ContainsKey(i))
+                if (this.ContainsKeyInternal(i))
                 {
                     yield return new KeyValuePair<int, T>(i, this.store[i]);
                 }
@@ -55,14 +55,14 @@ namespace logviewer.core
 
         public bool Contains(KeyValuePair<int, T> item)
         {
-            return this.indexes[item.Key] > 0;
+            return this.indexes[item.Key] > 0 && Equals(this.store[item.Key], item.Value);
         }
 
         public void CopyTo(KeyValuePair<int, T>[] array, int arrayIndex)
         {
             for (var i = arrayIndex; i < array.Length && i < this.store.Length; i++)
             {
-                if (this.ContainsKey(i))
+                if (this.ContainsKeyInternal(i))
                 {
                     array[i] = new KeyValuePair<int, T>(i, this.store[i]);
                 }
@@ -76,22 +76,25 @@ namespace logviewer.core
 
         public int Count
         {
-            // ReSharper disable once ConvertPropertyToExpressionBody
-            get { return this.count; }
+            get
+            {
+                var result = 0;
+                for (var i = 0; i < this.store.Length; i++)
+                {
+                    if (this.ContainsKeyInternal(i))
+                    {
+                        result++;
+                    }
+                }
+                return result;
+            }
         }
 
         public bool IsReadOnly => false;
 
         public bool ContainsKey(int key)
         {
-            if (key >= this.count)
-            {
-                return false;
-            }
-            fixed (int* p = this.indexes)
-            {
-                return p[key] > 0;
-            }
+            return key < this.count && this.ContainsKeyInternal(key);
         }
 
         public void Add(int key, T value)
@@ -106,7 +109,7 @@ namespace logviewer.core
 
         public bool Remove(int key)
         {
-            if (key >= this.count)
+            if (key >= this.count || !this.ContainsKeyInternal(key))
             {
                 return false;
             }
@@ -116,8 +119,8 @@ namespace logviewer.core
         }
 
         /// <remarks>
-        /// IMPORTANT: key out of range intentionally missed here due to performance reasons.
-        /// You shouldn't pass key that out of size range to avoid undefined behaviour
+        ///     IMPORTANT: key out of range intentionally missed here due to performance reasons.
+        ///     You shouldn't pass key that out of size range to avoid undefined behaviour
         /// </remarks>
         public bool TryGetValue(int key, out T value)
         {
@@ -160,6 +163,14 @@ namespace logviewer.core
                     result.Add(selector(e.Current));
                 }
                 return result;
+            }
+        }
+
+        private bool ContainsKeyInternal(int key)
+        {
+            fixed (int* p = this.indexes)
+            {
+                return p[key] > 0;
             }
         }
     }
