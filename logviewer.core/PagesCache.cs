@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace logviewer.core
 {
-    internal unsafe class PagesCache<T> : IDictionary<int, T> where T : class
+    internal unsafe class PagesCache<T> : IDictionary<int, T>
     {
         private T[] store;
         private int[] indexes;
@@ -84,7 +84,7 @@ namespace logviewer.core
 
         public bool Remove(int key)
         {
-            this.store[key] = null;
+            this.store[key] = default(T);
             this.indexes[key] = 0;
             return true;
         }
@@ -95,7 +95,7 @@ namespace logviewer.core
             {
                 if (p[key] == 0)
                 {
-                    value = null;
+                    value = default(T);
                     return false;
                 }
             }
