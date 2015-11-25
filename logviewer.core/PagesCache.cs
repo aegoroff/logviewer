@@ -26,7 +26,7 @@ namespace logviewer.core
             // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < this.store.Length; i++)
             {
-                if (this.store[i] != null)
+                if (!Equals(this.store[i], default(T)))
                 {
                     yield return new KeyValuePair<int, T>(i, this.store[i]);
                 }
@@ -113,8 +113,16 @@ namespace logviewer.core
         {
             get
             {
-                var ix = 0;
-                return this.store.Where(v => v != null).Select(v => ix++).ToArray();
+                var result = new List<int>();
+                var e = this.GetEnumerator();
+                using (e)
+                {
+                    while (e.MoveNext())
+                    {
+                        result.Add(e.Current.Key);
+                    }
+                    return result;
+                }
             }
         }
 
