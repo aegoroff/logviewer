@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace logviewer.core
 {
@@ -56,7 +55,13 @@ namespace logviewer.core
 
         public void CopyTo(KeyValuePair<int, T>[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            for (var i = arrayIndex; i < array.Length && i < this.store.Length; i++)
+            {
+                if (!Equals(this.store[i], default(T)))
+                {
+                    array[i] = new KeyValuePair<int, T>(i, this.store[i]);
+                }
+            }
         }
 
         public bool Remove(KeyValuePair<int, T> item)
@@ -111,21 +116,26 @@ namespace logviewer.core
 
         public ICollection<int> Keys
         {
-            get
-            {
-                var result = new List<int>();
-                var e = this.GetEnumerator();
-                using (e)
-                {
-                    while (e.MoveNext())
-                    {
-                        result.Add(e.Current.Key);
-                    }
-                    return result;
-                }
-            }
+            get { return this.Select(pair => pair.Key); }
         }
 
-        public ICollection<T> Values => this.store.Where(v=> v != null).ToArray();
+        public ICollection<T> Values
+        {
+            get { return this.Select(pair => pair.Value); }
+        }
+
+        private ICollection<TItem> Select<TItem>(Func<KeyValuePair<int, T>, TItem> selector)
+        {
+            var result = new List<TItem>();
+            var e = this.GetEnumerator();
+            using (e)
+            {
+                while (e.MoveNext())
+                {
+                    result.Add(selector(e.Current));
+                }
+                return result;
+            }
+        }
     }
 }
