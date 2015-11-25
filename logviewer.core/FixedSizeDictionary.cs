@@ -17,10 +17,11 @@ namespace logviewer.core
     {
         private T[] store;
         private int[] indexes;
+        private readonly int count;
 
         public FixedSizeDictionary(int count)
         {
-            this.Count = count;
+            this.count = count;
             this.store = new T[count];
             this.indexes = new int[count];
         }
@@ -48,8 +49,8 @@ namespace logviewer.core
 
         public void Clear()
         {
-            this.store = new T[this.Count];
-            this.indexes = new int[this.Count];
+            this.store = new T[this.count];
+            this.indexes = new int[this.count];
         }
 
         public bool Contains(KeyValuePair<int, T> item)
@@ -73,12 +74,20 @@ namespace logviewer.core
             return this.Remove(item.Key);
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            // ReSharper disable once ConvertPropertyToExpressionBody
+            get { return this.count; }
+        }
 
         public bool IsReadOnly => false;
 
         public bool ContainsKey(int key)
         {
+            if (key >= this.count)
+            {
+                return false;
+            }
             fixed (int* p = this.indexes)
             {
                 return p[key] > 0;
@@ -87,17 +96,29 @@ namespace logviewer.core
 
         public void Add(int key, T value)
         {
+            if (key >= this.count)
+            {
+                return;
+            }
             this.store[key] = value;
             this.indexes[key] = 1;
         }
 
         public bool Remove(int key)
         {
+            if (key >= this.count)
+            {
+                return false;
+            }
             this.store[key] = default(T);
             this.indexes[key] = 0;
             return true;
         }
 
+        /// <remarks>
+        /// IMPORTANT: key out of range intentionally missed here due to performance reasons.
+        /// You shouldn't pass key that out of size range to avoid undefined behaviour
+        /// </remarks>
         public bool TryGetValue(int key, out T value)
         {
             fixed (int* p = this.indexes)

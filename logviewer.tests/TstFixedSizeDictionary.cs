@@ -11,6 +11,8 @@ namespace logviewer.tests
 {
     public class TstFixedSizeDictionary
     {
+        private const string ExpectedString = "str";
+
         public static IEnumerable<object[]> ValuePairs => new[]
         {
             new object[] { 2, DateTime.Today },
@@ -19,7 +21,7 @@ namespace logviewer.tests
 
         public static IEnumerable<object[]> ReferencePairs => new[]
         {
-            new object[] { 2, "test" },
+            new object[] { 2, ExpectedString },
             new object[] { 2, null }
         };
 
@@ -58,6 +60,74 @@ namespace logviewer.tests
         public void ReferenceTypeValues(int key, string value)
         {
             ValuesTest(key, value);
+        }
+
+        [Fact]
+        public void AddAndContainsKeyTrue()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, string.Empty);
+            instance.ContainsKey(3).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AddAndContainsKeyFalse()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, string.Empty);
+            instance.ContainsKey(2).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AddAndContainsKeyBeyondSize()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(11, string.Empty);
+            instance.ContainsKey(11).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AddRemoveAndContainsKeyTrue()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, string.Empty);
+            instance.Remove(3).Should().BeTrue();
+            instance.ContainsKey(3).Should().BeFalse();
+        }
+
+        [Fact]
+        public void RemoveKeyBeyondSize()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Remove(11).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AddAndTryGetValueTrue()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, ExpectedString);
+            string result;
+            instance.TryGetValue(3, out result).Should().BeTrue();
+            result.Should().Be(ExpectedString);
+        }
+
+        [Fact]
+        public void AddAndGetValueTrue()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, ExpectedString);
+            instance[3].Should().Be(ExpectedString);
+        }
+
+        [Fact]
+        public void GetValueOutsidesize()
+        {
+            var instance = new FixedSizeDictionary<string>(10);
+            Assert.Throws<IndexOutOfRangeException>(delegate
+            {
+                instance[11].Should();
+            });
         }
     }
 }
