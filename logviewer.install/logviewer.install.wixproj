@@ -85,19 +85,14 @@
 		SuppressFragments="true"
 		Directory="bin\logviewer"
 		ComponentGroupName="logviewer"
-		DirectoryRefId="ProgramFiles6432Folder"
+		DirectoryRefId="INSTALLFOLDER"
 		KeepEmptyDirectories="false"
+        SuppressRootDirectory="true"
 		PreprocessorVariable="var.SourcePath"
 		SuppressRegistry="true" />
   </Target>
   <Target Name="UpdateWix" DependsOnTargets="CreateFiles">
     <ItemGroup>
-      <RegexTransform Include="$(ProjectDir)files.wxs">
-        <Find><![CDATA[Directory\s+Id="(\w+)"\s+Name="logviewer"]]></Find>
-        <ReplaceWith><![CDATA[Directory Id="INSTALLFOLDER" Name="logviewer"]]></ReplaceWith>
-        <Options>Singleline</Options>
-      </RegexTransform>
-	  
 	  <RegexTransform Include="$(ProjectDir)files.wxs">
         <Find><![CDATA[File\s+Id="\w+"\s+KeyPath="yes"\s+Source="(.+)(logviewer\.ui\.exe|LICENSE\.txt)"]]></Find>
         <ReplaceWith><![CDATA[File Id="$2" KeyPath="yes" Source="$1$2"]]></ReplaceWith>
@@ -105,7 +100,7 @@
 	  
 	  <RegexTransform Include="$(ProjectDir)files.wxs">
         <Find><![CDATA[<Wix(.+?)>(\s*)<Fragment>]]></Find>
-        <ReplaceWith><![CDATA[<Wix$1>$2<%3Finclude "Variables.wxi" %3F><Fragment>]]></ReplaceWith>
+        <ReplaceWith><![CDATA[<Wix$1>$2<%3Finclude "Variables.wxi" %3F>$2<Fragment>]]></ReplaceWith>
         <Options>Singleline</Options>
       </RegexTransform>
     </ItemGroup>
