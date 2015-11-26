@@ -85,7 +85,7 @@
 		SuppressFragments="true"
 		Directory="bin\logviewer"
 		ComponentGroupName="logviewer"
-		DirectoryRefId="ProgramFilesFolder"
+		DirectoryRefId="ProgramFiles6432Folder"
 		KeepEmptyDirectories="false"
 		PreprocessorVariable="var.SourcePath"
 		SuppressRegistry="true" />

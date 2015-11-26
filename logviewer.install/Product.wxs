@@ -51,7 +51,7 @@
         <Property Id="ARPPRODUCTICON" Value="AppIcon" />
         
 		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder"></Directory>
+			<Directory Id="ProgramFiles6432Folder"></Directory>
       <!-- logviewer Start menu folder -->
 			<Directory Id="ProgramMenuFolder" Name="Programs">
 				<Directory Id="LogviewerProgramMenuFolder" Name="Logviewer">
