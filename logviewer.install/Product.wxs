@@ -45,35 +45,4 @@
 
     <UIRef Id="WixUI_Minimal" />
   </Product>
-
-  <Fragment>
-
-    <Icon Id="AppIcon" SourceFile="$(var.SourcePath)\logviewer.ui.exe" />
-    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
-
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="INSTALLFOLDER"></Directory>
-      <!-- logviewer Start menu folder -->
-      <Directory Id="ProgramMenuFolder" Name="Programs">
-        <Directory Id="LogviewerProgramMenuFolder" Name="Logviewer">
-          <Component Id="logviewer.shortcut" Guid="{02EEED82-AD16-4EC4-8AC3-BA3E92D2F3A8}">
-            <!-- 
-							Fix ICE 38 by adding a dummy registry key that is the key for this shortcut.
-							http://msdn.microsoft.com/library/en-us/msi/setup/ice38.asp
-						-->
-            <RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes" />
-            <Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.ui.exe]" Id="LogviewerStartMenuShortcut"
-                      WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
-            <Shortcut Name="License" Target="[!LICENSE.txt]" Id="LogviewerLicenseStartMenuShortcut"
-                      WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
-            <!--
-							Fix ICE64 by adding a remove folder element 
-							http://windowssdk.msdn.microsoft.com/en-us/library/ms704358.aspx
-						-->
-            <RemoveFolder Id="RemoveLogviewerProgramMenuFolder" On="uninstall" />
-          </Component>
-        </Directory>
-      </Directory>
-    </Directory>
-  </Fragment>
 </Wix>

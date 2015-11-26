@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="files.wxs" />
+    <Compile Include="DirectoriesDefinition.wxs" />
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,45 +61,28 @@
     <Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
   <Target Name="AfterBuild">
-	<RemoveDir
-            Directories="bin\logviewer" />
+    <RemoveDir Directories="bin\logviewer" />
   </Target>
   <Target Name="CreateFiles">
-	<ItemGroup>
+    <ItemGroup>
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.exe" Exclude="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.vshost.exe" />
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.dll" />
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.pdb" />
       <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.patterns" />
-      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.config" Exclude="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.vshost.exe.config"/>
+      <PackageFile Include="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.config" Exclude="$(MSBuildProjectDirectory)\..\logviewer.ui\bin\$(Configuration)\**\*.vshost.exe.config" />
       <PackageFile Include="$(MSBuildProjectDirectory)\..\LICENSE.txt" />
     </ItemGroup>
-	<MakeDir
-		Directories="bin\logviewer" Condition="!Exists('bin\logviewer')"/>
-	<Copy
-		SourceFiles="@(PackageFile)"
-		DestinationFiles="@(PackageFile->'bin\logviewer\%(RecursiveDir)%(Filename)%(Extension)')"/>
-	<HeatDirectory 
-	    ToolPath="$(WixInstallPath)"
-		VerboseOutput="true"
-		GenerateGuidsNow="true"
-		OutputFile="$(ProjectDir)files.wxs"
-		SuppressFragments="true"
-		Directory="bin\logviewer"
-		ComponentGroupName="logviewer"
-		DirectoryRefId="INSTALLFOLDER"
-		KeepEmptyDirectories="false"
-        SuppressRootDirectory="true"
-		PreprocessorVariable="var.SourcePath"
-		SuppressRegistry="true" />
+    <MakeDir Directories="bin\logviewer" Condition="!Exists('bin\logviewer')" />
+    <Copy SourceFiles="@(PackageFile)" DestinationFiles="@(PackageFile->'bin\logviewer\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <HeatDirectory ToolPath="$(WixInstallPath)" VerboseOutput="true" GenerateGuidsNow="true" OutputFile="$(ProjectDir)files.wxs" SuppressFragments="true" Directory="bin\logviewer" ComponentGroupName="logviewer" DirectoryRefId="INSTALLFOLDER" KeepEmptyDirectories="false" SuppressRootDirectory="true" PreprocessorVariable="var.SourcePath" SuppressRegistry="true" />
   </Target>
   <Target Name="UpdateWix" DependsOnTargets="CreateFiles">
     <ItemGroup>
-	  <RegexTransform Include="$(ProjectDir)files.wxs">
+      <RegexTransform Include="$(ProjectDir)files.wxs">
         <Find><![CDATA[File\s+Id="\w+"\s+KeyPath="yes"\s+Source="(.+)(logviewer\.ui\.exe|LICENSE\.txt)"]]></Find>
         <ReplaceWith><![CDATA[File Id="$2" KeyPath="yes" Source="$1$2"]]></ReplaceWith>
       </RegexTransform>
-	  
-	  <RegexTransform Include="$(ProjectDir)files.wxs">
+      <RegexTransform Include="$(ProjectDir)files.wxs">
         <Find><![CDATA[<Wix(.+?)>(\s*)<Fragment>]]></Find>
         <ReplaceWith><![CDATA[<Wix$1>$2<%3Finclude "Variables.wxi" %3F>$2<Fragment>]]></ReplaceWith>
         <Options>Singleline</Options>
