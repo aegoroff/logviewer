@@ -1,76 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <?include "Variables.wxi" ?>
-	<Product 
-        Id="*" 
-        Name="Logviewer tool" 
-        Language="1033" 
-        Version="$(var.Version)" 
-        Manufacturer="Alexander Egorov" 
-        UpgradeCode="079be60b-0417-4be7-9513-27034cfedfd6"
-    >
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <Product
+    Id="*"
+    Name="Logviewer tool"
+    Language="1033"
+    Version="$(var.Version)"
+    Manufacturer="Alexander Egorov"
+    UpgradeCode="079be60b-0417-4be7-9513-27034cfedfd6">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-        
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
     <!--
 			Check for .NET 4.6
 		-->
-		<PropertyRef Id="WIX_IS_NETFRAMEWORK_46_OR_LATER_INSTALLED"/>
-		<Condition Message="This setup requires the .NET Framework 4.6 or higher.">
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_46_OR_LATER_INSTALLED" />
+    <Condition Message="This setup requires the .NET Framework 4.6 or higher.">
       Installed OR WIX_IS_NETFRAMEWORK_46_OR_LATER_INSTALLED
     </Condition>
-        
-		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-        <util:CloseApplication Id="CloseLogviewer" CloseMessage="yes" Target="logviewer.exe" RebootPrompt="no" />
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-        <Binary Id="logviewer.install.mca.Pack.dll"
-                SourceFile="..\logviewer.install.mca\bin\$(var.CONFIGURATION)\logviewer.install.mca.pack.dll" />
+    <util:CloseApplication Id="CloseLogviewer" CloseMessage="yes" Target="logviewer.exe" RebootPrompt="no" />
 
-        <CustomAction Id="KeepConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll" DllEntry="KeepConfigurationFiles" Execute="deferred" Impersonate="no"/>
-        <CustomAction Id="RestoreConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll" DllEntry="RestoreConfigurationFiles" Execute="deferred" Impersonate="no"/>
+    <Binary Id="logviewer.install.mca.Pack.dll"
+            SourceFile="..\logviewer.install.mca\bin\$(var.CONFIGURATION)\logviewer.install.mca.pack.dll" />
 
-        <Feature Id="ProductFeature" Title="logviewer.install" Level="1">
-			    <ComponentRef Id="logviewer.shortcut" />
-          <ComponentGroupRef Id="logviewer" />
-		    </Feature>
+    <CustomAction Id="KeepConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll"
+                  DllEntry="KeepConfigurationFiles" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="RestoreConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll"
+                  DllEntry="RestoreConfigurationFiles" Execute="deferred" Impersonate="no" />
 
-        <InstallExecuteSequence>
-            <Custom Before="InstallInitialize" Action="WixCloseApplications">WIX_UPGRADE_DETECTED</Custom>
-            <Custom Action="KeepConfigurationFiles" Before="RemoveFiles">Installed</Custom>
-            <Custom Action="RestoreConfigurationFiles" Before="StartServices">Not Installed AND WIX_UPGRADE_DETECTED</Custom>
-        </InstallExecuteSequence>
-    
-        <UIRef Id="WixUI_Minimal"/>
-	</Product>
+    <Feature Id="ProductFeature" Title="logviewer.install" Level="1">
+      <ComponentRef Id="logviewer.shortcut" />
+      <ComponentGroupRef Id="logviewer" />
+    </Feature>
 
-	<Fragment>
+    <InstallExecuteSequence>
+      <Custom Before="InstallInitialize" Action="WixCloseApplications">WIX_UPGRADE_DETECTED</Custom>
+      <Custom Action="KeepConfigurationFiles" Before="RemoveFiles">Installed</Custom>
+      <Custom Action="RestoreConfigurationFiles" Before="StartServices">Not Installed AND WIX_UPGRADE_DETECTED</Custom>
+    </InstallExecuteSequence>
 
-        <Icon Id="AppIcon" SourceFile="$(var.SourcePath)\logviewer.ui.exe"/>
-        <Property Id="ARPPRODUCTICON" Value="AppIcon" />
-        
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="INSTALLFOLDER"></Directory>
+    <UIRef Id="WixUI_Minimal" />
+  </Product>
+
+  <Fragment>
+
+    <Icon Id="AppIcon" SourceFile="$(var.SourcePath)\logviewer.ui.exe" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="INSTALLFOLDER"></Directory>
       <!-- logviewer Start menu folder -->
-			<Directory Id="ProgramMenuFolder" Name="Programs">
-				<Directory Id="LogviewerProgramMenuFolder" Name="Logviewer">
-					<Component Id="logviewer.shortcut" Guid="{02EEED82-AD16-4EC4-8AC3-BA3E92D2F3A8}">
-						<!-- 
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="LogviewerProgramMenuFolder" Name="Logviewer">
+          <Component Id="logviewer.shortcut" Guid="{02EEED82-AD16-4EC4-8AC3-BA3E92D2F3A8}">
+            <!-- 
 							Fix ICE 38 by adding a dummy registry key that is the key for this shortcut.
 							http://msdn.microsoft.com/library/en-us/msi/setup/ice38.asp
 						-->
-						<RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
-						<Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.ui.exe]" Id="LogviewerStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
-						<Shortcut Name="License" Target="[!LICENSE.txt]" Id="LogviewerLicenseStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
-						<!--
+            <RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+            <Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.ui.exe]" Id="LogviewerStartMenuShortcut"
+                      WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
+            <Shortcut Name="License" Target="[!LICENSE.txt]" Id="LogviewerLicenseStartMenuShortcut"
+                      WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
+            <!--
 							Fix ICE64 by adding a remove folder element 
 							http://windowssdk.msdn.microsoft.com/en-us/library/ms704358.aspx
 						-->
-						<RemoveFolder Id="RemoveLogviewerProgramMenuFolder" On="uninstall" />
-					</Component>
-				</Directory>
-			</Directory>
-		</Directory>
-	</Fragment>
+            <RemoveFolder Id="RemoveLogviewerProgramMenuFolder" On="uninstall" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
 </Wix>
