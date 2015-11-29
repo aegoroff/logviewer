@@ -86,6 +86,10 @@ namespace logviewer.core
                     // ReSharper disable once ForCanBeConvertedToForeach
                     for (var i = 0; i < commands.Length; i++)
                     {
+                        if (this.disposed)
+                        {
+                            return;
+                        }
                         using (var sqLiteCommand = this.connection.CreateCommand())
                         {
                             sqLiteCommand.CommandText = commands[i];
