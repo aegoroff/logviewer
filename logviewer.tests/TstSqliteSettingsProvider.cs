@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FluentAssertions;
 using logviewer.core;
 using Xunit;
@@ -225,6 +226,7 @@ namespace logviewer.tests
             this.provider.UseRecentFilesStore(store => store.Add(f1));
             this.provider.UseRecentFilesStore(store => store.Add(f2));
             this.provider.UseRecentFilesStore(store => store.Add(f3));
+            Thread.Sleep(180);
             this.provider.UseRecentFilesStore(store => files = store.ReadItems());
             files.Should().BeEquivalentTo(f2, f3);
         }
