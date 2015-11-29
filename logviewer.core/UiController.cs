@@ -399,6 +399,10 @@ namespace logviewer.core
                 this.queuedMessages = 0;
                 reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, ref inputEncoding, offset);
                 this.probeWatch.Stop();
+                if (!this.NotCancelled)
+                {
+                    return;
+                }
                 var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
                 var inserted = this.totalMessages - pending;
@@ -424,7 +428,10 @@ namespace logviewer.core
             finally
             {
                 this.viewModel.LogProgressText = Resources.LogIndexing;
-                this.store.FinishAddMessages();
+                if (this.NotCancelled)
+                {
+                    this.store.FinishAddMessages();
+                }
                 reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 reader.CompilationStarted -= this.OnCompilationStarted;
                 reader.CompilationFinished -= this.OnCompilationFinished;
