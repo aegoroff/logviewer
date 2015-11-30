@@ -24,7 +24,7 @@ namespace logviewer.install.mca
 
         private static string TempAppConfigFile => Path.Combine(Path.GetTempPath(), AppConfig);
 
-        private static string AppPath => Path.Combine(Environment.GetFolderPath(Environment.Is64BitOperatingSystem ? Environment.SpecialFolder.ProgramFilesX86 : Environment.SpecialFolder.ProgramFiles), Product);
+        private static string AppPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), Product);
 
         [CustomAction]
         public static ActionResult KeepConfigurationFiles(Session session)
