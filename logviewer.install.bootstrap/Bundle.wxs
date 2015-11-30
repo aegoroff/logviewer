@@ -6,7 +6,7 @@
     Version="$(var.Version)"
     Manufacturer="Alexander Egorov"
     UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e"
-    Condition="VersionNT > v5.2"
+    Condition="VersionNT > v6.0 AND VersionNT64"
     IconSourceFile="..\logviewer\Lv.ico">
 
     <WixVariable Id="WixStdbaThemeXml" Value="Theme.xml" />
@@ -24,7 +24,7 @@
     <Chain>
       <PackageGroupRef Id="NetFx46Redist" />
       <RollbackBoundary />
-      <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi">
+      <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" InstallCondition="VersionNT64">
         <MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]" />
       </MsiPackage>
     </Chain>
