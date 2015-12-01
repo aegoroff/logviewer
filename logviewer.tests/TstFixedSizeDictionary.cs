@@ -24,229 +24,354 @@ namespace logviewer.tests
             new object[] { 2, null }
         };
 
-        private static void KeysTest<T>(int key, T value)
+        [Theory, MemberData("ValuePairs")]
+        public void Add_ValueType_KeysValid(int key, DateTime value)
         {
-            var instance = new FixedSizeDictionary<T>(10);
+            // Arrange
+            var instance = new FixedSizeDictionary<DateTime>(10);
+
+            // Act
             instance.Add(key, value);
+
+            // Assert
             instance.Keys.ShouldBeEquivalentTo(new[] { key });
         }
 
-        private static void ValuesTest<T>(int key, T value)
+        [Theory, MemberData("ReferencePairs")]
+        public void Add_ReferenceType_KeysValid(int key, string value)
         {
-            var instance = new FixedSizeDictionary<T>(10);
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(10);
+
+            // Act
             instance.Add(key, value);
+
+            // Assert
+            instance.Keys.ShouldBeEquivalentTo(new[] { key });
+        }
+
+        [Theory, MemberData("ValuePairs")]
+        public void Add_ValueType_ValuesValid(int key, DateTime value)
+        {
+            // Arrange
+            var instance = new FixedSizeDictionary<DateTime>(10);
+
+            // Act
+            instance.Add(key, value);
+
+            // Assert
             instance.Values.ShouldBeEquivalentTo(new[] { value });
         }
 
-        [Theory, MemberData("ValuePairs")]
-        public void ValueTypeKeys(int key, DateTime value)
-        {
-            KeysTest(key, value);
-        }
-
         [Theory, MemberData("ReferencePairs")]
-        public void ReferenceTypeKeys(int key, string value)
+        public void Add_ReferenceType_ValuesValid(int key, string value)
         {
-            KeysTest(key, value);
-        }
-
-        [Theory, MemberData("ValuePairs")]
-        public void ValueTypeValues(int key, DateTime value)
-        {
-            ValuesTest(key, value);
-        }
-
-        [Theory, MemberData("ReferencePairs")]
-        public void ReferenceTypeValues(int key, string value)
-        {
-            ValuesTest(key, value);
-        }
-
-        [Fact]
-        public void AddAndContainsKeyTrue()
-        {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
-            instance.Add(3, string.Empty);
-            instance.ContainsKey(3).Should().BeTrue();
+
+            // Act
+            instance.Add(key, value);
+
+            // Assert
+            instance.Values.ShouldBeEquivalentTo(new[] { value });
         }
 
-        [Fact]
-        public void AddAndContainsKeyFalse()
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData(ExpectedString)]
+        public void ContainsKey_String_True(string str)
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
-            instance.Add(3, string.Empty);
-            instance.ContainsKey(2).Should().BeFalse();
+            instance.Add(3, str);
+
+            // Act
+            var result = instance.ContainsKey(3);
+
+            // Assert
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void AddAndContainsKeyBeyondSize()
+        public void ContainsKey_AfterAddBeyondSize_False()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(11, string.Empty);
-            instance.ContainsKey(11).Should().BeFalse();
+
+            // Act
+            var result = instance.ContainsKey(11);
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void AddRemoveAndContainsKeyTrue()
+        public void ContainsKey_AfterRemove_ShouldBeFalse()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(3, string.Empty);
-            instance.Remove(3).Should().BeTrue();
-            instance.ContainsKey(3).Should().BeFalse();
+            var removed = instance.Remove(3);
+
+            // Act
+            var result = instance.ContainsKey(3);
+
+            // Assert
+            removed.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void RemoveKeyBeyondSize()
+        public void Remove_KeyBeyondSize_ResultFalse()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
-            instance.Remove(11).Should().BeFalse();
+
+            // Act
+            var result = instance.Remove(11);
+            
+            // Assert
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void AddAndTryGetValueTrue()
+        public void TryGetValue_Exist_True()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(3, ExpectedString);
             string result;
-            instance.TryGetValue(3, out result).Should().BeTrue();
+            
+            // Act
+            var success = instance.TryGetValue(3, out result);
+
+            // Assert
+            success.Should().BeTrue();
             result.Should().Be(ExpectedString);
         }
 
         [Fact]
-        public void AddAndTryGetValueUnexist()
+        public void TryGetValue_Unexist_False()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(3, ExpectedString);
             string result;
-            instance.TryGetValue(4, out result).Should().BeFalse();
+
+            // Act
+            var success = instance.TryGetValue(4, out result);
+
+            // Assert
+            success.Should().BeFalse();
             result.Should().BeNull();
         }
 
         [Fact]
-        public void AddAndGetValueTrue()
+        public void GetValue_Exist_True()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(3, ExpectedString);
-            instance[3].Should().Be(ExpectedString);
+
+            // Act
+            var result = instance[3];
+
+            // Assert
+            result.Should().Be(ExpectedString);
         }
 
         [Fact]
-        public void GetValueOutsideSize()
+        public void GetValue_OutsideSize_Throw()
         {
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, ExpectedString);
+
+            // Act
             Assert.Throws<IndexOutOfRangeException>(delegate
             {
-                new FixedSizeDictionary<string>(10)[11].Should();
+                var v = instance[11];
             });
         }
 
         [Fact]
-        public void SetValueIntsideSize()
+        public void SetValue_InsideSize_ReturnTheSame()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
+            
+            // Act
             instance[2] = ExpectedString;
+
+            // Assert
             instance[2].Should().Be(ExpectedString);
         }
 
         [Fact]
-        public void SetValueOutsideSize()
+        public void SetValue_OutsideSize_Throw()
         {
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(10);
+            instance.Add(3, ExpectedString);
+
+            // Act
             Assert.Throws<IndexOutOfRangeException>(delegate
             {
-                new FixedSizeDictionary<string>(10)[11] = ExpectedString;
+                instance[11] = ExpectedString;
             });
         }
 
         [Fact]
-        public void IsReadOnly()
+        public void IsReadOnly_Get_False()
         {
-            new FixedSizeDictionary<string>(10).IsReadOnly.Should().BeFalse();
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(10);
+
+            // Act
+            var result = instance.IsReadOnly;
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void CountEmpty()
+        public void Count_EmptyCollection_Zero()
         {
-            new FixedSizeDictionary<string>(10).Count.Should().Be(0);
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(10);
+
+            // Act
+            var result = instance.Count;
+
+            // Assert
+            result.Should().Be(0);
         }
 
         [Fact]
-        public void CountSingle()
+        public void Count_SingleElemenCollection_One()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(3, ExpectedString);
-            instance.Count.Should().Be(1);
+
+            // Act
+            var result = instance.Count;
+
+            // Assert
+            result.Should().Be(1);
         }
 
         [Fact]
-        public void CountMany()
+        public void Count_ManyElemenCollection_MoreThenOne()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(2, ExpectedString);
             instance.Add(3, ExpectedString);
-            instance.Count.Should().Be(2);
+
+            // Act
+            var result = instance.Count;
+
+            // Assert
+            result.Should().Be(2);
         }
 
         [Fact]
-        public void EnumerateEmpty()
+        public void Enumerate_Empty_NoIterations()
         {
+            // Arrange
             int iterations = 0;
+            
+            // Act
             // ReSharper disable once UnusedVariable
             foreach (var pair in new FixedSizeDictionary<string>(10))
             {
                 iterations++;
             }
+
+            // Assert
             iterations.Should().Be(0);
         }
 
         [Fact]
-        public void EnumerateNotEmpty()
+        public void Enumerate_NotEmpty_HasIterations()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             int iterations = 0;
             instance.Add(2, ExpectedString);
+
+            // Act
             foreach (var pair in instance)
             {
                 iterations++;
                 pair.Key.Should().Be(2);
                 pair.Value.Should().Be(ExpectedString);
             }
+
+            // Assert
             iterations.Should().Be(1);
         }
 
         [Fact]
-        public void EnumerateAsNotGenericEnumerable()
+        public void Enumerate_AsNotGenericEnumerable_HasIterations()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             int iterations = 0;
             instance.Add(2, ExpectedString);
+
+            // Act
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var pair in (IEnumerable)instance)
             {
                 iterations++;
             }
+
+            // Assert
             iterations.Should().Be(1);
         }
 
         [Fact]
-        public void ContainsKeyValue()
+        public void Contains_SameKeyValuePair_ShouldBeTrue()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(2, ExpectedString);
-            instance.Contains(new KeyValuePair<int, string>(2, ExpectedString)).Should().BeTrue();
+
+            // Act
+            var result = instance.Contains(new KeyValuePair<int, string>(2, ExpectedString));
+
+            // Assert
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void NotContainsKeyValue()
+        public void Contains_SameKeyDifferentValue_ShouldBeFalse()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
             instance.Add(2, ExpectedString);
-            instance.Contains(new KeyValuePair<int, string>(2, "another")).Should().BeFalse("different value but key the same should not be found");
+
+            // Act
+            var result = instance.Contains(new KeyValuePair<int, string>(2, "another"));
+
+            // Assert
+            result.Should().BeFalse("different value but key the same should not be found");
         }
 
         [Fact]
-        public void AddKeyValuePair()
+        public void Add_KeyValuePair_Success()
         {
+            // Arrange
             var instance = new FixedSizeDictionary<string>(10);
+
+            // Act
             instance.Add(new KeyValuePair<int, string>(2, ExpectedString));
+
+            // Assert
             instance.ContainsKey(2).Should().BeTrue();
         }
 
@@ -266,77 +391,97 @@ namespace logviewer.tests
         };
 
         [Theory, MemberData("InstancesToClear")]
-        public void Clear(FixedSizeDictionary<string> instance)
+        public void Clear_DifferentCollections(FixedSizeDictionary<string> instance)
         {
+            // Arrange
             var value = new KeyValuePair<int, string>(2, ExpectedString);
+
+            // Act
             instance.Clear();
+
+            // Assert
             instance.Count.Should().Be(0);
             instance.Remove(value).Should().BeFalse();
             instance.ContainsKey(2).Should().BeFalse();
         }
 
         [Fact]
-        public void CopyToSameSizeFromZero()
+        public void CopyTo_SameSizeFromZero_ResultTheSame()
         {
+            // Arrange
             var value = new KeyValuePair<int, string>(1, ExpectedString);
             var instance = new FixedSizeDictionary<string>(2) { value };
 
             var array = new KeyValuePair<int, string>[2];
 
+            // Act
             instance.CopyTo(array, 0);
 
+            // Assert
             array.Should().BeEquivalentTo(new[] { this.empty, value });
         }
 
         [Fact]
-        public void CopyToSameSizeFromNonZero()
+        public void CopyTo_SameSizeFromNonZero_StrippedBelowIndex()
         {
+            // Arrange
             var value = new KeyValuePair<int, string>(0, ExpectedString);
             var instance = new FixedSizeDictionary<string>(2) { value };
 
             var array = new KeyValuePair<int, string>[2];
 
+            // Act
             instance.CopyTo(array, 1);
 
+            // Assert
             array.Should().BeEquivalentTo(new[] { this.empty, this.empty });
         }
 
         [Fact]
-        public void CopyToSameSizeFromZeroTargetGreaterThenSource()
+        public void CopyTo_FromZeroTargetGreaterThenSource_SourceAllWithinTarget()
         {
+            // Arrange
             var value = new KeyValuePair<int, string>(0, ExpectedString);
             var instance = new FixedSizeDictionary<string>(2) { value };
 
             var array = new KeyValuePair<int, string>[3];
 
+            // Act
             instance.CopyTo(array, 0);
 
+            // Assert
             array.Should().BeEquivalentTo(new[] { value, this.empty, this.empty });
         }
 
         [Fact]
-        public void CopyToSameSizeFromZeroTargetLessThenSource()
+        public void CopyTo_FromZeroTargetLessThenSource_PartOfSourceWithinTarget()
         {
+            // Arrange
             var value = new KeyValuePair<int, string>(0, ExpectedString);
             var instance = new FixedSizeDictionary<string>(3) { value };
 
             var array = new KeyValuePair<int, string>[2];
 
+            // Act
             instance.CopyTo(array, 0);
 
+            // Assert
             array.Should().BeEquivalentTo(new[] { value, this.empty });
         }
 
         [Fact]
-        public void CopyToSameSizeFromNotZeroTargetLessThenSource()
+        public void CopyTo_FromNotZeroTargetLessThenSource_NoSourceWithinTarget()
         {
+            // Arrange
             var value = new KeyValuePair<int, string>(2, ExpectedString);
             var instance = new FixedSizeDictionary<string>(3) { value };
 
             var array = new KeyValuePair<int, string>[2];
 
+            // Act
             instance.CopyTo(array, 1);
 
+            // Assert
             array.Should().BeEquivalentTo(new[] { this.empty, this.empty });
         }
     }
