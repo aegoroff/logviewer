@@ -79,6 +79,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot parse port: {0}.
+        /// </summary>
+        public static string CannotParsePort {
+            get {
+                return ResourceManager.GetString("CannotParsePort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check updates.
         /// </summary>
         public static string CheckUpdates {
@@ -327,6 +336,15 @@ namespace logviewer.ui.Properties {
         public static string MinMessageDate {
             get {
                 return ResourceManager.GetString("MinMessageDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Network.
+        /// </summary>
+        public static string NetworkSettings {
+            get {
+                return ResourceManager.GetString("NetworkSettings", resourceCulture);
             }
         }
         

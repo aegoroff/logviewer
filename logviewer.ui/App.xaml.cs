@@ -10,6 +10,7 @@ using logviewer.core;
 
 using System.Globalization;
 using System.Windows;
+using logviewer.core;
 using Application = System.Windows.Forms.Application;
 
 namespace logviewer.ui
@@ -26,6 +27,7 @@ namespace logviewer.ui
 #endif
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture;
+            NetworkSettings.SetProxy(MainViewModel.Current.SettingsProvider.OptionsProvider);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

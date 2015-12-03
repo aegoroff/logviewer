@@ -45,6 +45,7 @@
         <CommandBinding Command="logviewer:LogviewerCommands.Update" Executed="OnUpdate" />
         <CommandBinding Command="logviewer:LogviewerCommands.Statistic" Executed="OnStatistic" />
         <CommandBinding Command="logviewer:LogviewerCommands.Settings" Executed="OnSettings" />
+        <CommandBinding Command="logviewer:LogviewerCommands.NetworkSettings" Executed="OnNetworkSettings" />
         <CommandBinding Command="logviewer:LogviewerCommands.Updates" Executed="OnCheckUpdates" />
     </Window.CommandBindings>
     <Grid>
@@ -183,6 +184,12 @@
                             LargeIcon="Images\Large\interface_preferences.png"
                             Icon="Images\Small\interface_preferences.png"
                             Command="logviewer:LogviewerCommands.Settings" />
+                        <fluent:Button
+                            x:Name="ButtonNetworkSettings"
+                            Header="{x:Static properties:Resources.NetworkSettings}"
+                            LargeIcon="Images\Large\network_cloud.png"
+                            Icon="Images\Small\network_cloud.png"
+                            Command="logviewer:LogviewerCommands.NetworkSettings" />
                         <fluent:Button
                             x:Name="ButtonCheckUpdates"
                             Header="{x:Static properties:Resources.CheckUpdates}"

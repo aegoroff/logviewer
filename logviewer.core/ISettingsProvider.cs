@@ -38,5 +38,6 @@ namespace logviewer.core
         int SelectedParsingTemplate { get; set; }
         void UseRecentFilesStore(Action<RecentItemsStore> action);
         void UseRecentFiltersStore(Action<RecentItemsStore> action);
+        IOptionsProvider OptionsProvider { get; }
     }
 }

@@ -45,6 +45,7 @@ namespace logviewer.core
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
         private readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
+        private readonly OptionsProvider optionsProvider;
 
         private const int HeaderFontSize = 10;
         private const int BodyFontSize = 9;
@@ -68,6 +69,7 @@ namespace logviewer.core
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
+            this.optionsProvider = new OptionsProvider(this.settingsDatabaseFilePath);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
             this.parsingTemplatePropertiesColumns = this.parsingTemplateProperties.Select(GetColumnAttribute).ToArray();
             this.parsingTemplatePropertiesNames = this.parsingTemplatePropertiesColumns.Select(c => c.Name).ToArray();
@@ -107,7 +109,7 @@ namespace logviewer.core
 
         public Color ReadColor(LogLevel level)
         {
-            var argb = this.ReadIntegerOption(level.ToParameterName(), -1);
+            var argb = this.optionsProvider.ReadIntegerOption(level.ToParameterName(), -1);
             return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);
         }
 
@@ -115,8 +117,8 @@ namespace logviewer.core
 
         public int SelectedParsingTemplate
         {
-            get { return this.ReadIntegerOption(SelectedTemplateParameterName); }
-            set { this.UpdateIntegerOption(SelectedTemplateParameterName, value); }
+            get { return this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName); }
+            set { this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value); }
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -127,7 +129,7 @@ namespace logviewer.core
             }
             this.headerFormatsMap[level] = FormatChar(color, true);
             this.bodyFormatsMap[level] = FormatChar(color, false, BodyFontSize);
-            this.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
+            this.optionsProvider.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
         private static RegistryKey RegistryKey => GetRegKey(RegistryKeyBase + OptionsSectionName);
@@ -148,62 +150,62 @@ namespace logviewer.core
 
         public string MessageFilter
         {
-            get { return this.ReadStringOption(FilterParameterName); }
-            set { this.UpdateStringOption(FilterParameterName, value); }
+            get { return this.optionsProvider.ReadStringOption(FilterParameterName); }
+            set { this.optionsProvider.UpdateStringOption(FilterParameterName, value); }
         }
 
         public DateTime LastUpdateCheckTime
         {
-            get { return DateTime.Parse(this.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString("O"))).ToUniversalTime(); }
-            set { this.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString("O")); }
+            get { return DateTime.Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString("O"))).ToUniversalTime(); }
+            set { this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString("O")); }
         }
 
         public bool OpenLastFile
         {
-            get { return this.ReadBooleanOption(OpenLastFileParameterName); }
-            set { this.UpdateBooleanOption(OpenLastFileParameterName, value); }
+            get { return this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName); }
+            set { this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value); }
         }
 
         public bool AutoRefreshOnFileChange
         {
-            get { return this.ReadBooleanOption(AutoRefreshOnFileChangeName); }
-            set { this.UpdateBooleanOption(AutoRefreshOnFileChangeName, value); }
+            get { return this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName); }
+            set { this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value); }
         }
 
         public int MinLevel
         {
-            get { return this.ReadIntegerOption(MinLevelParameterName); }
-            set { this.UpdateIntegerOption(MinLevelParameterName, value); }
+            get { return this.optionsProvider.ReadIntegerOption(MinLevelParameterName); }
+            set { this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value); }
         }
 
         public int MaxLevel
         {
-            get { return this.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal); }
-            set { this.UpdateIntegerOption(MaxLevelParameterName, value); }
+            get { return this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal); }
+            set { this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value); }
         }
 
         public int PageSize
         {
-            get { return this.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
-            set { this.UpdateIntegerOption(PageSizeParameterName, value); }
+            get { return this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
+            set { this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value); }
         }
 
         public bool Sorting
         {
-            get { return this.ReadBooleanOption(SortingParameterName); }
-            set { this.UpdateBooleanOption(SortingParameterName, value); }
+            get { return this.optionsProvider.ReadBooleanOption(SortingParameterName); }
+            set { this.optionsProvider.UpdateBooleanOption(SortingParameterName, value); }
         }
 
         public bool UseRegexp
         {
-            get { return this.ReadBooleanOption(UseRegexpParameterName); }
-            set { this.UpdateBooleanOption(UseRegexpParameterName, value); }
+            get { return this.optionsProvider.ReadBooleanOption(UseRegexpParameterName); }
+            set { this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value); }
         }
 
         public int KeepLastNFiles
         {
-            get { return this.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
-            set { this.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
+            get { return this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
+            set { this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
 
         public string FullPathToDatabase => this.settingsDatabaseFilePath;
@@ -212,7 +214,7 @@ namespace logviewer.core
         {
             var propertiesSet = string.Join(",", from string member in this.parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
 
-            this.ExecuteNonQuery(
+            this.optionsProvider.ExecuteNonQuery(
                 $@"
                     UPDATE
                         ParsingTemplates
@@ -252,7 +254,7 @@ namespace logviewer.core
             Action<IDataReader> onRead = rdr => result.Add(rdr[0] as string);
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
 
-            this.ExecuteQuery(action);
+            this.optionsProvider.ExecuteQuery(action);
 
             return result;
         }
@@ -274,7 +276,7 @@ namespace logviewer.core
             Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string, StartMessage = rdr[2] as string });
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
 
-            this.ExecuteQuery(action);
+            this.optionsProvider.ExecuteQuery(action);
 
             return result;
         }
@@ -289,7 +291,7 @@ namespace logviewer.core
            
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
-                foreach (var column in parsingTemplateProperties)
+                foreach (var column in this.parsingTemplateProperties)
                 {
                     var attr = GetColumnAttribute(column);
                     if (column.PropertyType == typeof(bool))
@@ -314,7 +316,7 @@ namespace logviewer.core
                         Ix = @Ix
                     ";
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, query, beforeRead);
-            this.ExecuteQuery(action);
+            this.optionsProvider.ExecuteQuery(action);
 
             return result;
         }
@@ -339,7 +341,7 @@ namespace logviewer.core
                         @Ix,
                         {propertiesParams}
                     )";
-            this.ExecuteNonQuery(query, command => this.AddParsingTemplateIntoCommand(command, template));
+            this.optionsProvider.ExecuteNonQuery(query, command => this.AddParsingTemplateIntoCommand(command, template));
         }
         
         public void DeleteParsingTemplate(int ix)
@@ -377,7 +379,7 @@ namespace logviewer.core
                 indexesToUpdate.Add((long)rdr[0]);
             };
 
-            this.ExecuteQuery(delegate(DatabaseConnection connection)
+            this.optionsProvider.ExecuteQuery(delegate(DatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -423,6 +425,8 @@ namespace logviewer.core
             this.UseRecentItemsStore(action, "RecentFilters", KeepLastFilters);
         }
 
+        public IOptionsProvider OptionsProvider => this.optionsProvider;
+
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {
             return new RtfCharFormat
@@ -467,7 +471,7 @@ namespace logviewer.core
                     ";
         }
 
-        IEnumerable<string> ParsingTemplateColumnsDefinition()
+        private IEnumerable<string> ParsingTemplateColumnsDefinition()
         {
             var q = from ColumnAttribute member in this.parsingTemplatePropertiesColumns select member;
             foreach (var c in q)
@@ -488,7 +492,7 @@ namespace logviewer.core
         {
             var since = (int)this.SchemaVersion;
 
-            this.ExecuteQuery(delegate(DatabaseConnection connection)
+            this.optionsProvider.ExecuteQuery(delegate(DatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -514,7 +518,7 @@ namespace logviewer.core
             {
                 try
                 {
-                    return this.ExecuteScalar<long>(@"SELECT max(Version) FROM DatabaseConfiguration");
+                    return this.optionsProvider.ExecuteScalar<long>(@"SELECT max(Version) FROM DatabaseConfiguration");
                 }
                 catch (Exception e)
                 {
@@ -535,7 +539,7 @@ namespace logviewer.core
             connection.ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", action);
         }
 
-        static void Upgrade1(DatabaseConnection connection)
+        private static void Upgrade1(DatabaseConnection connection)
         {
             var result = connection.ExecuteScalar<long>(@"SELECT count(1) FROM ParsingTemplates");
             if (result <= 0)
@@ -560,29 +564,29 @@ namespace logviewer.core
 
             connection.ExecuteNonQuery(cmd, action);
         }
-        
-        static void Upgrade2(DatabaseConnection connection)
+
+        private static void Upgrade2(DatabaseConnection connection)
         {
             connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
         }
-        
-        void Upgrade3(DatabaseConnection connection)
+
+        private void Upgrade3(DatabaseConnection connection)
         {
             var properties = string.Join(",",
                 from string member in this.parsingTemplatePropertiesNames select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
-        
-        void Upgrade4(DatabaseConnection connection)
+
+        private void Upgrade4(DatabaseConnection connection)
         {
             var properties = string.Join(",",
                 from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Filter", StringComparison.Ordinal)) select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
-        
-        void Upgrade5(DatabaseConnection connection)
+
+        private void Upgrade5(DatabaseConnection connection)
         {
             var properties = string.Join(",",
                 from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Compiled", StringComparison.Ordinal)) select member);
@@ -603,32 +607,7 @@ namespace logviewer.core
 
         private void ExecuteNonQuery(params string[] queries)
         {
-            this.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
-        }
-
-        private T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
-        {
-            var result = default(T);
-            Action<DatabaseConnection> action = delegate(DatabaseConnection connection)
-            {
-                result = connection.ExecuteScalar<T>(query, actionBeforeExecute);
-            };
-            this.ExecuteQuery(action);
-            return result;
-        }
-
-        private void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
-        {
-            this.ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
-        }
-        
-        private void ExecuteQuery(Action<DatabaseConnection> action)
-        {
-            var connection = new DatabaseConnection(this.settingsDatabaseFilePath);
-            using (connection)
-            {
-                action(connection);
-            }
+            this.optionsProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
         }
 
         private void MigrateFromRegistry()
@@ -668,106 +647,19 @@ namespace logviewer.core
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
         }
 
-        void MigrateString(string option)
+        private void MigrateString(string option)
         {
-            this.UpdateStringOption(option, GetStringValue(option));
-        }
-        
-        void MigrateBoolean(string option)
-        {
-            this.UpdateBooleanOption(option, GetBoolValue(option));
-        }
-        
-        void MigrateInteger(string option)
-        {
-            this.UpdateIntegerOption(option, GetIntValue(option));
+            this.optionsProvider.UpdateStringOption(option, GetStringValue(option));
         }
 
-        private void UpdateStringOption(string option, string value)
+        private void MigrateBoolean(string option)
         {
-            this.UpdateOption("StringOptions", option, value);
+            this.optionsProvider.UpdateBooleanOption(option, GetBoolValue(option));
         }
 
-        private void UpdateBooleanOption(string option, bool value)
+        private void MigrateInteger(string option)
         {
-            this.UpdateOption("BooleanOptions", option, value);
-        }
-
-        private void UpdateIntegerOption(string option, int value)
-        {
-            this.UpdateOption("IntegerOptions", option, value);
-        }
-
-        private void UpdateOption<T>(string table, string option, T value)
-        {
-            const string insertCmd = @"INSERT INTO {0}(Option, Value) VALUES (@Option, @Value)";
-
-            const string updateCmd = @"
-                    UPDATE
-                        {0}
-                    SET
-                        Value = @Value
-                    WHERE
-                        Option = @Option
-                    ";
-
-            var query = $@"SELECT count(1) FROM {table} WHERE Option = @Option";
-            var exist = this.ExecuteScalar<long>(query,
-                command => DatabaseConnection.AddParameter(command, "@Option", option)) > 0;
-
-
-            Action<IDbCommand> action = delegate(IDbCommand command)
-            {
-                DatabaseConnection.AddParameter(command, "@Option", option);
-                DatabaseConnection.AddParameter(command, "@Value", value);
-            };
-
-            this.ExecuteNonQuery(string.Format(exist ? updateCmd : insertCmd, table), action);
-        }
-
-        private string ReadStringOption(string option, string defaultValue = null)
-        {
-            return this.ReadOption("StringOptions", option, defaultValue);
-        }
-
-        private bool ReadBooleanOption(string option, bool defaultValue = false)
-        {
-            return this.ReadOption("BooleanOptions", option, defaultValue);
-        }
-
-        private int ReadIntegerOption(string option, int defaultValue = 0)
-        {
-            return (int)this.ReadOption<long>("IntegerOptions", option, defaultValue);
-        }
-
-        private T ReadOption<T>(string table, string option, T defaultValue = default(T))
-        {
-            const string cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
-            var result = default(T);
-            var read = false;
-
-            Action<IDataReader> onRead = delegate(IDataReader rdr)
-            {
-                if (rdr[0] is DBNull)
-                {
-                    return;
-                }
-                result = (T)rdr[0];
-                read = true;
-            };
-
-            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Option", option);
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(cmd, table), beforeRead);
-            this.ExecuteQuery(action);
-
-
-            if (read)
-            {
-                return result;
-            }
-            this.UpdateOption(table, option, defaultValue);
-            result = defaultValue;
-            return result;
+            this.optionsProvider.UpdateIntegerOption(option, GetIntValue(option));
         }
 
         private void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)

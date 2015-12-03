@@ -123,6 +123,9 @@
   <data name="AboutTemplate" xml:space="preserve">
     <value>About {0}</value>
   </data>
+  <data name="CannotParsePort" xml:space="preserve">
+    <value>Cannot parse port: {0}</value>
+  </data>
   <data name="CheckUpdates" xml:space="preserve">
     <value>Check updates</value>
   </data>
@@ -206,6 +209,9 @@
   </data>
   <data name="MinMessageDate" xml:space="preserve">
     <value>First</value>
+  </data>
+  <data name="NetworkSettings" xml:space="preserve">
+    <value>Network</value>
   </data>
   <data name="NewVersion" xml:space="preserve">
     <value>New version available</value>

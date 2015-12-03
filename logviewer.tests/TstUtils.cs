@@ -115,13 +115,18 @@ namespace logviewer.tests
         }
         
         [Fact]
-        public void EncryptDecrypt()
+        public void EncryptDecrypt_WithGenerateKeys_CorrectStringAfterDecrypt()
         {
-            var crypt = new AsymCrypt();
-            crypt.GenerateKeys();
+            // Arrange
             const string plain = "string";
+            var crypt = new AsymCrypt();
+
+            // Act
+            crypt.GenerateKeys();
             var crypted = crypt.Encrypt(plain);
             var decrypted = crypt.Decrypt(crypted);
+
+            // Assert
             decrypted.Should().Be(plain);
         }
     }

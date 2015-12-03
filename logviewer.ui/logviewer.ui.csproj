@@ -145,6 +145,12 @@
     <Compile Include="UpdateDlg.Designer.cs">
       <DependentUpon>UpdateDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="NetworkSettingsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetworkSettingsDlg.Designer.cs">
+      <DependentUpon>NetworkSettingsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="WindowWrapper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -211,6 +217,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateDlg.ru.resx">
       <DependentUpon>UpdateDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetworkSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NetworkSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetworkSettingsDlg.ru.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NetworkSettingsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -288,6 +302,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Large\network_cloud.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Small\network_cloud.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

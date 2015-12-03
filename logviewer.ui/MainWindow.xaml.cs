@@ -168,5 +168,14 @@ namespace logviewer.ui
                 dlg.ShowDialog();
             }
         }
+
+        private void OnNetworkSettings(object sender, ExecutedRoutedEventArgs e)
+        {
+            var dlg = new NetworkSettingsDlg();
+            using (dlg)
+            {
+                dlg.ShowDialog();
+            }
+        }
     }
 }
