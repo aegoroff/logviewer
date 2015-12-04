@@ -86,6 +86,7 @@
     <Compile Include="TstLogProvider.cs" />
     <Compile Include="TstLogReader.cs" />
     <Compile Include="TstNetworkSettings.cs" />
+    <Compile Include="TstNetworkSettingsController.cs" />
     <Compile Include="TstUiController.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />

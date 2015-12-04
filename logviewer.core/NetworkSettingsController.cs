@@ -108,7 +108,7 @@ namespace logviewer.core
             {
                 return;
             }
-            if (string.IsNullOrEmpty(this.ui.Host) && this.ui.Port == 0)
+            if (string.IsNullOrWhiteSpace(this.ui.Host) || this.ui.Port == 0)
             {
                 // TODO: LoggingService.ErrorFormatted(Resources.BadProxySettings, this.ui.Host, this.ui.Port);
                 return;
