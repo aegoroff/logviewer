@@ -7,7 +7,7 @@ using System.Data;
 
 namespace logviewer.core
 {
-    public sealed class OptionsProvider : IOptionsProvider
+    internal sealed class OptionsProvider : IOptionsProvider
     {
         private const string StringOptionsTable = "StringOptions";
         private const string BooleanOptionsTable = "BooleanOptions";
