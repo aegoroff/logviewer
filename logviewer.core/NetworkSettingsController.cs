@@ -110,7 +110,7 @@ namespace logviewer.core
             }
             if (string.IsNullOrWhiteSpace(this.ui.Host) || this.ui.Port == 0)
             {
-                // TODO: LoggingService.ErrorFormatted(Resources.BadProxySettings, this.ui.Host, this.ui.Port);
+                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.ui.Host, this.ui.Port);
                 return;
             }
             this.networkSettings.Host = this.ui.Host;
