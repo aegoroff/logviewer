@@ -88,7 +88,7 @@ namespace logviewer.core
                 read = true;
             };
 
-            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Option", option);
+            Action<IDbCommand> beforeRead = command => command.AddParameter("@Option", option);
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(cmd, table), beforeRead);
             this.ExecuteQuery(action);
 
@@ -117,13 +117,13 @@ namespace logviewer.core
 
             var query = $@"SELECT count(1) FROM {table} WHERE Option = @Option";
             var exist = this.ExecuteScalar<long>(query,
-                command => DatabaseConnection.AddParameter(command, "@Option", option)) > 0;
+                command => command.AddParameter("@Option", option)) > 0;
 
 
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Option", option);
-                DatabaseConnection.AddParameter(command, "@Value", value);
+                command.AddParameter("@Option", option);
+                command.AddParameter("@Value", value);
             };
 
             this.ExecuteNonQuery(string.Format(exist ? updateCmd : insertCmd, table), action);

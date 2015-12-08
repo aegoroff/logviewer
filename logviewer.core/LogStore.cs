@@ -166,26 +166,33 @@ namespace logviewer.core
         {
             message.Cache(this.rules);
             // ugly but very fast
-            var cmd = this.insertPrefix + message.Ix + this.insertSuffix;
-            Action<IDbCommand> action = delegate(IDbCommand command)
+            var query = this.insertPrefix + message.Ix + this.insertSuffix;
+            this.connection.RunSqlQuery(delegate (IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Header", message.Header);
-                DatabaseConnection.AddParameter(command, "@Body", message.Body);
-// ReSharper disable once ForCanBeConvertedToForeach
-                for (var i = 0; i < this.additionalColumns.Length; i++)
+                try
                 {
-                    var column = this.additionalColumns[i];
-                    if (this.propertyTypesCache[column] == PropertyType.Integer)
+                    command.AddParameter("@Header", message.Header);
+                    command.AddParameter("@Body", message.Body);
+                    // ReSharper disable once ForCanBeConvertedToForeach
+                    for (var i = 0; i < this.additionalColumns.Length; i++)
                     {
-                        DatabaseConnection.AddParameter(command, "@" + column, message.IntegerProperty(column));
+                        var column = this.additionalColumns[i];
+                        if (this.propertyTypesCache[column] == PropertyType.Integer)
+                        {
+                            command.AddParameter("@" + column, message.IntegerProperty(column));
+                        }
+                        else
+                        {
+                            command.AddParameter("@" + column, message.StringProperty(column));
+                        }
                     }
-                    else
-                    {
-                        DatabaseConnection.AddParameter(command, "@" + column, message.StringProperty(column));
-                    }
+                    command.ExecuteNonQuery();
                 }
-            };
-            this.connection.ExecuteNonQuery(cmd, action);
+                catch (Exception e)
+                {
+                    Log.Instance.Debug(e);
+                }
+            }, query);
         }
 
         public void ReadMessages(
@@ -354,26 +361,26 @@ namespace logviewer.core
         {
             if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
-                DatabaseConnection.AddParameter(command, "@Min", (int) min);
+                command.AddParameter("@Min", (int) min);
             }
             if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
-                DatabaseConnection.AddParameter(command, "@Max", (int) max);
+                command.AddParameter("@Max", (int) max);
             }
             if (start != DateTime.MinValue && this.hasDateTimeProperty)
             {
-                DatabaseConnection.AddParameter(command, "@Start", start.ToFileTimeUtc());
+                command.AddParameter("@Start", start.ToFileTimeUtc());
             }
             if (finish != DateTime.MaxValue && this.hasDateTimeProperty)
             {
-                DatabaseConnection.AddParameter(command, "@Finish", finish.ToFileTimeUtc());
+                command.AddParameter("@Finish", finish.ToFileTimeUtc());
             }
             if (string.IsNullOrWhiteSpace(filter))
             {
                 return;
             }
             var f = useRegexp ? filter : "%" + filter.Trim('%') + "%";
-            DatabaseConnection.AddParameter(command, "@Filter", f);
+            command.AddParameter("@Filter", f);
         }
 
         #endregion

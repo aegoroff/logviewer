@@ -96,19 +96,27 @@ namespace logviewer.tests
         }
         
         [Fact]
-        public void GenerateRsaKeys()
+        public void GenerateKeys_Call_Success()
         {
+            // Arrange
             var crypt = new AsymCrypt();
+
+            // Act
             crypt.GenerateKeys();
+
+            // Assert
             crypt.PrivateKey.Should().NotBeNullOrEmpty();
             crypt.PublicKey.Should().NotBeNullOrEmpty();
         }
         
         [Fact]
-        public void DecryptBase64()
+        public void FromBase64String_GetPlainXml_Success()
         {
+            // Arrange
             var crypt = new AsymCrypt();
             crypt.GenerateKeys();
+
+            // Act
             var xml = AsymCrypt.FromBase64String(crypt.PrivateKey);
             var d = new XmlDocument();
             d.LoadXml(xml);
@@ -128,6 +136,25 @@ namespace logviewer.tests
 
             // Assert
             decrypted.Should().Be(plain);
+        }
+
+        [Theory]
+        [InlineData(null, false, true)]
+        [InlineData("", false, true)]
+        [InlineData(" ", false, true)]
+        [InlineData("test", false, true)]
+        [InlineData("test", true, true)]
+        [InlineData(null, true, true)]
+        [InlineData("", true, true)]
+        [InlineData(" ", true, true)]
+        [InlineData(".*((", true, false)]
+        public void IsValid_CorrectString_Success(string filter, bool useRegexp, bool result)
+        {
+            // Act
+            var valid = filter.IsValid(useRegexp);
+
+            // Assert
+            valid.Should().Be(result);
         }
     }
 }

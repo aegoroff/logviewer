@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using logviewer.core.Properties;
 using logviewer.engine;
@@ -28,6 +29,30 @@ namespace logviewer.core
         internal static string PropertyNameOf(this ICollection<Semantic> schema, ParserType type)
         {
             return (from s in schema from rule in s.CastingRules where rule.Type == type select s.Property).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Whether the string is valid to use as text filter
+        /// </summary>
+        /// <param name="messageTextFilter">string that supposed to be a filter</param>
+        /// <param name="useRegularExpressions">Wheter to use regular expressions in filter string</param>
+        /// <returns></returns>
+        public static bool IsValid(this string messageTextFilter, bool useRegularExpressions)
+        {
+            if (string.IsNullOrEmpty(messageTextFilter) || !useRegularExpressions)
+            {
+                return true;
+            }
+            try
+            {
+                var r = new Regex(messageTextFilter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                return r.GetHashCode() > 0;
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Info(e.Message, e);
+                return false;
+            }
         }
 
         public static string FormatString(this ulong value)

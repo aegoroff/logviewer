@@ -407,19 +407,6 @@ namespace logviewer.tests
             this.controller.TotalPages.Should().Be(pages);
         }
 
-        [Theory]
-        [InlineData("test", false, true)]
-        [InlineData("t[", false, true)]
-        [InlineData("t[", true, false)]
-        [InlineData("t[1]", true, true)]
-        [InlineData(null, true, true)]
-        [InlineData(null, false, true)]
-        public void FilterValidation(string filter, bool useRegex, bool result)
-        {
-            this.view.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
-            MainController.IsValidFilter(filter, useRegex).Should().Be(result);
-        }
-
         [Fact]
         public void StartReadingWithinDelay()
         {

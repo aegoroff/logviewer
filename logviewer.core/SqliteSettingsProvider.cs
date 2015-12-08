@@ -287,7 +287,7 @@ namespace logviewer.core
 
             var result = new ParsingTemplate { Index = index };
 
-            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Ix", index);
+            Action<IDbCommand> beforeRead = command => command.AddParameter("@Ix", index);
            
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
@@ -368,7 +368,7 @@ namespace logviewer.core
 
             var indexesToUpdate = new List<long>();
 
-            Action<IDbCommand> beforeRead = command => DatabaseConnection.AddParameter(command, "@Ix", ix);
+            Action<IDbCommand> beforeRead = command => command.AddParameter("@Ix", ix);
 
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
@@ -389,8 +389,8 @@ namespace logviewer.core
 
                     foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>)delegate(IDbCommand command)
                     {
-                        DatabaseConnection.AddParameter(command, "@Ix", index);
-                        DatabaseConnection.AddParameter(command, "@NewIx", index - 1);
+                        command.AddParameter("@Ix", index);
+                        command.AddParameter("@NewIx", index - 1);
                     }))
                     {
                         connection.ExecuteNonQuery(updateIndexesCmd, beforeUpdate);
@@ -532,8 +532,8 @@ namespace logviewer.core
         {
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Version", version);
-                DatabaseConnection.AddParameter(command, "@OccurredAt", DateTime.Now.Ticks);
+                command.AddParameter("@Version", version);
+                command.AddParameter("@OccurredAt", DateTime.Now.Ticks);
             };
 
             connection.ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", action);
@@ -558,8 +558,8 @@ namespace logviewer.core
 
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Ix", DefaultParsingProfileIndex);
-                DatabaseConnection.AddParameter(command, "@Name", Resources.ParsingTemplateNlog);
+                command.AddParameter("@Ix", DefaultParsingProfileIndex);
+                command.AddParameter("@Name", Resources.ParsingTemplateNlog);
             };
 
             connection.ExecuteNonQuery(cmd, action);
@@ -664,7 +664,7 @@ namespace logviewer.core
 
         private void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
         {
-            Action<string, object> action = (name, value) => DatabaseConnection.AddParameter(command, name, value);
+            Action<string, object> action = (name, value) => command.AddParameter(name, value);
 
             action("@Ix", template.Index);
 

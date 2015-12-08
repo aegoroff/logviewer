@@ -34,12 +34,12 @@ namespace logviewer.core
 
         public void Add(string item)
         {
-            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = @Item", AddItem(item));
+            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = @Item", cmd => cmd.AddParameter("@Item", item));
 
             Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
             {
-                DatabaseConnection.AddParameter(command, "@Item", item);
-                DatabaseConnection.AddParameter(command, "@UsedAt", DateTime.Now.Ticks);
+                command.AddParameter("@Item", item);
+                command.AddParameter("@UsedAt", DateTime.Now.Ticks);
             });
 
             if (result > 0)
@@ -65,11 +65,6 @@ namespace logviewer.core
             this.connection.ExecuteNonQuery(cmdDelete);
         }
 
-        private static Action<IDbCommand> AddItem(string file)
-        {
-            return cmd => DatabaseConnection.AddParameter(cmd, "@Item", file);
-        }
-
         public void Remove(params string[] items)
         {
             string cmd = $@"DELETE FROM {this.tableName} WHERE Item = @Item";
@@ -84,7 +79,7 @@ namespace logviewer.core
 
         private static Action<IDbCommand> Remove(string item)
         {
-            return command => DatabaseConnection.AddParameter(command, "@Item", item);
+            return command => command.AddParameter("@Item", item);
         }
 
         public IEnumerable<string> ReadItems()

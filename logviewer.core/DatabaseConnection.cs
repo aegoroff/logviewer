@@ -143,19 +143,6 @@ namespace logviewer.core
             this.creationContext.Send(o => method(), null);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        internal static void AddParameter<T>(IDbCommand cmd, string name, T value)
-        {
-            var parameter = SQLiteFactory.Instance.CreateParameter();
-            if (parameter == null)
-            {
-                return;
-            }
-            parameter.ParameterName = name;
-            parameter.Value = value;
-            cmd.Parameters.Add(parameter);
-        }
-
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);

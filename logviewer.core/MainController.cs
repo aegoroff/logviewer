@@ -221,7 +221,7 @@ namespace logviewer.core
 
         public void StartReadingCachedLog(string messageFilter, bool regexp)
         {
-            if (!IsValidFilter(messageFilter, regexp))
+            if (!messageFilter.IsValid(regexp))
             {
                 return;
             }
@@ -256,28 +256,6 @@ namespace logviewer.core
                     this.PendingStart = false;
                 }
             }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
-        }
-
-        public static bool IsValidFilter(string filter, bool regexp)
-        {
-            if (string.IsNullOrEmpty(filter))
-            {
-                return true;
-            }
-            if (!regexp)
-            {
-                return true;
-            }
-            try
-            {
-                var r = new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                return r.GetHashCode() > 0;
-            }
-            catch (Exception e)
-            {
-                Log.Instance.Info(e.Message, e);
-                return false;
-            }
         }
 
         public void BeginLogReading(int min, int max, string messageFilter, bool reverse, bool regexp)

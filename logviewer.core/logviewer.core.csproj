@@ -83,6 +83,7 @@
   <ItemGroup>
     <Compile Include="BaseGuiController.cs" />
     <Compile Include="AsymCrypt.cs" />
+    <Compile Include="DatabaseInterfaceExtensions.cs" />
     <Compile Include="DefectSender.cs" />
     <Compile Include="IItemsProvider.cs" />
     <Compile Include="INetworkSettingsView.cs" />

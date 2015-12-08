@@ -197,7 +197,7 @@ namespace logviewer.core
 
         public void StartReadingLogOnTextFilterChange()
         {
-            if (!IsValidFilter(this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions))
+            if (!this.viewModel.MessageFilter.IsValid(this.viewModel.UseRegularExpressions))
             {
                 return;
             }
@@ -228,27 +228,7 @@ namespace logviewer.core
             }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
         }
 
-        public static bool IsValidFilter(string filter, bool regexp)
-        {
-            if (string.IsNullOrEmpty(filter))
-            {
-                return true;
-            }
-            if (!regexp)
-            {
-                return true;
-            }
-            try
-            {
-                var r = new Regex(filter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                return r.GetHashCode() > 0;
-            }
-            catch (Exception e)
-            {
-                Log.Instance.Info(e.Message, e);
-                return false;
-            }
-        }
+        
 
         private void StartLogReadingTask()
         {
