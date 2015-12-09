@@ -138,11 +138,16 @@ namespace logviewer.engine
                 var measureStart = 0L;
                 var message = LogMessage.Create();
                 var compiled = false;
-                while (!sr.EndOfStream && !this.cancelled)
+                var line = sr.ReadLine();
+                while (line != null && !this.cancelled)
                 {
-                    var line = decode ? sr.ReadLine().Convert(encoding, Encoding.UTF8) : sr.ReadLine();
+                    if (decode)
+                    {
+                        line = line.Convert(encoding, Encoding.UTF8);
+                    }
                     if (this.filter != null && this.filter.Match(line))
                     {
+                        line = sr.ReadLine();
                         continue;
                     }
 
@@ -179,6 +184,7 @@ namespace logviewer.engine
                         message.AddProperties(properties);
                     }
                     message.AddLine(line);
+                    line = sr.ReadLine();
 
                     if (!canSeek || stream.Position < signalCounter * fraction || this.ProgressChanged == null)
                     {
