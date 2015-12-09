@@ -22,6 +22,7 @@ namespace logviewer.engine
         private GrokMatcher filter;
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private GrokMatcher matcher;
+        private bool cancelled;
 
         /// <summary>
         ///     Initializes reader
@@ -62,6 +63,14 @@ namespace logviewer.engine
         public event EventHandler CompilationFinished;
 
         /// <summary>
+        /// Cancels reading
+        /// </summary>
+        public void Cancel()
+        {
+            this.cancelled = true;
+        }
+
+        /// <summary>
         ///     Reads log from file
         /// </summary>
         /// <param name="logPath">Full path to file</param>
@@ -69,14 +78,10 @@ namespace logviewer.engine
         ///     On each log message read completion action or handler. This action may store message
         ///     within DB or do something else with the message passed.
         /// </param>
-        /// <param name="canContinue">
-        ///     Continue validator. It's called on every line read from log to have possibility to cancel log
-        ///     reading
-        /// </param>
         /// <param name="encoding">File encoding. It will be detected automatically if null passed as parameter value</param>
         /// <param name="offset">file offset</param>
         /// <returns>Detected file encoding</returns>
-        public void Read(string logPath, Action<LogMessage> onEachMessageRead, Func<bool> canContinue, ref Encoding encoding, long offset = 0)
+        public void Read(string logPath, Action<LogMessage> onEachMessageRead, ref Encoding encoding, long offset = 0)
         {
             var length = new FileInfo(logPath).Length;
             if (length == 0)
@@ -102,7 +107,7 @@ namespace logviewer.engine
 
                 using (var stream = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
-                    this.Read(stream, length, onEachMessageRead, canContinue, encoding);
+                    this.Read(stream, length, onEachMessageRead, encoding);
                 }
             }
         }
@@ -116,13 +121,8 @@ namespace logviewer.engine
         ///     On each log message read completion action or handler. This action may store message
         ///     within DB or do something else with the message passed.
         /// </param>
-        /// <param name="canContinue">
-        ///     Continue validator. It's called on every line read from log to have possibility to cancel log
-        ///     reading
-        /// </param>
         /// <param name="encoding">Stream encoding</param>
-        public void Read(Stream stream, long length, Action<LogMessage> onEachMessageRead, Func<bool> canContinue,
-            Encoding encoding = null)
+        public void Read(Stream stream, long length, Action<LogMessage> onEachMessageRead, Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
@@ -138,7 +138,7 @@ namespace logviewer.engine
                 var measureStart = 0L;
                 var message = LogMessage.Create();
                 var compiled = false;
-                while (!sr.EndOfStream && canContinue())
+                while (!sr.EndOfStream && !this.cancelled)
                 {
                     var line = decode ? sr.ReadLine().Convert(encoding, Encoding.UTF8) : sr.ReadLine();
                     if (this.filter != null && this.filter.Match(line))
@@ -189,8 +189,11 @@ namespace logviewer.engine
 
                     measureStart = this.ReportProgress(stream, measureStart, elapsed, total, ref signalCounter);
                 }
-                // Add last message
-                onEachMessageRead(message);
+                if (!this.cancelled)
+                {
+                    // Add last message
+                    onEachMessageRead(message);
+                }
             }
         }
 

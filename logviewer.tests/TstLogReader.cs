@@ -70,8 +70,9 @@ namespace logviewer.tests
         }
 
         [Theory, MemberData("ValidStreams")]
-        public void LogFromStream(string data, Encoding encoding)
+        public void Read_FromStream_AllRead(string data, Encoding encoding)
         {
+            // Arrange
             this.CreateStream(data, encoding);
             this.stream.Seek(0, SeekOrigin.Begin);
             var count = 0;
@@ -81,13 +82,17 @@ namespace logviewer.tests
                 message.IsEmpty.Should().BeFalse();
             };
 
-            this.reader.Read(this.stream, 0, onRead, () => true, encoding);
+            // Act
+            this.reader.Read(this.stream, 0, onRead, encoding);
+
+            // Assert
             count.Should().Be(2);
         }
 
         [Fact]
-        public void LogFromStreamWithCache()
+        public void Read_FromStreamWithCache_AllRead()
         {
+            // Arrange
             this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
             var count = 0;
@@ -104,13 +109,17 @@ namespace logviewer.tests
                 date.Day.Should().Be(27);
             };
 
-            this.reader.Read(this.stream, 0, onRead, () => true);
+            // Act
+            this.reader.Read(this.stream, 0, onRead);
+
+            // Assert
             count.Should().Be(2);
         }
 
         [Fact]
-        public void LogFromStreamCannotContinue()
+        public void Read_FromStreamCancelled_NoneRead()
         {
+            // Arrange
             this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
             var count = 0;
@@ -120,13 +129,18 @@ namespace logviewer.tests
                 message.IsEmpty.Should().BeTrue();
             };
 
-            this.reader.Read(this.stream, 0, onRead, () => false);
-            count.Should().Be(1);
+            // Act
+            this.reader.Cancel();
+            this.reader.Read(this.stream, 0, onRead);
+
+            // Assert
+            count.Should().Be(0);
         }
 
         [Fact]
-        public void LogFromStreamEnd()
+        public void Read_FromStreamEnd_EmptyRead()
         {
+            // Arrange
             this.CreateStream();
             var count = 0;
             Action<LogMessage> onRead = delegate(LogMessage message)
@@ -134,14 +148,17 @@ namespace logviewer.tests
                 count++;
                 message.IsEmpty.Should().BeTrue();
             };
+            // Act
+            this.reader.Read(this.stream, 0, onRead);
 
-            this.reader.Read(this.stream, 0, onRead, () => true);
+            // Assert
             count.Should().Be(1);
         }
 
         [Fact]
-        public void LogFromNotUtf8File()
+        public void Read_FromNotUtf8File_AllRead()
         {
+            // Arrange
             var encoding = Encoding.GetEncoding("windows-1251");
             this.detector.Setup(_ => _.Detect(It.IsAny<Stream>())).Returns(encoding);
             var encoded = Convert(MessageExamplesRu, Encoding.UTF8, encoding);
@@ -154,20 +171,29 @@ namespace logviewer.tests
                 message.IsEmpty.Should().BeFalse();
             };
             Encoding detected = null;
-            this.reader.Read(this.path, onRead, () => true, ref detected);
+
+            // Act
+            this.reader.Read(this.path, onRead, ref detected);
+
+            // Assert
             count.Should().Be(2);
             detected.EncodingName.Should().Be(encoding.EncodingName);
         }
 
         [Fact]
-        public void LogFromEmptyFile()
+        public void Read_FromEmptyFile_NoneRead()
         {
+            // Arrange
             var count = 0;
             Action<LogMessage> onRead = delegate {
                 count++;
             };
             Encoding detected = null;
-            this.reader.Read(this.path, onRead, () => true, ref detected);
+
+            // Act
+            this.reader.Read(this.path, onRead, ref detected);
+
+            // Assert
             count.Should().Be(0);
         }
 

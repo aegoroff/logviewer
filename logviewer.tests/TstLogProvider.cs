@@ -49,7 +49,7 @@ namespace logviewer.tests
                 this.store.AddMessage(message);
             };
 
-            this.reader.Read(this.stream, 0, onRead, () => true);
+            this.reader.Read(this.stream, 0, onRead);
         }
 
         private void CreateStream(string data = TstLogReader.MessageExamples)

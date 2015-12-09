@@ -40,6 +40,7 @@ namespace logviewer.core
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
         private readonly LogCharsetDetector charsetDetector = new LogCharsetDetector();
+        private LogReader reader;
 
         private string currentPath;
 
@@ -452,7 +453,8 @@ namespace logviewer.core
             {
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
-            var reader = new LogReader(this.charsetDetector, this.matcher, this.filter);
+
+            this.reader = new LogReader(this.charsetDetector, this.matcher, this.filter);
             var logPath = this.view.LogPath;
             
             var length = new FileInfo(logPath).Length;
@@ -498,17 +500,17 @@ namespace logviewer.core
             {
                 this.totalMessages = 0;
             }
-            reader.ProgressChanged += this.OnReadLogProgressChanged;
-            reader.CompilationStarted += this.OnCompilationStarted;
-            reader.CompilationFinished += this.OnCompilationFinished;
-            reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
-            reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
+            this.reader.ProgressChanged += this.OnReadLogProgressChanged;
+            this.reader.CompilationStarted += this.OnCompilationStarted;
+            this.reader.CompilationFinished += this.OnCompilationFinished;
+            this.reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
+            this.reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
             Encoding inputEncoding;
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             try
             {
                 this.queuedMessages = 0;
-                reader.Read(logPath, this.AddMessageToCache, () => this.NotCancelled, ref inputEncoding, offset);
+                this.reader.Read(logPath, this.AddMessageToCache, ref inputEncoding, offset);
                 this.probeWatch.Stop();
                 var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
@@ -538,11 +540,11 @@ namespace logviewer.core
                 this.RunOnGuiThread(
                         () => this.view.SetLogProgressCustomText(Resources.LogIndexing));
                 this.store.FinishAddMessages();
-                reader.ProgressChanged -= this.OnReadLogProgressChanged;
-                reader.CompilationStarted -= this.OnCompilationStarted;
-                reader.CompilationFinished -= this.OnCompilationFinished;
-                reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
-                reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
+                this.reader.ProgressChanged -= this.OnReadLogProgressChanged;
+                this.reader.CompilationStarted -= this.OnCompilationStarted;
+                this.reader.CompilationFinished -= this.OnCompilationFinished;
+                this.reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
+                this.reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             }
 
             this.ReadLogFromInternalStore(false);
@@ -692,6 +694,7 @@ namespace logviewer.core
                 return;
             }
             this.cancellation.Cancel();
+            this.reader?.Cancel();
         }
 
         public string GetLogSize(bool showBytes)

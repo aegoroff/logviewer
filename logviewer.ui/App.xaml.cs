@@ -5,7 +5,6 @@
 #if !DEBUG
 using System.Configuration;
 using System.Windows.Threading;
-using logviewer.core;
 #endif
 
 using System.Globalization;
