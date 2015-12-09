@@ -140,11 +140,7 @@ namespace logviewer.engine
                 var compiled = false;
                 while (!sr.EndOfStream && canContinue())
                 {
-                    var line = sr.ReadLine();
-                    if (decode)
-                    {
-                        line = line.Convert(encoding, Encoding.UTF8);
-                    }
+                    var line = decode ? sr.ReadLine().Convert(encoding, Encoding.UTF8) : sr.ReadLine();
                     if (this.filter != null && this.filter.Match(line))
                     {
                         continue;
