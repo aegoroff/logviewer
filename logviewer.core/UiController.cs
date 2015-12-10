@@ -595,7 +595,6 @@ namespace logviewer.core
             this.CancelPreviousTask();
             this.ClearCache();
             this.UpdateSettings(true);
-            this.StartLogReadingTask();
         }
 
         public void AddCurrentFileToRecentFilesList()
