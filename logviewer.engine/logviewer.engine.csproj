@@ -67,6 +67,7 @@
     <Compile Include="grammar\IPattern.cs" />
     <Compile Include="grammar\PassthroughPattern.cs" />
     <Compile Include="grammar\Pattern.cs" />
+    <Compile Include="IMessageMatcher.cs" />
     <Compile Include="LoadProgress.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogMessage.cs" />

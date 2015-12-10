@@ -18,7 +18,7 @@ namespace logviewer.core
             this.settings = settings;
         }
 
-        public MessageFilter Filter { get; set; }
+        public MessageFilterModel FilterModel { get; set; }
 
         public LogStore Store { get; set; }
 
@@ -29,18 +29,18 @@ namespace logviewer.core
 
         public long FetchCount()
         {
-            return this.Store?.CountMessages(this.Filter.Start, this.Filter.Finish, this.Filter.Min, this.Filter.Max, this.Filter.Filter,
-                this.Filter.UseRegexp, this.Filter.ExcludeNoLevel) ?? 0;
+            return this.Store?.CountMessages(this.FilterModel.Start, this.FilterModel.Finish, this.FilterModel.Min, this.FilterModel.Max, this.FilterModel.Filter,
+                this.FilterModel.UseRegexp, this.FilterModel.ExcludeNoLevel) ?? 0;
         }
 
         public string[] FetchRange(long offset, int limit)
         {
             var result = new string[limit];
             int ix = 0;
-            this.Store?.ReadMessages(limit, message => result[ix++] = this.CreateRtf(message), () => true, this.Filter.Start,
-                this.Filter.Finish, offset,
-                this.Filter.Reverse,
-                this.Filter.Min, this.Filter.Max, this.Filter.Filter, this.Filter.UseRegexp);
+            this.Store?.ReadMessages(limit, message => result[ix++] = this.CreateRtf(message), () => true, this.FilterModel.Start,
+                this.FilterModel.Finish, offset,
+                this.FilterModel.Reverse,
+                this.FilterModel.Min, this.FilterModel.Max, this.FilterModel.Filter, this.FilterModel.UseRegexp);
             return result;
         }
 

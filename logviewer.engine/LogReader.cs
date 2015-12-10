@@ -19,9 +19,9 @@ namespace logviewer.engine
     {
         private readonly ICharsetDetector detector;
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private GrokMatcher filter;
+        private GrokMatcher excludeMatcher;
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private GrokMatcher matcher;
+        private GrokMatcher includeMatcher;
         private bool cancelled;
 
         /// <summary>
@@ -29,12 +29,21 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="detector">Charset detector</param>
         /// <param name="matcher">Message matcher</param>
-        /// <param name="filter">Message filter if applicable</param>
-        public LogReader(ICharsetDetector detector, GrokMatcher matcher, GrokMatcher filter = null)
+        public LogReader(ICharsetDetector detector, IMessageMatcher matcher) : this(detector, matcher.IncludeMatcher, matcher.ExcludeMatcher)
+        {
+        }
+        
+        /// <summary>
+        ///     Initializes reader
+        /// </summary>
+        /// <param name="detector">Charset detector</param>
+        /// <param name="includeMatcher">Matcher that defines message start</param>
+        /// <param name="excludeMatcher">Matcher that filters row (row will not be included into any message)</param>
+        public LogReader(ICharsetDetector detector, GrokMatcher includeMatcher, GrokMatcher excludeMatcher = null)
         {
             this.detector = detector;
-            this.matcher = matcher;
-            this.filter = filter;
+            this.includeMatcher = includeMatcher;
+            this.excludeMatcher = excludeMatcher;
         }
 
         /// <summary>
@@ -145,7 +154,7 @@ namespace logviewer.engine
                     {
                         line = line.Convert(encoding, Encoding.UTF8);
                     }
-                    if (this.filter != null && this.filter.Match(line))
+                    if (this.excludeMatcher != null && this.excludeMatcher.Match(line))
                     {
                         line = sr.ReadLine();
                         continue;
@@ -157,7 +166,7 @@ namespace logviewer.engine
                         this.CompilationStarted?.Invoke(this, new EventArgs());
                     }
 
-                    var properties = this.matcher.Parse(line);
+                    var properties = this.includeMatcher.Parse(line);
 
                     // Occured only after first row
                     if (!compiled)

@@ -138,6 +138,7 @@ namespace logviewer.tests
             this.viewModel.SetupSet(v => v.UiControlsEnabled = false);
 
             this.controller.ClearCache();
+            this.controller.UpdateSettings(false);
             this.controller.StartReadingLogOnTextFilterChange();
             this.WaitReadingComplete();
             this.controller.Store.CountMessages().Should().Be(4);

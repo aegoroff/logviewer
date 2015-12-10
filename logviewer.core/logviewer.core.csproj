@@ -108,8 +108,9 @@
     <Compile Include="LogProvider.cs" />
     <Compile Include="LogReadCompletedEventArgs.cs" />
     <Compile Include="LogStore.cs" />
-    <Compile Include="MessageFilter.cs" />
+    <Compile Include="MessageFilterModel.cs" />
     <Compile Include="FixedSizeDictionary.cs" />
+    <Compile Include="MessageMatcher.cs" />
     <Compile Include="NetworkSettings.cs" />
     <Compile Include="NetworkSettingsController.cs" />
     <Compile Include="OptionsProvider.cs" />

@@ -85,6 +85,7 @@
     <Compile Include="TstGrokMatcher.cs" />
     <Compile Include="TstLogProvider.cs" />
     <Compile Include="TstLogReader.cs" />
+    <Compile Include="TstMessageMatcher.cs" />
     <Compile Include="TstNetworkSettings.cs" />
     <Compile Include="TstNetworkSettingsController.cs" />
     <Compile Include="TstUiController.cs" />

@@ -7,9 +7,9 @@ using logviewer.engine;
 
 namespace logviewer.core
 {
-    public class MessageFilter
+    public class MessageFilterModel
     {
-        public MessageFilter()
+        public MessageFilterModel()
         {
             this.Start = DateTime.MinValue;
             this.Finish = DateTime.MaxValue;

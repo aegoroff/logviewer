@@ -11,7 +11,7 @@ using logviewer.engine.grammar;
 namespace logviewer.engine
 {
     /// <summary>
-    /// Represents pattern mather
+    /// Represents pattern matcher
     /// </summary>
     public class GrokMatcher
     {

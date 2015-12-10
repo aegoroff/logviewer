@@ -54,7 +54,7 @@ namespace logviewer.core
             {
                 return;
             }
-            this.transaction?.Dispose();
+            SafeRunner.Run(() => this.transaction?.Dispose());
             SafeRunner.Run(() => this.connection?.Close());
             SafeRunner.Run(() => this.connection?.Dispose());
             this.disposed = true;
