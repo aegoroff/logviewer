@@ -176,9 +176,9 @@
     <Content Include="Lv.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\logviewer.core\logviewer.core.csproj">
+    <ProjectReference Include="..\logviewer.logic\logviewer.logic.csproj">
       <Project>{383c08fc-9cac-42e5-9b02-471561479a74}</Project>
-      <Name>logviewer.core</Name>
+      <Name>logviewer.logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
       <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>

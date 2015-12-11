@@ -3,7 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System.Configuration;
-using logviewer.core;
+using logviewer.logic;
 using Ninject.Modules;
 
 namespace logviewer

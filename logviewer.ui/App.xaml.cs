@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 using System.Globalization;
 using System.Windows;
-using logviewer.core;
+using logviewer.logic;
 using Application = System.Windows.Forms.Application;
 
 namespace logviewer.ui

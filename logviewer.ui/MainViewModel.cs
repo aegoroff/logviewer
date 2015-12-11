@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows;
-using logviewer.core;
+using logviewer.logic;
 using logviewer.ui.Annotations;
 using logviewer.ui.Properties;
 

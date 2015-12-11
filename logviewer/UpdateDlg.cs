@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
-using logviewer.core;
 using logviewer.engine;
+using logviewer.logic;
 using logviewer.Properties;
 
 namespace logviewer

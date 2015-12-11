@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
-using logviewer.core;
+using logviewer.logic;
 using Xunit;
 
 namespace logviewer.tests

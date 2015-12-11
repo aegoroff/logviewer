@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using logviewer.core;
+using logviewer.logic;
 
 namespace logviewer.ui
 {

@@ -6,8 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using logviewer.core;
 using logviewer.engine;
+using logviewer.logic;
 
 namespace logviewer
 {

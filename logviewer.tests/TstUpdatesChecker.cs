@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using logviewer.core;
+using logviewer.logic;
 using Moq;
 using Xunit;
 

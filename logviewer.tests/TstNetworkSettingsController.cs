@@ -2,7 +2,7 @@
 // Created at: 05.09.2007
 // © 2007-2008 Alexander Egorov
 
-using logviewer.core;
+using logviewer.logic;
 using Moq;
 using Xunit;
 

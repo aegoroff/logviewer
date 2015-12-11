@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using logviewer.core;
+using logviewer.logic;
 using MenuItem = Fluent.MenuItem;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 

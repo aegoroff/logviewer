@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
-using logviewer.core;
+using logviewer.logic;
 using Xunit;
 
 namespace logviewer.tests

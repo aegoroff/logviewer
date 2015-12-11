@@ -9,8 +9,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using logviewer.core;
 using logviewer.engine;
+using logviewer.logic;
 using logviewer.Properties;
 
 namespace logviewer

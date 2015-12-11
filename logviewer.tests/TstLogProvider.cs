@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using FluentAssertions;
-using logviewer.core;
 using logviewer.engine;
+using logviewer.logic;
 using Moq;
 using Xunit;
 

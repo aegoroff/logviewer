@@ -3,7 +3,7 @@
 // © 2007-2015 Alexander Egorov
 
 using FluentAssertions;
-using logviewer.core;
+using logviewer.logic;
 using Moq;
 using Xunit;
 

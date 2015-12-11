@@ -4,8 +4,8 @@
 
 using System.Xml;
 using FluentAssertions;
-using logviewer.core;
 using logviewer.engine;
+using logviewer.logic;
 using Xunit;
 
 namespace logviewer.tests
