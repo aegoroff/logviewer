@@ -7,8 +7,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using logviewer.logic;
-using logviewer.logic.models;
 using logviewer.logic.ui;
 using logviewer.logic.ui.network;
 
