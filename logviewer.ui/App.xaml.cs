@@ -12,6 +12,7 @@ using System.Net;
 using System.Windows;
 using logviewer.logic;
 using logviewer.logic.models;
+using logviewer.logic.ui.network;
 using Application = System.Windows.Forms.Application;
 
 namespace logviewer.ui

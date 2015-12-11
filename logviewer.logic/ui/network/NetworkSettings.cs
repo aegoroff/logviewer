@@ -4,9 +4,8 @@
 
 using System.Net;
 using logviewer.logic.support;
-using logviewer.logic.ui.network;
 
-namespace logviewer.logic.models
+namespace logviewer.logic.ui.network
 {
     public sealed class NetworkSettings
     {

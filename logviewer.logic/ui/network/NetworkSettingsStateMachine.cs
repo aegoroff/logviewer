@@ -3,7 +3,6 @@
 // © 2012-2015 Alexander Egorov
 
 using logviewer.logic.fsm;
-using logviewer.logic.models;
 
 namespace logviewer.logic.ui.network
 {

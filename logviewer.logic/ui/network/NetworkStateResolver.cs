@@ -4,7 +4,6 @@
 
 using System;
 using logviewer.logic.fsm;
-using logviewer.logic.models;
 
 namespace logviewer.logic.ui.network
 {

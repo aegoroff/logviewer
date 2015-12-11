@@ -2,7 +2,6 @@
 // Created at: 05.09.2007
 // © 2007-2008 Alexander Egorov
 
-using logviewer.logic.models;
 using logviewer.logic.support;
 
 namespace logviewer.logic.ui.network
@@ -13,8 +12,8 @@ namespace logviewer.logic.ui.network
     public class NetworkSettingsController
     {
         private readonly NetworkSettings networkSettings;
-        private readonly INetworkSettingsView ui;
         private readonly NetworkSettingsStateMachine stateMachine;
+        private readonly INetworkSettingsView ui;
         private bool started;
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace logviewer.logic.ui.network
         }
 
         /// <summary>
-        /// Goto proxy mode specified
+        ///     Goto proxy mode specified
         /// </summary>
         /// <param name="mode"></param>
         public void Goto(ProxyMode mode)

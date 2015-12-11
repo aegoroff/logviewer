@@ -4,7 +4,6 @@
 
 using FluentAssertions;
 using logviewer.logic;
-using logviewer.logic.models;
 using logviewer.logic.support;
 using logviewer.logic.ui.network;
 using Moq;
@@ -122,7 +121,7 @@ namespace logviewer.tests
         }
 
         [Fact]
-        public void Port()
+        public void Port_Set_SetSuccessfully()
         {
             // Arrange
             const int port = 777;

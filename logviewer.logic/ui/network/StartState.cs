@@ -8,6 +8,5 @@ namespace logviewer.logic.ui.network
 {
     public class StartState : SolidState
     {
-         
     }
 }

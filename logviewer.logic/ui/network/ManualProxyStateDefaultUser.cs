@@ -3,14 +3,13 @@
 // © 2012-2015 Alexander Egorov
 
 using logviewer.logic.fsm;
-using logviewer.logic.models;
 
 namespace logviewer.logic.ui.network
 {
     public class ManualProxyStateDefaultUser : SolidState
     {
-        private readonly INetworkSettingsView view;
         private readonly NetworkSettings networkSettings;
+        private readonly INetworkSettingsView view;
 
         public ManualProxyStateDefaultUser(INetworkSettingsView view, NetworkSettings networkSettings)
         {

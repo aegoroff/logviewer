@@ -120,7 +120,7 @@
     <Compile Include="models\MessageFilterModel.cs" />
     <Compile Include="support\FixedSizeDictionary.cs" />
     <Compile Include="models\MessageMatcher.cs" />
-    <Compile Include="models\NetworkSettings.cs" />
+    <Compile Include="ui\network\NetworkSettings.cs" />
     <Compile Include="ui\network\NetworkSettingsController.cs" />
     <Compile Include="storage\OptionsProvider.cs" />
     <Compile Include="ui\network\AutoProxyState.cs" />
