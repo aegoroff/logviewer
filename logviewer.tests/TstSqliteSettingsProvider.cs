@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
-using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.storage;
 using Xunit;

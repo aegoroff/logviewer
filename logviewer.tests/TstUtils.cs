@@ -8,6 +8,7 @@ using logviewer.engine;
 using logviewer.logic;
 using logviewer.logic.support;
 using logviewer.logic.ui;
+using logviewer.tests.support;
 using Xunit;
 
 namespace logviewer.tests

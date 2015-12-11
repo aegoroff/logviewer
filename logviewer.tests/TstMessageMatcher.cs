@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using FluentAssertions;
-using logviewer.logic;
 using logviewer.logic.models;
 using Xunit;
 

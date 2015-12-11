@@ -3,17 +3,14 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using FluentAssertions;
 using logviewer.engine;
 using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.storage;
-using logviewer.logic.support;
 using logviewer.logic.ui;
 using Moq;
 using Net.Sgoliver.NRtfTree.Util;

@@ -81,6 +81,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="fsm\Events.cs" />
+    <Compile Include="fsm\Exceptions.cs" />
+    <Compile Include="fsm\ISolidState.cs" />
+    <Compile Include="fsm\IStateResolver.cs" />
+    <Compile Include="fsm\SolidMachine.cs" />
+    <Compile Include="fsm\SolidState.cs" />
+    <Compile Include="fsm\SolidStateConstants.cs" />
+    <Compile Include="fsm\StateConfiguration.cs" />
+    <Compile Include="fsm\TriggerConfiguration.cs" />
     <Compile Include="ui\BaseGuiController.cs" />
     <Compile Include="support\AsymCrypt.cs" />
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />
@@ -155,6 +164,7 @@
       <Name>logviewer.engine</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.98.1\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.98.1\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

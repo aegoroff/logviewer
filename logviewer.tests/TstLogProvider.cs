@@ -8,10 +8,8 @@ using System.IO;
 using System.Text;
 using FluentAssertions;
 using logviewer.engine;
-using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.storage;
-using logviewer.logic.ui;
 using Moq;
 using Xunit;
 
