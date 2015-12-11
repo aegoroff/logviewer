@@ -6,6 +6,7 @@ using FluentAssertions;
 using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.support;
+using logviewer.logic.ui.network;
 using Moq;
 using Xunit;
 
@@ -96,28 +97,14 @@ namespace logviewer.tests
         public void IsUseProxy_GetSet_GetShouldBeTheSameAsSet()
         {
             // Arrange
-            this.provider.Setup(p => p.UpdateBooleanOption("IsUseProxy", true));
-            this.provider.Setup(p => p.ReadBooleanOption("IsUseProxy", false)).Returns(true);
+            this.provider.Setup(p => p.UpdateIntegerOption("ProxyMode", (int)ProxyMode.AutoProxyDetection));
+            this.provider.Setup(p => p.ReadIntegerOption("ProxyMode", (int)ProxyMode.AutoProxyDetection)).Returns((int)ProxyMode.AutoProxyDetection);
 
             // Act
-            this.settings.IsUseProxy = true;
+            this.settings.ProxyMode = ProxyMode.AutoProxyDetection;
 
             // Assert
-            this.settings.IsUseProxy.Should().Be(true);
-        }
-
-        [Fact]
-        public void IsUseIeProxy_GetSet_GetShouldBeTheSameAsSet()
-        {
-            // Arrange
-            this.provider.Setup(p => p.UpdateBooleanOption("IsUseIeProxy", false));
-            this.provider.Setup(p => p.ReadBooleanOption("IsUseIeProxy", true)).Returns(false);
-
-            // Act
-            this.settings.IsUseIeProxy = false;
-
-            // Assert
-            this.settings.IsUseIeProxy.Should().Be(false);
+            this.settings.ProxyMode.Should().Be(ProxyMode.AutoProxyDetection);
         }
 
         [Fact]

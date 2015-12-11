@@ -56,19 +56,7 @@ namespace logviewer.logic.ui.network
         /// </summary>
         public void Start()
         {
-            if (this.networkSettings.IsUseProxy)
-            {
-                //this.ui.IsUseDefaultCredentials = this.networkSettings.IsUseDefaultCredentials;
-                this.stateMachine.Trigger(ProxyMode.Custom);
-            }
-            else if (this.networkSettings.IsUseIeProxy)
-            {
-                this.stateMachine.Trigger(ProxyMode.AutoProxyDetection);
-            }
-            else
-            {
-                this.stateMachine.Trigger(ProxyMode.None);
-            }
+            this.stateMachine.Trigger(this.networkSettings.ProxyMode);
             this.started = true;
         }
 
@@ -94,9 +82,8 @@ namespace logviewer.logic.ui.network
 
         private void WriteUnsafe()
         {
-            this.networkSettings.IsUseProxy = this.ui.IsUseProxy;
-            this.networkSettings.IsUseIeProxy = this.ui.IsUseIeProxy;
-            if (!this.ui.IsUseProxy || this.ui.IsUseIeProxy)
+            this.networkSettings.ProxyMode = this.ui.ProxyMode;
+            if (!this.ui.IsUseProxy || this.ui.IsUseAutoProxy)
             {
                 return;
             }

@@ -15,13 +15,13 @@ namespace logviewer.ui
     public partial class NetworkSettingsDlg : Form, INetworkSettingsView
     {
         private readonly NetworkSettings networkSettings = new NetworkSettings(MainViewModel.Current.SettingsProvider.OptionsProvider);
-        private readonly NetworkSettingsController nsController;
+        private readonly NetworkSettingsController controller;
         private ProxyMode mode;
 
         public NetworkSettingsDlg()
         {
             this.InitializeComponent();
-            this.nsController = new NetworkSettingsController(this.networkSettings, this);
+            this.controller = new NetworkSettingsController(this.networkSettings, this);
 
             this.directConnRadio.Tag = ProxyMode.None;
             this.autoProxyRadio.Tag = ProxyMode.AutoProxyDetection;
@@ -29,7 +29,7 @@ namespace logviewer.ui
 
             this.IsUseDefaultCredentials = this.networkSettings.IsUseDefaultCredentials;
 
-            this.nsController.Start();
+            this.controller.Start();
         }
 
         public int Port
@@ -61,7 +61,7 @@ namespace logviewer.ui
 
         public bool IsUseProxy => this.proxyUseRadio.Checked;
 
-        public bool IsUseIeProxy => this.autoProxyRadio.Checked;
+        public bool IsUseAutoProxy => this.autoProxyRadio.Checked;
 
         public bool IsUseDefaultCredentials
         {
@@ -113,17 +113,17 @@ namespace logviewer.ui
                 return;
             }
             var toMode = (ProxyMode)radio.Tag;
-            this.nsController.Goto(toMode);
+            this.controller.Goto(toMode);
         }
 
         private void OnChangeAuthSettings(object sender, EventArgs e)
         {
-            this.nsController.Goto(ProxyMode.Custom);
+            this.controller.Goto(ProxyMode.Custom);
         }
 
         private void OnOK(object sender, EventArgs e)
         {
-            this.nsController.Write();
+            this.controller.Write();
             NetworkSettings.SetProxy(MainViewModel.Current.SettingsProvider.OptionsProvider);
             this.Close();
         }
