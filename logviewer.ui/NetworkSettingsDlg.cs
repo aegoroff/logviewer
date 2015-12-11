@@ -24,6 +24,7 @@ namespace logviewer.ui
             this.controller = new NetworkSettingsController(this.networkSettings, this);
 
             this.directConnRadio.Tag = ProxyMode.None;
+            this.autoProxyRadio.Tag = ProxyMode.AutoProxyDetection;
             this.proxyUseRadio.Tag = ProxyMode.Custom;
 
             this.IsUseDefaultCredentials = this.networkSettings.IsUseDefaultCredentials;
@@ -53,11 +54,14 @@ namespace logviewer.ui
             {
                 this.directConnRadio.Checked = value == ProxyMode.None;
                 this.proxyUseRadio.Checked = value == ProxyMode.Custom;
+                this.autoProxyRadio.Checked = value == ProxyMode.AutoProxyDetection;
                 this.mode = value;
             }
         }
 
         public bool IsUseProxy => this.proxyUseRadio.Checked;
+
+        public bool IsUseAutoProxy => this.autoProxyRadio.Checked;
 
         public bool IsUseDefaultCredentials
         {
@@ -117,7 +121,7 @@ namespace logviewer.ui
             this.controller.Goto(ProxyMode.Custom);
         }
 
-        private void OnOkay(object sender, EventArgs e)
+        private void OnOK(object sender, EventArgs e)
         {
             this.controller.Write();
             NetworkSettings.SetProxy(MainViewModel.Current.SettingsProvider.OptionsProvider);

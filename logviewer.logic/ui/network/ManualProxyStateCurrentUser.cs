@@ -7,12 +7,12 @@ using logviewer.logic.models;
 
 namespace logviewer.logic.ui.network
 {
-    public class ManualProxyStateDefaultUser : SolidState
+    public class ManualProxyStateCurrentUser : SolidState
     {
         private readonly INetworkSettingsView view;
         private readonly NetworkSettings networkSettings;
 
-        public ManualProxyStateDefaultUser(INetworkSettingsView view, NetworkSettings networkSettings)
+        public ManualProxyStateCurrentUser(INetworkSettingsView view, NetworkSettings networkSettings)
         {
             this.view = view;
             this.networkSettings = networkSettings;

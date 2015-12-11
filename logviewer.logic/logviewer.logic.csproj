@@ -123,7 +123,8 @@
     <Compile Include="models\NetworkSettings.cs" />
     <Compile Include="ui\network\NetworkSettingsController.cs" />
     <Compile Include="storage\OptionsProvider.cs" />
-    <Compile Include="ui\network\ManualProxyStateDefaultUser.cs" />
+    <Compile Include="ui\network\AutoProxyState.cs" />
+    <Compile Include="ui\network\ManualProxyStateCurrentUser.cs" />
     <Compile Include="ui\network\ManualProxyStateCustomUser.cs" />
     <Compile Include="ui\network\NetworkSettingsStateMachine.cs" />
     <Compile Include="ui\network\NetworkStateResolver.cs" />

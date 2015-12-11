@@ -30,6 +30,7 @@ namespace logviewer.tests
             this.view.SetupGet(v => v.Host).Returns("host");
             this.view.SetupGet(v => v.Port).Returns(1234);
             this.view.SetupGet(v => v.IsUseProxy).Returns(true);
+            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
             this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
             this.view.SetupGet(v => v.UserName).Returns("l2");
             this.view.SetupGet(v => v.Password).Returns("p2");
@@ -65,6 +66,7 @@ namespace logviewer.tests
             this.view.SetupGet(v => v.Host).Returns(host);
             this.view.SetupGet(v => v.Port).Returns(port);
             this.view.SetupGet(v => v.IsUseProxy).Returns(true);
+            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
             this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
             this.view.SetupGet(v => v.UserName).Returns("l2");
             this.view.SetupGet(v => v.Password).Returns("p2");
@@ -77,7 +79,7 @@ namespace logviewer.tests
             controller.Write();
 
             // Assert
-            this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 1), Times.Once);
+            this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 2), Times.Once);
             this.provider.Verify(p => p.UpdateStringOption("Host", It.IsAny<string>()), Times.Never);
             this.provider.Verify(p => p.UpdateIntegerOption("Port", It.IsAny<int>()), Times.Never);
 
@@ -95,6 +97,7 @@ namespace logviewer.tests
             this.view.SetupGet(v => v.Port).Returns(12341);
             this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
             this.view.SetupGet(v => v.IsUseProxy).Returns(false);
+            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
 
             var settings = new NetworkSettings(this.provider.Object);
             var controller = new NetworkSettingsController(settings, this.view.Object);
@@ -115,6 +118,7 @@ namespace logviewer.tests
             this.view.SetupGet(v => v.Host).Returns("host2");
             this.view.SetupGet(v => v.Port).Returns(123411);
             this.view.SetupGet(v => v.IsUseProxy).Returns(true);
+            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
             this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
             this.view.SetupGet(v => v.UserName).Returns("l1");
             this.view.SetupGet(v => v.Password).Returns("p1");
@@ -127,7 +131,7 @@ namespace logviewer.tests
             controller.Write();
 
             // Assert
-            this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 1), Times.Once);
+            this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 2), Times.Once);
             this.provider.Verify(p => p.UpdateBooleanOption("IsUseDefaultCredentials", false), Times.Once);
             this.provider.Verify(p => p.UpdateStringOption("Host", "host2"), Times.Once);
             this.provider.Verify(p => p.UpdateIntegerOption("Port", 123411), Times.Once);
@@ -136,6 +140,26 @@ namespace logviewer.tests
             this.provider.Verify(p => p.UpdateStringOption("Password", "p1"), Times.Never); // Don't save plain passwords
             this.provider.Verify(p => p.UpdateStringOption("Password", It.IsAny<string>()), Times.Once);
             this.provider.Verify(p => p.UpdateStringOption("Domain", "d1"), Times.Once);
+        }
+
+        [Fact]
+        public void Write_AutoProxy_OnlyProxyFlagsAffected()
+        {
+            // Arrange
+            this.view.SetupGet(v => v.ProxyMode).Returns(ProxyMode.AutoProxyDetection);
+            this.view.SetupGet(v => v.IsUseProxy).Returns(false);
+            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(true);
+
+            var settings = new NetworkSettings(this.provider.Object);
+            var controller = new NetworkSettingsController(settings, this.view.Object);
+            controller.Write();
+
+            // Assert
+            this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 1), Times.Once);
+
+            this.provider.Verify(p => p.UpdateStringOption("Host", It.IsAny<string>()), Times.Never);
+            this.provider.Verify(p => p.UpdateIntegerOption("Port", It.IsAny<int>()), Times.Never);
+            this.provider.Verify(p => p.UpdateBooleanOption("IsUseDefaultCredentials", It.IsAny<bool>()), Times.Never);
         }
     }
 }
