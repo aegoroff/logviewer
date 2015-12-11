@@ -48,8 +48,8 @@ namespace logviewer.logic.models
 
         public ProxyMode ProxyMode
         {
-            get { return (ProxyMode)this.optionsProvider.ReadIntegerOption(ProxyModeProperty, (int)ProxyMode.AutoProxyDetection); }
-            set { this.optionsProvider.UpdateIntegerOption(ProxyModeProperty, (int)value); }
+            get { return (ProxyMode) this.optionsProvider.ReadIntegerOption(ProxyModeProperty, (int) ProxyMode.AutoProxyDetection); }
+            set { this.optionsProvider.UpdateIntegerOption(ProxyModeProperty, (int) value); }
         }
 
         public bool IsUseDefaultCredentials
@@ -98,28 +98,35 @@ namespace logviewer.logic.models
         }
 
 
-        public WebProxy Proxy => this.GetProxy();
+        public IWebProxy Proxy => this.GetProxy();
 
-        private WebProxy GetProxy()
+        private IWebProxy GetProxy()
         {
-            if (this.ProxyMode != ProxyMode.Custom)
+            switch (this.ProxyMode)
             {
-                return null;
+                case ProxyMode.None:
+                    return null;
+                case ProxyMode.AutoProxyDetection:
+                    var proxy = WebRequest.DefaultWebProxy;
+                    proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    return proxy;
+                case ProxyMode.Custom:
+                    return new WebProxy(this.Host, this.Port)
+                    {
+                        Credentials =
+                            this.IsUseDefaultCredentials
+                                ? CredentialCache.DefaultNetworkCredentials
+                                : new NetworkCredential(this.UserName, this.Password, this.Domain)
+                    };
+                default:
+                    return null;
             }
-            var result = new WebProxy(this.Host, this.Port)
-            {
-                Credentials =
-                    this.IsUseDefaultCredentials
-                        ? CredentialCache.DefaultNetworkCredentials
-                        : new NetworkCredential(this.UserName, this.Password, this.Domain)
-            };
-            return result;
         }
 
         public static void SetProxy(IOptionsProvider optionsProvider)
         {
             var settings = new NetworkSettings(optionsProvider);
-            if (settings.ProxyMode == ProxyMode.Custom)
+            if (settings.ProxyMode != ProxyMode.None)
             {
                 WebRequest.DefaultWebProxy = settings.Proxy;
             }
