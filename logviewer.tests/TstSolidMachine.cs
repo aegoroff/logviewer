@@ -71,7 +71,7 @@ namespace logviewer.tests
         }
 
         [Fact]
-        public void Trigger_WithoutStart_ThrowSolidStateException()
+        public void Trigger_WithoutStart_ThrowException()
         {
             // Arrange
             var sm = new SolidMachine<TelephoneTrigger>();
@@ -176,6 +176,162 @@ namespace logviewer.tests
 
             // Assert
             sm.CurrentState.GetType().Name.Should().Be(stateName);
+        }
+
+        [Fact]
+        public void Configure_MultipleUnguardedTriggers_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.State<IdleState>()
+                    .On(TelephoneTrigger.PickingUpPhone).GoesTo<DiallingState>()
+                    .On(TelephoneTrigger.PickingUpPhone).GoesTo<RingingState>();
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorTriggerAlreadyConfiguredForState);
+        }
+
+        [Fact]
+        public void Configure_UnguardedAndGuardedTrigger_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.State<IdleState>()
+                    .On(TelephoneTrigger.PickingUpPhone).GoesTo<DiallingState>()
+                    .On(TelephoneTrigger.PickingUpPhone, () => true).GoesTo<RingingState>();
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorCannotMixGuardedAndGuardlessTransitions);
+        }
+
+        [Fact]
+        public void Configure_MultipleGuardsEvaluateToTrue_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            sm.State<IdleState>()
+                .IsInitialState()
+                .On(TelephoneTrigger.PickingUpPhone, () => 1 + 1 == 2).GoesTo<DiallingState>()
+                .On(TelephoneTrigger.PickingUpPhone, () => 6 / 2 == 3).GoesTo<RingingState>();
+
+            sm.Start();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.Trigger(TelephoneTrigger.PickingUpPhone);
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorMultipleGuardClausesAreTrue);
+        }
+
+        [Fact]
+        public void Configure_MultipleInitialStates_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.State<IdleState>()
+                    .IsInitialState()
+                    .On(TelephoneTrigger.PickingUpPhone).GoesTo<DiallingState>()
+                    .On(TelephoneTrigger.IncomingCall).GoesTo<RingingState>();
+
+                sm.State<RingingState>()
+                    .IsInitialState()
+                    .On(TelephoneTrigger.PickingUpPhone).GoesTo<ConversationState>()
+                    .On(TelephoneTrigger.HangingUp).GoesTo<IdleState>();
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorMultipleInitialStates);
+        }
+
+        [Fact]
+        public void Configure_StartWithParameterizedState_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.State<IdleState>()
+                    .On(TelephoneTrigger.IncomingCall).GoesTo<StateWithoutParameterlessConstructor>();
+                sm.Start();
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorStatesNeedParameterlessConstructor);
+        }
+
+        [Fact]
+        public void Start_WithoutStates_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.Start();
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorNoStatesHaveBeenConfigured);
+        }
+
+        [Fact]
+        public void Trigger_InvalidTriggerSequence_ThrowException()
+        {
+            // Arrange
+            var sm = new SolidMachine<TelephoneTrigger>();
+
+            sm.State<IdleState>()
+                .On(TelephoneTrigger.PickingUpPhone).GoesTo<DiallingState>()
+                .On(TelephoneTrigger.IncomingCall).GoesTo<RingingState>();
+
+            sm.State<DiallingState>()
+                .On(TelephoneTrigger.DialedNumber).GoesTo<WaitForAnswerState>()
+                .On(TelephoneTrigger.HangingUp).GoesTo<IdleState>();
+
+            sm.State<RingingState>()
+                .On(TelephoneTrigger.PickingUpPhone).GoesTo<ConversationState>()
+                .On(TelephoneTrigger.HangingUp).GoesTo<IdleState>();
+
+            sm.State<WaitForAnswerState>()
+                .On(TelephoneTrigger.Answered).GoesTo<ConversationState>()
+                .On(TelephoneTrigger.NotAnswering).GoesTo<IdleState>()
+                .On(TelephoneTrigger.HangingUp).GoesTo<IdleState>();
+
+            sm.State<ConversationState>()
+                .On(TelephoneTrigger.HangingUp).GoesTo<IdleState>();
+
+            sm.Start();
+
+            // Act
+            var exception = Assert.Throws<SolidStateException>(delegate
+            {
+                sm.Trigger(TelephoneTrigger.PickingUpPhone);
+                sm.Trigger(TelephoneTrigger.PickingUpPhone);
+            });
+
+            // Assert
+            exception.ErrorId.Should().Be(SolidStateConstants.ErrorTriggerNotValidForState);
         }
     }
 }
