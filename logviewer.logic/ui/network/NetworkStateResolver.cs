@@ -29,9 +29,9 @@ namespace logviewer.logic.ui.network
             {
                 return new AutoProxyState(this.view);
             }
-            if (stateType == typeof (ManualProxyStateCurrentUser))
+            if (stateType == typeof (ManualProxyStateDefaultUser))
             {
-                return new ManualProxyStateCurrentUser(this.view, this.networkSettings);
+                return new ManualProxyStateDefaultUser(this.view, this.networkSettings);
             }
             if (stateType == typeof (ManualProxyStateCustomUser))
             {
