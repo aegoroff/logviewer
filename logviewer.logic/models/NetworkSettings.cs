@@ -126,10 +126,7 @@ namespace logviewer.logic.models
         public static void SetProxy(IOptionsProvider optionsProvider)
         {
             var settings = new NetworkSettings(optionsProvider);
-            if (settings.ProxyMode != ProxyMode.None)
-            {
-                WebRequest.DefaultWebProxy = settings.Proxy;
-            }
+            WebRequest.DefaultWebProxy = settings.Proxy;
         }
     }
 }
