@@ -19,11 +19,6 @@ namespace logviewer.logic.ui.network
         None,
 
         /// <summary>
-        ///     Automatic proxy detection
-        /// </summary>
-        AutoProxyDetection,
-
-        /// <summary>
         ///     Manual proxy settings
         /// </summary>
         Custom
@@ -83,7 +78,7 @@ namespace logviewer.logic.ui.network
         private void WriteUnsafe()
         {
             this.networkSettings.ProxyMode = this.ui.ProxyMode;
-            if (!this.ui.IsUseProxy || this.ui.IsUseAutoProxy)
+            if (!this.ui.IsUseProxy)
             {
                 return;
             }

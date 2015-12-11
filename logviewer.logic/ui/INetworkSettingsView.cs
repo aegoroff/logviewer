@@ -10,7 +10,6 @@ namespace logviewer.logic.ui
 	{
 		ProxyMode ProxyMode { get; set; }
 		bool IsUseProxy { get; }
-		bool IsUseAutoProxy { get; }
 		bool IsUseDefaultCredentials { get; set; }
 		int Port { get; set; }
 		string Host { get; set; }

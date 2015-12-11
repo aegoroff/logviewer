@@ -15,32 +15,22 @@ namespace logviewer.logic.ui.network
             this.State<StartState>()
                 .IsInitialState()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()
-                .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateCurrentUser>()
+                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
                 .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
             this.State<NoProxyState>()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()
-                .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateCurrentUser>()
+                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
                 .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
-            this.State<AutoProxyState>()
+            this.State<ManualProxyStateDefaultUser>()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()
-                .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateCurrentUser>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
-
-            this.State<ManualProxyStateCurrentUser>()
-                .On(ProxyMode.None).GoesTo<NoProxyState>()
-                .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateCurrentUser>()
+                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
                 .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
             this.State<ManualProxyStateCustomUser>()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()
-                .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateCurrentUser>()
+                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
                 .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
             this.Start();

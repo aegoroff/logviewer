@@ -34,7 +34,6 @@ namespace logviewer.ui
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.autoProxyRadio = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.domainLabel = new System.Windows.Forms.Label();
             this.domainBox = new System.Windows.Forms.TextBox();
@@ -64,15 +63,15 @@ namespace logviewer.ui
             // 
             // flowLayoutPanel1
             // 
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Controls.Add(this.cancelButton);
             this.flowLayoutPanel1.Controls.Add(this.okButton);
-            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // cancelButton
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             resources.ApplyResources(this.cancelButton, "cancelButton");
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.OnClose);
@@ -82,28 +81,19 @@ namespace logviewer.ui
             resources.ApplyResources(this.okButton, "okButton");
             this.okButton.Name = "okButton";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.OnOK);
+            this.okButton.Click += new System.EventHandler(this.OnOkay);
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.autoProxyRadio);
+            resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.proxyUseRadio);
             this.panel1.Controls.Add(this.directConnRadio);
-            resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Name = "panel1";
-            // 
-            // autoProxyRadio
-            // 
-            resources.ApplyResources(this.autoProxyRadio, "autoProxyRadio");
-            this.autoProxyRadio.Checked = true;
-            this.autoProxyRadio.Name = "autoProxyRadio";
-            this.autoProxyRadio.TabStop = true;
-            this.autoProxyRadio.UseVisualStyleBackColor = true;
-            this.autoProxyRadio.CheckedChanged += new System.EventHandler(this.OnSelectProxyOption);
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.domainLabel);
             this.groupBox1.Controls.Add(this.domainBox);
             this.groupBox1.Controls.Add(this.pwdLabel);
@@ -115,7 +105,6 @@ namespace logviewer.ui
             this.groupBox1.Controls.Add(this.portLabel);
             this.groupBox1.Controls.Add(this.hostBox);
             this.groupBox1.Controls.Add(this.proxyLabel);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -235,6 +224,5 @@ namespace logviewer.ui
 		private System.Windows.Forms.TextBox loginBox;
 		private System.Windows.Forms.TextBox domainBox;
 		private System.Windows.Forms.Label domainLabel;
-		private System.Windows.Forms.RadioButton autoProxyRadio;
 	}
 }

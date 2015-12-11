@@ -97,14 +97,14 @@ namespace logviewer.tests
         public void IsUseProxy_GetSet_GetShouldBeTheSameAsSet()
         {
             // Arrange
-            this.provider.Setup(p => p.UpdateIntegerOption("ProxyMode", (int)ProxyMode.AutoProxyDetection));
-            this.provider.Setup(p => p.ReadIntegerOption("ProxyMode", (int)ProxyMode.AutoProxyDetection)).Returns((int)ProxyMode.AutoProxyDetection);
+            this.provider.Setup(p => p.UpdateIntegerOption("ProxyMode", (int)ProxyMode.Custom));
+            this.provider.Setup(p => p.ReadIntegerOption("ProxyMode", (int)ProxyMode.Custom)).Returns((int)ProxyMode.Custom);
 
             // Act
-            this.settings.ProxyMode = ProxyMode.AutoProxyDetection;
+            this.settings.ProxyMode = ProxyMode.Custom;
 
             // Assert
-            this.settings.ProxyMode.Should().Be(ProxyMode.AutoProxyDetection);
+            this.settings.ProxyMode.Should().Be(ProxyMode.Custom);
         }
 
         [Fact]

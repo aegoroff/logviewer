@@ -48,7 +48,7 @@ namespace logviewer.logic.models
 
         public ProxyMode ProxyMode
         {
-            get { return (ProxyMode)this.optionsProvider.ReadIntegerOption(ProxyModeProperty, (int)ProxyMode.AutoProxyDetection); }
+            get { return (ProxyMode)this.optionsProvider.ReadIntegerOption(ProxyModeProperty, (int)ProxyMode.Custom); }
             set { this.optionsProvider.UpdateIntegerOption(ProxyModeProperty, (int)value); }
         }
 
