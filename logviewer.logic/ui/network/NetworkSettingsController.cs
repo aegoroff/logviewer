@@ -5,9 +5,8 @@
 
 using logviewer.logic.models;
 using logviewer.logic.support;
-using logviewer.logic.ui.network;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.network
 {
     /// <summary>
     ///     Represents all possible proxy modes.

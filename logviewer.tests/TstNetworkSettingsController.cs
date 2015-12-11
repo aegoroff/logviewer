@@ -5,6 +5,7 @@
 using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.ui;
+using logviewer.logic.ui.network;
 using Moq;
 using Xunit;
 

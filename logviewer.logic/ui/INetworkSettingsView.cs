@@ -2,6 +2,8 @@
 // Created at: 05.09.2007
 // © 2007-2008 Alexander Egorov
 
+using logviewer.logic.ui.network;
+
 namespace logviewer.logic.ui
 {
 	public interface INetworkSettingsView
