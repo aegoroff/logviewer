@@ -12,7 +12,7 @@ namespace logviewer.logic.ui.network
     public class NetworkSettingsController
     {
         private readonly NetworkSettings networkSettings;
-        private readonly NetworkSettingsStateMachine stateMachine;
+        private readonly StateMachine stateMachine;
         private readonly INetworkSettingsView ui;
         private bool started;
 
@@ -25,7 +25,7 @@ namespace logviewer.logic.ui.network
         {
             this.networkSettings = networkSettings;
             this.ui = ui;
-            this.stateMachine = new NetworkSettingsStateMachine(ui, this.networkSettings);
+            this.stateMachine = new StateMachine(ui, this.networkSettings);
         }
 
         /// <summary>

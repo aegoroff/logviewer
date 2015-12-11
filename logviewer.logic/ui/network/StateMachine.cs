@@ -6,9 +6,9 @@ using logviewer.logic.fsm;
 
 namespace logviewer.logic.ui.network
 {
-    public class NetworkSettingsStateMachine : SolidMachine<ProxyMode>
+    internal class StateMachine : SolidMachine<ProxyMode>
     {
-        public NetworkSettingsStateMachine(INetworkSettingsView view, NetworkSettings networkSettings, object context = null)
+        public StateMachine(INetworkSettingsView view, NetworkSettings networkSettings, object context = null)
             : base(context, new NetworkStateResolver(view, networkSettings))
         {
             this.State<StartState>()
