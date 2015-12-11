@@ -13,19 +13,19 @@ namespace logviewer.logic.ui.network
     {
         private readonly NetworkSettings networkSettings;
         private readonly StateMachine stateMachine;
-        private readonly INetworkSettingsView ui;
+        private readonly INetworkSettingsView view;
         private bool started;
 
         /// <summary>
         ///     Creates new controller class
         /// </summary>
         /// <param name="networkSettings">Domain model instance</param>
-        /// <param name="ui">User interface instance</param>
-        public NetworkSettingsController(NetworkSettings networkSettings, INetworkSettingsView ui)
+        /// <param name="view">User interface instance</param>
+        public NetworkSettingsController(NetworkSettings networkSettings, INetworkSettingsView view)
         {
             this.networkSettings = networkSettings;
-            this.ui = ui;
-            this.stateMachine = new StateMachine(ui, this.networkSettings);
+            this.view = view;
+            this.stateMachine = new StateMachine(view, this.networkSettings, StateMachineMode.Read);
         }
 
         /// <summary>
@@ -59,26 +59,8 @@ namespace logviewer.logic.ui.network
 
         private void WriteUnsafe()
         {
-            this.networkSettings.ProxyMode = this.ui.ProxyMode;
-            if (!this.ui.IsUseProxy || this.ui.IsUseAutoProxy)
-            {
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(this.ui.Host) || this.ui.Port == 0)
-            {
-                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.ui.Host, this.ui.Port);
-                return;
-            }
-            this.networkSettings.Host = this.ui.Host;
-            this.networkSettings.Port = this.ui.Port;
-            this.networkSettings.IsUseDefaultCredentials = this.ui.IsUseDefaultCredentials;
-            if (this.ui.IsUseDefaultCredentials)
-            {
-                return;
-            }
-            this.networkSettings.UserName = this.ui.UserName;
-            this.networkSettings.Password = this.ui.Password;
-            this.networkSettings.Domain = this.ui.Domain;
+            var sm = new StateMachine(this.view, this.networkSettings, StateMachineMode.Write);
+            sm.Trigger(this.view.ProxyMode);
         }
     }
 }

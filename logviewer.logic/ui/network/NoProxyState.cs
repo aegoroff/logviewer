@@ -2,23 +2,28 @@
 // Created at: 11.12.2015
 // © 2012-2015 Alexander Egorov
 
-using logviewer.logic.fsm;
-
 namespace logviewer.logic.ui.network
 {
-    public class NoProxyState : SolidState
+    internal class NoProxyState : ProxyState
     {
+        private readonly NetworkSettings networkSettings;
         private readonly INetworkSettingsView view;
 
-        public NoProxyState(INetworkSettingsView view)
+        public NoProxyState(INetworkSettingsView view, NetworkSettings networkSettings)
         {
             this.view = view;
+            this.networkSettings = networkSettings;
         }
 
-        protected override void DoEntering(object context)
+        protected override void Read()
         {
             this.view.ProxyMode = ProxyMode.None;
             this.view.EnableProxySettings(false);
+        }
+
+        protected override void Write()
+        {
+            this.networkSettings.ProxyMode = ProxyMode.None;
         }
     }
 }

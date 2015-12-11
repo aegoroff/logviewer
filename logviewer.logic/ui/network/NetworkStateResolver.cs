@@ -22,11 +22,11 @@ namespace logviewer.logic.ui.network
         {
             if (stateType == typeof (NoProxyState))
             {
-                return new NoProxyState(this.view);
+                return new NoProxyState(this.view, this.networkSettings);
             }
             if (stateType == typeof (AutoProxyState))
             {
-                return new AutoProxyState(this.view);
+                return new AutoProxyState(this.view, this.networkSettings);
             }
             if (stateType == typeof (ManualProxyStateDefaultUser))
             {

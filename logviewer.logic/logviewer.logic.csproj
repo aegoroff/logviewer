@@ -124,13 +124,14 @@
     <Compile Include="ui\network\NetworkSettingsController.cs" />
     <Compile Include="storage\OptionsProvider.cs" />
     <Compile Include="ui\network\AutoProxyState.cs" />
-    <Compile Include="ui\network\ManualProxyStateDefaultUser.cs" />
-    <Compile Include="ui\network\ManualProxyStateCustomUser.cs" />
+    <Compile Include="ui\network\ManualProxyState.cs" />
+    <Compile Include="ui\network\ProxyState.cs" />
     <Compile Include="ui\network\StateMachine.cs" />
     <Compile Include="ui\network\NetworkStateResolver.cs" />
     <Compile Include="ui\network\NoProxyState.cs" />
     <Compile Include="ui\network\ProxyMode.cs" />
     <Compile Include="ui\network\StartState.cs" />
+    <Compile Include="ui\network\StateMachineMode.cs" />
     <Compile Include="ui\UiController.cs" />
     <Compile Include="ui\MainController.cs" />
     <Compile Include="support\Maybe.cs" />
