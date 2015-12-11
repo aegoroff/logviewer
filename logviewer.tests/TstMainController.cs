@@ -11,6 +11,9 @@ using System.Threading;
 using FluentAssertions;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.models;
+using logviewer.logic.storage;
+using logviewer.logic.ui;
 using Moq;
 using Net.Sgoliver.NRtfTree.Util;
 using Xunit;
@@ -40,7 +43,7 @@ namespace logviewer.tests
             this.settings.Setup(_ => _.FormatBody(new LogLevel())).Returns(new RtfCharFormat()); // any
             this.settings.Setup(_ => _.FormatHead(new LogLevel())).Returns(new RtfCharFormat()); // any
 
-            var template = ParsingTemplate(logic.ParsingTemplate.Defaults.First().StartMessage);
+            var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template); // 1
 
             this.controller = new MainController(this.settings.Object);
@@ -109,7 +112,7 @@ namespace logviewer.tests
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
 
-        internal static string MessageStart = logic.ParsingTemplate.Defaults.First().StartMessage;
+        internal static string MessageStart = logic.models.ParsingTemplate.Defaults.First().StartMessage;
 
         [Fact]
         public void AllFilters()

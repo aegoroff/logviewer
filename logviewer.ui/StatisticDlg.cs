@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.storage;
 using logviewer.ui.Properties;
 
 namespace logviewer.ui

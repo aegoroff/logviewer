@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using logviewer.logic;
+using logviewer.logic.models;
 using Moq;
 using Xunit;
 

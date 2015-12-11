@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
 using logviewer.logic;
+using logviewer.logic.support;
 using Xunit;
 
 namespace logviewer.tests

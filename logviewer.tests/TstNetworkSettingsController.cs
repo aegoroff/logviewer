@@ -3,6 +3,8 @@
 // © 2007-2008 Alexander Egorov
 
 using logviewer.logic;
+using logviewer.logic.models;
+using logviewer.logic.ui;
 using Moq;
 using Xunit;
 

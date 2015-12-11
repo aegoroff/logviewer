@@ -6,6 +6,8 @@ using System.Xml;
 using FluentAssertions;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.support;
+using logviewer.logic.ui;
 using Xunit;
 
 namespace logviewer.tests

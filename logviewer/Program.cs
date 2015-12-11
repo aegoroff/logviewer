@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Forms;
 using BurnSystems.CommandLine;
 using logviewer.logic;
+using logviewer.logic.support;
 using Ninject;
 
 namespace logviewer

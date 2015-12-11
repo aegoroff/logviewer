@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using logviewer.engine;
 using logviewer.logic.Properties;
+using logviewer.logic.support;
 
 namespace logviewer.logic
 {

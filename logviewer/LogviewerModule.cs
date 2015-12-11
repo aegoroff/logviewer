@@ -4,6 +4,8 @@
 
 using System.Configuration;
 using logviewer.logic;
+using logviewer.logic.storage;
+using logviewer.logic.ui;
 using Ninject.Modules;
 
 namespace logviewer

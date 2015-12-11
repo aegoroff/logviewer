@@ -4,6 +4,8 @@
 
 using FluentAssertions;
 using logviewer.logic;
+using logviewer.logic.models;
+using logviewer.logic.support;
 using Moq;
 using Xunit;
 

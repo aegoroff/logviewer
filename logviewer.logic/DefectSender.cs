@@ -5,6 +5,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using logviewer.logic.support;
 using Octokit;
 
 namespace logviewer.logic

@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
+using logviewer.logic.models;
 
 namespace logviewer.logic
 {

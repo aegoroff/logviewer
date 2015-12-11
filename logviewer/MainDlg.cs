@@ -8,6 +8,9 @@ using System.Threading;
 using System.Windows.Forms;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.models;
+using logviewer.logic.support;
+using logviewer.logic.ui;
 using logviewer.Properties;
 using Ninject;
 

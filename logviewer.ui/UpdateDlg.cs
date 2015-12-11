@@ -6,6 +6,7 @@ using System;
 using System.Windows.Forms;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.ui;
 using logviewer.ui.Properties;
 
 namespace logviewer.ui

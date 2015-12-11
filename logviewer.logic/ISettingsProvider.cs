@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using logviewer.engine;
+using logviewer.logic.models;
+using logviewer.logic.storage;
 using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer.logic

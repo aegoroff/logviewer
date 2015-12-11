@@ -81,61 +81,61 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseGuiController.cs" />
-    <Compile Include="AsymCrypt.cs" />
-    <Compile Include="DatabaseInterfaceExtensions.cs" />
+    <Compile Include="ui\BaseGuiController.cs" />
+    <Compile Include="support\AsymCrypt.cs" />
+    <Compile Include="storage\DatabaseInterfaceExtensions.cs" />
     <Compile Include="DefectSender.cs" />
-    <Compile Include="IItemsProvider.cs" />
-    <Compile Include="INetworkSettingsView.cs" />
+    <Compile Include="ui\IItemsProvider.cs" />
+    <Compile Include="ui\INetworkSettingsView.cs" />
     <Compile Include="IOptionsProvider.cs" />
-    <Compile Include="IViewModel.cs" />
+    <Compile Include="ui\IViewModel.cs" />
     <Compile Include="LogCharsetDetector.cs" />
-    <Compile Include="ColorPickResult.cs" />
-    <Compile Include="ColumnAttribute.cs" />
+    <Compile Include="ui\ColorPickResult.cs" />
+    <Compile Include="storage\ColumnAttribute.cs" />
     <Compile Include="CoreModule.cs" />
-    <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="storage\DatabaseConnection.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FormData.cs" />
-    <Compile Include="ILogView.cs" />
-    <Compile Include="IParsingTemplateView.cs" />
+    <Compile Include="ui\FormData.cs" />
+    <Compile Include="ui\ILogView.cs" />
+    <Compile Include="ui\IParsingTemplateView.cs" />
     <Compile Include="ISettingsProvider.cs" />
-    <Compile Include="ISettingsView.cs" />
-    <Compile Include="IUpdatable.cs" />
-    <Compile Include="IUpdateView.cs" />
+    <Compile Include="ui\ISettingsView.cs" />
+    <Compile Include="ui\IUpdatable.cs" />
+    <Compile Include="ui\IUpdateView.cs" />
     <Compile Include="IVersionsReader.cs" />
-    <Compile Include="LoggingService.cs" />
-    <Compile Include="LogParseTemplateController.cs" />
-    <Compile Include="LogProvider.cs" />
-    <Compile Include="LogReadCompletedEventArgs.cs" />
-    <Compile Include="LogStore.cs" />
-    <Compile Include="MessageFilterModel.cs" />
-    <Compile Include="FixedSizeDictionary.cs" />
-    <Compile Include="MessageMatcher.cs" />
-    <Compile Include="NetworkSettings.cs" />
-    <Compile Include="NetworkSettingsController.cs" />
-    <Compile Include="OptionsProvider.cs" />
-    <Compile Include="UiController.cs" />
-    <Compile Include="MainController.cs" />
-    <Compile Include="Maybe.cs" />
-    <Compile Include="ParsingTemplate.cs" />
-    <Compile Include="ProducerConsumerQueue.cs" />
+    <Compile Include="support\LoggingService.cs" />
+    <Compile Include="ui\LogParseTemplateController.cs" />
+    <Compile Include="storage\LogProvider.cs" />
+    <Compile Include="models\LogReadCompletedEventArgs.cs" />
+    <Compile Include="storage\LogStore.cs" />
+    <Compile Include="models\MessageFilterModel.cs" />
+    <Compile Include="support\FixedSizeDictionary.cs" />
+    <Compile Include="models\MessageMatcher.cs" />
+    <Compile Include="models\NetworkSettings.cs" />
+    <Compile Include="ui\NetworkSettingsController.cs" />
+    <Compile Include="storage\OptionsProvider.cs" />
+    <Compile Include="ui\UiController.cs" />
+    <Compile Include="ui\MainController.cs" />
+    <Compile Include="support\Maybe.cs" />
+    <Compile Include="models\ParsingTemplate.cs" />
+    <Compile Include="support\ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PropertyType.cs" />
-    <Compile Include="RecentItemsStore.cs" />
-    <Compile Include="SafeRunner.cs" />
-    <Compile Include="SettingsController.cs" />
-    <Compile Include="SqliteSettingsProvider.cs" />
-    <Compile Include="SqliteRegEx.cs" />
+    <Compile Include="storage\PropertyType.cs" />
+    <Compile Include="storage\RecentItemsStore.cs" />
+    <Compile Include="support\SafeRunner.cs" />
+    <Compile Include="ui\SettingsController.cs" />
+    <Compile Include="storage\SqliteSettingsProvider.cs" />
+    <Compile Include="storage\SqliteRegEx.cs" />
     <Compile Include="UpdatesChecker.cs" />
-    <Compile Include="UpdatesController.cs" />
-    <Compile Include="VersionEventArgs.cs" />
+    <Compile Include="ui\UpdatesController.cs" />
+    <Compile Include="models\VersionEventArgs.cs" />
     <Compile Include="VersionsReader.cs" />
-    <Compile Include="VirtualizingCollection.cs" />
+    <Compile Include="ui\VirtualizingCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
