@@ -4,8 +4,10 @@
 
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.ui;
 using logviewer.logic.ui.network;
@@ -124,7 +126,7 @@ namespace logviewer.ui
         private void OnOK(object sender, EventArgs e)
         {
             this.controller.Write();
-            NetworkSettings.SetProxy(MainViewModel.Current.SettingsProvider.OptionsProvider);
+            WebRequest.DefaultWebProxy = new NetworkSettings(MainViewModel.Current.SettingsProvider.OptionsProvider).Proxy;
             this.Close();
         }
 

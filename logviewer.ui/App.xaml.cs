@@ -8,6 +8,7 @@ using System.Windows.Threading;
 #endif
 
 using System.Globalization;
+using System.Net;
 using System.Windows;
 using logviewer.logic;
 using logviewer.logic.models;
@@ -27,7 +28,7 @@ namespace logviewer.ui
 #endif
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture;
-            NetworkSettings.SetProxy(MainViewModel.Current.SettingsProvider.OptionsProvider);
+            WebRequest.DefaultWebProxy = new NetworkSettings(MainViewModel.Current.SettingsProvider.OptionsProvider).Proxy;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

@@ -98,35 +98,32 @@ namespace logviewer.logic.models
         }
 
 
-        public IWebProxy Proxy => this.GetProxy();
-
-        private IWebProxy GetProxy()
+        public IWebProxy Proxy
         {
-            switch (this.ProxyMode)
+            get
             {
-                case ProxyMode.None:
-                    return null;
-                case ProxyMode.AutoProxyDetection:
-                    var proxy = WebRequest.GetSystemWebProxy();
-                    proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    return proxy;
-                case ProxyMode.Custom:
-                    return new WebProxy(this.Host, this.Port)
-                    {
-                        Credentials =
-                            this.IsUseDefaultCredentials
-                                ? CredentialCache.DefaultNetworkCredentials
-                                : new NetworkCredential(this.UserName, this.Password, this.Domain)
-                    };
-                default:
-                    return null;
+                switch (this.ProxyMode)
+                {
+                    case ProxyMode.None:
+                        return null;
+                    case ProxyMode.AutoProxyDetection:
+                        var proxy = WebRequest.GetSystemWebProxy();
+                        proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                        return proxy;
+                    case ProxyMode.Custom:
+                        return new WebProxy(this.Host, this.Port)
+                        {
+                            Credentials =
+                                this.IsUseDefaultCredentials
+                                    ? CredentialCache.DefaultNetworkCredentials
+                                    : this.Credentials
+                        };
+                    default:
+                        return null;
+                }
             }
         }
 
-        public static void SetProxy(IOptionsProvider optionsProvider)
-        {
-            var settings = new NetworkSettings(optionsProvider);
-            WebRequest.DefaultWebProxy = settings.Proxy;
-        }
+        private ICredentials Credentials => new NetworkCredential(this.UserName, this.Password, this.Domain);
     }
 }
