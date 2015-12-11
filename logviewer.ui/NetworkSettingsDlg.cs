@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.ui;
 
@@ -22,9 +21,14 @@ namespace logviewer.ui
         {
             this.InitializeComponent();
             this.nsController = new NetworkSettingsController(this.networkSettings, this);
-            this.nsController.ReadMain();
-            this.nsController.ReadAuthSettings();
-            this.nsController.ReadHostAndPort();
+
+            this.directConnRadio.Tag = ProxyMode.None;
+            this.autoProxyRadio.Tag = ProxyMode.AutoProxyDetection;
+            this.proxyUseRadio.Tag = ProxyMode.Custom;
+
+            this.IsUseDefaultCredentials = this.networkSettings.IsUseDefaultCredentials;
+
+            this.nsController.Start();
         }
 
         public int Port
@@ -47,18 +51,9 @@ namespace logviewer.ui
             [DebuggerStepThrough] get { return this.mode; }
             set
             {
-                switch (value)
-                {
-                    case ProxyMode.None:
-                        this.directConnRadio.Checked = true;
-                        break;
-                    case ProxyMode.Custom:
-                        this.proxyUseRadio.Checked = true;
-                        break;
-                    case ProxyMode.AutoProxyDetection:
-                        this.autoProxyRadio.Checked = true;
-                        break;
-                }
+                this.directConnRadio.Checked = value == ProxyMode.None;
+                this.proxyUseRadio.Checked = value == ProxyMode.Custom;
+                this.autoProxyRadio.Checked = value == ProxyMode.AutoProxyDetection;
                 this.mode = value;
             }
         }
@@ -97,21 +92,32 @@ namespace logviewer.ui
             set { this.domainBox.Text = value; }
         }
 
+        public void EnableProxySettings(bool enabled)
+        {
+            this.groupBox1.Enabled = enabled;
+        }
+
+        public void EnableCredentialsSettings(bool enabled)
+        {
+            this.loginBox.Enabled = enabled;
+            this.pwdBox.Enabled = enabled;
+            this.domainBox.Enabled = enabled;
+        }
+
         private void OnSelectProxyOption(object sender, EventArgs e)
         {
-            this.groupBox1.Enabled = this.IsUseProxy;
-            if (this.IsUseProxy)
+            var radio = (RadioButton) sender;
+            if (!radio.Checked)
             {
-                this.nsController.ReadHostAndPort();
+                return;
             }
+            var toMode = (ProxyMode)radio.Tag;
+            this.nsController.Goto(toMode);
         }
 
         private void OnChangeAuthSettings(object sender, EventArgs e)
         {
-            this.loginBox.Enabled = !this.IsUseDefaultCredentials;
-            this.pwdBox.Enabled = !this.IsUseDefaultCredentials;
-            this.domainBox.Enabled = !this.IsUseDefaultCredentials;
-            this.nsController.ReadAuthSettings();
+            this.nsController.Goto(ProxyMode.Custom);
         }
 
         private void OnOK(object sender, EventArgs e)

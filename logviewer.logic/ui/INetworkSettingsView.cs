@@ -15,5 +15,7 @@ namespace logviewer.logic.ui
 		string UserName { get; set; }
 		string Password { get; set; }
 		string Domain { get; set; }
+	    void EnableProxySettings(bool enabled);
+	    void EnableCredentialsSettings(bool enabled);
 	}
 }

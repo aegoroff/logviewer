@@ -5,6 +5,7 @@
 
 using logviewer.logic.models;
 using logviewer.logic.support;
+using logviewer.logic.ui.network;
 
 namespace logviewer.logic.ui
 {
@@ -36,6 +37,8 @@ namespace logviewer.logic.ui
     {
         private readonly NetworkSettings networkSettings;
         private readonly INetworkSettingsView ui;
+        private readonly NetworkSettingsStateMachine stateMachine;
+        private bool started;
 
         /// <summary>
         ///     Creates new controller class
@@ -46,53 +49,40 @@ namespace logviewer.logic.ui
         {
             this.networkSettings = networkSettings;
             this.ui = ui;
+            this.stateMachine = new NetworkSettingsStateMachine(ui, this.networkSettings);
         }
 
         /// <summary>
         ///     Reads proxy mode and credentials settings from storage and sets UI to read values.
         /// </summary>
-        public void ReadMain()
+        public void Start()
         {
             if (this.networkSettings.IsUseProxy)
             {
-                this.ui.ProxyMode = ProxyMode.Custom;
-                this.ui.IsUseDefaultCredentials = this.networkSettings.IsUseDefaultCredentials;
+                //this.ui.IsUseDefaultCredentials = this.networkSettings.IsUseDefaultCredentials;
+                this.stateMachine.Trigger(ProxyMode.Custom);
             }
             else if (this.networkSettings.IsUseIeProxy)
             {
-                this.ui.ProxyMode = ProxyMode.AutoProxyDetection;
+                this.stateMachine.Trigger(ProxyMode.AutoProxyDetection);
             }
             else
             {
-                this.ui.ProxyMode = ProxyMode.None;
+                this.stateMachine.Trigger(ProxyMode.None);
             }
+            this.started = true;
         }
 
         /// <summary>
-        ///     Reads authentification settings and sets UI to read values
+        /// Goto proxy mode specified
         /// </summary>
-        public void ReadAuthSettings()
+        /// <param name="mode"></param>
+        public void Goto(ProxyMode mode)
         {
-            if (this.networkSettings.IsUseDefaultCredentials)
+            if (this.started)
             {
-                return;
+                this.stateMachine.Trigger(mode);
             }
-            this.ui.UserName = this.networkSettings.UserName;
-            this.ui.Password = this.networkSettings.Password;
-            this.ui.Domain = this.networkSettings.Domain;
-        }
-
-        /// <summary>
-        ///     Reads host and port from storage and sets UI to the values.
-        /// </summary>
-        public void ReadHostAndPort()
-        {
-            if (!this.networkSettings.IsUseProxy)
-            {
-                return;
-            }
-            this.ui.Host = this.networkSettings.Host;
-            this.ui.Port = this.networkSettings.Port;
         }
 
         /// <summary>
