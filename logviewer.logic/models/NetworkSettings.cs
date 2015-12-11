@@ -107,7 +107,9 @@ namespace logviewer.logic.models
                 case ProxyMode.None:
                     return null;
                 case ProxyMode.AutoProxyDetection:
-                    return WebRequest.GetSystemWebProxy();
+                    var proxy = WebRequest.GetSystemWebProxy();
+                    proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    return proxy;
                 case ProxyMode.Custom:
                     return new WebProxy(this.Host, this.Port)
                     {
