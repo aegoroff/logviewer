@@ -3,8 +3,6 @@
 // © 2007-2008 Alexander Egorov
 
 using logviewer.logic;
-using logviewer.logic.models;
-using logviewer.logic.ui;
 using logviewer.logic.ui.network;
 using Moq;
 using Xunit;
@@ -14,33 +12,33 @@ namespace logviewer.tests
     public class TstNetworkSettingsController
     {
         private readonly Mock<IOptionsProvider> provider;
-        private readonly Mock<INetworkSettingsView> view;
+        private readonly Mock<INetworkSettingsModel> model;
 
         public TstNetworkSettingsController()
         {
             this.provider = new Mock<IOptionsProvider>();
-            this.view = new Mock<INetworkSettingsView>();
+            this.model = new Mock<INetworkSettingsModel>();
         }
 
         [Fact]
         public void Write_CustomProxyWithDefaultCredentials_CustomCredentialsNotAffected()
         {
             // Arrange
-            this.view.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
-            this.view.SetupGet(v => v.Host).Returns("host");
-            this.view.SetupGet(v => v.Port).Returns(1234);
-            this.view.SetupGet(v => v.IsUseProxy).Returns(true);
-            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
-            this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
-            this.view.SetupGet(v => v.UserName).Returns("l2");
-            this.view.SetupGet(v => v.Password).Returns("p2");
-            this.view.SetupGet(v => v.Domain).Returns("d2");
+            this.model.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
+            this.model.SetupGet(v => v.Host).Returns("host");
+            this.model.SetupGet(v => v.Port).Returns(1234);
+            this.model.SetupGet(v => v.IsUseManualProxy).Returns(true);
+            this.model.SetupGet(v => v.IsUseAutoProxy).Returns(false);
+            this.model.SetupGet(v => v.IsNoUseProxy).Returns(false);
+            this.model.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
+            this.model.SetupGet(v => v.UserName).Returns("l2");
+            this.model.SetupGet(v => v.Password).Returns("p2");
+            this.model.SetupGet(v => v.Domain).Returns("d2");
 
-            var settings = new NetworkSettings(this.provider.Object);
-            var controller = new NetworkSettingsController(settings, this.view.Object);
+            var controller = new NetworkSettingsController(this.model.Object, this.provider.Object);
 
             // Act
-            controller.Write();
+            controller.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", It.IsAny<int>()), Times.Once);
@@ -62,21 +60,21 @@ namespace logviewer.tests
         public void Write_CustomProxyBadProxyData_ProxySettingsNotSet(string host, int port)
         {
             // Arrange
-            this.view.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
-            this.view.SetupGet(v => v.Host).Returns(host);
-            this.view.SetupGet(v => v.Port).Returns(port);
-            this.view.SetupGet(v => v.IsUseProxy).Returns(true);
-            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
-            this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
-            this.view.SetupGet(v => v.UserName).Returns("l2");
-            this.view.SetupGet(v => v.Password).Returns("p2");
-            this.view.SetupGet(v => v.Domain).Returns("d2");
+            this.model.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
+            this.model.SetupGet(v => v.Host).Returns(host);
+            this.model.SetupGet(v => v.Port).Returns(port);
+            this.model.SetupGet(v => v.IsUseManualProxy).Returns(true);
+            this.model.SetupGet(v => v.IsUseAutoProxy).Returns(false);
+            this.model.SetupGet(v => v.IsNoUseProxy).Returns(false);
+            this.model.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
+            this.model.SetupGet(v => v.UserName).Returns("l2");
+            this.model.SetupGet(v => v.Password).Returns("p2");
+            this.model.SetupGet(v => v.Domain).Returns("d2");
 
-            var settings = new NetworkSettings(this.provider.Object);
-            var controller = new NetworkSettingsController(settings, this.view.Object);
+            var controller = new NetworkSettingsController(this.model.Object, this.provider.Object);
 
             // Act
-            controller.Write();
+            controller.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 2), Times.Once);
@@ -92,18 +90,18 @@ namespace logviewer.tests
         public void Write_NoProxy_UseProxyFalseHostPortNotAffected()
         {
             // Arrange
-            this.view.SetupGet(v => v.ProxyMode).Returns(ProxyMode.None);
-            this.view.SetupGet(v => v.Host).Returns("host1");
-            this.view.SetupGet(v => v.Port).Returns(12341);
-            this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
-            this.view.SetupGet(v => v.IsUseProxy).Returns(false);
-            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
+            this.model.SetupGet(v => v.ProxyMode).Returns(ProxyMode.None);
+            this.model.SetupGet(v => v.Host).Returns("host1");
+            this.model.SetupGet(v => v.Port).Returns(12341);
+            this.model.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
+            this.model.SetupGet(v => v.IsNoUseProxy).Returns(true);
+            this.model.SetupGet(v => v.IsUseManualProxy).Returns(false);
+            this.model.SetupGet(v => v.IsUseAutoProxy).Returns(false);
 
-            var settings = new NetworkSettings(this.provider.Object);
-            var controller = new NetworkSettingsController(settings, this.view.Object);
+            var controller = new NetworkSettingsController(this.model.Object, this.provider.Object);
 
             // Act
-            controller.Write();
+            controller.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 0), Times.Once);
@@ -114,21 +112,21 @@ namespace logviewer.tests
         [Fact]
         public void Write_CustomModeWithCredentials_AllSet()
         {
-            this.view.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
-            this.view.SetupGet(v => v.Host).Returns("host2");
-            this.view.SetupGet(v => v.Port).Returns(123411);
-            this.view.SetupGet(v => v.IsUseProxy).Returns(true);
-            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(false);
-            this.view.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
-            this.view.SetupGet(v => v.UserName).Returns("l1");
-            this.view.SetupGet(v => v.Password).Returns("p1");
-            this.view.SetupGet(v => v.Domain).Returns("d1");
+            this.model.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
+            this.model.SetupGet(v => v.Host).Returns("host2");
+            this.model.SetupGet(v => v.Port).Returns(123411);
+            this.model.SetupGet(v => v.IsUseManualProxy).Returns(true);
+            this.model.SetupGet(v => v.IsUseAutoProxy).Returns(false);
+            this.model.SetupGet(v => v.IsNoUseProxy).Returns(false);
+            this.model.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
+            this.model.SetupGet(v => v.UserName).Returns("l1");
+            this.model.SetupGet(v => v.Password).Returns("p1");
+            this.model.SetupGet(v => v.Domain).Returns("d1");
 
-            var settings = new NetworkSettings(this.provider.Object);
-            var controller = new NetworkSettingsController(settings, this.view.Object);
+            var controller = new NetworkSettingsController(this.model.Object, this.provider.Object);
 
             // Act
-            controller.Write();
+            controller.Write("p2");
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 2), Times.Once);
@@ -136,6 +134,7 @@ namespace logviewer.tests
             this.provider.Verify(p => p.UpdateStringOption("Host", "host2"), Times.Once);
             this.provider.Verify(p => p.UpdateIntegerOption("Port", 123411), Times.Once);
 
+            this.model.VerifySet(p => p.Password = "p2", Times.Once);
             this.provider.Verify(p => p.UpdateStringOption("Login", "l1"), Times.Once);
             this.provider.Verify(p => p.UpdateStringOption("Password", "p1"), Times.Never); // Don't save plain passwords
             this.provider.Verify(p => p.UpdateStringOption("Password", It.IsAny<string>()), Times.Once);
@@ -146,13 +145,13 @@ namespace logviewer.tests
         public void Write_AutoProxy_OnlyProxyFlagsAffected()
         {
             // Arrange
-            this.view.SetupGet(v => v.ProxyMode).Returns(ProxyMode.AutoProxyDetection);
-            this.view.SetupGet(v => v.IsUseProxy).Returns(false);
-            this.view.SetupGet(v => v.IsUseAutoProxy).Returns(true);
+            this.model.SetupGet(v => v.ProxyMode).Returns(ProxyMode.AutoProxyDetection);
+            this.model.SetupGet(v => v.IsUseManualProxy).Returns(false);
+            this.model.SetupGet(v => v.IsNoUseProxy).Returns(false);
+            this.model.SetupGet(v => v.IsUseAutoProxy).Returns(true);
 
-            var settings = new NetworkSettings(this.provider.Object);
-            var controller = new NetworkSettingsController(settings, this.view.Object);
-            controller.Write();
+            var controller = new NetworkSettingsController(this.model.Object, this.provider.Object);
+            controller.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 1), Times.Once);

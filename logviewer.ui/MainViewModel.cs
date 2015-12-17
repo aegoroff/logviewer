@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using System.Windows;
 using logviewer.logic;
 using logviewer.logic.storage;
-using logviewer.logic.support;
 using logviewer.logic.ui;
 using logviewer.ui.Annotations;
 using logviewer.ui.Properties;

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace logviewer.logic.fsm
@@ -497,6 +498,7 @@ namespace logviewer.logic.fsm
         /// <param name="trigger"></param>
         public void Trigger(TTrigger trigger)
         {
+            Trace.WriteLine(trigger);
             this.ThrowOnNotStarted();
 
             // Queue it up

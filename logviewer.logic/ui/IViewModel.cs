@@ -5,7 +5,6 @@
 using System;
 using System.ComponentModel;
 using logviewer.logic.storage;
-using logviewer.logic.support;
 
 namespace logviewer.logic.ui
 {

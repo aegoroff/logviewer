@@ -79,6 +79,24 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Address.
+        /// </summary>
+        public static string Address {
+            get {
+                return ResourceManager.GetString("Address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use automatic proxy detection.
+        /// </summary>
+        public static string AutoProxy {
+            get {
+                return ResourceManager.GetString("AutoProxy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot parse port: {0}.
         /// </summary>
         public static string CannotParsePort {
@@ -147,6 +165,15 @@ namespace logviewer.ui.Properties {
         public static string DebugLabel {
             get {
                 return ResourceManager.GetString("DebugLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Domain.
+        /// </summary>
+        public static string Domain {
+            get {
+                return ResourceManager.GetString("Domain", resourceCulture);
             }
         }
         
@@ -295,11 +322,29 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log Viewer.
         /// </summary>
         public static string MainWindowCaptionPrefix {
             get {
                 return ResourceManager.GetString("MainWindowCaptionPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manual proxy settings.
+        /// </summary>
+        public static string ManualProxy {
+            get {
+                return ResourceManager.GetString("ManualProxy", resourceCulture);
             }
         }
         
@@ -340,7 +385,7 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Network.
+        ///   Looks up a localized string similar to Network Settings.
         /// </summary>
         public static string NetworkSettings {
             get {
@@ -363,6 +408,15 @@ namespace logviewer.ui.Properties {
         public static string NewVersionAvailable {
             get {
                 return ResourceManager.GetString("NewVersionAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direct Internet Connection. Don&apos;t use automatic proxy detection..
+        /// </summary>
+        public static string NoProxy {
+            get {
+                return ResourceManager.GetString("NoProxy", resourceCulture);
             }
         }
         
@@ -390,6 +444,33 @@ namespace logviewer.ui.Properties {
         public static string Open {
             get {
                 return ResourceManager.GetString("Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        public static string Port {
+            get {
+                return ResourceManager.GetString("Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proxy settings.
+        /// </summary>
+        public static string ProxySettings {
+            get {
+                return ResourceManager.GetString("ProxySettings", resourceCulture);
             }
         }
         
@@ -525,6 +606,15 @@ namespace logviewer.ui.Properties {
         public static string UpdateDownloadProgressFormat {
             get {
                 return ResourceManager.GetString("UpdateDownloadProgressFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use current user settings.
+        /// </summary>
+        public static string UseCurrentUserSettings {
+            get {
+                return ResourceManager.GetString("UseCurrentUserSettings", resourceCulture);
             }
         }
         

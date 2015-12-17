@@ -87,8 +87,8 @@
     <Compile Include="TstLogProvider.cs" />
     <Compile Include="TstLogReader.cs" />
     <Compile Include="TstMessageMatcher.cs" />
-    <Compile Include="TstNetworkSettings.cs" />
     <Compile Include="TstNetworkSettingsController.cs" />
+    <Compile Include="TstNetworkSettingsModel.cs" />
     <Compile Include="TstSolidMachine.cs" />
     <Compile Include="TstUiController.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />

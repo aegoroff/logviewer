@@ -1,86 +1,45 @@
-﻿// Created by: egr
-// Created at: 11.12.2015
-// © 2012-2015 Alexander Egorov
+// Created by: egr
+// Created at: 16.12.2015
+// � 2012-2015 Alexander Egorov
 
 using logviewer.logic.support;
 
 namespace logviewer.logic.ui.network
 {
-    /// <summary>
-    ///     Manual proxy address setting but credentials from process default credentials
-    /// </summary>
-    internal class ManualProxyStateDefaultUser : ProxyState
+    internal abstract class ManualProxyState : ProxyState
     {
-        private readonly NetworkSettings networkSettings;
-        private readonly INetworkSettingsView view;
+        private static string host;
+        private static int port;
 
-        public ManualProxyStateDefaultUser(INetworkSettingsView view, NetworkSettings networkSettings)
+        protected ManualProxyState(INetworkSettingsModel model, IOptionsProvider provider) : base(model, provider)
         {
-            this.view = view;
-            this.networkSettings = networkSettings;
+        }
+
+        protected override void DoExiting(object context)
+        {
+            host = this.Model.Host;
+            port = this.Model.Port;
         }
 
         protected override void Read()
         {
-            this.view.ProxyMode = ProxyMode.Custom;
-            this.view.EnableProxySettings(true);
-            this.view.EnableCredentialsSettings(false);
-
-            this.view.Host = this.networkSettings.Host;
-            this.view.Port = this.networkSettings.Port;
+            this.Model.Host = host ?? this.Provider.ReadStringOption(Constants.HostProperty);
+            this.Model.Port = port > 0 ? port : this.Provider.ReadIntegerOption(Constants.PortProperty);
         }
 
-        protected override void Write()
+        protected bool WriteProxyCommonSettings()
         {
-            this.networkSettings.ProxyMode = ProxyMode.Custom;
-
-            if (string.IsNullOrWhiteSpace(this.view.Host) || this.view.Port <= 0)
+            if (string.IsNullOrWhiteSpace(this.Model.Host) || this.Model.Port <= 0)
             {
-                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.view.Host, this.view.Port);
-                return;
+                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.Model.Host, this.Model.Port);
+                return false;
             }
 
-            this.networkSettings.Host = this.view.Host;
-            this.networkSettings.Port = this.view.Port;
-            this.networkSettings.IsUseDefaultCredentials = this.view.IsUseDefaultCredentials;
-        }
-    }
+            this.Provider.UpdateStringOption(Constants.HostProperty, this.Model.Host);
+            this.Provider.UpdateIntegerOption(Constants.PortProperty, this.Model.Port);
+            this.Provider.UpdateBooleanOption(Constants.IsUseDefaultCredentialsProperty, this.Model.IsUseDefaultCredentials);
 
-    /// <summary>
-    ///     All manual proxy settings including credentials
-    /// </summary>
-    internal class ManualProxyStateCustomUser : ManualProxyStateDefaultUser
-    {
-        private readonly NetworkSettings networkSettings;
-        private readonly INetworkSettingsView view;
-
-        public ManualProxyStateCustomUser(INetworkSettingsView view, NetworkSettings networkSettings) : base(view, networkSettings)
-        {
-            this.view = view;
-            this.networkSettings = networkSettings;
-        }
-
-        protected override void Read()
-        {
-            this.view.ProxyMode = ProxyMode.Custom;
-            this.view.EnableProxySettings(true);
-            this.view.EnableCredentialsSettings(true);
-
-            this.view.Host = this.networkSettings.Host;
-            this.view.Port = this.networkSettings.Port;
-
-            this.view.UserName = this.networkSettings.UserName;
-            this.view.Password = this.networkSettings.Password;
-            this.view.Domain = this.networkSettings.Domain;
-        }
-
-        protected override void Write()
-        {
-            base.Write();
-
-            this.networkSettings.UserName = this.view.UserName;
-            this.networkSettings.Password = this.view.Password;
-            this.networkSettings.Domain = this.view.Domain;
+            return true;
         }
     }
 }

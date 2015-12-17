@@ -8,25 +8,25 @@ namespace logviewer.logic.ui.network
 {
     internal class StateMachine : SolidMachine<ProxyMode>
     {
-        public StateMachine(INetworkSettingsView view, NetworkSettings networkSettings, object context = null)
-            : base(context, new NetworkStateResolver(view, networkSettings))
+        public StateMachine(INetworkSettingsModel model, IOptionsProvider provider, object context = null)
+            : base(context, new NetworkStateResolver(model, provider))
         {
             this.State<StartState>()
                 .IsInitialState()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()
                 .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
+                .On(ProxyMode.Custom, () => model.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
+                .On(ProxyMode.Custom, () => model.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
             this.State<NoProxyState>()
                 .On(ProxyMode.AutoProxyDetection).GoesTo<AutoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
+                .On(ProxyMode.Custom, () => model.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
+                .On(ProxyMode.Custom, () => model.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
             this.State<AutoProxyState>()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
-                .On(ProxyMode.Custom, () => view.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
+                .On(ProxyMode.Custom, () => model.IsUseDefaultCredentials).GoesTo<ManualProxyStateDefaultUser>()
+                .On(ProxyMode.Custom, () => model.IsUseDefaultCredentials == false).GoesTo<ManualProxyStateCustomUser>();
 
             this.State<ManualProxyStateDefaultUser>()
                 .On(ProxyMode.None).GoesTo<NoProxyState>()

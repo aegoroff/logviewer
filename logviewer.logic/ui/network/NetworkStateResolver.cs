@@ -9,32 +9,32 @@ namespace logviewer.logic.ui.network
 {
     internal class NetworkStateResolver : IStateResolver
     {
-        private readonly NetworkSettings networkSettings;
-        private readonly INetworkSettingsView view;
+        private readonly INetworkSettingsModel model;
+        private readonly IOptionsProvider provider;
 
-        public NetworkStateResolver(INetworkSettingsView view, NetworkSettings networkSettings)
+        public NetworkStateResolver(INetworkSettingsModel model, IOptionsProvider provider)
         {
-            this.networkSettings = networkSettings;
-            this.view = view;
+            this.model = model;
+            this.provider = provider;
         }
 
         public ISolidState ResolveState(Type stateType)
         {
             if (stateType == typeof (NoProxyState))
             {
-                return new NoProxyState(this.view, this.networkSettings);
+                return new NoProxyState(this.model, this.provider);
             }
             if (stateType == typeof (AutoProxyState))
             {
-                return new AutoProxyState(this.view, this.networkSettings);
+                return new AutoProxyState(this.model, this.provider);
             }
             if (stateType == typeof (ManualProxyStateDefaultUser))
             {
-                return new ManualProxyStateDefaultUser(this.view, this.networkSettings);
+                return new ManualProxyStateDefaultUser(this.model, this.provider);
             }
             if (stateType == typeof (ManualProxyStateCustomUser))
             {
-                return new ManualProxyStateCustomUser(this.view, this.networkSettings);
+                return new ManualProxyStateCustomUser(this.model, this.provider);
             }
             return new StartState();
         }

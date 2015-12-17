@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using logviewer.logic;
 using logviewer.logic.ui;
 using MenuItem = Fluent.MenuItem;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
@@ -172,11 +171,7 @@ namespace logviewer.ui
 
         private void OnNetworkSettings(object sender, ExecutedRoutedEventArgs e)
         {
-            var dlg = new NetworkSettingsDlg();
-            using (dlg)
-            {
-                dlg.ShowDialog();
-            }
+            new Network().ShowDialog();
         }
     }
 }

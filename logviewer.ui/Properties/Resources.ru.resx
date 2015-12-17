@@ -196,7 +196,7 @@
     <value>Первое</value>
   </data>
   <data name="NetworkSettings" xml:space="preserve">
-    <value>Сеть</value>
+    <value>Настройки сети</value>
   </data>
   <data name="NewVersion" xml:space="preserve">
     <value>Доступна новая версия</value>
@@ -266,5 +266,35 @@
   </data>
   <data name="Warn" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="AutoProxy" xml:space="preserve">
+    <value>Определять настройки прокси автоматически</value>
+  </data>
+  <data name="Domain" xml:space="preserve">
+    <value>Домен</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Логин</value>
+  </data>
+  <data name="ManualProxy" xml:space="preserve">
+    <value>Настроить параметры прокси вручную</value>
+  </data>
+  <data name="NoProxy" xml:space="preserve">
+    <value>Прямое соединение. Не использовать автоматическое определение</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Порт</value>
+  </data>
+  <data name="ProxySettings" xml:space="preserve">
+    <value>Настройки прокси</value>
+  </data>
+  <data name="UseCurrentUserSettings" xml:space="preserve">
+    <value>Использовать настройки текущего пользователя</value>
   </data>
 </root>

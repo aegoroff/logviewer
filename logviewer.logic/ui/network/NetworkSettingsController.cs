@@ -11,56 +11,62 @@ namespace logviewer.logic.ui.network
     /// </summary>
     public class NetworkSettingsController
     {
-        private readonly NetworkSettings networkSettings;
+        private readonly INetworkSettingsModel model;
+        private readonly IOptionsProvider provider;
         private readonly StateMachine stateMachine;
-        private readonly INetworkSettingsView view;
-        private bool started;
 
         /// <summary>
         ///     Creates new controller class
         /// </summary>
-        /// <param name="networkSettings">Domain model instance</param>
-        /// <param name="view">User interface instance</param>
-        public NetworkSettingsController(NetworkSettings networkSettings, INetworkSettingsView view)
+        /// <param name="model">Domain model instance</param>
+        /// <param name="provider">Options provider instance</param>
+        public NetworkSettingsController(INetworkSettingsModel model, IOptionsProvider provider)
         {
-            this.networkSettings = networkSettings;
-            this.view = view;
-            this.stateMachine = new StateMachine(view, this.networkSettings, StateMachineMode.Read);
+            this.model = model;
+            this.provider = provider;
+            this.stateMachine = new StateMachine(model, provider, StateMachineMode.Read);
         }
 
         /// <summary>
         ///     Reads proxy mode and credentials settings from storage and sets UI to read values.
         /// </summary>
-        public void Start()
+        public void Initialize()
         {
-            this.stateMachine.Trigger(this.networkSettings.ProxyMode);
-            this.started = true;
+            // TODO: think over about async read
+            var mode = (ProxyMode)this.provider.ReadIntegerOption(Constants.ProxyModeProperty, (int)ProxyMode.AutoProxyDetection);
+            var useDefalutCredentials = this.provider.ReadBooleanOption(Constants.IsUseDefaultCredentialsProperty, true);
+            this.model.Initialize(mode, useDefalutCredentials);
+            this.model.ModeChanged += this.OnModeChanged;
+            this.stateMachine.Trigger(this.model.ProxyMode);
         }
 
-        /// <summary>
-        ///     Goto proxy mode specified
-        /// </summary>
-        /// <param name="mode"></param>
-        public void Goto(ProxyMode mode)
+        private void OnModeChanged(object sender, ProxyMode e)
         {
-            if (this.started)
+            this.stateMachine.Trigger(e);
+            this.InvokeSettingsChange();
+        }
+
+        public void InvokeSettingsChange()
+        {
+            if (!this.model.IsSettingsChanged)
             {
-                this.stateMachine.Trigger(mode);
+                this.model.IsSettingsChanged = true;
             }
         }
 
         /// <summary>
         ///     Writes all proxy settings into storage.
         /// </summary>
-        public void Write()
+        public void Write(string password)
         {
+            this.model.Password = password;
             SafeRunner.Run(this.WriteUnsafe);
         }
 
         private void WriteUnsafe()
         {
-            var sm = new StateMachine(this.view, this.networkSettings, StateMachineMode.Write);
-            sm.Trigger(this.view.ProxyMode);
+            var sm = new StateMachine(this.model, this.provider, StateMachineMode.Write);
+            sm.Trigger(this.model.ProxyMode);
         }
     }
 }

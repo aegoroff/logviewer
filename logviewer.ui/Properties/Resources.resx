@@ -288,4 +288,37 @@
   <data name="WarnLabel" xml:space="preserve">
     <value>Warn - 3</value>
   </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="AutoProxy" xml:space="preserve">
+    <value>Use automatic proxy detection</value>
+  </data>
+  <data name="Domain" xml:space="preserve">
+    <value>Domain</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="ManualProxy" xml:space="preserve">
+    <value>Manual proxy settings</value>
+  </data>
+  <data name="NetworkSettings" xml:space="preserve">
+    <value>Network Settings</value>
+  </data>
+  <data name="NoProxy" xml:space="preserve">
+    <value>Direct Internet Connection. Don't use automatic proxy detection.</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="ProxySettings" xml:space="preserve">
+    <value>Proxy settings</value>
+  </data>
+  <data name="UseCurrentUserSettings" xml:space="preserve">
+    <value>Use current user settings</value>
+  </data>
 </root>
