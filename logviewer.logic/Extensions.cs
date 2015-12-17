@@ -89,65 +89,9 @@ namespace logviewer.logic
             return value < min ? min : value;
         }
 
-        private static string WithDays(TimeSpan input)
-        {
-            return input.Days > 0 ? string.Format(Resources.RemainingWithDays, input.Days, input.Hours, input.Minutes, input.Seconds, input.DaysToString(), input.HoursToString(), input.MinutesToString(), input.SecondsToString()) : null;
-        }
-
-        private static string WithHours(TimeSpan input)
-        {
-            return input.Hours > 0 ? string.Format(Resources.RemainingWithHours, input.Hours, input.Minutes, input.Seconds, input.HoursToString(), input.MinutesToString(), input.SecondsToString()) : null;
-        }
-
-        private static string WithMinutes(TimeSpan input)
-        {
-            return input.Minutes > 0 ? string.Format(Resources.RemainingWithMinutes, input.Minutes, input.Seconds, input.MinutesToString(), input.SecondsToString()) : null;
-        }
-
-        private static string WithSeconds(TimeSpan input)
-        {
-            return input.Seconds > 0 ? string.Format(Resources.RemainingOnlySeconds, input.Seconds, input.SecondsToString()) : null;
-        }
-
-        private static string SecondsToString(this TimeSpan input)
-        {
-            return ((long)input.Seconds).Declension(Resources.SecondsNominative, Resources.SecondsGenitiveSingular, Resources.SecondsGenitivePlural);
-        }
-        
-        private static string MinutesToString(this TimeSpan input)
-        {
-            return ((long)input.Minutes).Declension(Resources.MinutesNominative, Resources.MinutesGenitiveSingular, Resources.MinutesGenitivePlural);
-        }
-        
-        private static string HoursToString(this TimeSpan input)
-        {
-            return ((long)input.Hours).Declension(Resources.HoursNominative, Resources.HoursGenitiveSingular, Resources.HoursGenitivePlural);
-        }
-        
-        private static string DaysToString(this TimeSpan input)
-        {
-            return ((long)input.Days).Declension(Resources.DaysNominative, Resources.DaysGenitiveSingular, Resources.DaysGenitivePlural);
-        }
-
         private static string BytesToString(this ulong bytes)
         {
             return ((long)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
-        }
-
-        internal static string TimespanToHumanString(this TimeSpan timeSpan)
-        {
-            Func<TimeSpan, string>[] funcs =
-            {
-                WithDays,
-                WithHours,
-                WithMinutes,
-                WithSeconds
-            };
-            foreach (var result in funcs.Select(format => format(timeSpan)).Where(result => result != null))
-            {
-                return result;
-            }
-            return Resources.RemainingLessThenSecond;
         }
 
         public static string Format(this LoadProgress progress)

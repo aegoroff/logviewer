@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Humanizer;
 using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
@@ -651,7 +652,7 @@ namespace logviewer.logic.ui
         {
             this.view.SetProgress(LoadProgress.FromPercent(100));
             this.totalReadTimeWatch.Stop();
-            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.TimespanToHumanString());
+            var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.Humanize());
             this.view.SetLogProgressCustomText(text);
         }
 
