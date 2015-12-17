@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Humanizer;
 using logviewer.engine;
 using logviewer.logic.Properties;
 using logviewer.logic.support;
@@ -153,7 +154,7 @@ namespace logviewer.logic
         {
             return progress.Speed.Bytes == 0
                 ? string.Format(Resources.SpeedPercent, progress.Percent)
-                : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(), progress.Remainig.TimespanToHumanString());
+                : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(), progress.Remainig.Humanize());
         
         }
 
