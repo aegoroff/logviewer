@@ -151,6 +151,8 @@ namespace logviewer.tests
             this.model.SetupGet(v => v.IsUseAutoProxy).Returns(true);
 
             var controller = new NetworkSettingsController(this.model.Object, this.provider.Object);
+
+            // Act
             controller.Write(string.Empty);
 
             // Assert
