@@ -3,6 +3,7 @@
 // © 2007-2008 Alexander Egorov
 
 using logviewer.logic;
+using logviewer.logic.support;
 using logviewer.logic.ui.network;
 using Moq;
 using Xunit;
@@ -11,6 +12,11 @@ namespace logviewer.tests
 {
     public class TstNetworkSettingsModel
     {
+        private const string HostValue = "h";
+        private const string LoginValue = "l";
+        private const string PasswordValue = "p";
+        private const string DomainValue = "d";
+        private const int PortValue = 8080;
         private readonly Mock<IOptionsProvider> provider;
         private readonly Mock<INetworkSettingsViewModel> viewModel;
 
@@ -161,6 +167,108 @@ namespace logviewer.tests
             this.provider.Verify(p => p.UpdateStringOption("Host", It.IsAny<string>()), Times.Never);
             this.provider.Verify(p => p.UpdateIntegerOption("Port", It.IsAny<int>()), Times.Never);
             this.provider.Verify(p => p.UpdateBooleanOption("IsUseDefaultCredentials", It.IsAny<bool>()), Times.Never);
+        }
+
+        [Fact]
+        public void Initialize_NoProxy_Triggered()
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.ProxyMode).Returns(ProxyMode.None);
+
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
+
+            // Act
+            model.Initialize();
+
+            // Assert
+            this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.None, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Host = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Port = 0, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = string.Empty, Times.Once);
+        }
+
+        [Fact]
+        public void Initialize_AutoProxy_Triggered()
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.ProxyMode).Returns(ProxyMode.AutoProxyDetection);
+
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
+
+            // Act
+            model.Initialize();
+
+            // Assert
+            this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.AutoProxyDetection, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Host = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Port = 0, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = string.Empty, Times.Once);
+        }
+
+        [Fact]
+        public void Initialize_CustomProxyUseDefaultCredentials_Triggered()
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
+            this.viewModel.SetupGet(v => v.IsUseDefaultCredentials).Returns(true);
+
+            this.provider.Setup(p => p.ReadIntegerOption("ProxyMode", 1)).Returns((int) ProxyMode.Custom);
+            this.provider.Setup(p => p.ReadBooleanOption("IsUseDefaultCredentials", true)).Returns(true);
+            this.provider.Setup(p => p.ReadStringOption("Host", null)).Returns(HostValue);
+            this.provider.Setup(p => p.ReadIntegerOption("Port", 0)).Returns(PortValue);
+            
+
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
+
+            // Act
+            model.Initialize();
+
+            // Assert
+            this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.Custom, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Host = HostValue, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Port = PortValue, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = string.Empty, Times.Once);
+        }
+
+        [Fact]
+        public void Initialize_CustomProxyUseCustomCredentials_Triggered()
+        {
+            // Arrange
+            var crypt = new AsymCrypt();
+            crypt.GenerateKeys();
+            this.provider.Setup(p => p.ReadStringOption("PrivateKey", null)).Returns(crypt.PrivateKey);
+            this.provider.Setup(p => p.ReadStringOption("PublicKey", null)).Returns(crypt.PublicKey);
+
+            this.viewModel.SetupGet(v => v.ProxyMode).Returns(ProxyMode.Custom);
+            this.viewModel.SetupGet(v => v.IsUseDefaultCredentials).Returns(false);
+
+            this.provider.Setup(p => p.ReadIntegerOption("ProxyMode", 1)).Returns((int) ProxyMode.Custom);
+            this.provider.Setup(p => p.ReadBooleanOption("IsUseDefaultCredentials", true)).Returns(false);
+            this.provider.Setup(p => p.ReadStringOption("Host", null)).Returns(HostValue);
+            this.provider.Setup(p => p.ReadIntegerOption("Port", 0)).Returns(PortValue);
+            this.provider.Setup(p => p.ReadStringOption("Login", null)).Returns(LoginValue);
+            this.provider.Setup(p => p.ReadStringOption("Password", null)).Returns(crypt.Encrypt(PasswordValue));
+            this.provider.Setup(p => p.ReadStringOption("Domain", null)).Returns(DomainValue);
+
+
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
+
+            // Act
+            model.Initialize();
+
+            // Assert
+            this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.Custom, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Host = HostValue, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Port = PortValue, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = LoginValue, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = PasswordValue, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = DomainValue, Times.Once);
         }
     }
 }
