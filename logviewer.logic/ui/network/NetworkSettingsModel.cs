@@ -9,7 +9,7 @@ namespace logviewer.logic.ui.network
     /// <summary>
     ///     Represent business logic of network settings dialog
     /// </summary>
-    public class NetworkSettingsController
+    public class NetworkSettingsModel
     {
         private readonly INetworkSettingsViewModel viewModel;
         private readonly IOptionsProvider provider;
@@ -20,7 +20,7 @@ namespace logviewer.logic.ui.network
         /// </summary>
         /// <param name="viewModel">Domain model instance</param>
         /// <param name="provider">Options provider instance</param>
-        public NetworkSettingsController(INetworkSettingsViewModel viewModel, IOptionsProvider provider)
+        public NetworkSettingsModel(INetworkSettingsViewModel viewModel, IOptionsProvider provider)
         {
             this.viewModel = viewModel;
             this.provider = provider;

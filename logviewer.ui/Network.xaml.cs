@@ -9,7 +9,7 @@ namespace logviewer.ui
     /// </summary>
     public partial class Network
     {
-        private readonly NetworkSettingsController controller;
+        private readonly NetworkSettingsModel model;
 
         public Network()
         {
@@ -17,8 +17,8 @@ namespace logviewer.ui
             var viewModel = new NetworkSettingsViewModel();
             viewModel.PasswordUpdated += this.ModelOnPasswordUpdated;
             this.DataContext = viewModel;
-            this.controller = new NetworkSettingsController(viewModel, MainViewModel.Current.SettingsProvider.OptionsProvider);
-            this.controller.Initialize();
+            this.model = new NetworkSettingsModel(viewModel, MainViewModel.Current.SettingsProvider.OptionsProvider);
+            this.model.Initialize();
         }
 
         private void ModelOnPasswordUpdated(object sender, string s)
@@ -35,13 +35,13 @@ namespace logviewer.ui
         private void OnOk(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
-            this.controller.Write(this.Password.Password);
+            this.model.Write(this.Password.Password);
             this.Close();
         }
 
         private void OnChange(object sender, KeyEventArgs e)
         {
-            this.controller.InvokeSettingsChange();
+            this.model.InvokeSettingsChange();
         }
     }
 }

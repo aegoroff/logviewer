@@ -129,7 +129,7 @@
     <Compile Include="ui\network\ManualProxyState.cs" />
     <Compile Include="ui\network\ManualProxyStateCustomUser.cs" />
     <Compile Include="ui\network\ManualProxyStateDefaultUser.cs" />
-    <Compile Include="ui\network\NetworkSettingsController.cs" />
+    <Compile Include="ui\network\NetworkSettingsModel.cs" />
     <Compile Include="storage\OptionsProvider.cs" />
     <Compile Include="ui\network\NetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\ProxyStateImplementations.cs" />

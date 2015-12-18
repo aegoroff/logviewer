@@ -9,12 +9,12 @@ using Xunit;
 
 namespace logviewer.tests
 {
-    public class TstNetworkSettingsController
+    public class TstNetworkSettingsModel
     {
         private readonly Mock<IOptionsProvider> provider;
         private readonly Mock<INetworkSettingsViewModel> viewModel;
 
-        public TstNetworkSettingsController()
+        public TstNetworkSettingsModel()
         {
             this.provider = new Mock<IOptionsProvider>();
             this.viewModel = new Mock<INetworkSettingsViewModel>();
@@ -35,10 +35,10 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.Password).Returns("p2");
             this.viewModel.SetupGet(v => v.Domain).Returns("d2");
 
-            var controller = new NetworkSettingsController(this.viewModel.Object, this.provider.Object);
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
 
             // Act
-            controller.Write(string.Empty);
+            model.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", It.IsAny<int>()), Times.Once);
@@ -71,10 +71,10 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.Password).Returns("p2");
             this.viewModel.SetupGet(v => v.Domain).Returns("d2");
 
-            var controller = new NetworkSettingsController(this.viewModel.Object, this.provider.Object);
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
 
             // Act
-            controller.Write(string.Empty);
+            model.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 2), Times.Once);
@@ -98,10 +98,10 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.IsUseManualProxy).Returns(false);
             this.viewModel.SetupGet(v => v.IsUseAutoProxy).Returns(false);
 
-            var controller = new NetworkSettingsController(this.viewModel.Object, this.provider.Object);
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
 
             // Act
-            controller.Write(string.Empty);
+            model.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 0), Times.Once);
@@ -123,10 +123,10 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.Password).Returns("p1");
             this.viewModel.SetupGet(v => v.Domain).Returns("d1");
 
-            var controller = new NetworkSettingsController(this.viewModel.Object, this.provider.Object);
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
 
             // Act
-            controller.Write("p2");
+            model.Write("p2");
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 2), Times.Once);
@@ -150,10 +150,10 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.IsNoUseProxy).Returns(false);
             this.viewModel.SetupGet(v => v.IsUseAutoProxy).Returns(true);
 
-            var controller = new NetworkSettingsController(this.viewModel.Object, this.provider.Object);
+            var model = new NetworkSettingsModel(this.viewModel.Object, this.provider.Object);
 
             // Act
-            controller.Write(string.Empty);
+            model.Write(string.Empty);
 
             // Assert
             this.provider.Verify(p => p.UpdateIntegerOption("ProxyMode", 1), Times.Once);
