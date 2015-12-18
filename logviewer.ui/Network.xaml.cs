@@ -14,10 +14,10 @@ namespace logviewer.ui
         public Network()
         {
             this.InitializeComponent();
-            var model = new NetworkSettingsModel();
-            model.PasswordUpdated += this.ModelOnPasswordUpdated;
-            this.DataContext = model;
-            this.controller = new NetworkSettingsController(model, MainViewModel.Current.SettingsProvider.OptionsProvider);
+            var viewModel = new NetworkSettingsViewModel();
+            viewModel.PasswordUpdated += this.ModelOnPasswordUpdated;
+            this.DataContext = viewModel;
+            this.controller = new NetworkSettingsController(viewModel, MainViewModel.Current.SettingsProvider.OptionsProvider);
             this.controller.Initialize();
         }
 

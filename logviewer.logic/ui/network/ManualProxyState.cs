@@ -11,33 +11,33 @@ namespace logviewer.logic.ui.network
         private static string host;
         private static int port;
 
-        protected ManualProxyState(INetworkSettingsModel model, IOptionsProvider provider) : base(model, provider)
+        protected ManualProxyState(INetworkSettingsViewModel viewModel, IOptionsProvider provider) : base(viewModel, provider)
         {
         }
 
         protected override void DoExiting(object context)
         {
-            host = this.Model.Host;
-            port = this.Model.Port;
+            host = this.ViewModel.Host;
+            port = this.ViewModel.Port;
         }
 
         protected override void Read()
         {
-            this.Model.Host = host ?? this.Provider.ReadStringOption(Constants.HostProperty);
-            this.Model.Port = port > 0 ? port : this.Provider.ReadIntegerOption(Constants.PortProperty);
+            this.ViewModel.Host = host ?? this.Provider.ReadStringOption(Constants.HostProperty);
+            this.ViewModel.Port = port > 0 ? port : this.Provider.ReadIntegerOption(Constants.PortProperty);
         }
 
         protected bool WriteProxyCommonSettings()
         {
-            if (string.IsNullOrWhiteSpace(this.Model.Host) || this.Model.Port <= 0)
+            if (string.IsNullOrWhiteSpace(this.ViewModel.Host) || this.ViewModel.Port <= 0)
             {
-                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.Model.Host, this.Model.Port);
+                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.ViewModel.Host, this.ViewModel.Port);
                 return false;
             }
 
-            this.Provider.UpdateStringOption(Constants.HostProperty, this.Model.Host);
-            this.Provider.UpdateIntegerOption(Constants.PortProperty, this.Model.Port);
-            this.Provider.UpdateBooleanOption(Constants.IsUseDefaultCredentialsProperty, this.Model.IsUseDefaultCredentials);
+            this.Provider.UpdateStringOption(Constants.HostProperty, this.ViewModel.Host);
+            this.Provider.UpdateIntegerOption(Constants.PortProperty, this.ViewModel.Port);
+            this.Provider.UpdateBooleanOption(Constants.IsUseDefaultCredentialsProperty, this.ViewModel.IsUseDefaultCredentials);
 
             return true;
         }

@@ -9,7 +9,7 @@ namespace logviewer.logic.ui.network
     /// </summary>
     internal class ManualProxyStateDefaultUser : ManualProxyState
     {
-        public ManualProxyStateDefaultUser(INetworkSettingsModel model, IOptionsProvider provider) : base(model, provider)
+        public ManualProxyStateDefaultUser(INetworkSettingsViewModel viewModel, IOptionsProvider provider) : base(viewModel, provider)
         {
         }
 
@@ -19,9 +19,9 @@ namespace logviewer.logic.ui.network
         {
             base.Read();
 
-            this.Model.UserName = string.Empty;
-            this.Model.Password = string.Empty;
-            this.Model.Domain = string.Empty;
+            this.ViewModel.UserName = string.Empty;
+            this.ViewModel.Password = string.Empty;
+            this.ViewModel.Domain = string.Empty;
         }
 
         protected override void Write()

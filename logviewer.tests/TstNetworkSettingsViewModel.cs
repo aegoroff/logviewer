@@ -11,7 +11,7 @@ using Xunit;
 
 namespace logviewer.tests
 {
-    public class TstNetworkSettingsModel
+    public class TstNetworkSettingsViewModel
     {
         private const string TestString = "str";
         private const int TestInt = 10;
@@ -21,7 +21,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { calls.Add(args.PropertyName); };
 
             // Act
@@ -36,7 +36,7 @@ namespace logviewer.tests
         public void ProxyMode_SetNone_IsNoUseProxyTrueOtherFalse()
         {
             // Arrange
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
 
             // Act
             model.ProxyMode = ProxyMode.None;
@@ -51,7 +51,7 @@ namespace logviewer.tests
         public void ProxyMode_SetAutoProxyDetection_IsUseAutoProxyTrueOtherFalse()
         {
             // Arrange
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
 
             // Act
             model.ProxyMode = ProxyMode.AutoProxyDetection;
@@ -66,7 +66,7 @@ namespace logviewer.tests
         public void ProxyMode_SetCustom_IsUseManualProxyTrueOtherFalse()
         {
             // Arrange
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
 
             // Act
             model.ProxyMode = ProxyMode.Custom;
@@ -82,7 +82,7 @@ namespace logviewer.tests
         {
             // Arrange
             var proxyMode = (ProxyMode) 10000;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
 
             // Act
@@ -98,7 +98,7 @@ namespace logviewer.tests
         {
             // Arrange
             var proxyMode = (ProxyMode) 10000;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
 
             // Act
@@ -114,7 +114,7 @@ namespace logviewer.tests
         {
             // Arrange
             var proxyMode = (ProxyMode) 10000;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
 
             // Act
@@ -133,7 +133,7 @@ namespace logviewer.tests
             // Arrange
             var proxyMode = (ProxyMode) 10000;
             string property = null;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { property = args.PropertyName; };
 
@@ -151,7 +151,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -167,7 +167,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -184,7 +184,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -201,7 +201,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -217,7 +217,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -234,7 +234,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -251,7 +251,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -267,7 +267,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -284,7 +284,7 @@ namespace logviewer.tests
         {
             // Arrange
             var count = 0;
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.ModeChanged += delegate { count++; };
 
             // Act
@@ -301,7 +301,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { calls.Add(args.PropertyName); };
 
             // Act
@@ -317,7 +317,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { calls.Add(args.PropertyName); };
 
             // Act
@@ -333,7 +333,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { calls.Add(args.PropertyName); };
 
             // Act
@@ -349,7 +349,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PasswordUpdated += delegate(object sender, string s) { calls.Add(s); };
 
             // Act
@@ -365,7 +365,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { calls.Add(args.PropertyName); };
 
             // Act
@@ -381,7 +381,7 @@ namespace logviewer.tests
         {
             // Arrange
             var calls = new List<string>();
-            var model = new NetworkSettingsModel();
+            var model = new NetworkSettingsViewModel();
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { calls.Add(args.PropertyName); };
 
             // Act
@@ -396,7 +396,7 @@ namespace logviewer.tests
         public void Proxy_ModeNone_ReturnNull()
         {
             // Arrange
-            var model = new NetworkSettingsModel { ProxyMode = ProxyMode.None };
+            var model = new NetworkSettingsViewModel { ProxyMode = ProxyMode.None };
 
             // Act
             var proxy = model.Proxy;
@@ -409,7 +409,7 @@ namespace logviewer.tests
         public void Proxy_ModeInvalid_ReturnNull()
         {
             // Arrange
-            var model = new NetworkSettingsModel { ProxyMode = (ProxyMode)1000 };
+            var model = new NetworkSettingsViewModel { ProxyMode = (ProxyMode)1000 };
 
             // Act
             var proxy = model.Proxy;
@@ -422,7 +422,7 @@ namespace logviewer.tests
         public void Proxy_ModeAuto_ReturnSystemWithDefaultCredentials()
         {
             // Arrange
-            var model = new NetworkSettingsModel { ProxyMode = ProxyMode.AutoProxyDetection };
+            var model = new NetworkSettingsViewModel { ProxyMode = ProxyMode.AutoProxyDetection };
 
             // Act
             var proxy = model.Proxy;
@@ -438,7 +438,7 @@ namespace logviewer.tests
             // Arrange
             const string host = "localhost";
             const int port = 8080;
-            var model = new NetworkSettingsModel
+            var model = new NetworkSettingsViewModel
             {
                 ProxyMode = ProxyMode.Custom,
                 Host = host,
@@ -464,7 +464,7 @@ namespace logviewer.tests
             const string password = "123";
             const string domain = "domain";
             const int port = 8080;
-            var model = new NetworkSettingsModel
+            var model = new NetworkSettingsViewModel
             {
                 ProxyMode = ProxyMode.Custom,
                 Host = host,

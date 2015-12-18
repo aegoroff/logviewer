@@ -6,7 +6,7 @@ using System;
 
 namespace logviewer.logic.ui.network
 {
-    public interface INetworkSettingsModel
+    public interface INetworkSettingsViewModel
     {
         void Initialize(ProxyMode mode, bool useDefaultCredentials);
         ProxyMode ProxyMode { get; set; }

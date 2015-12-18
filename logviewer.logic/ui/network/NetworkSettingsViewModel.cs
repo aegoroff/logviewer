@@ -10,7 +10,7 @@ using logviewer.logic.Annotations;
 
 namespace logviewer.logic.ui.network
 {
-    public sealed class NetworkSettingsModel : INetworkSettingsModel, INotifyPropertyChanged
+    public sealed class NetworkSettingsViewModel : INetworkSettingsViewModel, INotifyPropertyChanged
     {
         private string domain;
         private string host;

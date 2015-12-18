@@ -16,7 +16,7 @@ namespace logviewer.logic.ui.network
         private static string password;
         private static string domain;
 
-        public ManualProxyStateCustomUser(INetworkSettingsModel model, IOptionsProvider provider) : base(model, provider)
+        public ManualProxyStateCustomUser(INetworkSettingsViewModel viewModel, IOptionsProvider provider) : base(viewModel, provider)
         {
             var privateKey = this.Provider.ReadStringOption(Constants.PrivateKey);
             var publicKey = this.Provider.ReadStringOption(Constants.PublicKey);
@@ -41,9 +41,9 @@ namespace logviewer.logic.ui.network
         {
             base.DoExiting(context);
 
-            login = this.Model.UserName;
-            password = this.crypt.Encrypt(this.Model.Password);
-            domain = this.Model.Domain;
+            login = this.ViewModel.UserName;
+            password = this.crypt.Encrypt(this.ViewModel.Password);
+            domain = this.ViewModel.Domain;
         }
 
         protected override ProxyMode Mode => ProxyMode.Custom;
@@ -52,9 +52,9 @@ namespace logviewer.logic.ui.network
         {
             base.Read();
 
-            this.Model.UserName = login ?? this.Provider.ReadStringOption(Constants.LoginProperty);
-            this.Model.Password = this.crypt.Decrypt(password ?? this.Provider.ReadStringOption(Constants.PasswordProperty));
-            this.Model.Domain = domain ?? this.Provider.ReadStringOption(Constants.DomainProperty);
+            this.ViewModel.UserName = login ?? this.Provider.ReadStringOption(Constants.LoginProperty);
+            this.ViewModel.Password = this.crypt.Decrypt(password ?? this.Provider.ReadStringOption(Constants.PasswordProperty));
+            this.ViewModel.Domain = domain ?? this.Provider.ReadStringOption(Constants.DomainProperty);
         }
 
         protected override void Write()
@@ -64,12 +64,12 @@ namespace logviewer.logic.ui.network
                 return;
             }
 
-            this.Provider.UpdateStringOption(Constants.LoginProperty, this.Model.UserName);
+            this.Provider.UpdateStringOption(Constants.LoginProperty, this.ViewModel.UserName);
 
-            var encrypted = this.crypt.Encrypt(this.Model.Password);
+            var encrypted = this.crypt.Encrypt(this.ViewModel.Password);
             this.Provider.UpdateStringOption(Constants.PasswordProperty, encrypted);
 
-            this.Provider.UpdateStringOption(Constants.DomainProperty, this.Model.Domain);
+            this.Provider.UpdateStringOption(Constants.DomainProperty, this.ViewModel.Domain);
         }
     }
 }

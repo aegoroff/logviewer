@@ -28,7 +28,7 @@ namespace logviewer.ui
 #endif
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture;
-            WebRequest.DefaultWebProxy = new NetworkSettingsModel().Proxy;
+            WebRequest.DefaultWebProxy = new NetworkSettingsViewModel().Proxy;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

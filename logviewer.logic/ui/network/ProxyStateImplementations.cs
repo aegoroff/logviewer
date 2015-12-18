@@ -11,13 +11,13 @@ namespace logviewer.logic.ui.network
     /// </summary>
     internal abstract class ProxyState : SolidState
     {
-        protected ProxyState(INetworkSettingsModel model, IOptionsProvider provider)
+        protected ProxyState(INetworkSettingsViewModel viewModel, IOptionsProvider provider)
         {
-            this.Model = model;
+            this.ViewModel = viewModel;
             this.Provider = provider;
         }
 
-        protected INetworkSettingsModel Model { get; }
+        protected INetworkSettingsViewModel ViewModel { get; }
 
         protected IOptionsProvider Provider { get; }
 
@@ -28,7 +28,7 @@ namespace logviewer.logic.ui.network
             var mode = (StateMachineMode) context;
             if (mode == StateMachineMode.Read)
             {
-                this.Model.ProxyMode = this.Mode;
+                this.ViewModel.ProxyMode = this.Mode;
                 this.Read();
             }
             else
@@ -40,12 +40,12 @@ namespace logviewer.logic.ui.network
 
         protected virtual void Read()
         {
-            this.Model.Host = string.Empty;
-            this.Model.Port = 0;
+            this.ViewModel.Host = string.Empty;
+            this.ViewModel.Port = 0;
 
-            this.Model.UserName = string.Empty;
-            this.Model.Password = string.Empty;
-            this.Model.Domain = string.Empty;
+            this.ViewModel.UserName = string.Empty;
+            this.ViewModel.Password = string.Empty;
+            this.ViewModel.Domain = string.Empty;
         }
 
         protected virtual void Write()
@@ -58,7 +58,7 @@ namespace logviewer.logic.ui.network
     /// </summary>
     internal class AutoProxyState : ProxyState
     {
-        public AutoProxyState(INetworkSettingsModel model, IOptionsProvider provider) : base(model, provider)
+        public AutoProxyState(INetworkSettingsViewModel viewModel, IOptionsProvider provider) : base(viewModel, provider)
         {
         }
 
@@ -70,7 +70,7 @@ namespace logviewer.logic.ui.network
     /// </summary>
     internal class NoProxyState : ProxyState
     {
-        public NoProxyState(INetworkSettingsModel model, IOptionsProvider provider) : base(model, provider)
+        public NoProxyState(INetworkSettingsViewModel viewModel, IOptionsProvider provider) : base(viewModel, provider)
         {
         }
 

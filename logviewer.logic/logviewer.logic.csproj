@@ -125,13 +125,13 @@
     <Compile Include="support\FixedSizeDictionary.cs" />
     <Compile Include="models\MessageMatcher.cs" />
     <Compile Include="ui\network\Constants.cs" />
-    <Compile Include="ui\network\INetworkSettingsModel.cs" />
+    <Compile Include="ui\network\INetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\ManualProxyState.cs" />
     <Compile Include="ui\network\ManualProxyStateCustomUser.cs" />
     <Compile Include="ui\network\ManualProxyStateDefaultUser.cs" />
     <Compile Include="ui\network\NetworkSettingsController.cs" />
     <Compile Include="storage\OptionsProvider.cs" />
-    <Compile Include="ui\network\NetworkSettingsModel.cs" />
+    <Compile Include="ui\network\NetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\ProxyStateImplementations.cs" />
     <Compile Include="ui\network\StateMachine.cs" />
     <Compile Include="ui\network\NetworkStateResolver.cs" />
