@@ -21,9 +21,13 @@ namespace logviewer.tests
         [InlineData(-1, 0, 100, 0)]
         [InlineData(100, 0, 100, 100)]
         [InlineData(101, 0, 100, 100)]
-        public void TestSafePercent(int value, int min, int max, int result)
+        public void ToSafePercent_InRangeSpecified_ResultAsExpected(int value, int min, int max, int result)
         {
-            value.ToSafePercent(min, max).Should().Be(result);
+            // Act
+            var percent = value.ToSafePercent(min, max);
+
+            // Assert
+            percent.Should().Be(result);
         }
 
         [Theory]
@@ -65,9 +69,13 @@ namespace logviewer.tests
         [InlineData(-15L, -100L, 0)]
         [InlineData(-15L, 100L, 0)]
         [InlineData(5L, 0L, 0)]
-        public void TestPercentOf(long value, long total, int percent)
+        public void PercentOf_LongType_CalculatedCorrectly(long value, long total, int percent)
         {
-            value.PercentOf(total).Should().Be(percent);
+            // Act
+            var result = value.PercentOf(total);
+
+            // Assert
+            result.Should().Be(percent);
         }
 
         [Fact]
