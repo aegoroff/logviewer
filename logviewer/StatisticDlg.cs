@@ -76,7 +76,7 @@ namespace logviewer
                 var items =
                     byLevel.Select(
                         (value, i) =>
-                            new ListViewItem(new[] { this.levelDescriptions[i], value.ToString(value.FormatString(), CultureInfo.CurrentCulture) }))
+                            new ListViewItem(new[] { this.levelDescriptions[i], value.ToString("N0", CultureInfo.CurrentCulture) }))
                         .ToList();
 
                 var sizeItem = new ListViewItem(new[] { Resources.Size, this.size });
@@ -92,7 +92,7 @@ namespace logviewer
                 }
 
                 var totalItem =
-                    new ListViewItem(new[] { Resources.TotalMessages, total.ToString(total.FormatString(), CultureInfo.CurrentCulture) });
+                    new ListViewItem(new[] { Resources.TotalMessages, total.ToString("N0", CultureInfo.CurrentCulture) });
 
                 items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem, encodingItem, databaseSize });
 

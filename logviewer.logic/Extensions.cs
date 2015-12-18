@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Humanizer;
@@ -57,29 +56,6 @@ namespace logviewer.logic
             }
         }
 
-        public static string FormatString(this ulong value)
-        {
-            if (value == 0)
-            {
-                return string.Empty;
-            }
-            Func<ulong, int> count = null;
-            count = num => (num /= 10) > 0 ? 1 + count(num) : 1;
-
-            var digits = count(value);
-
-            var builder = new StringBuilder();
-            for (var i = digits; i > 0; i--)
-            {
-                if (i % 3 == 0 && i < digits)
-                {
-                    builder.Append(' ');
-                }
-                builder.Append('#');
-            }
-            return builder.ToString();
-        }
-
         public static int ToSafePercent(this int value, int min, int max)
         {
             if (value > max)
@@ -102,7 +78,7 @@ namespace logviewer.logic
         
         }
 
-        private const string BigFileFormat = "{0:F2} {1} ({2} {3})";
+        private const string BytesTrailerFileFormat = " ({0} {1})";
         private const string BigFileFormatNoBytes = "{0:F2} {1}";
         private const string SmallFileFormat = "{0} {1}";
 
@@ -123,13 +99,15 @@ namespace logviewer.logic
                 return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, fileSize.Bytes,
                     fileSize.Bytes.BytesToString());
             }
+            var noBytes = string.Format(CultureInfo.CurrentCulture,
+                    BigFileFormatNoBytes,
+                    fileSize.Value,
+                    sizes[(int)fileSize.Unit]);
             if (fileSize.BigWithoutBytes)
             {
-                return string.Format(CultureInfo.CurrentCulture, BigFileFormatNoBytes, fileSize.Value, sizes[(int)fileSize.Unit]);
+                return noBytes;
             }
-            return string.Format(CultureInfo.CurrentCulture, BigFileFormat, fileSize.Value,
-                sizes[(int)fileSize.Unit], fileSize.Bytes.ToString(fileSize.Bytes.FormatString(), CultureInfo.CurrentCulture),
-                fileSize.Bytes.BytesToString());
+            return noBytes + $" ({fileSize.Bytes.ToString("N0", CultureInfo.CurrentCulture)} {fileSize.Bytes.BytesToString()})";
         }
 
         private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary

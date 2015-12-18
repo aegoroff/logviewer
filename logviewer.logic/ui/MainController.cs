@@ -658,9 +658,7 @@ namespace logviewer.logic.ui
 
         public void ShowLogPageStatistic()
         {
-            var formatTotal = ((ulong)this.TotalMessages).FormatString();
-            var formatFiltered = ((ulong)this.totalFiltered).FormatString();
-            var total = this.TotalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+            var total = this.TotalMessages.ToString("N0", CultureInfo.CurrentCulture);
 
             this.view.LogInfo = string.Format(Resources.LogInfoFormatString,
                 this.DisplayedMessages,
@@ -671,7 +669,7 @@ namespace logviewer.logic.ui
                 this.CountMessages(LogLevel.Warn),
                 this.CountMessages(LogLevel.Error),
                 this.CountMessages(LogLevel.Fatal),
-                this.totalFiltered.ToString(formatFiltered, CultureInfo.CurrentCulture)
+                this.totalFiltered.ToString("N0", CultureInfo.CurrentCulture)
                 );
         }
 
@@ -951,8 +949,7 @@ namespace logviewer.logic.ui
             this.RunOnGuiThread(delegate
             {
                 this.view.SetProgress((LoadProgress)progress);
-                var formatTotal = ((ulong)this.totalMessages).FormatString();
-                var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+                var total = this.totalMessages.ToString("N0", CultureInfo.CurrentCulture);
                 this.view.LogInfo = string.Format(Resources.LogInfoFormatString, 0, total, 0, 0, 0, 0, 0, 0, 0);
             });
         }

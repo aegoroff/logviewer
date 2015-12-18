@@ -504,7 +504,7 @@ namespace logviewer.logic.ui
             this.viewModel.Provider.Store = this.store;
             this.viewModel.Datasource.Clear();
 
-            this.viewModel.ToDisplayMessages = ToHumanReadableString((ulong)this.viewModel.Provider.FetchCount());
+            this.viewModel.ToDisplayMessages = this.viewModel.Provider.FetchCount().ToString("N0", CultureInfo.CurrentCulture);
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
                 this.CountMessages(LogLevel.Trace),
                 this.CountMessages(LogLevel.Debug),
@@ -524,8 +524,7 @@ namespace logviewer.logic.ui
 
         private static string ToHumanReadableString(ulong value)
         {
-            var formatTotal = value.FormatString();
-            return value.ToString(formatTotal, CultureInfo.CurrentCulture);
+            return value.ToString("N0", CultureInfo.CurrentCulture);
         }
 
         private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -535,8 +534,7 @@ namespace logviewer.logic.ui
 
         private void OnLogReadProgress(object progress)
         {
-            var formatTotal = ((ulong) this.totalMessages).FormatString();
-            var total = this.totalMessages.ToString(formatTotal, CultureInfo.CurrentCulture);
+            var total = this.totalMessages.ToString("N0", CultureInfo.CurrentCulture);
 
             var logProgress = (LoadProgress) progress;
             this.viewModel.LogProgress = logProgress.Percent;
