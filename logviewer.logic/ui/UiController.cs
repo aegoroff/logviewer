@@ -346,7 +346,7 @@ namespace logviewer.logic.ui
             }
 
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
-            this.ChangeTotalOnUi("0");
+            this.ChangeTotalOnUi("0"); // Not L10N
 
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
             if (this.store != null && !append)
@@ -480,8 +480,8 @@ namespace logviewer.logic.ui
             }
             if (!cached)
             {
-                this.viewModel.From = this.SelectDateUsingFunc("min");
-                this.viewModel.To = this.SelectDateUsingFunc("max");
+                this.viewModel.From = this.SelectDateUsingFunc("min"); // Not L10N
+                this.viewModel.To = this.SelectDateUsingFunc("max"); // Not L10N
             }
 
             this.viewModel.Provider.FilterModel = new MessageFilterModel
@@ -504,7 +504,7 @@ namespace logviewer.logic.ui
             this.viewModel.Provider.Store = this.store;
             this.viewModel.Datasource.Clear();
 
-            this.viewModel.ToDisplayMessages = this.viewModel.Provider.FetchCount().ToString("N0", CultureInfo.CurrentCulture);
+            this.viewModel.ToDisplayMessages = this.viewModel.Provider.FetchCount().ToString("N0", CultureInfo.CurrentCulture); // Not L10N
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
                 this.CountMessages(LogLevel.Trace),
                 this.CountMessages(LogLevel.Debug),
@@ -524,7 +524,7 @@ namespace logviewer.logic.ui
 
         private static string ToHumanReadableString(ulong value)
         {
-            return value.ToString("N0", CultureInfo.CurrentCulture);
+            return value.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
         }
 
         private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -534,7 +534,7 @@ namespace logviewer.logic.ui
 
         private void OnLogReadProgress(object progress)
         {
-            var total = this.totalMessages.ToString("N0", CultureInfo.CurrentCulture);
+            var total = this.totalMessages.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
 
             var logProgress = (LoadProgress) progress;
             this.viewModel.LogProgress = logProgress.Percent;
@@ -545,7 +545,7 @@ namespace logviewer.logic.ui
         private void ChangeTotalOnUi(string total)
         {
             this.viewModel.TotalMessages = total;
-            this.viewModel.ToDisplayMessages = "0";
+            this.viewModel.ToDisplayMessages = "0"; // Not L10N
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
         }
 

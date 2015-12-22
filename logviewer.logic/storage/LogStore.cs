@@ -79,8 +79,8 @@ namespace logviewer.logic.storage
         
         private string CreateAdditionalColumnsList(string prefix = null)
         {
-            var colums = string.Join(",", this.ReadAdditionalColumns(s => prefix + s));
-            return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
+            var colums = string.Join(",", this.ReadAdditionalColumns(s => prefix + s)); // Not L10N
+            return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums; // Not L10N
         }
 
 
@@ -107,8 +107,8 @@ namespace logviewer.logic.storage
 
             var pages = Math.Min(sqliteAvailablePages, dbSize / PageSize + 1);
 
-            var colums = string.Join(",", this.CreateAdditionalColumns());
-            var additionalCreate = string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums;
+            var colums = string.Join(",", this.CreateAdditionalColumns()); // Not L10N
+            var additionalCreate = string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums; // Not L10N
 
             var mmap = $@"PRAGMA mmap_size={dbSize};";
             var cache = $@"PRAGMA cache_size = {pages};";
@@ -129,7 +129,7 @@ namespace logviewer.logic.storage
                 this.propertyTypesCache.Add(column, this.DefinePropertyType(column));
             }
             this.insertPrefix = $"INSERT INTO Log(Ix, Header, Body{this.CreateAdditionalColumnsList()}) VALUES (";
-            this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})";
+            this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})"; // Not L10N
         }
 
         #endregion
@@ -172,19 +172,19 @@ namespace logviewer.logic.storage
             {
                 try
                 {
-                    command.AddParameter("@Header", message.Header);
-                    command.AddParameter("@Body", message.Body);
+                    command.AddParameter("@Header", message.Header); // Not L10N
+                    command.AddParameter("@Body", message.Body); // Not L10N
                     // ReSharper disable once ForCanBeConvertedToForeach
                     for (var i = 0; i < this.additionalColumns.Length; i++)
                     {
                         var column = this.additionalColumns[i];
                         if (this.propertyTypesCache[column] == PropertyType.Integer)
                         {
-                            command.AddParameter("@" + column, message.IntegerProperty(column));
+                            command.AddParameter("@" + column, message.IntegerProperty(column)); // Not L10N
                         }
                         else
                         {
-                            command.AddParameter("@" + column, message.StringProperty(column));
+                            command.AddParameter("@" + column, message.StringProperty(column)); // Not L10N
                         }
                     }
                     command.ExecuteNonQuery();
@@ -209,7 +209,7 @@ namespace logviewer.logic.storage
             string filter = null,
             bool useRegexp = true)
         {
-            var order = reverse ? "DESC" : "ASC";
+            var order = reverse ? "DESC" : "ASC"; // Not L10N
 
             var where = this.Where(min, max, filter, useRegexp, start, finish);
 
@@ -307,7 +307,7 @@ namespace logviewer.logic.storage
             {
                 return string.Empty;
             }
-            return "WHERE " + string.Join(" AND ", notEmpty);
+            return "WHERE " + string.Join(" AND ", notEmpty); // Not L10N
         }
 
         private string LevelClause(LogLevel min, LogLevel max)
@@ -319,13 +319,13 @@ namespace logviewer.logic.storage
             var clause = new List<string>();
             if (min != LogLevel.Trace)
             {
-                clause.Add(this.logLevelProperty + " >= @Min");
+                clause.Add(this.logLevelProperty + " >= @Min"); // Not L10N
             }
             if (max != LogLevel.Fatal)
             {
-                clause.Add(this.logLevelProperty + " <= @Max");
+                clause.Add(this.logLevelProperty + " <= @Max"); // Not L10N
             }
-            return string.Join(" AND ", clause);
+            return string.Join(" AND ", clause); // Not L10N
         }
 
         private string DateClause(DateTime start, DateTime finish)
@@ -337,51 +337,51 @@ namespace logviewer.logic.storage
             var clause = new List<string>();
             if (start != DateTime.MinValue)
             {
-                clause.Add(this.dateTimeProperty + " >= @Start");
+                clause.Add(this.dateTimeProperty + " >= @Start"); // Not L10N
             }
             if (finish != DateTime.MaxValue)
             {
-                clause.Add(this.dateTimeProperty + " <= @Finish");
+                clause.Add(this.dateTimeProperty + " <= @Finish"); // Not L10N
             }
-            return string.Join(" AND ", clause);
+            return string.Join(" AND ", clause); // Not L10N
         }
 
         private static string FilterClause(string filter, bool useRegexp)
         {
-            var comparer = useRegexp ? "REGEXP" : "LIKE";
+            var comparer = useRegexp ? "REGEXP" : "LIKE"; // Not L10N
             var func = $"(Header || Body) {comparer} @Filter";
             return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
         }
 
         private string ExcludeNoLevelClause(bool excludeNoLevel)
         {
-            return excludeNoLevel && this.hasLogLevelProperty ? this.logLevelProperty + " > " + (int)LogLevel.None : string.Empty;
+            return excludeNoLevel && this.hasLogLevelProperty ? this.logLevelProperty + " > " + (int)LogLevel.None : string.Empty; // Not L10N
         }
 
         private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish)
         {
             if (min != LogLevel.Trace && this.hasLogLevelProperty)
             {
-                command.AddParameter("@Min", (int) min);
+                command.AddParameter("@Min", (int) min); // Not L10N
             }
             if (max != LogLevel.Fatal && this.hasLogLevelProperty)
             {
-                command.AddParameter("@Max", (int) max);
+                command.AddParameter("@Max", (int) max); // Not L10N
             }
             if (start != DateTime.MinValue && this.hasDateTimeProperty)
             {
-                command.AddParameter("@Start", start.ToFileTimeUtc());
+                command.AddParameter("@Start", start.ToFileTimeUtc()); // Not L10N
             }
             if (finish != DateTime.MaxValue && this.hasDateTimeProperty)
             {
-                command.AddParameter("@Finish", finish.ToFileTimeUtc());
+                command.AddParameter("@Finish", finish.ToFileTimeUtc()); // Not L10N
             }
             if (string.IsNullOrWhiteSpace(filter))
             {
                 return;
             }
-            var f = useRegexp ? filter : "%" + filter.Trim('%') + "%";
-            command.AddParameter("@Filter", f);
+            var f = useRegexp ? filter : "%" + filter.Trim('%') + "%"; // Not L10N
+            command.AddParameter("@Filter", f); // Not L10N
         }
 
         #endregion

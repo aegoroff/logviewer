@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -20,21 +19,6 @@ namespace logviewer.engine
         private const int DefaultPropertyDicitionaryCapacity = 5;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private static string[] formats =
-                    {
-                        "yyyy-MM-dd HH:mm:ss,FFF",
-                        "yyyy-MM-dd HH:mm:ss.FFF",
-                        "yyyy-MM-dd HH:mm:ss,FFFK",
-                        "yyyy-MM-dd HH:mm:ss.FFFK",
-                        "yyyy-MM-dd HH:mm", 
-                        "yyyy-MM-dd HH:mm:ss", 
-                        "yyyy-MM-ddTHH:mm:ss,FFFK",
-                        "yyyy-MM-ddTHH:mm:ss.FFFK",
-                        "dd/MMM/yyyy:HH:mm:ssK",
-                        "dd/MMM/yyyy:HH:mm:ss K",
-                        "dd/MMM/yyyy:HH:mm:sszzz",
-                        "dd/MMM/yyyy:HH:mm:ss zzz"
-                    };
 
         /// <summary>
         /// Initializes new message instance using header and body specified
@@ -82,6 +66,24 @@ namespace logviewer.engine
         public bool HasHeader => this.rawProperties != null;
 
         /// <summary>
+        /// All supportable dates formats to parse
+        /// </summary>
+        public static string[] Formats { get; set; } = {
+            @"yyyy-MM-dd HH:mm:ss,FFF",
+            @"yyyy-MM-dd HH:mm:ss.FFF",
+            @"yyyy-MM-dd HH:mm:ss,FFFK",
+            @"yyyy-MM-dd HH:mm:ss.FFFK",
+            @"yyyy-MM-dd HH:mm",
+            @"yyyy-MM-dd HH:mm:ss",
+            @"yyyy-MM-ddTHH:mm:ss,FFFK",
+            @"yyyy-MM-ddTHH:mm:ss.FFFK",
+            @"dd/MMM/yyyy:HH:mm:ssK",
+            @"dd/MMM/yyyy:HH:mm:ss K",
+            @"dd/MMM/yyyy:HH:mm:sszzz",
+            @"dd/MMM/yyyy:HH:mm:ss zzz"
+        };
+
+        /// <summary>
         /// Add line to the message (the first line will be header the others will be considered as body)
         /// </summary>
         /// <param name="line">Line to add</param>
@@ -112,33 +114,33 @@ namespace logviewer.engine
         {
             switch (s.ToUpperInvariant())
             {
-                case "TRACE":
+                case @"TRACE":
                     level = LogLevel.Trace;
                     return true;
-                case "DEBUG":
-                case "DEBUGGING":
+                case @"DEBUG":
+                case @"DEBUGGING":
                     level = LogLevel.Debug;
                     return true;
-                case "INFO":
-                case "NOTICE":
-                case "INFORMATIONAL":
+                case @"INFO":
+                case @"NOTICE":
+                case @"INFORMATIONAL":
                     level = LogLevel.Info;
                     return true;
-                case "WARN":
-                case "WARNING":
+                case @"WARN":
+                case @"WARNING":
                     level = LogLevel.Warn;
                     return true;
-                case "ERROR":
-                case "ERR":
-                case "CRITICAL":
+                case @"ERROR":
+                case @"ERR":
+                case @"CRITICAL":
                     level = LogLevel.Error;
                     return true;
-                case "FATAL":
-                case "SEVERE":
-                case "EMERG":
-                case "EMERGENCY":
-                case "PANIC":
-                case "ALERT":
+                case @"FATAL":
+                case @"SEVERE":
+                case @"EMERG":
+                case @"EMERGENCY":
+                case @"PANIC":
+                case @"ALERT":
                     level = LogLevel.Fatal;
                     return true;
                 default:
@@ -148,7 +150,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
+        private void ParseLogLevel(string dataToParse, ICollection<GrokRule> rules, string property)
         {
             LogLevel level;
             var result = rules.Count > 1
@@ -164,7 +166,7 @@ namespace logviewer.engine
         private void ParseDateTime(string dataToParse, string property)
         {
             DateTime r;
-            var success = DateTime.TryParseExact(dataToParse, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+            var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
             if (!success)
             {
                 success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
@@ -199,13 +201,30 @@ namespace logviewer.engine
             {
                 return;
             }
-            foreach (var property in this.rawProperties)
+
+            // Ugly but allows to avoid on allocation per call
+            // This code is rather performance critical
+            var enumerator = this.rawProperties.GetEnumerator();
+            while (enumerator.MoveNext())
             {
+                var property = enumerator.Current;
                 if (!schema.ContainsKey(property.Key))
                 {
                     continue;
                 }
-                var semanticProperty = schema.First(p => p.Key == property.Key).Key;
+                var semanticProperty = default(SemanticProperty);
+
+                var schemaEnumarator = schema.GetEnumerator();
+                while (schemaEnumarator.MoveNext())
+                {
+                    if (schemaEnumarator.Current.Key != property.Key)
+                    {
+                        continue;
+                    }
+                    semanticProperty = schemaEnumarator.Current.Key;
+                    break;
+                }
+
                 var rules = schema[property.Key];
                 var matchedData = property.Value;
 
@@ -231,15 +250,29 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool TryRunSemanticAction(string dataToParse, ISet<GrokRule> rules, out LogLevel level)
+        private static bool TryRunSemanticAction(string dataToParse, IEnumerable<GrokRule> rules, out LogLevel level)
         {
-            foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
+            var enumerator = rules.GetEnumerator();
+            while (enumerator.MoveNext())
             {
+                var rule = enumerator.Current;
+                if (!dataToParse.Contains(rule.Pattern))
+                {
+                    continue;
+                }
                 level = rule.Level;
                 return true;
             }
-            var defaultRule = rules.First(rule => rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase));
-            level = defaultRule.Level;
+            enumerator.Reset();
+            level = LogLevel.None;
+            while (enumerator.MoveNext())
+            {
+                var rule = enumerator.Current;
+                if (rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase))
+                {
+                    level = rule.Level;
+                }
+            }
             return true;
         }
 
