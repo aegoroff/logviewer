@@ -110,8 +110,8 @@ namespace logviewer.logic.storage
 
             string updateCmd = $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}";
 
-            var query = $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}";
-            var exist = this.ExecuteScalar<long>(query,
+            var selectQuery = $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}";
+            var exist = this.ExecuteScalar<long>(selectQuery,
                 command => command.AddParameter(OptionParameter, option)) > 0;
 
 
@@ -121,7 +121,9 @@ namespace logviewer.logic.storage
                 command.AddParameter(ValueParameter, value);
             };
 
-            this.ExecuteNonQuery(string.Format(exist ? updateCmd : insertCmd, table), action);
+            var format = exist ? updateCmd : insertCmd;
+            var updateQuery = string.Format(format, table);
+            this.ExecuteNonQuery(updateQuery, action);
         }
     }
 }
