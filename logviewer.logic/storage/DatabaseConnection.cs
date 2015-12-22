@@ -122,11 +122,11 @@ namespace logviewer.logic.storage
             }
         }
 
-        internal void ExecuteReader(Action<IDataReader> onRead, string query, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
+        internal void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
         {
             this.RunSqlQuery(delegate(IDbCommand command)
             {
-                beforeRead.Do(action => action(command));
+                beforeRead?.Invoke(command);
                 var rdr = command.ExecuteReader();
                 using (rdr)
                 {
@@ -149,7 +149,7 @@ namespace logviewer.logic.storage
             var result = default(T);
             this.RunSqlQuery(delegate(IDbCommand cmd)
             {
-                actionBeforeExecute.Do(action => action(cmd));
+                actionBeforeExecute?.Invoke(cmd);
                 result = (T)cmd.ExecuteScalar();
             }, query);
             return result;

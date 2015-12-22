@@ -91,7 +91,7 @@ namespace logviewer.logic.storage
             };
 
             Action<IDbCommand> beforeRead = command => command.AddParameter(OptionParameter, option);
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(cmd, table), beforeRead);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(string.Format(cmd, table), onRead, beforeRead);
             this.ExecuteQuery(action);
 
 
@@ -106,14 +106,9 @@ namespace logviewer.logic.storage
 
         private void UpdateOption<T>(string table, string option, T value)
         {
-            string insertCmd = $"INSERT INTO {{0}}(Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
-
-            string updateCmd = $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}";
-
-            var selectQuery = $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}";
-            var exist = this.ExecuteScalar<long>(selectQuery,
+            var exist = this.ExecuteScalar<long>(
+                $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}",
                 command => command.AddParameter(OptionParameter, option)) > 0;
-
 
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
@@ -121,7 +116,9 @@ namespace logviewer.logic.storage
                 command.AddParameter(ValueParameter, value);
             };
 
-            var format = exist ? updateCmd : insertCmd;
+            var format = exist 
+                ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
+                : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
             var updateQuery = string.Format(format, table);
             this.ExecuteNonQuery(updateQuery, action);
         }

@@ -255,7 +255,7 @@ namespace logviewer.logic.storage
             var result = new List<string>();
 
             Action<IDataReader> onRead = rdr => result.Add(rdr[0] as string);
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(cmd, onRead);
 
             this.optionsProvider.ExecuteQuery(action);
 
@@ -277,7 +277,7 @@ namespace logviewer.logic.storage
             var result = new List<ParsingTemplate>();
 
             Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string, StartMessage = rdr[2] as string });
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, cmd);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(cmd, onRead);
 
             this.optionsProvider.ExecuteQuery(action);
 
@@ -318,7 +318,7 @@ namespace logviewer.logic.storage
                     WHERE
                         Ix = @Ix
                     ";
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, query, beforeRead);
+            Action<DatabaseConnection> action = connection => connection.ExecuteReader(query, onRead, beforeRead);
             this.optionsProvider.ExecuteQuery(action);
 
             return result;
@@ -388,7 +388,7 @@ namespace logviewer.logic.storage
                 try
                 {
                     connection.ExecuteNonQuery(query);
-                    connection.ExecuteReader(onRead, selectIndexesCmd, beforeRead);
+                    connection.ExecuteReader(selectIndexesCmd, onRead, beforeRead);
 
                     foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>)delegate(IDbCommand command)
                     {

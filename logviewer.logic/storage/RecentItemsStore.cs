@@ -87,8 +87,7 @@ namespace logviewer.logic.storage
         public IEnumerable<string> ReadItems()
         {
             var result = new List<string>(this.maxItems);
-            this.connection.ExecuteReader(reader => result.Add(reader[0] as string),
-                $"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC");
+            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC", reader => result.Add(reader[0] as string));
             return result;
         }
         
@@ -99,7 +98,7 @@ namespace logviewer.logic.storage
             {
                 result = reader[0] as string;
             };
-            this.connection.ExecuteReader(onRead, $"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1");
+            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1", onRead);
             return result;
         }
 

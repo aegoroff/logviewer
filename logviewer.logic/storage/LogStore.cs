@@ -235,7 +235,7 @@ namespace logviewer.logic.storage
 
                 onReadMessage(msg);
             };
-            this.connection.ExecuteReader(onRead, query, beforeRead, notCancelled);
+            this.connection.ExecuteReader(query, onRead, beforeRead, notCancelled);
         }
 
         private PropertyType DefinePropertyType(string param)
