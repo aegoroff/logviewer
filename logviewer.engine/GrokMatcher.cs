@@ -109,8 +109,20 @@ namespace logviewer.engine
         /// <returns>Metadata dictionary or null</returns>
         public IDictionary<string, string> Parse(string s)
         {
+            // This implementation so verbose to avoid extra allocations using foreach and delegates if using LINQ or system helpers
             var match = this.regex.Match(s);
-            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
+            if (!match.Success)
+            {
+                return null;
+            }
+            var enumerator = this.MessageSchema.GetEnumerator();
+            var result = new Dictionary<string, string>(this.MessageSchema.Count);
+            while (enumerator.MoveNext())
+            {
+                var semantic = enumerator.Current;
+                result.Add(semantic.Property, match.Groups[semantic.Property].Value);
+            }
+            return result;
         }
     }
 }
