@@ -10,6 +10,8 @@ namespace logviewer.logic.storage
 {
     public sealed class RecentItemsStore : IDisposable
     {
+        private const string ItemParameter = @"@Item";
+        private const string UsedAtParameter = @"@UsedAt";
         private readonly string tableName;
         private readonly int maxItems;
         private readonly DatabaseConnection connection;
@@ -34,21 +36,21 @@ namespace logviewer.logic.storage
 
         public void Add(string item)
         {
-            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = @Item", cmd => cmd.AddParameter("@Item", item));
+            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = {ItemParameter}", cmd => cmd.AddParameter(ItemParameter, item));
 
             Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
             {
-                command.AddParameter("@Item", item);
-                command.AddParameter("@UsedAt", DateTime.Now.Ticks);
+                command.AddParameter(ItemParameter, item);
+                command.AddParameter(UsedAtParameter, DateTime.Now.Ticks);
             });
 
             if (result > 0)
             {
-                query($"Update {this.tableName} SET UsedAt = @UsedAt WHERE Item = @Item");
+                query($"Update {this.tableName} SET UsedAt = {UsedAtParameter} WHERE Item = {ItemParameter}");
                 return;
             }
 
-            query($@"INSERT INTO {this.tableName}(Item, UsedAt) VALUES (@Item, @UsedAt)");
+            query($@"INSERT INTO {this.tableName}(Item, UsedAt) VALUES ({ItemParameter}, {UsedAtParameter})");
             
             result = this.connection.ExecuteScalar<long>($"SELECT count(1) FROM {this.tableName}");
 
@@ -67,7 +69,7 @@ namespace logviewer.logic.storage
 
         public void Remove(params string[] items)
         {
-            string cmd = $@"DELETE FROM {this.tableName} WHERE Item = @Item";
+            string cmd = $@"DELETE FROM {this.tableName} WHERE Item = {ItemParameter}";
 
             this.connection.BeginTran();
             foreach (var file in items)
@@ -79,7 +81,7 @@ namespace logviewer.logic.storage
 
         private static Action<IDbCommand> Remove(string item)
         {
-            return command => command.AddParameter("@Item", item);
+            return command => command.AddParameter(ItemParameter, item);
         }
 
         public IEnumerable<string> ReadItems()

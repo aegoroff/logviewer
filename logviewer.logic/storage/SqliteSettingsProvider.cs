@@ -36,7 +36,7 @@ namespace logviewer.logic.storage
         private const string UseRegexpParameterName = @"UseRegexp";
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
         private const int DefaultParsingProfileIndex = 0;
-        private const string ApplicationOptionsFolder = "logviewer";
+        private const string ApplicationOptionsFolder = @"logviewer";
         private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
         private readonly int defaultKeepLastNFiles;
@@ -159,8 +159,8 @@ namespace logviewer.logic.storage
 
         public DateTime LastUpdateCheckTime
         {
-            get { return DateTime.Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString("O"))).ToUniversalTime(); }
-            set { this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString("O")); }
+            get { return DateTime.Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O"))).ToUniversalTime(); }
+            set { this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O")); }
         }
 
         public bool OpenLastFile
@@ -215,7 +215,7 @@ namespace logviewer.logic.storage
 
         public void UpdateParsingTemplate(ParsingTemplate template)
         {
-            var propertiesSet = string.Join(",", from string member in this.parsingTemplatePropertiesNames select string.Format("{0} = @{0}", member));
+            var propertiesSet = string.Join(@",", from string member in this.parsingTemplatePropertiesNames select string.Format(@"{0} = @{0}", member));
 
             this.optionsProvider.ExecuteNonQuery(
                 $@"
@@ -286,11 +286,11 @@ namespace logviewer.logic.storage
 
         public ParsingTemplate ReadParsingTemplate(int index)
         {
-            var propertiesGet = string.Join(",", from level in this.parsingTemplatePropertiesNames select level);
+            var propertiesGet = string.Join(@",", from level in this.parsingTemplatePropertiesNames select level);
 
             var result = new ParsingTemplate { Index = index };
 
-            Action<IDbCommand> beforeRead = command => command.AddParameter("@Ix", index);
+            Action<IDbCommand> beforeRead = command => command.AddParameter(@"@Ix", index);
            
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
@@ -331,8 +331,8 @@ namespace logviewer.logic.storage
 
         public void InsertParsingTemplate(ParsingTemplate template)
         {
-            var propertiesColumns = string.Join(",", from level in this.parsingTemplatePropertiesNames select level);
-            var propertiesParams = string.Join(",", from level in this.parsingTemplatePropertiesNames select "@" + level);
+            var propertiesColumns = string.Join(@",", from level in this.parsingTemplatePropertiesNames select level);
+            var propertiesParams = string.Join(@",", from level in this.parsingTemplatePropertiesNames select @"@" + level);
 
             var query =
                     $@"
@@ -371,7 +371,7 @@ namespace logviewer.logic.storage
 
             var indexesToUpdate = new List<long>();
 
-            Action<IDbCommand> beforeRead = command => command.AddParameter("@Ix", ix);
+            Action<IDbCommand> beforeRead = command => command.AddParameter(@"@Ix", ix);
 
             Action<IDataReader> onRead = delegate(IDataReader rdr)
             {
@@ -392,8 +392,8 @@ namespace logviewer.logic.storage
 
                     foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>)delegate(IDbCommand command)
                     {
-                        command.AddParameter("@Ix", index);
-                        command.AddParameter("@NewIx", index - 1);
+                        command.AddParameter(@"@Ix", index);
+                        command.AddParameter(@"@NewIx", index - 1);
                     }))
                     {
                         connection.ExecuteNonQuery(updateIndexesCmd, beforeUpdate);
@@ -420,12 +420,12 @@ namespace logviewer.logic.storage
 
         public void UseRecentFilesStore(Action<RecentItemsStore> action)
         {
-            this.UseRecentItemsStore(action, "RecentFiles");
+            this.UseRecentItemsStore(action, @"RecentFiles");
         }
 
         public void UseRecentFiltersStore(Action<RecentItemsStore> action)
         {
-            this.UseRecentItemsStore(action, "RecentFilters", KeepLastFilters);
+            this.UseRecentItemsStore(action, @"RecentFilters", KeepLastFilters);
         }
 
         public IOptionsProvider OptionsProvider => this.optionsProvider;
@@ -435,7 +435,7 @@ namespace logviewer.logic.storage
             return new RtfCharFormat
             {
                 Color = color,
-                Font = "Courier New",
+                Font = @"Courier New",
                 Size = size,
                 Bold = bold
             };
@@ -450,9 +450,9 @@ namespace logviewer.logic.storage
                         );
                     ";
             
-            var stringOptions = string.Format(optionsTableTemplate, "StringOptions", "TEXT");
-            var integerOptions = string.Format(optionsTableTemplate, "IntegerOptions", "INTEGER");
-            var booleanOptions = string.Format(optionsTableTemplate, "BooleanOptions", "BOOLEAN");
+            var stringOptions = string.Format(optionsTableTemplate, @"StringOptions", @"TEXT");
+            var integerOptions = string.Format(optionsTableTemplate, @"IntegerOptions", @"INTEGER");
+            var booleanOptions = string.Format(optionsTableTemplate, @"BooleanOptions", @"BOOLEAN");
 
             const string databaseConfigurationTable = @"
                         CREATE TABLE IF NOT EXISTS DatabaseConfiguration (
@@ -466,7 +466,7 @@ namespace logviewer.logic.storage
 
         private string ParsingTeplateCreateCmd()
         {
-            var propertiesCreate = string.Join(", ", this.ParsingTemplateColumnsDefinition());
+            var propertiesCreate = string.Join(@", ", this.ParsingTemplateColumnsDefinition());
             return $@"CREATE TABLE IF NOT EXISTS ParsingTemplates (
                                  Ix INTEGER PRIMARY KEY,
                                  {propertiesCreate}
@@ -479,14 +479,14 @@ namespace logviewer.logic.storage
             var q = from ColumnAttribute member in this.parsingTemplatePropertiesColumns select member;
             foreach (var c in q)
             {
-                if (c.Name == "Compiled")
+                if (c.Name == @"Compiled")
                 {
-                    yield return c.Name + " BOOLEAN NULL DEFAULT FALSE";
+                    yield return c.Name + @" BOOLEAN NULL DEFAULT FALSE";
                 }
                 else
                 {
-                    var n = c.Nullable ? string.Empty : "NOT";
-                    yield return c.Name + " TEXT " + n +" NULL";
+                    var n = c.Nullable ? string.Empty : @"NOT";
+                    yield return c.Name + @" TEXT " + n + @" NULL";
                 }
             }
         }
@@ -535,8 +535,8 @@ namespace logviewer.logic.storage
         {
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                command.AddParameter("@Version", version);
-                command.AddParameter("@OccurredAt", DateTime.Now.Ticks);
+                command.AddParameter(@"@Version", version);
+                command.AddParameter(@"@OccurredAt", DateTime.Now.Ticks);
             };
 
             connection.ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", action);
@@ -561,8 +561,8 @@ namespace logviewer.logic.storage
 
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                command.AddParameter("@Ix", DefaultParsingProfileIndex);
-                command.AddParameter("@Name", Resources.ParsingTemplateNlog);
+                command.AddParameter(@"@Ix", DefaultParsingProfileIndex);
+                command.AddParameter(@"@Name", Resources.ParsingTemplateNlog);
             };
 
             connection.ExecuteNonQuery(cmd, action);
@@ -575,7 +575,7 @@ namespace logviewer.logic.storage
 
         private void Upgrade3(DatabaseConnection connection)
         {
-            var properties = string.Join(",",
+            var properties = string.Join(@",",
                 from string member in this.parsingTemplatePropertiesNames select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
@@ -583,28 +583,28 @@ namespace logviewer.logic.storage
 
         private void Upgrade4(DatabaseConnection connection)
         {
-            var properties = string.Join(",",
-                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Filter", StringComparison.Ordinal)) select member);
+            var properties = string.Join(@",",
+                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals(@"Filter", StringComparison.Ordinal)) select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
 
         private void Upgrade5(DatabaseConnection connection)
         {
-            var properties = string.Join(",",
-                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals("Compiled", StringComparison.Ordinal)) select member);
+            var properties = string.Join(@",",
+                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals(@"Compiled", StringComparison.Ordinal)) select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
 
         private void UpgradeParsingTemplatesTable(DatabaseConnection connection, string properties)
         {
-            properties = "Ix," + properties;
+            properties = @"Ix," + properties;
 
             connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
             connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
-            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + ") SELECT " + properties +
-                                       " FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + @") SELECT " + properties +
+                                       @" FROM ParsingTemplatesOld");
             connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
         }
 
@@ -642,7 +642,7 @@ namespace logviewer.logic.storage
             var template = new ParsingTemplate
             {
                 Index = DefaultParsingProfileIndex,
-                StartMessage = GetStringValue("StartMessageTemplate")
+                StartMessage = GetStringValue(@"StartMessageTemplate")
             };
 
             this.InsertParsingTemplate(template);
@@ -667,13 +667,13 @@ namespace logviewer.logic.storage
 
         private void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
         {
-            command.AddParameter("@Ix", template.Index);
+            command.AddParameter(@"@Ix", template.Index);
 
             foreach (var column in this.parsingTemplateProperties)
             {
                 var value = column.GetValue(template, null);
                 var attr = GetColumnAttribute(column);
-                command.AddParameter("@" + attr.Name, value);
+                command.AddParameter(@"@" + attr.Name, value);
             }
         }
 

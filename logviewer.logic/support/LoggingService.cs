@@ -13,7 +13,7 @@ namespace logviewer.logic.support
         private static readonly Log instance = new Log();
 
         internal Log()
-            : base("logviewer")
+            : base(@"logviewer")
         {
         }
 

@@ -6,7 +6,7 @@ using System;
 
 namespace logviewer.logic.storage
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class ColumnAttribute : Attribute
     {
         public ColumnAttribute(string name)

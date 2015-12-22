@@ -17,7 +17,7 @@ namespace logviewer.logic
         private readonly string project;
         private readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private const string DownloadUrlTemplate = "http://github.com/{0}/{1}/releases/download/{2}/{3}";
+        private const string DownloadUrlTemplate = @"http://github.com/{0}/{1}/releases/download/{2}/{3}";
 
         public event EventHandler ReadCompleted;
         public event EventHandler<VersionEventArgs> VersionRead;

@@ -9,9 +9,11 @@ namespace logviewer.logic.storage
 {
     internal sealed class OptionsProvider : IOptionsProvider
     {
-        private const string StringOptionsTable = "StringOptions";
-        private const string BooleanOptionsTable = "BooleanOptions";
-        private const string IntegerOptionsTable = "IntegerOptions";
+        private const string StringOptionsTable = @"StringOptions";
+        private const string BooleanOptionsTable = @"BooleanOptions";
+        private const string IntegerOptionsTable = @"IntegerOptions";
+        private const string OptionParameter = @"@Option";
+        private const string ValueParameter = @"@Value";
         private readonly string settingsDatabaseFilePath;
 
         public OptionsProvider(string settingsDatabaseFilePath)
@@ -74,7 +76,7 @@ namespace logviewer.logic.storage
 
         private T ReadOption<T>(string table, string option, T defaultValue = default(T))
         {
-            const string cmd = @"SELECT Value FROM {0} WHERE Option = @Option";
+            string cmd = $"SELECT Value FROM {{0}} WHERE Option = {OptionParameter}";
             var result = default(T);
             var read = false;
 
@@ -88,7 +90,7 @@ namespace logviewer.logic.storage
                 read = true;
             };
 
-            Action<IDbCommand> beforeRead = command => command.AddParameter("@Option", option);
+            Action<IDbCommand> beforeRead = command => command.AddParameter(OptionParameter, option);
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(onRead, string.Format(cmd, table), beforeRead);
             this.ExecuteQuery(action);
 
@@ -104,26 +106,19 @@ namespace logviewer.logic.storage
 
         private void UpdateOption<T>(string table, string option, T value)
         {
-            const string insertCmd = @"INSERT INTO {0}(Option, Value) VALUES (@Option, @Value)";
+            string insertCmd = $"INSERT INTO {{0}}(Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
 
-            const string updateCmd = @"
-                    UPDATE
-                        {0}
-                    SET
-                        Value = @Value
-                    WHERE
-                        Option = @Option
-                    ";
+            string updateCmd = $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}";
 
-            var query = $@"SELECT count(1) FROM {table} WHERE Option = @Option";
+            var query = $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}";
             var exist = this.ExecuteScalar<long>(query,
-                command => command.AddParameter("@Option", option)) > 0;
+                command => command.AddParameter(OptionParameter, option)) > 0;
 
 
             Action<IDbCommand> action = delegate(IDbCommand command)
             {
-                command.AddParameter("@Option", option);
-                command.AddParameter("@Value", value);
+                command.AddParameter(OptionParameter, option);
+                command.AddParameter(ValueParameter, value);
             };
 
             this.ExecuteNonQuery(string.Format(exist ? updateCmd : insertCmd, table), action);

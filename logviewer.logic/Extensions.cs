@@ -19,7 +19,7 @@ namespace logviewer.logic
     {
         internal static string ToParameterName(this LogLevel level)
         {
-            return level.ToString("G") + "Color";
+            return level.ToString(@"G") + @"Color";
         }
 
         internal static  bool HasProperty(this ICollection<Semantic> schema, ParserType type)
@@ -78,9 +78,8 @@ namespace logviewer.logic
         
         }
 
-        private const string BytesTrailerFileFormat = " ({0} {1})";
-        private const string BigFileFormatNoBytes = "{0:F2} {1}";
-        private const string SmallFileFormat = "{0} {1}";
+        private const string BigFileFormatNoBytes = @"{0:F2} {1}";
+        private const string SmallFileFormat = @"{0} {1}";
 
         public static string Format(this FileSize fileSize)
         {
@@ -107,7 +106,7 @@ namespace logviewer.logic
             {
                 return noBytes;
             }
-            return noBytes + $" ({fileSize.Bytes.ToString("N0", CultureInfo.CurrentCulture)} {fileSize.Bytes.BytesToString()})";
+            return noBytes + $" ({fileSize.Bytes.ToString(@"N0", CultureInfo.CurrentCulture)} {fileSize.Bytes.BytesToString()})";
         }
 
         private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary
