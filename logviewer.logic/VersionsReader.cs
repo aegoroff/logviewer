@@ -33,13 +33,13 @@ namespace logviewer.logic
             try
             {
                 var github = new GitHubClient(new ProductHeaderValue(this.project));
-                var releases = github.Release.GetAll(this.account, this.project);
+                var releases = github.Repository.Release.GetAll(this.account, this.project);
                 releases.Wait();
                 foreach (var release in releases.Result)
                 {
                     try
                     {
-                        var assets = github.Release.GetAllAssets(this.account, this.project, release.Id);
+                        var assets = github.Repository.Release.GetAllAssets(this.account, this.project, release.Id);
                         assets.Wait();
                         foreach (var m in from releaseAsset in assets.Result
                             select this.versionRegexp.Match(releaseAsset.Name)
