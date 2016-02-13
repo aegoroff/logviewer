@@ -29,11 +29,11 @@ namespace logviewer.engine
         {
             this.head = header;
             this.body = body;
-            this.Ix = 0;
+            this.ix = 0L;
             this.rawProperties = null;
             this.bodyBuilder = null;
-            this.integerProperties = new Dictionary<string, long>();
-            this.stringProperties = new Dictionary<string, string>();
+            this.integerProperties = new Dictionary<string, long>(DefaultPropertyDicitionaryCapacity);
+            this.stringProperties = new Dictionary<string, string>(DefaultPropertyDicitionaryCapacity);
         }
 
         /// <summary>
@@ -45,7 +45,11 @@ namespace logviewer.engine
         /// <summary>
         /// Gets or sets message unique index to store it into database for example
         /// </summary>
-        public long Ix { get; set; }
+        public long Ix
+        {
+            get { return this.ix; }
+            set { this.ix = value; }
+        }
 
         /// <summary>
         /// Gets message's head
@@ -358,11 +362,9 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static LogMessage Create()
         {
-            return new LogMessage
+            return new LogMessage(null, null)
             {
-                bodyBuilder = new StringBuilder(),
-                integerProperties = new Dictionary<string, long>(DefaultPropertyDicitionaryCapacity),
-                stringProperties = new Dictionary<string, string>(DefaultPropertyDicitionaryCapacity)
+                bodyBuilder = new StringBuilder()
             };
         }
 
@@ -374,6 +376,7 @@ namespace logviewer.engine
         private StringBuilder bodyBuilder;
         private string head;
         private IDictionary<string, string> rawProperties;
+        private long ix;
 
         #endregion
     }
