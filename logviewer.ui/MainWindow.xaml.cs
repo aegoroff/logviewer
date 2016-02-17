@@ -35,6 +35,7 @@ namespace logviewer.ui
         {
             this.logWatch.Path = Path.GetDirectoryName(path);
             this.logWatch.Filter = Path.GetFileName(path);
+            this.logWatch.EnableRaisingEvents = true;
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)
