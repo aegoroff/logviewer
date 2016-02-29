@@ -33,6 +33,10 @@ namespace logviewer.ui
 
         private void WatchLogFile(string path)
         {
+            if (!File.Exists(path))
+            {
+                return;
+            }
             this.logWatch.Path = Path.GetDirectoryName(path);
             this.logWatch.Filter = Path.GetFileName(path);
             this.logWatch.EnableRaisingEvents = true;
