@@ -54,7 +54,6 @@ namespace logviewer.logic.ui
         private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
-        private readonly RegexOptions options;
         public event EventHandler<EventArgs> ReadCompleted;
         private const int CheckUpdatesEveryDays = 7;
 
@@ -62,13 +61,12 @@ namespace logviewer.logic.ui
 
         #region Constructors and Destructors
 
-        public UiController(IViewModel viewModel, RegexOptions options = RegexOptions.ExplicitCapture)
+        public UiController(IViewModel viewModel)
         {
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
             this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
             this.prevInput = DateTime.Now;
-            this.options = options;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
         }
 
@@ -100,7 +98,7 @@ namespace logviewer.logic.ui
 
         public void UpdateSettings(bool refresh)
         {
-            this.matcher = new MessageMatcher(this.settings.ReadParsingTemplate(), this.options);
+            this.matcher = new MessageMatcher(this.settings.ReadParsingTemplate(), RegexOptions.ExplicitCapture);
             if (refresh)
             {
                 this.StartLogReadingTask();
