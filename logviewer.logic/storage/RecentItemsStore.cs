@@ -38,20 +38,14 @@ namespace logviewer.logic.storage
         {
             var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = {ItemParameter}", cmd => cmd.AddParameter(ItemParameter, item));
 
-            Action<string> query = commandText => this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
-            {
-                command.AddParameter(ItemParameter, item);
-                command.AddParameter(UsedAtParameter, DateTime.Now.Ticks);
-            });
-
             if (result > 0)
             {
-                query($"Update {this.tableName} SET UsedAt = {UsedAtParameter} WHERE Item = {ItemParameter}");
+                this.ExecuteChangeQuery(item, $"Update {this.tableName} SET UsedAt = {UsedAtParameter} WHERE Item = {ItemParameter}");
                 return;
             }
 
-            query($@"INSERT INTO {this.tableName}(Item, UsedAt) VALUES ({ItemParameter}, {UsedAtParameter})");
-            
+            this.ExecuteChangeQuery(item, $@"INSERT INTO {this.tableName}(Item, UsedAt) VALUES ({ItemParameter}, {UsedAtParameter})");
+
             result = this.connection.ExecuteScalar<long>($"SELECT count(1) FROM {this.tableName}");
 
             if (result <= this.maxItems)
@@ -65,6 +59,15 @@ namespace logviewer.logic.storage
                 )";
             var cmdDelete = string.Format(deleteTemplate, result - this.maxItems, this.tableName);
             this.connection.ExecuteNonQuery(cmdDelete);
+        }
+
+        private void ExecuteChangeQuery(string item, string commandText)
+        {
+            this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
+            {
+                command.AddParameter(ItemParameter, item);
+                command.AddParameter(UsedAtParameter, DateTime.Now.Ticks);
+            });
         }
 
         public void Remove(params string[] items)
