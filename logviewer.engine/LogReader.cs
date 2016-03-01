@@ -113,10 +113,12 @@ namespace logviewer.engine
 
                 using (var stream = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
-                    var enumerator = this.Read(stream, length, encoding).GetEnumerator();
-                    while (enumerator.MoveNext())
+                    using (var enumerator = this.Read(stream, length, encoding).GetEnumerator())
                     {
-                        yield return enumerator.Current;
+                        while (enumerator.MoveNext())
+                        {
+                            yield return enumerator.Current;
+                        }
                     }
                 }
             }

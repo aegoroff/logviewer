@@ -371,11 +371,13 @@ namespace logviewer.logic.ui
             try
             {
                 this.queuedMessages = 0;
-                var enumerator = this.reader.Read(logPath, inputEncoding, offset).GetEnumerator();
 
-                while (enumerator.MoveNext())
+                using (var enumerator = this.reader.Read(logPath, inputEncoding, offset).GetEnumerator())
                 {
-                    this.AddMessageToCache(enumerator.Current);
+                    while (enumerator.MoveNext())
+                    {
+                        this.AddMessageToCache(enumerator.Current);
+                    }
                 }
 
                 this.probeWatch.Stop();
