@@ -222,8 +222,7 @@ namespace logviewer.logic.storage
                     UPDATE
                         ParsingTemplates
                     SET
-                        {
-                    propertiesSet}
+                        {propertiesSet}
                     WHERE
                         Ix = @Ix
                     ", command => this.AddParsingTemplateIntoCommand(command, template));
