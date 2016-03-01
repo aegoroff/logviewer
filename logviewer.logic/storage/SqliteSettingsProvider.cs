@@ -583,7 +583,9 @@ namespace logviewer.logic.storage
         private void Upgrade4(DatabaseConnection connection)
         {
             var properties = string.Join(@",",
-                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals(@"Filter", StringComparison.Ordinal)) select member);
+                from string member in this.parsingTemplatePropertiesNames
+                where !member.Equals(@"Filter", StringComparison.Ordinal)
+                select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
@@ -591,7 +593,9 @@ namespace logviewer.logic.storage
         private void Upgrade5(DatabaseConnection connection)
         {
             var properties = string.Join(@",",
-                from string member in this.parsingTemplatePropertiesNames.Where(n => !n.Equals(@"Compiled", StringComparison.Ordinal)) select member);
+                from string member in this.parsingTemplatePropertiesNames
+                where !member.Equals(@"Compiled", StringComparison.Ordinal)
+                select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
