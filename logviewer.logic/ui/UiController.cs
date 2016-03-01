@@ -346,17 +346,11 @@ namespace logviewer.logic.ui
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
             this.ChangeTotalOnUi("0"); // Not L10N
 
-            var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
-            if (this.store != null && !append)
-            {
-                this.store.Dispose();
-            }
-            if (!append || this.store == null)
-            {
-                this.store = new LogStore(dbSize, null, this.matcher.IncludeMatcher.MessageSchema);
-            }
+            this.InitNewStoreIfNecessary(append);
+
             GC.Collect();
             this.store.StartAddMessages();
+
             if (!append)
             {
                 this.totalMessages = 0;
@@ -372,32 +366,15 @@ namespace logviewer.logic.ui
             {
                 this.queuedMessages = 0;
 
-                using (var enumerator = this.reader.Read(logPath, inputEncoding, offset).GetEnumerator())
-                {
-                    while (enumerator.MoveNext())
-                    {
-                        this.AddMessageToCache(enumerator.Current);
-                    }
-                }
+                this.RunReading(logPath, inputEncoding, offset);
 
                 this.probeWatch.Stop();
                 if (!this.NotCancelled)
                 {
                     return;
                 }
-                var elapsed = this.probeWatch.Elapsed;
-                var pending = Interlocked.Read(ref this.queuedMessages);
-                var inserted = this.totalMessages - pending;
-                var insertRatio = inserted / elapsed.TotalSeconds;
-                var remain = Math.Abs(insertRatio) < 0.00001
-                    ? TimeSpan.FromSeconds(0)
-                    : TimeSpan.FromSeconds(pending / insertRatio);
+                this.FinishLoading();
 
-                var remainSeconds = remain.Seconds;
-                if (remainSeconds > 0)
-                {
-                    this.viewModel.LogProgressText = string.Format(Resources.FinishLoading, remainSeconds);
-                }
                 // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(
                     () => Interlocked.Read(ref this.queuedMessages) == 0 || this.cancellation.IsCancellationRequested);
@@ -415,12 +392,60 @@ namespace logviewer.logic.ui
                 this.reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 this.reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
             }
-            for (var i = 0; i < (int)LogLevel.Fatal + 1; i++)
-            {
-                var level = (LogLevel)i;
-                this.byLevel[level] = (ulong)this.store.CountMessages(level, level, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions, true);
-            }
+            this.UpdateStatisticByLevel();
             this.AfterDatabaseCreation(false);
+        }
+
+        private void InitNewStoreIfNecessary(bool append)
+        {
+            if (this.store != null && !append)
+            {
+                this.store.Dispose();
+            }
+            if (append && this.store != null)
+            {
+                return;
+            }
+            var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
+            this.store = new LogStore(dbSize, null, this.matcher.IncludeMatcher.MessageSchema);
+        }
+
+        private void RunReading(string logPath, Encoding inputEncoding, long offset)
+        {
+            using (var enumerator = this.reader.Read(logPath, inputEncoding, offset).GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    this.AddMessageToCache(enumerator.Current);
+                }
+            }
+        }
+
+        private void UpdateStatisticByLevel()
+        {
+            for (var i = 0; i < (int) LogLevel.Fatal + 1; i++)
+            {
+                var level = (LogLevel) i;
+                this.byLevel[level] =
+                    (ulong) this.store.CountMessages(level, level, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions, true);
+            }
+        }
+
+        private void FinishLoading()
+        {
+            var elapsed = this.probeWatch.Elapsed;
+            var pending = Interlocked.Read(ref this.queuedMessages);
+            var inserted = this.totalMessages - pending;
+            var insertRatio = inserted / elapsed.TotalSeconds;
+            var remain = Math.Abs(insertRatio) < 0.00001
+                ? TimeSpan.FromSeconds(0)
+                : TimeSpan.FromSeconds(pending / insertRatio);
+
+            var remainSeconds = remain.Seconds;
+            if (remainSeconds > 0)
+            {
+                this.viewModel.LogProgressText = string.Format(Resources.FinishLoading, remainSeconds);
+            }
         }
 
         private void OnCompilationFinished(object sender, EventArgs eventArgs)
@@ -436,6 +461,7 @@ namespace logviewer.logic.ui
         /// <remarks>
         /// this method MUST be called only from one thread.
         /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AddMessageToCache(LogMessage message)
         {
             if (message.IsEmpty || this.cancellation.IsCancellationRequested)
