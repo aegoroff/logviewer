@@ -44,13 +44,15 @@ namespace logviewer.tests
         private void ReadFromStream()
         {
             long ix = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
+
+            var enumerator = this.reader.Read(this.stream, 0).GetEnumerator();
+
+            while (enumerator.MoveNext())
             {
+                var message = enumerator.Current;
                 message.Ix = ix++;
                 this.store.AddMessage(message);
-            };
-
-            this.reader.Read(this.stream, 0, onRead);
+            }
         }
 
         private void CreateStream(string data = TstLogReader.MessageExamples)

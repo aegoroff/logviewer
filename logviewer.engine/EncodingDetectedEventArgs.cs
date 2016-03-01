@@ -12,7 +12,10 @@ namespace logviewer.engine
     /// </summary>
     public sealed class EncodingDetectedEventArgs : EventArgs
     {
-        private readonly Encoding encoding;
+        /// <summary>
+        /// Gets detected <see cref="Encoding"/> instance
+        /// </summary>
+        public Encoding Encoding { get; }
 
         /// <summary>
         /// Initializes new args instance
@@ -20,7 +23,7 @@ namespace logviewer.engine
         /// <param name="encoding">Encoding detected</param>
         public EncodingDetectedEventArgs(Encoding encoding)
         {
-            this.encoding = encoding;
+            this.Encoding = encoding;
         }
 
         /// <summary>
@@ -32,7 +35,7 @@ namespace logviewer.engine
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return this.encoding?.EncodingName ?? string.Empty;
+            return this.Encoding?.EncodingName ?? string.Empty;
         }
     }
 }

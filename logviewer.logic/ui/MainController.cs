@@ -514,7 +514,13 @@ namespace logviewer.logic.ui
             try
             {
                 this.queuedMessages = 0;
-                this.reader.Read(logPath, this.AddMessageToCache, ref inputEncoding, offset);
+
+                var enumerator = this.reader.Read(logPath, inputEncoding, offset).GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    this.AddMessageToCache(enumerator.Current);
+                }
+
                 this.probeWatch.Stop();
                 var elapsed = this.probeWatch.Elapsed;
                 var pending = Interlocked.Read(ref this.queuedMessages);
@@ -524,11 +530,6 @@ namespace logviewer.logic.ui
                     ? TimeSpan.FromSeconds(0)
                     : TimeSpan.FromSeconds(pending / insertRatio);
 
-                if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) &&
-                    inputEncoding != null)
-                {
-                    this.filesEncodingCache.Add(this.currentPath, inputEncoding);
-                }
                 var remainSeconds = remain.Seconds;
                 if (remainSeconds > 0)
                 {
@@ -594,6 +595,10 @@ namespace logviewer.logic.ui
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
             this.probeWatch.Restart();
+            if (this.currentPath != null && !this.filesEncodingCache.ContainsKey(this.currentPath) && e.Encoding != null)
+            {
+                this.filesEncodingCache.Add(this.currentPath, e.Encoding);
+            }
             this.RunOnGuiThread(delegate
             {
                 this.view.SetLogProgressCustomText(string.Empty);

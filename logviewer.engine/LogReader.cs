@@ -3,6 +3,7 @@
 // © 2012-2015 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -83,19 +84,15 @@ namespace logviewer.engine
         ///     Reads log from file
         /// </summary>
         /// <param name="logPath">Full path to file</param>
-        /// <param name="onEachMessageRead">
-        ///     On each log message read completion action or handler. This action may store message
-        ///     within DB or do something else with the message passed.
-        /// </param>
         /// <param name="encoding">File encoding. It will be detected automatically if null passed as parameter value</param>
         /// <param name="offset">file offset</param>
-        /// <returns>Detected file encoding</returns>
-        public void Read(string logPath, Action<LogMessage> onEachMessageRead, ref Encoding encoding, long offset = 0)
+        /// <returns>Messages stream</returns>
+        public IEnumerable<LogMessage> Read(string logPath, Encoding encoding = null, long offset = 0)
         {
             var length = new FileInfo(logPath).Length;
             if (length == 0)
             {
-                return;
+                yield break;
             }
 
             var mapName = Guid.NewGuid().ToString();
@@ -116,7 +113,11 @@ namespace logviewer.engine
 
                 using (var stream = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
-                    this.Read(stream, length, onEachMessageRead, encoding);
+                    var enumerator = this.Read(stream, length, encoding).GetEnumerator();
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
                 }
             }
         }
@@ -126,12 +127,9 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="stream">Stream to read log from</param>
         /// <param name="length">Stream lendgh if applicable</param>
-        /// <param name="onEachMessageRead">
-        ///     On each log message read completion action or handler. This action may store message
-        ///     within DB or do something else with the message passed.
-        /// </param>
         /// <param name="encoding">Stream encoding</param>
-        public void Read(Stream stream, long length, Action<LogMessage> onEachMessageRead, Encoding encoding = null)
+        /// <returns>Messages stream</returns>
+        public IEnumerable<LogMessage> Read(Stream stream, long length, Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
@@ -182,7 +180,7 @@ namespace logviewer.engine
                     {
                         if (message.HasHeader)
                         {
-                            onEachMessageRead(message);
+                            yield return message;
                             message = LogMessage.Create();
                         }
                         else
@@ -207,7 +205,7 @@ namespace logviewer.engine
                 if (!this.cancelled)
                 {
                     // Add last message
-                    onEachMessageRead(message);
+                    yield return message;
                 }
             }
         }

@@ -5,7 +5,6 @@
 using System;
 using logviewer.engine;
 using logviewer.logic.models;
-using logviewer.logic.support;
 using logviewer.logic.ui;
 using Net.Sgoliver.NRtfTree.Util;
 

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using FluentAssertions;
 using logviewer.engine;
@@ -75,18 +76,14 @@ namespace logviewer.tests
             // Arrange
             this.CreateStream(data, encoding);
             this.stream.Seek(0, SeekOrigin.Begin);
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
-            {
-                count++;
-                message.IsEmpty.Should().BeFalse();
-            };
 
             // Act
-            this.reader.Read(this.stream, 0, onRead, encoding);
+            var result = this.reader.Read(this.stream, 0, encoding).ToList();
 
             // Assert
-            count.Should().Be(2);
+            result.Count.Should().Be(2);
+            result[0].IsEmpty.Should().BeFalse();
+            result[1].IsEmpty.Should().BeFalse();
         }
 
         [Fact]
@@ -95,25 +92,31 @@ namespace logviewer.tests
             // Arrange
             this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
-            {
-                count++;
-                message.IsEmpty.Should().BeFalse();
-                message.Cache(this.builder.Rules);
-                var level = (LogLevel) message.IntegerProperty("Level");
-                var date = DateTime.FromFileTime(message.IntegerProperty("Occured"));
-                Assert.InRange(level, LogLevel.Info, LogLevel.Error);
-                date.Year.Should().Be(2008);
-                date.Month.Should().Be(12);
-                date.Day.Should().Be(27);
-            };
 
             // Act
-            this.reader.Read(this.stream, 0, onRead);
+            var result = this.reader.Read(this.stream, 0).ToList();
 
             // Assert
-            count.Should().Be(2);
+            result.Count.Should().Be(2);
+
+            result[0].IsEmpty.Should().BeFalse();
+            result[0].Cache(this.builder.Rules);
+            var level = (LogLevel)result[0].IntegerProperty("Level");
+            var date = DateTime.FromFileTime(result[0].IntegerProperty("Occured"));
+            Assert.InRange(level, LogLevel.Info, LogLevel.Error);
+            date.Year.Should().Be(2008);
+            date.Month.Should().Be(12);
+            date.Day.Should().Be(27);
+
+            result[1].IsEmpty.Should().BeFalse();
+            result[1].Cache(this.builder.Rules);
+            level = (LogLevel)result[1].IntegerProperty("Level");
+            date = DateTime.FromFileTime(result[1].IntegerProperty("Occured"));
+            Assert.InRange(level, LogLevel.Info, LogLevel.Error);
+            date.Year.Should().Be(2008);
+            date.Month.Should().Be(12);
+            date.Day.Should().Be(27);
+
         }
 
         [Fact]
@@ -122,19 +125,13 @@ namespace logviewer.tests
             // Arrange
             this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
-            {
-                count++;
-                message.IsEmpty.Should().BeTrue();
-            };
 
             // Act
             this.reader.Cancel();
-            this.reader.Read(this.stream, 0, onRead);
+            var result = this.reader.Read(this.stream, 0).ToList();
 
             // Assert
-            count.Should().Be(0);
+            result.Should().BeEmpty();
         }
 
         [Fact]
@@ -142,17 +139,13 @@ namespace logviewer.tests
         {
             // Arrange
             this.CreateStream();
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
-            {
-                count++;
-                message.IsEmpty.Should().BeTrue();
-            };
+
             // Act
-            this.reader.Read(this.stream, 0, onRead);
+            var result = this.reader.Read(this.stream, 0).ToList();
 
             // Assert
-            count.Should().Be(1);
+            result.Count.Should().Be(1);
+            result[0].IsEmpty.Should().BeTrue();
         }
 
         [Fact]
@@ -164,37 +157,31 @@ namespace logviewer.tests
             var encoded = Convert(MessageExamplesRu, Encoding.UTF8, encoding);
             File.WriteAllText(this.path, encoded, encoding);
 
-            var count = 0;
-            Action<LogMessage> onRead = delegate (LogMessage message)
+            this.reader.EncodingDetectionFinished += delegate(object sender, EncodingDetectedEventArgs args)
             {
-                count++;
-                message.IsEmpty.Should().BeFalse();
+                args.Encoding.EncodingName.Should().Be(encoding.EncodingName);
             };
-            Encoding detected = null;
+
+            this.reader.MonitorEvents();
 
             // Act
-            this.reader.Read(this.path, onRead, ref detected);
+            var result = this.reader.Read(this.path).ToList();
 
             // Assert
-            count.Should().Be(2);
-            detected.EncodingName.Should().Be(encoding.EncodingName);
+            result.Count.Should().Be(2);
+            this.reader.ShouldRaise("EncodingDetectionFinished");
         }
 
         [Fact]
         public void Read_FromEmptyFile_NoneRead()
         {
             // Arrange
-            var count = 0;
-            Action<LogMessage> onRead = delegate {
-                count++;
-            };
-            Encoding detected = null;
 
             // Act
-            this.reader.Read(this.path, onRead, ref detected);
+            var result = this.reader.Read(this.path).ToList();
 
             // Assert
-            count.Should().Be(0);
+            result.Should().BeEmpty();
         }
 
         internal static string Convert(string line, Encoding srcEncoding, Encoding dstEncoding)
