@@ -94,11 +94,7 @@ namespace logviewer.logic.storage
         public string ReadLastUsedItem()
         {
             var result = string.Empty;
-            Action<IDataReader> onRead = delegate(IDataReader reader)
-            {
-                result = reader[0] as string;
-            };
-            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1", onRead);
+            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1", reader => result = reader[0] as string);
             return result;
         }
 
