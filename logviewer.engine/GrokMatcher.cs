@@ -115,12 +115,15 @@ namespace logviewer.engine
             {
                 return null;
             }
-            var enumerator = this.MessageSchema.GetEnumerator();
+            
             var result = new Dictionary<string, string>(this.MessageSchema.Count);
-            while (enumerator.MoveNext())
+            using (var enumerator = this.MessageSchema.GetEnumerator())
             {
-                var semantic = enumerator.Current;
-                result.Add(semantic.Property, match.Groups[semantic.Property].Value);
+                while (enumerator.MoveNext())
+                {
+                    var semantic = enumerator.Current;
+                    result.Add(semantic.Property, match.Groups[semantic.Property].Value);
+                }
             }
             return result;
         }
