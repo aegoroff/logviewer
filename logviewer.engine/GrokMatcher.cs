@@ -121,8 +121,8 @@ namespace logviewer.engine
             {
                 while (enumerator.MoveNext())
                 {
-                    var semantic = enumerator.Current;
-                    result.Add(semantic.Property, match.Groups[semantic.Property].Value);
+                    var property = enumerator.Current.Property;
+                    result.Add(property, match.Groups[property].Value);
                 }
             }
             return result;
