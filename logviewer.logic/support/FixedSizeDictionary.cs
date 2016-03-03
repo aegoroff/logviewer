@@ -2,9 +2,9 @@
 // Created at: 24.11.2015
 // © 2012-2015 Alexander Egorov
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace logviewer.logic.support
 {
@@ -144,26 +144,12 @@ namespace logviewer.logic.support
 
         public ICollection<int> Keys
         {
-            get { return this.Select(pair => pair.Key); }
+            get { return this.Select(pair => pair.Key).ToArray(); }
         }
 
         public ICollection<T> Values
         {
-            get { return this.Select(pair => pair.Value); }
-        }
-
-        private ICollection<TItem> Select<TItem>(Func<KeyValuePair<int, T>, TItem> selector)
-        {
-            var result = new List<TItem>();
-            var e = this.GetEnumerator();
-            using (e)
-            {
-                while (e.MoveNext())
-                {
-                    result.Add(selector(e.Current));
-                }
-                return result;
-            }
+            get { return this.Select(pair => pair.Value).ToArray(); }
         }
 
         private bool ContainsKeyInternal(int key)
