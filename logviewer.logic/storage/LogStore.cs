@@ -349,8 +349,7 @@ namespace logviewer.logic.storage
         private static string FilterClause(string filter, bool useRegexp)
         {
             var comparer = useRegexp ? "REGEXP" : "LIKE"; // Not L10N
-            var func = $"(Header || Body) {comparer} @Filter";
-            return string.IsNullOrWhiteSpace(filter) ? string.Empty : func;
+            return string.IsNullOrWhiteSpace(filter) ? string.Empty : $"(Header || Body) {comparer} @Filter";
         }
 
         private string ExcludeNoLevelClause(bool excludeNoLevel)
