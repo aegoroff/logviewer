@@ -48,8 +48,8 @@ namespace logviewer.logic.ui
         private long totalMessages;
         private readonly IViewModel viewModel;
 
-        private readonly ProducerConsumerQueue queue =
-            new ProducerConsumerQueue(Math.Max(2, Environment.ProcessorCount / 2));
+        private readonly ProducerConsumerMessageQueue queue =
+            new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
 
         private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
@@ -364,7 +364,7 @@ namespace logviewer.logic.ui
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
             try
             {
-                this.queuedMessages = 0;
+                this.queue.ResetQueuedCount();
 
                 this.RunReading(logPath, inputEncoding, offset);
 
@@ -375,9 +375,8 @@ namespace logviewer.logic.ui
                 }
                 this.FinishLoading();
 
-                // Interlocked is a must because other threads can change this
                 SpinWait.SpinUntil(
-                    () => Interlocked.Read(ref this.queuedMessages) == 0 || this.cancellation.IsCancellationRequested);
+                    () => this.queue.ReadCompleted || this.cancellation.IsCancellationRequested);
             }
             finally
             {
@@ -408,6 +407,7 @@ namespace logviewer.logic.ui
             }
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
             this.store = new LogStore(dbSize, null, this.matcher.IncludeMatcher.MessageSchema);
+            this.queue.Store = this.store;
         }
 
         private void RunReading(string logPath, Encoding inputEncoding, long offset)
@@ -431,7 +431,7 @@ namespace logviewer.logic.ui
         private void FinishLoading()
         {
             var elapsed = this.probeWatch.Elapsed;
-            var pending = Interlocked.Read(ref this.queuedMessages);
+            var pending = this.queue.QueuedMessages;
             var inserted = this.totalMessages - pending;
             var insertRatio = inserted / elapsed.TotalSeconds;
             var remain = Math.Abs(insertRatio) < 0.00001
@@ -465,22 +465,9 @@ namespace logviewer.logic.ui
             {
                 return;
             }
-            // Interlocked is a must because other threads can change this
-            Interlocked.Increment(ref this.queuedMessages);
+            this.queue.IncrementQueuedCount();
             message.Ix = Interlocked.Increment(ref this.totalMessages);
-
-            this.queue.EnqueueItem(delegate
-            {
-                try
-                {
-                    this.store.AddMessage(message);
-                }
-                finally
-                {
-                    // Interlocked is a must because other threads can change this
-                    Interlocked.Decrement(ref this.queuedMessages);
-                }
-            });
+            this.queue.EnqueueItem(message);
         }
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
@@ -651,8 +638,6 @@ namespace logviewer.logic.ui
         private long TotalMessages => this.store?.CountMessages() ?? 0;
 
         public LogStore Store => this.store;
-
-        private long queuedMessages;
 
         #endregion
 

@@ -95,6 +95,7 @@
     <Compile Include="fsm\StateConfiguration.cs" />
     <Compile Include="fsm\TriggerConfiguration.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\BaseGuiController.cs" />
     <Compile Include="support\AsymCrypt.cs" />
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />

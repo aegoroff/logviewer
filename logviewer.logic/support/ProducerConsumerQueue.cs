@@ -8,16 +8,16 @@ using System.Threading;
 
 namespace logviewer.logic.support
 {
-    internal class ProducerConsumerQueue
+    internal abstract class ProducerConsumerQueue<T>
     {
         private readonly object locker = new object();
         private readonly Thread[] workers;
-        private readonly Queue<Action> itemQ = new Queue<Action>();
+        private readonly Queue<T> itemQ = new Queue<T>();
 
         private const int MaxQueueCountBeforeEnqueueDelay = 20000;
         private const int EnqueueTimeoutMilliseconds = 30;
 
-        public ProducerConsumerQueue(int workerCount)
+        protected ProducerConsumerQueue(int workerCount)
         {
             this.workers = new Thread[workerCount];
 
@@ -33,7 +33,7 @@ namespace logviewer.logic.support
             // Enqueue one null item per worker to make each exit.
             for (var i = 0; i < this.workers.Length; i++)
             {
-                this.EnqueueItem(null);
+                this.EnqueueItem(default(T));
             }
 
             // Wait for workers to finish
@@ -57,7 +57,7 @@ namespace logviewer.logic.support
 
         public int WorkersCount => this.workers.Length;
 
-        public void EnqueueItem(Action item)
+        public void EnqueueItem(T item)
         {
             // memory: Freeze queue filling until pending count less then MaxQueueCountBeforeEnqueueDelay and then increase queue length
             if (this.itemQ.Count >= MaxQueueCountBeforeEnqueueDelay)
@@ -71,12 +71,14 @@ namespace logviewer.logic.support
             }
         }
 
+        protected abstract void Handler(T item);
+
         private void Consume()
         {
             while (true) // Keep consuming until
             {
                 // told otherwise.
-                Action item;
+                T item;
                 lock (this.locker)
                 {
                     while (this.itemQ.Count == 0)
@@ -85,11 +87,11 @@ namespace logviewer.logic.support
                     }
                     item = this.itemQ.Dequeue();
                 }
-                if (item == null)
+                if (item == null || item.Equals(default(T)))
                 {
                     return; // This signals our exit.
                 }
-                item(); // Execute item.
+                this.Handler(item); // Execute item.
             }
         }
     }
