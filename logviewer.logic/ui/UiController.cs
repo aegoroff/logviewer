@@ -412,12 +412,9 @@ namespace logviewer.logic.ui
 
         private void RunReading(string logPath, Encoding inputEncoding, long offset)
         {
-            using (var enumerator = this.reader.Read(logPath, inputEncoding, offset).GetEnumerator())
+            foreach (var message in this.reader.Read(logPath, inputEncoding, offset))
             {
-                while (enumerator.MoveNext())
-                {
-                    this.AddMessageToCache(enumerator.Current);
-                }
+                this.AddMessageToCache(message);
             }
         }
 
