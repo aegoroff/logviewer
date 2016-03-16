@@ -1,9 +1,9 @@
 ﻿// Created by: egr
 // Created at: 16.09.2012
-// © 2012-2015 Alexander Egorov
+// © 2012-2016 Alexander Egorov
 // Created by: egr
 // Created at: 11.09.2015
-// © 2012-2015 Alexander Egorov
+// © 2012-2016 Alexander Egorov
 
 using System;
 using System.Configuration;

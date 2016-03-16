@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 04.08.2015
-// © 2012-2015 Alexander Egorov
+// © 2012-2016 Alexander Egorov
 
 #if !DEBUG
 using System.Configuration;
@@ -10,6 +10,7 @@ using logviewer.logic;
 
 using System.Globalization;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using logviewer.logic.ui.network;
 using Application = System.Windows.Forms.Application;
@@ -28,6 +29,7 @@ namespace logviewer.ui
 #endif
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
             WebRequest.DefaultWebProxy = new NetworkSettingsViewModel().Proxy;
 
             Application.EnableVisualStyles();

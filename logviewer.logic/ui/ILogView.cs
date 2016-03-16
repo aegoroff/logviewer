@@ -1,6 +1,6 @@
 // Created by: egr
 // Created at: 19.09.2012
-// © 2012-2015 Alexander Egorov
+// © 2012-2016 Alexander Egorov
 
 using logviewer.engine;
 using logviewer.logic.models;

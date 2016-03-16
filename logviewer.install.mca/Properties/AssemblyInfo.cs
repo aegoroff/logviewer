@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Alexander Egorov")]
 [assembly: AssemblyProduct("logviewer")]
-[assembly: AssemblyCopyright("Copyright ©  2012-2015")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

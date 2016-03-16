@@ -1,6 +1,6 @@
 ﻿// Created by: egr
 // Created at: 24.10.2012
-// © 2012-2015 Alexander Egorov
+// © 2012-2016 Alexander Egorov
 
 using System.Xml;
 using FluentAssertions;
