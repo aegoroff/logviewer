@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using logviewer.engine;
 using logviewer.logic;
 using logviewer.logic.models;
-using logviewer.logic.support;
 using logviewer.logic.ui;
 
 namespace logviewer
@@ -91,7 +90,7 @@ namespace logviewer
             return result;
         }
 
-        static void Draw(ButtonBase button, Color color)
+        private static void Draw(ButtonBase button, Color color)
         {
             const int squareSize = 16;
 
@@ -107,7 +106,7 @@ namespace logviewer
                     g.FillRectangle(pen.Brush, rect);
                 }
             }
-            button.Image.Do(image => image.Dispose());
+            button.Image?.Dispose();
             button.Image = img;
         }
 

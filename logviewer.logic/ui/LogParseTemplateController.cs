@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
-using logviewer.logic.support;
 
 namespace logviewer.logic.ui
 {
@@ -48,7 +47,7 @@ namespace logviewer.logic.ui
 
         private void OnTemplateChangeSuccess()
         {
-            this.TemplateChangeSuccess.Do(handler => handler(this, new EventArgs()));
+            this.TemplateChangeSuccess?.Invoke(this, new EventArgs());
         }
 
         private void UpdatePattern(string value, object control, Action<string> assignAction)
@@ -62,7 +61,7 @@ namespace logviewer.logic.ui
             if (new GrokMatcher(value).CompilationFailed)
             {
                 this.view.ShowInvalidTemplateError(Resources.InvalidTemplate, control);
-                this.TemplateChangeFailure.Do(handler => handler(this, new EventArgs()));
+                this.TemplateChangeFailure?.Invoke(this, new EventArgs());
                 var task = Task.Factory.StartNew(delegate
                 {
                     Thread.Sleep(millisecondsToShowTooltip);

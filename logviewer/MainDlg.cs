@@ -451,7 +451,7 @@ namespace logviewer
         {
             if (disposing)
             {
-                this.components.Do(container => container.Dispose());
+                this.components?.Dispose();
             }
             this.controller.Dispose();
             base.Dispose(disposing);

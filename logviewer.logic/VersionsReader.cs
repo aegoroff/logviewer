@@ -64,7 +64,7 @@ namespace logviewer.logic
             }
             finally
             {
-                this.ReadCompleted.Do(handler => handler(this, new EventArgs()));
+                this.ReadCompleted?.Invoke(this, new EventArgs());
             }
         }
     }

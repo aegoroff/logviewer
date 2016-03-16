@@ -345,11 +345,8 @@ namespace logviewer.logic.ui
                 {
                     this.currentPath = string.Empty;
                     this.logSize = 0;
-                    this.store.Do(logStore =>
-                    {
-                        logStore.Dispose();
-                        this.store = null;
-                    });
+                    this.store?.Dispose();
+                    this.store = null;
                 }
                 if (f.Length == this.logSize)
                 {
@@ -641,7 +638,7 @@ namespace logviewer.logic.ui
 
         private void OnSuccessRtfCreate(string rtf)
         {
-            this.ReadCompleted.Do(handler => handler(this, new LogReadCompletedEventArgs(rtf)));
+            this.ReadCompleted?.Invoke(this, new LogReadCompletedEventArgs(rtf));
         }
 
         public void ShowElapsedTime()
@@ -992,7 +989,7 @@ namespace logviewer.logic.ui
             }
             finally
             {
-                this.store.Do(logStore => SafeRunner.Run(logStore.Dispose));
+                SafeRunner.Run(() => this.store?.Dispose());
                 this.kernel.Dispose();
             }
         }
