@@ -63,24 +63,24 @@ namespace logviewer.logic.storage
 
         internal void BeginTran()
         {
-            this.ExecuteInCreationContext(() => this.transaction = this.connection.BeginTransaction());
+            this.ExecuteInCreationContext(o => this.transaction = this.connection.BeginTransaction());
         }
 
         internal void CommitTran()
         {
-            this.ExecuteInCreationContext(() => this.transaction.Commit());
+            this.ExecuteInCreationContext(o => this.transaction.Commit());
         }
         
         internal void RollbackTran()
         {
-            this.ExecuteInCreationContext(() => this.transaction.Rollback());
+            this.ExecuteInCreationContext(o => this.transaction.Rollback());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
-            this.ExecuteInCreationContext(delegate
+            this.ExecuteInCreationContext(state =>
             {
                 try
                 {
@@ -98,7 +98,7 @@ namespace logviewer.logic.storage
                         }
                     }
                 }
-                catch (SQLiteException e) when(HandleSqlException(e))
+                catch (SQLiteException e) when (HandleSqlException(e))
                 {
                     Log.Instance.Debug(e);
                 }
@@ -139,9 +139,9 @@ namespace logviewer.logic.storage
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ExecuteInCreationContext(Action method)
+        private void ExecuteInCreationContext(SendOrPostCallback method)
         {
-            this.creationContext.Send(o => method(), null);
+            this.creationContext.Send(method, null);
         }
 
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
