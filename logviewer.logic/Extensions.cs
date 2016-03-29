@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Humanizer;
@@ -17,19 +18,28 @@ namespace logviewer.logic
 {
     public static class Extensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string ToParameterName(this LogLevel level)
         {
             return level.ToString(@"G") + @"Color";
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static  bool HasProperty(this ICollection<Semantic> schema, ParserType type)
         {
-            return schema.SelectMany(s => s.CastingRules).Any(r => r.Type == type);
+            return schema.FilterSchema(type).Any();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string PropertyNameOf(this ICollection<Semantic> schema, ParserType type)
         {
-            return (from s in schema from rule in s.CastingRules where rule.Type == type select s.Property).FirstOrDefault();
+            return schema.FilterSchema(type).Select(s => s.Property).FirstOrDefault();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IEnumerable<Semantic> FilterSchema(this ICollection<Semantic> schema, ParserType type)
+        {
+            return from s in schema from rule in s.CastingRules where rule.Type == type select s;
         }
 
         /// <summary>
