@@ -29,9 +29,9 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string UnescapeString(this string escaped)
         {
-            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
+            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\""))) // Not L10N
             {
-                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
+                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'"); // Not L10N
             }
             return escaped;
         }

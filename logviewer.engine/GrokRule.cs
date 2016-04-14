@@ -14,10 +14,15 @@ namespace logviewer.engine
     [DebuggerDisplay("{Pattern}")]
     public struct GrokRule
     {
-        internal const string DefaultPattern = "*";
-        readonly string pattern;
-        readonly ParserType type;
-        readonly LogLevel level;
+        internal const string DefaultPattern = @"*";
+
+        private readonly string pattern;
+        
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private ParserType type;
+        
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private LogLevel level;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance

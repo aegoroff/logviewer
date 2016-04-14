@@ -28,7 +28,7 @@ namespace logviewer.engine
             this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
             foreach (var semantic in schema)
             {
-                var k = this.rules.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
+                var k = this.rules.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property; // Not L10N
                 this.rules.Add(Create(k, semantic.CastingRules), semantic.CastingRules);
             }
         }

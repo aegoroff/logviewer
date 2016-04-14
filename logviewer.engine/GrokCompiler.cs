@@ -18,7 +18,7 @@ namespace logviewer.engine
         private Action<string> customErrorOutputMethod;
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private List<Semantic> messageSchema = new List<Semantic>();
-        private const string MainPattern = "MAIN";
+        private const string MainPattern = "MAIN"; // Not L10N
         private string[] patternFiles;
         private const int StreamBufferSize = 0xFFFF;
 
@@ -34,11 +34,11 @@ namespace logviewer.engine
 
         private void CreateLibraryTemplates()
         {
-            const string pattern = "*.patterns";
+            const string pattern = "*.patterns"; // Not L10N
             this.patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
             if (this.patternFiles.Length == 0)
             {
-                this.patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
+                this.patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly); // Not L10N
             }
         }
 
