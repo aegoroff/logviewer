@@ -148,11 +148,12 @@ namespace logviewer.engine
                 var message = LogMessage.Create();
                 var compiled = false;
                 var line = sr.ReadLine();
+                var targetEncoding = Encoding.UTF8;
                 while (line != null && !this.cancelled)
                 {
                     if (decode)
                     {
-                        line = line.Convert(encoding, Encoding.UTF8);
+                        line = line.Convert(encoding, targetEncoding);
                     }
                     if (this.excludeMatcher != null && this.excludeMatcher.Match(line))
                     {
