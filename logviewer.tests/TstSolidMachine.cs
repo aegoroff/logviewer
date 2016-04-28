@@ -222,8 +222,8 @@ namespace logviewer.tests
 
             sm.State<IdleState>()
                 .IsInitialState()
-                .On(TelephoneTrigger.PickingUpPhone, () => 1 + 1 == 2).GoesTo<DiallingState>()
-                .On(TelephoneTrigger.PickingUpPhone, () => 6 / 2 == 3).GoesTo<RingingState>();
+                .On(TelephoneTrigger.PickingUpPhone, () => 1 + 1 == 2).GoesTo<DiallingState>() //-V3022
+                .On(TelephoneTrigger.PickingUpPhone, () => 6 / 2 == 3).GoesTo<RingingState>(); //-V3022
 
             sm.Start();
 

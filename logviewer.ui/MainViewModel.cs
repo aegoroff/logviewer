@@ -196,8 +196,6 @@ namespace logviewer.ui
             }
         }
 
-        public IVersionsReader VersionsReader { get; set; }
-
         public string GithubAccount => ConfigurationManager.AppSettings["GitHubAccount"];
 
         public string GithubProject => ConfigurationManager.AppSettings["GitHubProject"];
