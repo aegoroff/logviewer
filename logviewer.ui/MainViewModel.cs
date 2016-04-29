@@ -74,7 +74,7 @@ namespace logviewer.ui
 
         public static MainViewModel Current { get; } = new MainViewModel();
 
-        public List<string> MinLevelLabeles { get; private set; } = new List<string>
+        public IEnumerable<string> MinLevelLabeles { get; } = new List<string>
         {
             Resources.TraceLabel,
             Resources.DebugLabel,
@@ -84,7 +84,7 @@ namespace logviewer.ui
             Resources.FatalLabel
         };
 
-        public List<string> MaxLevelLabeles { get; private set; } = new List<string>
+        public IEnumerable<string> MaxLevelLabeles { get; } = new List<string>
         {
             Resources.TraceLabel,
             Resources.DebugLabel,
@@ -94,7 +94,7 @@ namespace logviewer.ui
             Resources.FatalLabel
         };
 
-        public List<string> Sorting { get; private set; } = new List<string>
+        public IEnumerable<string> Sorting { get; } = new List<string>
         {
             Resources.SortDesc,
             Resources.SortAsc
