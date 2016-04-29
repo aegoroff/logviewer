@@ -57,7 +57,7 @@ namespace logviewer.engine
         /// <param name="value">Value to calculate percent</param>
         /// <param name="total">Value upper boundary</param>
         /// <returns>Percent of value from total parameter</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this ulong value, ulong total)
         {
             return (int)((value / (double)total) * 100);
@@ -69,7 +69,7 @@ namespace logviewer.engine
         /// <param name="value">Value to calculate percent</param>
         /// <param name="total">Value upper boundary</param>
         /// <returns>Percent of value from total parameter</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this long value, long total)
         {
             var v = value > 0 ? (ulong)value : 0;
@@ -82,7 +82,7 @@ namespace logviewer.engine
         /// <param name="value">Value to calculate percent</param>
         /// <param name="total">Value upper boundary</param>
         /// <returns>Percent of value from total parameter</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this FileSize value, FileSize total)
         {
             return value.Bytes.PercentOf(total.Bytes);
