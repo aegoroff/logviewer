@@ -72,7 +72,7 @@ namespace logviewer.engine
         /// <summary>
         /// All supportable dates formats to parse
         /// </summary>
-        public static string[] Formats { get; set; } = {
+        public static string[] Formats { get; } = {
             @"yyyy-MM-dd HH:mm:ss,FFF",
             @"yyyy-MM-dd HH:mm:ss.FFF",
             @"yyyy-MM-dd HH:mm:ss,FFFK",
@@ -116,41 +116,43 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         private static bool TryParseLogLevel(string s, out LogLevel level)
         {
-            switch (s.ToUpperInvariant())
+            if (string.Equals(s, @"TRACE", StringComparison.OrdinalIgnoreCase))
             {
-                case @"TRACE":
-                    level = LogLevel.Trace;
-                    return true;
-                case @"DEBUG":
-                case @"DEBUGGING":
-                    level = LogLevel.Debug;
-                    return true;
-                case @"INFO":
-                case @"NOTICE":
-                case @"INFORMATIONAL":
-                    level = LogLevel.Info;
-                    return true;
-                case @"WARN":
-                case @"WARNING":
-                    level = LogLevel.Warn;
-                    return true;
-                case @"ERROR":
-                case @"ERR":
-                case @"CRITICAL":
-                    level = LogLevel.Error;
-                    return true;
-                case @"FATAL":
-                case @"SEVERE":
-                case @"EMERG":
-                case @"EMERGENCY":
-                case @"PANIC":
-                case @"ALERT":
-                    level = LogLevel.Fatal;
-                    return true;
-                default:
-                    level = LogLevel.None;
-                    return false;
+                level = LogLevel.Trace;
+                return true;
             }
+            if (string.Equals(s, @"DEBUG", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
+            {
+                level = LogLevel.Debug;
+                return true;
+            }
+            if (string.Equals(s, @"INFO", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(s, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
+            {
+                level = LogLevel.Info;
+                return true;
+            }
+            if (string.Equals(s, @"WARN", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"WARNING", StringComparison.OrdinalIgnoreCase))
+            {
+                level = LogLevel.Warn;
+                return true;
+            }
+            if (string.Equals(s, @"ERROR", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"ERR", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(s, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
+            {
+                level = LogLevel.Error;
+                return true;
+            }
+            if (string.Equals(s, @"FATAL", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"SEVERE", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(s, @"EMERG", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(s, @"EMERGENCY", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"PANIC", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(s, @"ALERT", StringComparison.OrdinalIgnoreCase))
+            {
+                level = LogLevel.Fatal;
+                return true;
+            }
+            level = LogLevel.None;
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
