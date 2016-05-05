@@ -30,16 +30,13 @@ namespace logviewer.logic.ui
     {
         #region Constructors
 
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageCacheTimeoutMilliseconds)
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize)
         {
-            this.ItemsProvider = itemsProvider;
-            this.pageSize = pageSize;
             this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
         }
 
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize)
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize) : this(itemsProvider)
         {
-            this.ItemsProvider = itemsProvider;
             this.pageSize = pageSize;
         }
 

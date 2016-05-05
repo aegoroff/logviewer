@@ -289,7 +289,7 @@ namespace logviewer.logic.ui
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        public void UpdateRecentFilters(string value = null)
+        private void UpdateRecentFilters(string value = null)
         {
             this.settings.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {

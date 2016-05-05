@@ -21,13 +21,12 @@ namespace logviewer.logic.storage
 
         internal DatabaseConnection(string databaseFilePath)
         {
-            this.DatabasePath = databaseFilePath;
-            if (!File.Exists(this.DatabasePath) || new FileInfo(this.DatabasePath).Length == 0)
+            if (!File.Exists(databaseFilePath) || new FileInfo(databaseFilePath).Length == 0)
             {
-                SQLiteConnection.CreateFile(this.DatabasePath);
+                SQLiteConnection.CreateFile(databaseFilePath);
                 this.IsEmpty = true;
             }
-            var conString = new SQLiteConnectionStringBuilder { DataSource = this.DatabasePath };
+            var conString = new SQLiteConnectionStringBuilder { DataSource = databaseFilePath };
             this.creationContext = new SynchronizationContext();
             this.connection = new SQLiteConnection(conString.ToString());
             this.connection.Open();
@@ -39,7 +38,6 @@ namespace logviewer.logic.storage
         }
 
         internal bool IsEmpty { get; private set; }
-        internal string DatabasePath { get; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
