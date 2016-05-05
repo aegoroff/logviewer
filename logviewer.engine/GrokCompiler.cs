@@ -71,6 +71,6 @@ namespace logviewer.engine
         /// <summary>
         /// Message schema - all possible properties and casting rules
         /// </summary>
-        internal ICollection<Semantic> MessageSchema => this.messageSchema;
+        internal IEnumerable<Semantic> MessageSchema => this.messageSchema;
     }
 }
