@@ -139,7 +139,7 @@
                             <Label Content="{x:Static properties:Resources.From}" Grid.Column="0" Grid.Row="0" />
                             <Label Content="{x:Static properties:Resources.To}" Grid.Column="0" Grid.Row="1" />
                             <xctk:DateTimePicker
-                                Format="Custom"
+                                Format="FullDateTime"
                                 Margin="5"
                                 Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=From, IsAsync=True}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
@@ -147,7 +147,7 @@
                                 Grid.Column="1"
                                 Grid.Row="0" />
                             <xctk:DateTimePicker
-                                Format="Custom"
+                                Format="FullDateTime"
                                 Margin="5"
                                 Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=To, IsAsync=True}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"

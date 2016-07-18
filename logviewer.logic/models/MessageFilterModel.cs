@@ -4,6 +4,7 @@
 
 using System;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.models
 {
@@ -29,6 +30,7 @@ namespace logviewer.logic.models
 
         public bool UseRegexp { get; set; }
 
+        [PublicAPI]
         public bool ExcludeNoLevel { get; set; }
 
         public bool Reverse { get; set; }
