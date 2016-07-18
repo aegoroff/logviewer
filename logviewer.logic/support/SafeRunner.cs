@@ -5,6 +5,8 @@
 using System;
 using System.Runtime.CompilerServices;
 
+using logviewer.logic.Annotations;
+
 namespace logviewer.logic.support
 {
     /// <summary>
@@ -17,6 +19,7 @@ namespace logviewer.logic.support
         /// </summary>
         /// <param name="method"> Method to run </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [PublicAPI]
         public static void Run(Action method)
         {
             try
@@ -34,6 +37,7 @@ namespace logviewer.logic.support
         /// </summary>
         /// <param name="method"> Method to run </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [PublicAPI]
         public static T Run<T>(Func<T> method)
         {
             try
@@ -54,6 +58,7 @@ namespace logviewer.logic.support
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [PublicAPI]
         public static void Run<T>(Action<T> method, T argument)
         {
             try
@@ -75,6 +80,7 @@ namespace logviewer.logic.support
         /// <param name="argument1"> Argument 1 value </param>
         /// <param name="argument2"> Argument 2 value </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [PublicAPI]
         public static void Run<T1, T2>(Action<T1, T2> method, T1 argument1, T2 argument2)
         {
             try
@@ -98,6 +104,7 @@ namespace logviewer.logic.support
         /// <param name="argument2"> Argument 2 value </param>
         /// <param name="argument3"> Argument 3 value </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [PublicAPI]
         public static void Run<T1, T2, T3>(Action<T1, T2, T3> method, T1 argument1, T2 argument2, T3 argument3)
         {
             try

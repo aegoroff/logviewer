@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Humanizer;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using logviewer.logic.Properties;
 using logviewer.logic.support;
 
@@ -25,7 +26,7 @@ namespace logviewer.logic
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static  bool HasProperty(this ICollection<Semantic> schema, ParserType type)
+        internal static bool HasProperty(this ICollection<Semantic> schema, ParserType type)
         {
             return schema.FilterSchema(type).Any();
         }
@@ -66,6 +67,7 @@ namespace logviewer.logic
             }
         }
 
+        [Pure]
         public static int ToSafePercent(this int value, int min, int max)
         {
             if (value > max)
