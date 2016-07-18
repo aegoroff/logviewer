@@ -81,7 +81,7 @@ namespace logviewer.tests
         [Fact]
         public void EnsureNoAsyncVoidMethods()
         {
-            Helpers.AssertNoAsyncVoidMethods(GetType().Assembly);
+            Helpers.AssertNoAsyncVoidMethods(this.GetType().Assembly);
             Helpers.AssertNoAsyncVoidMethods(typeof(MainController).Assembly);
         }
         

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
 using logviewer.logic;
+using logviewer.logic.Annotations;
 using logviewer.logic.support;
 using Xunit;
 
@@ -13,19 +14,21 @@ namespace logviewer.tests
         private const string ExpectedString = "str";
         readonly KeyValuePair<int, string> empty = new KeyValuePair<int, string>();
 
+        [PublicAPI]
         public static IEnumerable<object[]> ValuePairs => new[]
         {
             new object[] { 2, DateTime.Today },
             new object[] { 2, DateTime.MinValue }
         };
 
+        [PublicAPI]
         public static IEnumerable<object[]> ReferencePairs => new[]
         {
             new object[] { 2, ExpectedString },
             new object[] { 2, null }
         };
 
-        [Theory, MemberData("ValuePairs")]
+        [Theory, MemberData(nameof(ValuePairs))]
         public void Add_ValueType_KeysValid(int key, DateTime value)
         {
             // Arrange
@@ -38,7 +41,7 @@ namespace logviewer.tests
             instance.Keys.ShouldBeEquivalentTo(new[] { key });
         }
 
-        [Theory, MemberData("ReferencePairs")]
+        [Theory, MemberData(nameof(ReferencePairs))]
         public void Add_ReferenceType_KeysValid(int key, string value)
         {
             // Arrange
@@ -51,7 +54,7 @@ namespace logviewer.tests
             instance.Keys.ShouldBeEquivalentTo(new[] { key });
         }
 
-        [Theory, MemberData("ValuePairs")]
+        [Theory, MemberData(nameof(ValuePairs))]
         public void Add_ValueType_ValuesValid(int key, DateTime value)
         {
             // Arrange
@@ -64,7 +67,7 @@ namespace logviewer.tests
             instance.Values.ShouldBeEquivalentTo(new[] { value });
         }
 
-        [Theory, MemberData("ReferencePairs")]
+        [Theory, MemberData(nameof(ReferencePairs))]
         public void Add_ReferenceType_ValuesValid(int key, string value)
         {
             // Arrange
@@ -385,13 +388,14 @@ namespace logviewer.tests
             instance.ContainsKey(2).Should().BeFalse();
         }
 
+        [PublicAPI]
         public static IEnumerable<object[]> InstancesToClear => new[]
         {
             new object[] { new FixedSizeDictionary<string>(10) { new KeyValuePair<int, string>(2, ExpectedString) } },
             new object[] { new FixedSizeDictionary<string>(10) }
         };
 
-        [Theory, MemberData("InstancesToClear")]
+        [Theory, MemberData(nameof(InstancesToClear))]
         public void Clear_DifferentCollections(FixedSizeDictionary<string> instance)
         {
             // Arrange

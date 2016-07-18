@@ -11,6 +11,7 @@ using System.Threading;
 using FluentAssertions;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using logviewer.logic.storage;
 using logviewer.logic.ui;
@@ -165,7 +166,7 @@ namespace logviewer.tests
             this.controller.MessagesCount.Should().Be(c);
         }
 
-        [Theory, MemberData("MaxDates")]
+        [Theory, MemberData(nameof(MaxDates))]
         public void MaxDate(DateTime filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
@@ -178,7 +179,7 @@ namespace logviewer.tests
             this.controller.MessagesCount.Should().Be(c);
         }
 
-        [Theory, MemberData("MinDates")]
+        [Theory, MemberData(nameof(MinDates))]
         public void MinDate(DateTime filter, int c)
         {
             File.WriteAllText(TestPath, MessageExamples);
@@ -191,6 +192,7 @@ namespace logviewer.tests
             this.controller.MessagesCount.Should().Be(c);
         }
 
+        [PublicAPI]
         public static IEnumerable<object[]> MaxDates => new[]
         {
             new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },
@@ -198,6 +200,7 @@ namespace logviewer.tests
             new object[] { new DateTime(2008, 12, 27, 19, 12, 0, DateTimeKind.Utc), 0 }
         };
 
+        [PublicAPI]
         public static IEnumerable<object[]> MinDates => new[]
         {
             new object[] { new DateTime(2008, 12, 27, 19, 32, 0, DateTimeKind.Utc), 1 },

@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using FluentAssertions;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using logviewer.logic.storage;
 using Moq;
@@ -62,6 +63,7 @@ namespace logviewer.tests
             this.stream.Seek(0, SeekOrigin.Begin);
         }
 
+        [PublicAPI]
         public void Dispose()
         {
             this.stream.Dispose();
@@ -72,6 +74,7 @@ namespace logviewer.tests
             }
         }
 
+        [PublicAPI]
         public static IEnumerable<object[]> FilterCases => new[]
         {
             new object[] { new MessageFilterModel(), 2  },
@@ -88,7 +91,7 @@ namespace logviewer.tests
             new object[] { new MessageFilterModel { Finish = new DateTime(2000, 1, 1) }, 0  }
         };
 
-        [Theory, MemberData("FilterCases")]
+        [Theory, MemberData(nameof(FilterCases))]
         public void FetchCount(MessageFilterModel filterModel, int expectation)
         {
             this.FillStore();
@@ -96,7 +99,7 @@ namespace logviewer.tests
             this.provider.FetchCount().Should().Be(expectation);
         }
 
-        [Theory, MemberData("FilterCases")]
+        [Theory, MemberData(nameof(FilterCases))]
         public void FetchRangeFiltered(MessageFilterModel filterModel, int expectation)
         {
             this.FillStore();

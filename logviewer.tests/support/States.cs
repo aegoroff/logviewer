@@ -1,28 +1,35 @@
 ﻿using System;
+using logviewer.logic.Annotations;
 using logviewer.logic.fsm;
 
 namespace logviewer.tests.support
 {
+    [PublicAPI]
     public class ConversationState : SolidState
     {
     }
 
+    [PublicAPI]
     public class DiallingState : SolidState
     {
     }
 
+    [PublicAPI]
     public class IdleState : SolidState
     {
     }
 
+    [PublicAPI]
     public class RingingState : SolidState
     {
     }
 
+    [PublicAPI]
     public class WaitForAnswerState : SolidState
     {
     }
 
+    [PublicAPI]
     public class TelephoneBrokenState : SolidState
     {
     }
@@ -40,6 +47,7 @@ namespace logviewer.tests.support
     /// <summary>
     ///     A test state that reports the current date back to the state machine in its Entering method.
     /// </summary>
+    [PublicAPI]
     public class DateReportingState : SolidState
     {
         protected override void DoEntering(object context)
@@ -57,6 +65,7 @@ namespace logviewer.tests.support
         public DateTime CurrentDate { get; set; }
     }
 
+    [PublicAPI]
     public class StateWithoutParameterlessConstructor : SolidState
     {
         private readonly int number;

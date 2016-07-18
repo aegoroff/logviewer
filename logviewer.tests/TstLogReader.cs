@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using FluentAssertions;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using Moq;
 using Xunit;
 
@@ -41,6 +42,7 @@ namespace logviewer.tests
             this.path = Path.GetTempFileName();
         }
 
+        [PublicAPI]
         public static IEnumerable<object[]> ValidStreams => new[]
         {
             new object[] { MessageExamples, Encoding.UTF8 },
@@ -70,7 +72,7 @@ namespace logviewer.tests
             this.stream.Write(this.buffer, 0, this.buffer.Length);
         }
 
-        [Theory, MemberData("ValidStreams")]
+        [Theory, MemberData(nameof(ValidStreams))]
         public void Read_FromStream_AllRead(string data, Encoding encoding)
         {
             // Arrange

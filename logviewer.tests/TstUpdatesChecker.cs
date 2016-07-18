@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using logviewer.logic;
+using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using Moq;
 using Xunit;
@@ -40,7 +41,7 @@ namespace logviewer.tests
         private static readonly Version v1 = new Version(1, 2, 104, 0);
         private static readonly Version v2 = new Version(1, 0);
 
-        [Theory, MemberData("Versions")]
+        [Theory, MemberData(nameof(Versions))]
         public void EqualLess(Version[] versions)
         {
             this.Invoke(versions);
@@ -58,13 +59,14 @@ namespace logviewer.tests
             this.checker.LatestVersion.Should().Be(v);
         }
 
-        [Theory, MemberData("Versions")]
+        [Theory, MemberData(nameof(Versions))]
         public void Less(Version[] versions)
         {
             this.Invoke(versions);
             this.checker.IsUpdatesAvaliable(v2).Should().BeTrue();
         }
 
+        [PublicAPI]
         public static IEnumerable<object[]> Versions => new []
         {
             new object[] { new [] { v1 } },
