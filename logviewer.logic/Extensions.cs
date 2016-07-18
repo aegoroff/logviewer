@@ -20,18 +20,21 @@ namespace logviewer.logic
     public static class Extensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Pure]
         internal static string ToParameterName(this LogLevel level)
         {
             return level.ToString(@"G") + @"Color";
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Pure]
         internal static bool HasProperty(this ICollection<Semantic> schema, ParserType type)
         {
             return schema.FilterSchema(type).Any();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Pure]
         internal static string PropertyNameOf(this ICollection<Semantic> schema, ParserType type)
         {
             return schema.FilterSchema(type).Select(s => s.Property).FirstOrDefault();
@@ -49,6 +52,7 @@ namespace logviewer.logic
         /// <param name="messageTextFilter">string that supposed to be a filter</param>
         /// <param name="useRegularExpressions">Wheter to use regular expressions in filter string</param>
         /// <returns></returns>
+        [Pure]
         public static bool IsValid(this string messageTextFilter, bool useRegularExpressions)
         {
             if (string.IsNullOrEmpty(messageTextFilter) || !useRegularExpressions)
@@ -77,11 +81,13 @@ namespace logviewer.logic
             return value < min ? min : value;
         }
 
+        [Pure]
         private static string BytesToString(this ulong bytes)
         {
             return ((long)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
         }
 
+        [Pure]
         public static string Format(this LoadProgress progress)
         {
             return progress.Speed.Bytes == 0
@@ -93,6 +99,7 @@ namespace logviewer.logic
         private const string BigFileFormatNoBytes = @"{0:F2} {1}";
         private const string SmallFileFormat = @"{0} {1}";
 
+        [Pure]
         public static string Format(this FileSize fileSize)
         {
             string[] sizes =

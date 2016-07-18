@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Humanizer;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
 using logviewer.logic.storage;
@@ -187,6 +188,7 @@ namespace logviewer.logic.ui
 
         private DateTime prevInput;
 
+        [PublicAPI]
         public bool PendingStart { get; private set; }
 
         public void StartReadingLogOnTextFilterChange()
@@ -563,6 +565,7 @@ namespace logviewer.logic.ui
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
         }
 
+        [PublicAPI]
         public void CancelReading()
         {
             if (this.cancellation.IsCancellationRequested)
@@ -618,6 +621,7 @@ namespace logviewer.logic.ui
             this.settings.UseRecentFilesStore(s => s.Add(this.viewModel.LogPath));
         }
 
+        [PublicAPI]
         public string CountMessages(LogLevel level)
         {
             return ToHumanReadableString(this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0);

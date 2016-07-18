@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.support
 {
@@ -48,6 +49,7 @@ namespace logviewer.logic.support
             return ToBase64String(stringWriter.ToString());
         }
 
+        [Pure]
         public string Encrypt(string plain)
         {
             var provider = CreateProvider(this.PublicKey);
@@ -57,6 +59,7 @@ namespace logviewer.logic.support
             return Convert.ToBase64String(cryptedBytes);
         }
 
+        [Pure]
         public string Decrypt(string crypted)
         {
             var provider = CreateProvider(this.PrivateKey);
@@ -77,12 +80,14 @@ namespace logviewer.logic.support
             return provider;
         }
 
+        [Pure]
         public static string ToBase64String(string plain)
         {
             var bytes = Encoding.Unicode.GetBytes(plain);
             return Convert.ToBase64String(bytes);
         }
 
+        [Pure]
         public static string FromBase64String(string base64)
         {
             var bytes = Convert.FromBase64String(base64);

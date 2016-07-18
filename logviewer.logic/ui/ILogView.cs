@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using logviewer.logic.models;
 
 namespace logviewer.logic.ui
@@ -11,6 +12,7 @@ namespace logviewer.logic.ui
     {
         string LogPath { get; set; }
         string LogFileName { get; }
+        [PublicAPI]
         string HumanReadableLogSize { get; set; }
         string LogInfo { get; set; }
         void ClearRecentFilesList();
@@ -20,9 +22,11 @@ namespace logviewer.logic.ui
         void OnFailureRead(string errorMessage);
         bool OpenExport(string path);
         void SaveRtf();
+        [PublicAPI]
         void SetCurrentPage(int page);
         void SetPageSize(int size);
         void Initialize();
+        [PublicAPI]
         void FocusOnTextFilterControl();
         void SetProgress(LoadProgress progress);
         void SetLogProgressCustomText(string text);

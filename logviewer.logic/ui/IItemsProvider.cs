@@ -2,6 +2,8 @@
 // Created at: 10.11.2015
 // © 2012-2016 Alexander Egorov
 
+using logviewer.logic.Annotations;
+
 namespace logviewer.logic.ui
 {
     /// <summary>
@@ -14,6 +16,7 @@ namespace logviewer.logic.ui
         ///     Fetches the total number of items available.
         /// </summary>
         /// <returns></returns>
+        [PublicAPI]
         long FetchCount();
 
         /// <summary>
@@ -22,6 +25,7 @@ namespace logviewer.logic.ui
         /// <param name="offset">The start index.</param>
         /// <param name="limit">The number of items to fetch.</param>
         /// <returns></returns>
+        [PublicAPI]
         T[] FetchRange(long offset, int limit);
     }
 }

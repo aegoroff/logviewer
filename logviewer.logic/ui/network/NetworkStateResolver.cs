@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using logviewer.logic.Annotations;
 using logviewer.logic.fsm;
 
 namespace logviewer.logic.ui.network
@@ -18,6 +19,7 @@ namespace logviewer.logic.ui.network
             this.provider = provider;
         }
 
+        [Pure]
         public ISolidState ResolveState(Type stateType)
         {
             if (stateType == typeof (NoProxyState))

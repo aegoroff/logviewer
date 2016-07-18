@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using logviewer.logic.Annotations;
 using logviewer.logic.support;
 
 namespace logviewer.logic.ui
@@ -35,11 +36,13 @@ namespace logviewer.logic.ui
             this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
         }
 
+        [PublicAPI]
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize) : this(itemsProvider)
         {
             this.pageSize = pageSize;
         }
 
+        [PublicAPI]
         public VirtualizingCollection(IItemsProvider<T> itemsProvider)
         {
             this.ItemsProvider = itemsProvider;
@@ -47,14 +50,17 @@ namespace logviewer.logic.ui
 
         #endregion
 
+        [PublicAPI]
         public IItemsProvider<T> ItemsProvider { get; }
 
+        [PublicAPI]
         public int PageSize
         {
             // ReSharper disable once ConvertPropertyToExpressionBody
             get { return this.pageSize; }
         }
 
+        [PublicAPI]
         public long PageCacheTimeoutMilliseconds { get; } = 10000;
 
         private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
@@ -242,6 +248,7 @@ namespace logviewer.logic.ui
             return this.IndexOf((T) value);
         }
 
+        [Pure]
         public int IndexOf(T item)
         {
             return -1;
@@ -303,6 +310,7 @@ namespace logviewer.logic.ui
         /// <summary>
         ///     Cleans up any stale pages that have not been accessed in the period dictated by PageCacheTimeoutMilliseconds.
         /// </summary>
+        [PublicAPI]
         public void CleanUpPages()
         {
             // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating

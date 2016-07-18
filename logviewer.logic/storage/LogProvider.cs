@@ -4,6 +4,7 @@
 
 using System;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using logviewer.logic.ui;
 using Net.Sgoliver.NRtfTree.Util;
@@ -20,8 +21,10 @@ namespace logviewer.logic.storage
             this.settings = settings;
         }
 
+        [PublicAPI]
         public MessageFilterModel FilterModel { get; set; }
 
+        [PublicAPI]
         public LogStore Store { get; set; }
 
         public void Dispose()

@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.fsm
 {
@@ -27,11 +28,13 @@ namespace logviewer.logic.fsm
         /// <summary>
         ///     The source state of the transition.
         /// </summary>
+        [PublicAPI]
         public Type SourceState { get; }
 
         /// <summary>
         ///     The target state of the transition.
         /// </summary>
+        [PublicAPI]
         public Type TargetState { get; }
     }
 }

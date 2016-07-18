@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using logviewer.engine;
+using logviewer.logic.Annotations;
 using logviewer.logic.support;
 using Microsoft.VisualBasic.Devices;
 
@@ -141,28 +142,33 @@ namespace logviewer.logic.storage
             this.Dispose(true);
         }
 
+        [PublicAPI]
         public void StartAddMessages()
         {
             this.NoIndex();
             this.connection.BeginTran();
         }
 
+        [PublicAPI]
         public void FinishAddMessages()
         {
             this.connection.CommitTran();
             this.Index();
         }
 
+        [PublicAPI]
         public void Index()
         {
             this.connection.ExecuteNonQuery(this.CreateAdditionalIndexes().ToArray());
         }
 
+        [PublicAPI]
         public void NoIndex()
         {
             this.connection.ExecuteNonQuery(this.DropAdditionalIndexes().ToArray());
         }
 
+        [PublicAPI]
         public void AddMessage(LogMessage message)
         {
             message.Cache(this.rules);
@@ -196,6 +202,7 @@ namespace logviewer.logic.storage
             }, query);
         }
 
+        [PublicAPI]
         public void ReadMessages(
             int limit,
             Action<LogMessage> onReadMessage,
@@ -244,6 +251,7 @@ namespace logviewer.logic.storage
             return result == ParserType.String ? PropertyType.String : PropertyType.Integer;
         }
 
+        [PublicAPI]
         public long CountMessages(
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
@@ -253,7 +261,8 @@ namespace logviewer.logic.storage
         {
             return this.CountMessages(DateTime.MinValue, DateTime.MaxValue, min, max, filter, useRegexp, excludeNoLevel);
         }
-        
+
+        [PublicAPI]
         public long CountMessages(
             DateTime start, 
             DateTime finish,
@@ -274,7 +283,8 @@ namespace logviewer.logic.storage
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
         }
-        
+
+        [PublicAPI]
         public DateTime SelectDateUsingFunc(string func, LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
             string filter = null,

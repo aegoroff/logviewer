@@ -9,7 +9,7 @@ namespace logviewer.logic.models
     public sealed class VersionEventArgs : EventArgs
     {
         public Version Version { get; private set; }
-        public string Url { get; set; }
+        public string Url { get; private set; }
 
         public VersionEventArgs(Version version, string url)
         {

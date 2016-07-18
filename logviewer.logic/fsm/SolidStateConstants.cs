@@ -4,7 +4,7 @@
 
 namespace logviewer.logic.fsm
 {
-    public class SolidStateConstants
+    public static class SolidStateConstants
     {
         public static int ErrorStateMachineNotStarted = 1000;
         public static int ErrorTriggerNotValidForState = 1001;

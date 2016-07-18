@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.fsm
 {
@@ -12,12 +13,13 @@ namespace logviewer.logic.fsm
     public class SolidStateException : Exception
     {
         // Constructors
-
+        [PublicAPI]
         public SolidStateException(int errorId, string message) : base(message)
         {
             this.ErrorId = errorId;
         }
 
+        [PublicAPI]
         public SolidStateException(int errorId, string message, Exception innerException) : base(message, innerException)
         {
             this.ErrorId = errorId;

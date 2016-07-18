@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.fsm
 {
@@ -46,11 +47,13 @@ namespace logviewer.logic.fsm
             this.stateHistoryTrimThreshold = DefaultStatehistoryTrimThreshold;
         }
 
+        [PublicAPI]
         public SolidMachine(object context) : this()
         {
             this.Context = context;
         }
 
+        [PublicAPI]
         public SolidMachine(object context, IStateResolver stateResolver) : this(context)
         {
             this.Context = context;
@@ -62,35 +65,41 @@ namespace logviewer.logic.fsm
         /// <summary>
         ///     The type of the machines initial state.
         /// </summary>
+        [PublicAPI]
         public Type InitialState => this.initialState.StateType;
 
         /// <summary>
         ///     Returns the state that the state machine is currently in.
         /// </summary>
+        [PublicAPI]
         public ISolidState CurrentState => this.currentState?.StateInstance;
 
         /// <summary>
         ///     A list of the triggers that are valid to use on the current state.
         ///     If the machine hasn't been started yet, this list is empty.
         /// </summary>
+        [PublicAPI]
         public List<TTrigger> ValidTriggers => this.GetValidTriggers();
 
         /// <summary>
         ///     An arbitrary object that will be passed on to the states in their entry and exit methods.
         ///     If no context is defined, the state machine instance will be used as context.
         /// </summary>
+        [PublicAPI]
         public object Context { get; set; }
 
         /// <summary>
         ///     The resolver for state machine states. If this is not specified the standard
         ///     .NET activator is used and all states must then have parameterless constructors.
         /// </summary>
+        [PublicAPI]
         public IStateResolver StateResolver { get; set; }
 
         /// <summary>
         ///     Controls whether state class instances should be Singletons or if they should be instantiated
         ///     for each transition. Default value is Singleton.
         /// </summary>
+        [PublicAPI]
         public StateInstantiationMode StateInstantiationMode
         {
             get { return this.stateInstantiationMode; }
@@ -125,6 +134,7 @@ namespace logviewer.logic.fsm
         ///     The number of entries that will be kept in the state history before an automatic
         ///     trim is performed.
         /// </summary>
+        [PublicAPI]
         public int StateHistoryTrimThreshold
         {
             get { return this.stateHistoryTrimThreshold; }

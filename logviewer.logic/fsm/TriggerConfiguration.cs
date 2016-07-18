@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.fsm
 {
@@ -12,12 +13,14 @@ namespace logviewer.logic.fsm
         {
             private readonly StateConfiguration owningStateConfiguration;
 
+            [PublicAPI]
             public TriggerConfiguration(TTrigger trigger, StateConfiguration owningStateConfiguration)
             {
                 this.Trigger = trigger;
                 this.owningStateConfiguration = owningStateConfiguration;
             }
 
+            [PublicAPI]
             public TriggerConfiguration(TTrigger trigger, Func<bool> guardClause, StateConfiguration owningStateConfiguration)
             {
                 this.GuardClause = guardClause;

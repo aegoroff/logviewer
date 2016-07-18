@@ -5,11 +5,13 @@
 using System;
 using System.Data.SQLite;
 using System.Text.RegularExpressions;
+using logviewer.logic.Annotations;
 using logviewer.logic.support;
 
 namespace logviewer.logic.storage
 {
     [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
+    [PublicAPI]
     internal class SqliteRegEx : SQLiteFunction
     {
         private static string invalid;

@@ -5,6 +5,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.support
 {
@@ -53,6 +54,7 @@ namespace logviewer.logic.support
             this.indexes = new int[this.count];
         }
 
+        [Pure]
         public bool Contains(KeyValuePair<int, T> item)
         {
             return this.indexes[item.Key] > 0 && Equals(this.store[item.Key], item.Value);
@@ -92,6 +94,7 @@ namespace logviewer.logic.support
 
         public bool IsReadOnly => false;
 
+        [Pure]
         public bool ContainsKey(int key)
         {
             return key < this.count && this.ContainsKeyInternal(key);
