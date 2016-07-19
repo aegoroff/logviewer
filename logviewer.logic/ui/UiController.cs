@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -123,6 +124,15 @@ namespace logviewer.logic.ui
                     return;
                 }
             }
+
+            IObservable<UpdatesChecker> observable = null;
+
+            observable?.Subscribe(
+                delegate(UpdatesChecker c)
+                    {
+                        RunOnGuiThread(() => viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
+                    });
+
             var checker = new UpdatesChecker(this.VersionsReader);
             this.settings.LastUpdateCheckTime = DateTime.UtcNow;
             Task.Factory.StartNew(delegate

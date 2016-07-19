@@ -19,9 +19,17 @@ namespace logviewer.logic
         }
 
         public Version LatestVersion { get; private set; }
+
         public string LatestVersionUrl { get; private set; }
         
         public Version CurrentVersion { get; }
+
+        public bool UpdatesAvaliable { get; private set; }
+
+        public void CheckUpdates()
+        {
+            this.UpdatesAvaliable = this.IsUpdatesAvaliable();
+        }
 
         public bool IsUpdatesAvaliable()
         {
