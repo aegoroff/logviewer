@@ -12,11 +12,13 @@ using Octokit;
 
 namespace logviewer.logic
 {
-    internal class VersionsReader : IVersionsReader
+    internal class VersionsReader : IVersionsReader, IDisposable
     {
         private readonly string account;
         private readonly string project;
-        private readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        private readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private const string DownloadUrlTemplate = @"http://github.com/{0}/{1}/releases/download/{2}/{3}";
 
@@ -73,6 +75,19 @@ namespace logviewer.logic
         public IDisposable Subscribe(Action<VersionModel> onNext, Action onCompleted)
         {
             return this.subject.Subscribe(onNext, onCompleted);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.subject.Dispose();
+            }
         }
     }
 }

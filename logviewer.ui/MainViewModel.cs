@@ -19,7 +19,7 @@ using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public sealed class MainViewModel : IViewModel
+    public sealed class MainViewModel : IViewModel, IDisposable
     {
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
@@ -316,6 +316,19 @@ namespace logviewer.ui
         public void ShowNoUpdateAvaliable()
         {
            System.Windows.MessageBox.Show(Resources.NoUpdateAvailable, Resources.NoUpdateAvailableCaption, MessageBoxButton.OK);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.Provider.Dispose();
+            }
         }
     }
 

@@ -653,6 +653,7 @@ namespace logviewer.logic.ui
              MessageId = "store")]
         public void Dispose()
         {
+            this.VersionsReader.Dispose();
             this.queue.Shutdown(true);
             try
             {
