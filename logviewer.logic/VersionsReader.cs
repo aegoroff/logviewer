@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
 using logviewer.logic.models;
 using logviewer.logic.support;
@@ -19,13 +20,14 @@ namespace logviewer.logic
 
         private const string DownloadUrlTemplate = @"http://github.com/{0}/{1}/releases/download/{2}/{3}";
 
-        public event EventHandler ReadCompleted;
-        public event EventHandler<VersionEventArgs> VersionRead;
-        
+        private readonly Subject<VersionModel> subject;
+
+
         public VersionsReader(string account, string project)
         {
             this.account = account;
             this.project = project;
+            this.subject = new Subject<VersionModel>();
         }
 
         public void ReadReleases()
@@ -49,7 +51,7 @@ namespace logviewer.logic
                         {
                             var url = string.Format(DownloadUrlTemplate, this.account, this.project, release.Name, m.Value);
                             var version = new Version(m.Groups[1].Captures[0].Value);
-                            this.VersionRead?.Invoke(this, new VersionEventArgs(version, url));
+                            this.subject.OnNext(new VersionModel(version, url));
                         }
                     }
                     catch (Exception e)
@@ -64,8 +66,13 @@ namespace logviewer.logic
             }
             finally
             {
-                this.ReadCompleted?.Invoke(this, new EventArgs());
+                this.subject.OnCompleted();
             }
+        }
+
+        public IDisposable Subscribe(Action<VersionModel> onNext, Action onCompleted)
+        {
+            return this.subject.Subscribe(onNext, onCompleted);
         }
     }
 }

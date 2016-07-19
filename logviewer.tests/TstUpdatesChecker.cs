@@ -20,6 +20,7 @@ namespace logviewer.tests
         public TstUpdatesChecker()
         {
             this.reader = new Mock<IVersionsReader>();
+            this.observer = new Mock<IObserver<VersionModel>>();
             this.checker = new UpdatesChecker(this.reader.Object);
         }
 
@@ -30,14 +31,15 @@ namespace logviewer.tests
                 Thread.Sleep(30);
                 foreach (var version in versions)
                 {
-                    this.reader.Raise(_ => _.VersionRead += null, new VersionEventArgs(version, string.Empty));
+                    this.observer.Setup(o => o.OnNext(new VersionModel(version, string.Empty)));
                 }
-                this.reader.Raise(_ => _.ReadCompleted += null, new EventArgs());
+                this.observer.Setup(o => o.OnCompleted());
             });
         }
 
         private readonly UpdatesChecker checker;
         private readonly Mock<IVersionsReader> reader;
+        private readonly Mock<IObserver<VersionModel>> observer;
         private static readonly Version v1 = new Version(1, 2, 104, 0);
         private static readonly Version v2 = new Version(1, 0);
 

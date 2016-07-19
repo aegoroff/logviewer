@@ -24,13 +24,6 @@ namespace logviewer.logic
         
         public Version CurrentVersion { get; }
 
-        public bool UpdatesAvaliable { get; private set; }
-
-        public void CheckUpdates()
-        {
-            this.UpdatesAvaliable = this.IsUpdatesAvaliable();
-        }
-
         public bool IsUpdatesAvaliable()
         {
             return this.IsUpdatesAvaliable(this.CurrentVersion);
@@ -40,28 +33,20 @@ namespace logviewer.logic
         {
             var completed = false;
             var result = false;
-            this.reader.VersionRead += (sender, eventArgs) =>
+            this.LatestVersion = current;
+            this.reader.Subscribe(args =>
             {
-                if (result)
+                result = args.Version > current;
+                if (!result || this.LatestVersion > args.Version)
                 {
                     return;
                 }
-                result = eventArgs.Version > current;
-                if (!result)
-                {
-                    return;
-                }
-                this.LatestVersion = eventArgs.Version;
-                this.LatestVersionUrl = eventArgs.Url;
-            };
-            this.reader.ReadCompleted += delegate { completed = true; };
+                this.LatestVersion = args.Version;
+                this.LatestVersionUrl = args.Url;
+            }, () => completed = true);
 
             this.reader.ReadReleases();
             SpinWait.SpinUntil(() => completed);
-            if (!result)
-            {
-                this.LatestVersion = current;
-            }
             return result;
         }
     }

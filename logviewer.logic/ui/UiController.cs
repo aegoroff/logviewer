@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -124,34 +125,28 @@ namespace logviewer.logic.ui
                     return;
                 }
             }
-
-            IObservable<UpdatesChecker> observable = null;
-
-            observable?.Subscribe(
-                delegate(UpdatesChecker c)
-                    {
-                        RunOnGuiThread(() => viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
-                    });
-
             var checker = new UpdatesChecker(this.VersionsReader);
-            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
-            Task.Factory.StartNew(delegate
-            {
-                if (!checker.IsUpdatesAvaliable())
-                {
-                    if (manualInvoke)
-                    {
-                        this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
-                    }
-                    return;
-                }
 
-                this.RunOnGuiThread(
-                    () =>
-                        this.viewModel.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion,
-                            checker.LatestVersionUrl));
-            });
+            var observable = Observable.Return(checker, Scheduler.Default);
+
+            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
+
+            observable.Subscribe(
+                c =>
+                {
+                    if (!c.IsUpdatesAvaliable())
+                    {
+                        if (manualInvoke)
+                        {
+                            this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
+                        }
+                        return;
+                    }
+                    this.RunOnGuiThread(
+                        () => this.viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
+                });
         }
+
 
         private bool NotCancelled => !this.cancellation.IsCancellationRequested;
 
