@@ -4,7 +4,7 @@
 
 using System;
 using System.Reflection;
-using System.Threading;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic
 {
@@ -24,14 +24,15 @@ namespace logviewer.logic
         
         public Version CurrentVersion { get; }
 
-        public bool IsUpdatesAvaliable()
+        [PublicAPI]
+        public void CheckUpdatesAvaliable(Action<bool> onComplete)
         {
-            return this.IsUpdatesAvaliable(this.CurrentVersion);
+            this.CheckUpdatesAvaliable(onComplete, this.CurrentVersion);
         }
 
-        public bool IsUpdatesAvaliable(Version current)
+        [PublicAPI]
+        public void CheckUpdatesAvaliable(Action<bool> onComplete, Version current)
         {
-            var completed = false;
             var result = false;
             this.LatestVersion = current;
             this.reader.Subscribe(args =>
@@ -43,11 +44,9 @@ namespace logviewer.logic
                 }
                 this.LatestVersion = args.Version;
                 this.LatestVersionUrl = args.Url;
-            }, () => completed = true);
+            }, () => onComplete(result));
 
             this.reader.ReadReleases();
-            SpinWait.SpinUntil(() => completed);
-            return result;
         }
     }
 }

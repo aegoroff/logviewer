@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -423,23 +425,29 @@ namespace logviewer.logic.ui
                 }
             }
             var checker = this.kernel.Get<UpdatesChecker>();
-            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
-            Task.Factory.StartNew(delegate
-            {
-                if (!checker.IsUpdatesAvaliable())
-                {
-                    if (manualInvoke)
-                    {
-                        this.RunOnGuiThread(() => this.view.ShowNoUpdateAvaliable());
-                    }
-                    return;
-                }
 
-                this.RunOnGuiThread(
-                    () =>
-                        this.view.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion,
-                            checker.LatestVersionUrl));
-            });
+            var observable = Observable.Return(checker, Scheduler.Default);
+
+            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
+
+            observable.Subscribe(
+                c =>
+                {
+                    c.CheckUpdatesAvaliable(result =>
+                    {
+                        if (!result)
+                        {
+                            if (manualInvoke)
+                            {
+                                this.RunOnGuiThread(() => this.view.ShowNoUpdateAvaliable());
+                            }
+                            return;
+                        }
+                        this.RunOnGuiThread(
+                            () =>
+                                this.view.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
+                    });
+                });
         }
 
         /// <summary>

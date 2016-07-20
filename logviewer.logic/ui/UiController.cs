@@ -134,16 +134,18 @@ namespace logviewer.logic.ui
             observable.Subscribe(
                 c =>
                 {
-                    if (!c.IsUpdatesAvaliable())
+                    c.CheckUpdatesAvaliable(result =>
                     {
-                        if (manualInvoke)
+                        if (!result)
                         {
-                            this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
+                            if (manualInvoke)
+                            {
+                                this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
+                            }
+                            return;
                         }
-                        return;
-                    }
-                    this.RunOnGuiThread(
-                        () => this.viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
+                        this.RunOnGuiThread(() => this.viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
+                    });
                 });
         }
 

@@ -19,9 +19,10 @@ namespace logviewer.tests
     {
         public TstUpdatesChecker()
         {
-            this.reader = new Mock<IVersionsReader>();
+            var reader = new Mock<IVersionsReader>();
             this.observer = new Mock<IObserver<VersionModel>>();
-            this.checker = new UpdatesChecker(this.reader.Object);
+            this.checker = new UpdatesChecker(reader.Object);
+            reader.Setup(x => x.ReadReleases());
         }
 
         private void Invoke(params Version[] versions)
@@ -38,7 +39,6 @@ namespace logviewer.tests
         }
 
         private readonly UpdatesChecker checker;
-        private readonly Mock<IVersionsReader> reader;
         private readonly Mock<IObserver<VersionModel>> observer;
         private static readonly Version v1 = new Version(1, 2, 104, 0);
         private static readonly Version v2 = new Version(1, 0);
@@ -47,7 +47,7 @@ namespace logviewer.tests
         public void EqualLess(Version[] versions)
         {
             this.Invoke(versions);
-            this.checker.IsUpdatesAvaliable(new Version(1, 2, 104, 0)).Should().BeFalse();
+            this.checker.CheckUpdatesAvaliable(b => { }, new Version(1, 2, 104, 0));
             this.checker.LatestVersion.Should().Be(v1);
         }
 
@@ -57,7 +57,7 @@ namespace logviewer.tests
             var v = new Version(2, 0);
             this.Invoke(v1);
 
-            this.checker.IsUpdatesAvaliable(v).Should().BeFalse();
+            this.checker.CheckUpdatesAvaliable(b => { }, v);
             this.checker.LatestVersion.Should().Be(v);
         }
 
@@ -65,7 +65,7 @@ namespace logviewer.tests
         public void Less(Version[] versions)
         {
             this.Invoke(versions);
-            this.checker.IsUpdatesAvaliable(v2).Should().BeTrue();
+            this.checker.CheckUpdatesAvaliable(b => { }, v2);
         }
 
         [PublicAPI]
