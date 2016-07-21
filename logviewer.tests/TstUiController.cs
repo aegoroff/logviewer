@@ -39,6 +39,8 @@ namespace logviewer.tests
             this.viewModel.SetupGet(_ => _.SettingsProvider).Returns(this.settings.Object);
             this.viewModel.SetupGet(_ => _.Provider).Returns(new LogProvider(null, this.settings.Object));
             this.viewModel.SetupGet(_ => _.Datasource).Returns(new VirtualizingCollection<string>(itemsProvider.Object));
+            this.viewModel.SetupGet(_ => _.GithubAccount).Returns("egoroff");
+            this.viewModel.SetupGet(_ => _.GithubProject).Returns("logviewer");
 
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);

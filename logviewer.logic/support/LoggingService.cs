@@ -15,6 +15,7 @@ namespace logviewer.logic.support
     {
         private static readonly Log instance = new Log();
 
+        [PublicAPI]
         internal Log()
             : base(@"logviewer")
         {

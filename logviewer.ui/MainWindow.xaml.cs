@@ -86,6 +86,7 @@ namespace logviewer.ui
         {
             this.logWatch.Dispose();
             this.controller.Dispose();
+            MainViewModel.Current.Dispose();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

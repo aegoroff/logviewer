@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -124,24 +126,29 @@ namespace logviewer.logic.ui
                 }
             }
             var checker = new UpdatesChecker(this.VersionsReader);
-            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
-            Task.Factory.StartNew(delegate
-            {
-                if (!checker.IsUpdatesAvaliable())
-                {
-                    if (manualInvoke)
-                    {
-                        this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
-                    }
-                    return;
-                }
 
-                this.RunOnGuiThread(
-                    () =>
-                        this.viewModel.ShowDialogAboutNewVersionAvaliable(checker.CurrentVersion, checker.LatestVersion,
-                            checker.LatestVersionUrl));
-            });
+            var observable = Observable.Return(checker, Scheduler.Default);
+
+            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
+
+            observable.Subscribe(
+                c =>
+                {
+                    c.CheckUpdatesAvaliable(result =>
+                    {
+                        if (!result)
+                        {
+                            if (manualInvoke)
+                            {
+                                this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
+                            }
+                            return;
+                        }
+                        this.RunOnGuiThread(() => this.viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
+                    });
+                });
         }
+
 
         private bool NotCancelled => !this.cancellation.IsCancellationRequested;
 
@@ -648,6 +655,7 @@ namespace logviewer.logic.ui
              MessageId = "store")]
         public void Dispose()
         {
+            this.VersionsReader.Dispose();
             this.queue.Shutdown(true);
             try
             {
