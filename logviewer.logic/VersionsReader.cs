@@ -42,42 +42,28 @@ namespace logviewer.logic
             {
                 var releases = this.github.Repository.Release.GetAll(this.account, this.project);
                 releases.ContinueWith(this.OnReleasesListCompleted, TaskContinuationOptions.NotOnFaulted);
-                releases.ContinueWith(task =>
-                {
-                    this.subject.OnCompleted();
-                    Log.Instance.Error(task.Exception?.InnerException.Message, task.Exception?.InnerException);
-                }, TaskContinuationOptions.OnlyOnFaulted);
+                releases.ContinueWith(this.OnError, TaskContinuationOptions.OnlyOnFaulted);
             }
             catch (Exception e)
             {
-                Log.Instance.Error(e.Message, e);
-                this.subject.OnCompleted();
+                this.OnError(e);
             }
         }
 
         private void OnReleasesListCompleted(Task<IReadOnlyList<Release>> task)
         {
-            for (var i = 0; i < task.Result.Count; i++)
+            var lastRelease = task.Result.OrderByDescending(r => r.PublishedAt).FirstOrDefault();
+            if (lastRelease == null)
             {
-                try
-                {
-                    var release = task.Result[i];
-                    var assets = this.github.Repository.Release.GetAllAssets(this.account, this.project, release.Id);
-                    var asset = assets.ContinueWith(this.OnAssetComplete, release);
-                    if (i == task.Result.Count - 1)
-                    {
-                        asset.ContinueWith(t => this.subject.OnCompleted());
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Instance.Warn(e.Message, e);
-                    if (i == task.Result.Count - 1)
-                    {
-                        this.subject.OnCompleted();
-                    }
-                }
+                this.subject.OnCompleted();
+                return;
             }
+            var assets = this.github.Repository.Release.GetAllAssets(this.account, this.project, lastRelease.Id);
+            assets
+                .ContinueWith(this.OnAssetComplete, lastRelease, TaskContinuationOptions.NotOnFaulted)
+                .ContinueWith(t => this.subject.OnCompleted());
+
+            assets.ContinueWith(this.OnError, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private void OnAssetComplete(Task<IReadOnlyList<ReleaseAsset>> task, object state)
@@ -93,6 +79,17 @@ namespace logviewer.logic
                 var version = new Version(m.Groups[1].Captures[0].Value);
                 this.subject.OnNext(new VersionModel(version, url));
             }
+        }
+
+        private void OnError(Task task)
+        {
+            this.OnError(task.Exception?.InnerException);
+        }
+
+        private void OnError(Exception ex)
+        {
+            this.subject.OnCompleted();
+            Log.Instance.Error(ex?.Message, ex);
         }
 
         public IDisposable Subscribe(Action<VersionModel> onNext, Action onCompleted)
