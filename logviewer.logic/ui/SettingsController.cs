@@ -195,7 +195,7 @@ namespace logviewer.logic.ui
             get
             {
                 return this.settings.DefaultColors.Where(c => c.Key != LogLevel.None)
-                    .Aggregate(false, (current, c) => current | this.formData.Colors[c.Key].ToArgb() != c.Value.ToArgb());
+                    .Aggregate(false, (current, c) => current | this.formData.Colors[c.Key].ToArgb() != c.Value.ToArgb()); //-V3093
             }
         }
 
