@@ -37,11 +37,11 @@ namespace logviewer.logic
             this.LatestVersion = current;
             this.reader.Subscribe(args =>
             {
-                result = args.Version > current;
-                if (!result || this.LatestVersion > args.Version)
+                if (this.LatestVersion > args.Version)
                 {
                     return;
                 }
+                result = true;
                 this.LatestVersion = args.Version;
                 this.LatestVersionUrl = args.Url;
             }, () => onComplete(result));
