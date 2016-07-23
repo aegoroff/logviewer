@@ -24,6 +24,7 @@ namespace logviewer.logic.support
         /// </summary>
         public string PrivateKey { get; set; }
 
+        [PublicAPI]
         public void GenerateKeys(int keySize = 2048)
         {
             var csp = new RSACryptoServiceProvider(keySize);
@@ -50,6 +51,7 @@ namespace logviewer.logic.support
         }
 
         [Pure]
+        [PublicAPI]
         public string Encrypt(string plain)
         {
             var provider = CreateProvider(this.PublicKey);
@@ -60,6 +62,7 @@ namespace logviewer.logic.support
         }
 
         [Pure]
+        [PublicAPI]
         public string Decrypt(string crypted)
         {
             var provider = CreateProvider(this.PrivateKey);
@@ -81,6 +84,7 @@ namespace logviewer.logic.support
         }
 
         [Pure]
+        [PublicAPI]
         public static string ToBase64String(string plain)
         {
             var bytes = Encoding.Unicode.GetBytes(plain);
@@ -88,6 +92,7 @@ namespace logviewer.logic.support
         }
 
         [Pure]
+        [PublicAPI]
         public static string FromBase64String(string base64)
         {
             var bytes = Convert.FromBase64String(base64);
