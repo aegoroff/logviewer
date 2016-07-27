@@ -6,13 +6,18 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+
+#if !DEBUG
 using System.Configuration;
+using logviewer.logic;
+#endif
+
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using BurnSystems.CommandLine;
-using logviewer.logic;
+
 using logviewer.logic.support;
 using Ninject;
 
@@ -53,7 +58,7 @@ namespace logviewer
                 Application.Run(Kernel.Get<MainDlg>());
             }
         }
-
+#if !DEBUG
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var defectSender = new DefectSender(
@@ -63,5 +68,6 @@ namespace logviewer
             MiniDump.CreateMiniDump();
             task.Wait();
         }
+#endif
     }
 }

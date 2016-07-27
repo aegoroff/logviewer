@@ -5,6 +5,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using logviewer.logic.Annotations;
 using logviewer.logic.support;
 using Octokit;
 
@@ -27,6 +28,7 @@ namespace logviewer.logic
             this.project = project;
         }
 
+        [PublicAPI]
         public async Task<int> Send(Exception exception)
         {
             try
