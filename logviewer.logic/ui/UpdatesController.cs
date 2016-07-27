@@ -2,19 +2,20 @@
 // Created at: 04.10.2014
 // © 2012-2016 Alexander Egorov
 
-
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using logviewer.engine;
 using logviewer.logic.storage;
 using logviewer.logic.support;
 
 namespace logviewer.logic.ui
 {
-    public class UpdatesController : BaseGuiController
+    public class UpdatesController
     {
         private readonly string targetAddress;
         private readonly IUpdateView view;
@@ -32,8 +33,12 @@ namespace logviewer.logic.ui
             this.view.DisableYesControl();
 
             var client = new WebClient();
-            client.DownloadProgressChanged += this.OnDownloadProgressChanged;
-            client.DownloadFileCompleted += this.OnDownloadFileCompleted;
+
+            var onProgress = Observable.FromEventPattern<DownloadProgressChangedEventArgs>(client, nameof(client.DownloadProgressChanged));
+            var onComplete = Observable.FromEventPattern(client, nameof(client.DownloadFileCompleted));
+            onProgress.ObserveOn(Scheduler.CurrentThread).Subscribe(this.OnProgress);
+            onComplete.ObserveOn(Scheduler.CurrentThread).Subscribe(this.OnComplete);
+            
             try
             {
                 var source = new Uri(this.targetAddress);
@@ -47,21 +52,18 @@ namespace logviewer.logic.ui
             }
         }
 
-        private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void OnComplete(EventPattern<object> eventPattern)
         {
-            this.RunOnGuiThread(
-                () =>
-                    this.view.EnableUpdateStartControl(true));
+            this.view.EnableUpdateStartControl(true);
         }
 
-        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void OnProgress(EventPattern<DownloadProgressChangedEventArgs> eventPattern)
         {
+            var e = eventPattern.EventArgs;
             var bytesIn = new FileSize(e.BytesReceived, true);
             var totalBytes = new FileSize(e.TotalBytesToReceive, true);
             var percentage = bytesIn.PercentOf(totalBytes);
-            this.RunOnGuiThread(
-                () =>
-                    this.view.OnProgress(percentage, totalBytes, bytesIn));
+            this.view.OnProgress(percentage, totalBytes, bytesIn);
         }
 
         public void StartUpdate()
