@@ -285,4 +285,7 @@
   <data name="ZeroFileDetected" xml:space="preserve">
     <value>Empty file detected. File must be not empty to be displayed.</value>
   </data>
+  <data name="UpdateDownloadProgressFormat" xml:space="preserve">
+    <value>Downloaded {0} of {1}   {2}%</value>
+  </data>
 </root>

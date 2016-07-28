@@ -297,4 +297,16 @@
   <data name="UseCurrentUserSettings" xml:space="preserve">
     <value>Использовать настройки текущего пользователя</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="UpdatesChecking" xml:space="preserve">
+    <value>Проверка обновлений</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
 </root>

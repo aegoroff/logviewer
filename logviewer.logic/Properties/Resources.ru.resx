@@ -264,6 +264,9 @@
   <data name="SpeedPercentWithRemain" xml:space="preserve">
     <value>{0} %  ({1}/сек.) осталось {2}</value>
   </data>
+  <data name="UpdateDownloadProgressFormat" xml:space="preserve">
+    <value>Загружено {0} из {1}   {2}%</value>
+  </data>
   <data name="ZeroFileDetected" xml:space="preserve">
     <value>Пустой файл. Файл не должен быть пустым.</value>
   </data>

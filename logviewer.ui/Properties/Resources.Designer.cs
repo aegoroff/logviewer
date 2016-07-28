@@ -412,6 +412,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string No {
+            get {
+                return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Direct Internet Connection. Don&apos;t use automatic proxy detection..
         /// </summary>
         public static string NoProxy {
@@ -601,11 +610,29 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        public static string Update {
+            get {
+                return ResourceManager.GetString("Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloaded {0} of {1}   {2}%.
         /// </summary>
         public static string UpdateDownloadProgressFormat {
             get {
                 return ResourceManager.GetString("UpdateDownloadProgressFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updates checking.
+        /// </summary>
+        public static string UpdatesChecking {
+            get {
+                return ResourceManager.GetString("UpdatesChecking", resourceCulture);
             }
         }
         
@@ -660,6 +687,15 @@ namespace logviewer.ui.Properties {
         public static string WarnLabel {
             get {
                 return ResourceManager.GetString("WarnLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }

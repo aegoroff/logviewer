@@ -168,6 +168,7 @@
     <Compile Include="ui\SettingsController.cs" />
     <Compile Include="storage\SqliteSettingsProvider.cs" />
     <Compile Include="storage\SqliteRegEx.cs" />
+    <Compile Include="ui\update\UpdateViewModel.cs" />
     <Compile Include="UpdatesChecker.cs" />
     <Compile Include="ui\UpdatesController.cs" />
     <Compile Include="models\VersionModel.cs" />
