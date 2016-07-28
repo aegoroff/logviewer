@@ -170,7 +170,6 @@
     <Compile Include="storage\SqliteRegEx.cs" />
     <Compile Include="ui\update\UpdateViewModel.cs" />
     <Compile Include="UpdatesChecker.cs" />
-    <Compile Include="ui\UpdatesController.cs" />
     <Compile Include="models\VersionModel.cs" />
     <Compile Include="VersionsReader.cs" />
     <Compile Include="ui\VirtualizingCollection.cs" />
