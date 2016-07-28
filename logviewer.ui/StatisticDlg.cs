@@ -73,17 +73,15 @@ namespace logviewer.ui
 
             Action<Task> updateUi = delegate
             {
-                var items =
-                    byLevel.Select(
-                        (value, i) =>
-                            new ListViewItem(new[] { this.levelDescriptions[i], value.ToString("N0", CultureInfo.CurrentCulture) }))
-                        .ToList();
+                var items = byLevel
+                    .Zip(this.levelDescriptions, (val, level) => CreateItem(level, val))
+                    .ToList();
 
-                var sizeItem = new ListViewItem(new[] { Resources.Size, this.size });
-                var encodingItem = new ListViewItem(new[] { Resources.Encoding, this.encoding });
-                var databaseSize = new ListViewItem(new[] { Resources.DatabaseSize, new FileSize(dbSize).Format() });
-                var minDate = new ListViewItem(new[] { Resources.MinMessageDate, minDateTime.ToString("f") });
-                var maxDate = new ListViewItem(new[] { Resources.MaxMessageDate, maxDateTime.ToString("f") });
+                var sizeItem = CreateItem(Resources.Size, this.size);
+                var encodingItem = CreateItem(Resources.Encoding, this.encoding);
+                var databaseSize = CreateItem(Resources.DatabaseSize, new FileSize(dbSize).Format());
+                var minDate = CreateItem(Resources.MinMessageDate, minDateTime);
+                var maxDate = CreateItem(Resources.MaxMessageDate, maxDateTime);
 
                 if (minDateTime != maxDateTime || minDateTime != DateTime.MinValue)
                 {
@@ -91,9 +89,7 @@ namespace logviewer.ui
                     items.Add(maxDate);
                 }
 
-                
-                var totalItem =
-                    new ListViewItem(new[] { Resources.TotalMessages, total.ToString("N0", CultureInfo.CurrentCulture) });
+                var totalItem = CreateItem(Resources.TotalMessages, total);
 
                 items.AddRange(new[] { new ListViewItem(), totalItem, sizeItem, encodingItem, databaseSize });
 
@@ -101,6 +97,21 @@ namespace logviewer.ui
             };
 
             job.ContinueWith(updateUi, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, this.uiContext);
+        }
+
+        private static ListViewItem CreateItem(string key, ulong value)
+        {
+            return CreateItem(key, value.ToString("N0", CultureInfo.CurrentCulture));
+        }
+
+        private static ListViewItem CreateItem(string key, DateTime value)
+        {
+            return CreateItem(key, value.ToString("f"));
+        }
+
+        private static ListViewItem CreateItem(string key, string value)
+        {
+            return new ListViewItem(new[] { key, value });
         }
 
         private void OnOk(object sender, EventArgs e)
