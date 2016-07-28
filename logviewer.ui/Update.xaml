@@ -16,7 +16,14 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
         <GroupBox Grid.Row="0" Header="{x:Static properties:Resources.NewVersion}">
-            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <Label x:Name="InfoLabel" Grid.Row="0"></Label>
+                <ProgressBar x:Name="ProgressBar" Grid.Row="1"></ProgressBar>
+            </Grid>
         </GroupBox>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right"
                     FlowDirection="RightToLeft">
