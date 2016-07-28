@@ -288,4 +288,7 @@
   <data name="UpdateDownloadProgressFormat" xml:space="preserve">
     <value>Downloaded {0} of {1}   {2}%</value>
   </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>The new version of logviewer available. Current version is {0} but the new is {1}. Download it now?</value>
+  </data>
 </root>

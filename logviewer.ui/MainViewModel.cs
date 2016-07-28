@@ -8,12 +8,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows.Forms;
 using System.Windows;
 using logviewer.logic;
 using logviewer.logic.storage;
 using logviewer.logic.ui;
+using logviewer.logic.ui.update;
 using logviewer.ui.Annotations;
 using logviewer.ui.Properties;
 
@@ -308,8 +308,8 @@ namespace logviewer.ui
 
         public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress)
         {
-            var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
-            new Update(m, targetAddress).Show();
+            var model = new UpdateViewModel(current, latest, targetAddress);
+            new Update(model).Show();
         }
 
         public void ShowNoUpdateAvaliable()

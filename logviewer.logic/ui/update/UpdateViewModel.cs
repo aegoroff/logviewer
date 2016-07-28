@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using logviewer.engine;
 using logviewer.logic.Annotations;
 using logviewer.logic.Properties;
@@ -25,11 +26,12 @@ namespace logviewer.logic.ui.update
         private string updateAvailableText;
 
         private string target;
-        private readonly string targetAddress;
+        private string targetAddress;
 
-        public UpdateViewModel(string targetAddress)
+        public UpdateViewModel(Version current, Version latest, string targetAddress)
         {
             this.targetAddress = targetAddress;
+            this.UpdateAvailableText = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -13,13 +13,12 @@ namespace logviewer.ui
     {
         private UpdateViewModel viewModel;
 
-        public Update(string text, string targetAddress)
+        public Update(UpdateViewModel viewModel)
         {
             this.InitializeComponent();
-            this.viewModel = new UpdateViewModel(targetAddress);
+            this.viewModel = viewModel;
             this.viewModel.Close += this.ViewModelOnClose;
             this.DataContext = this.viewModel;
-            this.viewModel.UpdateAvailableText = text;
             this.viewModel.YesEnabled = true;
         }
 

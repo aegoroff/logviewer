@@ -186,6 +186,9 @@
   <data name="MinutesNominative" xml:space="preserve">
     <value>минута</value>
   </data>
+  <data name="NewVersionAvailable" xml:space="preserve">
+    <value>Доступна новая версия logviewer. Текущая версия {0} а новая {1}. Загрузить её сейчас?</value>
+  </data>
   <data name="ParsingTemplateApacheCombined" xml:space="preserve">
     <value>Комбинированный журнал доступа Apache</value>
   </data>

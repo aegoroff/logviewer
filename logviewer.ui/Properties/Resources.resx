@@ -216,9 +216,6 @@
   <data name="NewVersion" xml:space="preserve">
     <value>New version available</value>
   </data>
-  <data name="NewVersionAvailable" xml:space="preserve">
-    <value>The new version of logviewer available. Current version is {0} but the new is {1}. Download it now?</value>
-  </data>
   <data name="NoUpdateAvailable" xml:space="preserve">
     <value>You are using the latetest version of the program. No update available now.</value>
   </data>

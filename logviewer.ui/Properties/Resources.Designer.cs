@@ -403,15 +403,6 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The new version of logviewer available. Current version is {0} but the new is {1}. Download it now?.
-        /// </summary>
-        public static string NewVersionAvailable {
-            get {
-                return ResourceManager.GetString("NewVersionAvailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         public static string No {
