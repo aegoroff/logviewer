@@ -21,19 +21,22 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <Label x:Name="InfoLabel" Grid.Row="0"></Label>
-                <ProgressBar x:Name="ProgressBar" Grid.Row="1"></ProgressBar>
+                <Label x:Name="InfoLabel" Grid.Row="0" Content="{Binding Path=UpdateAvailableText, IsAsync=True}"></Label>
+                <ProgressBar 
+                    x:Name="ProgressBar" 
+                    Value="{Binding Path=Percent, IsAsync=True}"
+                    Grid.Row="1"></ProgressBar>
             </Grid>
         </GroupBox>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right"
                     FlowDirection="RightToLeft">
             <Button x:Name="No" Content="{x:Static properties:Resources.No}" Width="70" Margin="3,0" Click="OnNo"/>
-            <Button x:Name="Yes" Content="{x:Static properties:Resources.Yes}" Margin="3,0" Click="OnYes">
+            <Button x:Name="Yes" Content="{x:Static properties:Resources.Yes}" Margin="3,0" Click="OnYes" IsEnabled="{Binding Path=YesEnabled}">
                 <Button.Width>
                     <Binding ElementName="No" Path="Width" />
                 </Button.Width>
             </Button>
-            <Button x:Name="UpdateBtn" Content="{x:Static properties:Resources.Update}" Margin="3,0" Click="OnUpdate">
+            <Button x:Name="UpdateBtn" Content="{x:Static properties:Resources.Update}" Margin="3,0" Click="OnUpdate" IsEnabled="{Binding Path=UpdateEnabled}">
                 <Button.Width>
                     <Binding ElementName="No" Path="Width" />
                 </Button.Width>

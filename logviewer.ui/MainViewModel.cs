@@ -309,9 +309,7 @@ namespace logviewer.ui
         public void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress)
         {
             var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
-            var update = new UpdateDlg(m, targetAddress);
-            update.Show(this.Window);
-            // TODO: new Update().Show();
+            new Update(m, targetAddress).Show();
         }
 
         public void ShowNoUpdateAvaliable()
