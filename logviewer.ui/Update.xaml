@@ -20,12 +20,14 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <Label x:Name="InfoLabel" Grid.Row="0" Content="{Binding Path=UpdateAvailableText, IsAsync=True}"></Label>
+                <TextBlock x:Name="InfoLabel" Grid.Row="0" Text="{Binding Path=UpdateAvailableText, IsAsync=True}" TextWrapping="Wrap"></TextBlock>
+                <Label x:Name="ProgressLabel" Grid.Row="1" Content="{Binding Path=ReadBytes, IsAsync=True}"></Label>
                 <ProgressBar 
                     x:Name="ProgressBar" 
                     Value="{Binding Path=Percent, IsAsync=True}"
-                    Grid.Row="1"></ProgressBar>
+                    Grid.Row="2"></ProgressBar>
             </Grid>
         </GroupBox>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right"

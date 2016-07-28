@@ -154,12 +154,6 @@
     <Compile Include="Update.xaml.cs">
       <DependentUpon>Update.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UpdateDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UpdateDlg.Designer.cs">
-      <DependentUpon>UpdateDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="WindowWrapper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -228,12 +222,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="StatisticDlg.ru.resx">
       <DependentUpon>StatisticDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateDlg.resx">
-      <DependentUpon>UpdateDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateDlg.ru.resx">
-      <DependentUpon>UpdateDlg.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>

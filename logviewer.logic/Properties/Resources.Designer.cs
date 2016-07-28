@@ -556,6 +556,15 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloaded {0} of {1}   {2}%.
+        /// </summary>
+        internal static string UpdateDownloadProgressFormat {
+            get {
+                return ResourceManager.GetString("UpdateDownloadProgressFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empty file detected. File must be not empty to be displayed..
         /// </summary>
         internal static string ZeroFileDetected {

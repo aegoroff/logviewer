@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using logviewer.engine;
 using logviewer.logic.Annotations;
+using logviewer.logic.Properties;
 using logviewer.logic.storage;
 using logviewer.logic.support;
 
@@ -20,7 +21,6 @@ namespace logviewer.logic.ui.update
         private bool updateEnabled;
         private bool yesEnabled;
         private string readBytes;
-        private string totalBytes;
         private int percent;
         private string updateAvailableText;
 
@@ -64,16 +64,6 @@ namespace logviewer.logic.ui.update
             }
         }
 
-        public string TotalBytes
-        {
-            get { return this.totalBytes; }
-            set
-            {
-                this.totalBytes = value;
-                this.OnPropertyChanged(nameof(this.TotalBytes));
-            }
-        }
-
         public int Percent
         {
             get { return this.percent; }
@@ -114,7 +104,7 @@ namespace logviewer.logic.ui.update
             catch (Exception e)
             {
                 Log.Instance.Error(e.Message, e);
-                //this.view.ShowErrorMessage(e.Message);
+                this.UpdateAvailableText = e.Message;
             }
         }
 
@@ -123,11 +113,11 @@ namespace logviewer.logic.ui.update
             try
             {
                 Process.Start(this.target);
-                //this.view.Close();
+                // TODO: this.view.Close();
             }
             catch (Exception e)
             {
-                //this.view.ShowErrorMessage(e.Message);
+                this.UpdateAvailableText = e.Message;
             }
         }
 
@@ -142,9 +132,8 @@ namespace logviewer.logic.ui.update
             var bytesIn = new FileSize(e.BytesReceived, true);
             var total = new FileSize(e.TotalBytesToReceive, true);
             var percentage = bytesIn.PercentOf(total);
-            this.ReadBytes = bytesIn.Format();
-            this.TotalBytes = total.Format();
             this.Percent = percentage;
+            this.ReadBytes = string.Format(Resources.UpdateDownloadProgressFormat, bytesIn.Format(), total.Format(), percentage);
         }
 
         [NotifyPropertyChangedInvocator]
