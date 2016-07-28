@@ -34,6 +34,8 @@ namespace logviewer.logic.ui.update
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public event EventHandler Close;
+
         public bool UpdateEnabled
         {
             get { return this.updateEnabled; }
@@ -113,7 +115,7 @@ namespace logviewer.logic.ui.update
             try
             {
                 Process.Start(this.target);
-                // TODO: this.view.Close();
+                this.Close?.Invoke(this, new EventArgs());
             }
             catch (Exception e)
             {

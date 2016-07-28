@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using logviewer.logic.ui.update;
 using logviewer.ui.Annotations;
 
@@ -16,9 +17,15 @@ namespace logviewer.ui
         {
             this.InitializeComponent();
             this.viewModel = new UpdateViewModel(targetAddress);
+            this.viewModel.Close += this.ViewModelOnClose;
             this.DataContext = this.viewModel;
             this.viewModel.UpdateAvailableText = text;
             this.viewModel.YesEnabled = true;
+        }
+
+        private void ViewModelOnClose(object sender, EventArgs eventArgs)
+        {
+            this.Close();
         }
 
         private void OnNo(object sender, RoutedEventArgs e)
