@@ -151,6 +151,9 @@
     <Compile Include="StatisticDlg.Designer.cs">
       <DependentUpon>StatisticDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Update.xaml.cs">
+      <DependentUpon>Update.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UpdateDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,6 +175,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Network.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Update.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

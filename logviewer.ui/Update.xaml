@@ -1,0 +1,36 @@
+﻿<Window x:Class="logviewer.ui.Update"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:logviewer.ui"
+        xmlns:properties="clr-namespace:logviewer.ui.Properties"
+        mc:Ignorable="d"
+        Title="{x:Static properties:Resources.UpdatesChecking}"
+        Height="203" Width="528"
+        MaxHeight="203" MaxWidth="528"
+        MinHeight="203" MinWidth="528" ResizeMode="NoResize">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="{x:Static properties:Resources.NewVersion}">
+            
+        </GroupBox>
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right"
+                    FlowDirection="RightToLeft">
+            <Button x:Name="No" Content="{x:Static properties:Resources.No}" Width="70" Margin="3,0" Click="OnNo"/>
+            <Button x:Name="Yes" Content="{x:Static properties:Resources.Yes}" Margin="3,0" Click="OnYes">
+                <Button.Width>
+                    <Binding ElementName="No" Path="Width" />
+                </Button.Width>
+            </Button>
+            <Button x:Name="UpdateBtn" Content="{x:Static properties:Resources.Update}" Margin="3,0" Click="OnUpdate">
+                <Button.Width>
+                    <Binding ElementName="No" Path="Width" />
+                </Button.Width>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

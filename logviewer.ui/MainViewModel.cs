@@ -311,6 +311,7 @@ namespace logviewer.ui
             var m = string.Format(Thread.CurrentThread.CurrentCulture, Resources.NewVersionAvailable, current, latest);
             var update = new UpdateDlg(m, targetAddress);
             update.Show(this.Window);
+            // TODO: new Update().Show();
         }
 
         public void ShowNoUpdateAvaliable()

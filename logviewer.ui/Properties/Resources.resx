@@ -211,7 +211,7 @@
     <value>First</value>
   </data>
   <data name="NetworkSettings" xml:space="preserve">
-    <value>Network</value>
+    <value>Network Settings</value>
   </data>
   <data name="NewVersion" xml:space="preserve">
     <value>New version available</value>
@@ -303,9 +303,6 @@
   <data name="ManualProxy" xml:space="preserve">
     <value>Manual proxy settings</value>
   </data>
-  <data name="NetworkSettings" xml:space="preserve">
-    <value>Network Settings</value>
-  </data>
   <data name="NoProxy" xml:space="preserve">
     <value>Direct Internet Connection. Don't use automatic proxy detection.</value>
   </data>
@@ -320,5 +317,17 @@
   </data>
   <data name="UseCurrentUserSettings" xml:space="preserve">
     <value>Use current user settings</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="UpdatesChecking" xml:space="preserve">
+    <value>Updates checking</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>
