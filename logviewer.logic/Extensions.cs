@@ -99,19 +99,20 @@ namespace logviewer.logic
         private const string BigFileFormatNoBytes = @"{0:F2} {1}";
         private const string SmallFileFormat = @"{0} {1}";
 
+        static readonly string[] sizes =
+        {
+            Resources.SizeBytes,
+            Resources.SizeKBytes,
+            Resources.SizeMBytes,
+            Resources.SizeGBytes,
+            Resources.SizeTBytes,
+            Resources.SizePBytes,
+            Resources.SizeEBytes
+        };
+
         [Pure]
         public static string Format(this FileSize fileSize)
         {
-            string[] sizes =
-            {
-                Resources.SizeBytes,
-                Resources.SizeKBytes,
-                Resources.SizeMBytes,
-                Resources.SizeGBytes,
-                Resources.SizeTBytes,
-                Resources.SizePBytes,
-                Resources.SizeEBytes
-            };
             if (fileSize.Unit == SizeUnit.Bytes)
             {
                 return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, fileSize.Bytes,
