@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using logviewer.engine;
@@ -234,21 +237,25 @@ namespace logviewer.logic.ui
             this.view.ShowNewParsingTemplateForm(false);
             var t = this.view.NewParsingTemplateData;
             t.Index = this.templateList.Count;
-            IList<string> newList = null;
-            var task = Task.Factory.StartNew(delegate
+
+            var source = Observable.Create<IList<string>>(observer =>
             {
                 this.settings.InsertParsingTemplate(t);
-                newList = this.settings.ReadParsingTemplateList();
+                var list = this.settings.ReadParsingTemplateList();
+                observer.OnNext(list);
+                return Disposable.Empty;
             });
 
-            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
-            {
-                for (var i = t.Index; i < newList.Count; i++)
+            source.SubscribeOn(Scheduler.Default)
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(list =>
                 {
-                    this.view.AddTemplateName(newList[i]);
-                    this.templateList.Add(newList[i]);
-                }
-            });
+                    for (var i = t.Index; i < list.Count; i++)
+                    {
+                        this.view.AddTemplateName(list[i]);
+                        this.templateList.Add(list[i]);
+                    }
+                });
         }
 
         public void RemoveSelectedParsingTemplate()
@@ -257,16 +264,22 @@ namespace logviewer.logic.ui
             {
                 return;
             }
-            var task = Task.Factory.StartNew(delegate
+
+            var source = Observable.Create<int>(observer =>
             {
                 this.settings.DeleteParsingTemplate(this.parsingTemplateIndex);
                 this.templateList.RemoveAt(this.parsingTemplateIndex);
+                observer.OnNext(this.parsingTemplateIndex);
+                return Disposable.Empty;
             });
-            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
-            {
-                this.view.RemoveParsingTemplateName(this.parsingTemplateIndex);
-                this.view.SelectParsingTemplate(this.parsingTemplateIndex - 1);
-            });
+
+            source.SubscribeOn(Scheduler.Default)
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(i =>
+                {
+                    this.view.RemoveParsingTemplateName(i);
+                    this.view.SelectParsingTemplate(i - 1);
+                });
         }
 
         public void RestoreDefaultTemplates()
@@ -331,18 +344,23 @@ namespace logviewer.logic.ui
 
             this.view.EnableChangeOrClose(false);
 
-            var task = Task.Factory.StartNew(delegate
+            var source = Observable.Create<ParsingTemplate>(observer =>
             {
-                this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
+                var t =  this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
+                observer.OnNext(t);
+                return Disposable.Empty;
             });
 
-            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
-            {
-                this.view.LoadParsingTemplate(this.template);
-                this.view.EnableChangeOrClose(true);
-                this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
-                this.view.EnableSave(false);
-            });
+            source.SubscribeOn(Scheduler.Default)
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(parsingTemplate =>
+                {
+                    this.template = parsingTemplate;
+                    this.view.LoadParsingTemplate(this.template);
+                    this.view.EnableChangeOrClose(true);
+                    this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
+                    this.view.EnableSave(false);
+                });
         }
     }
 }
