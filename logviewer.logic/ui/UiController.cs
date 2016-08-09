@@ -240,9 +240,15 @@ namespace logviewer.logic.ui
 
             task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.UiSyncContext);
             task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.UiSyncContext);
-            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
+            task.ContinueWith(this.OnError, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
 
             this.runningTasks.Add(task, this.viewModel.LogPath);
+        }
+
+        private void OnError(Task task)
+        {
+            this.viewModel.LogProgressText = task.Exception?.InnerException.Message;
+            this.OnComplete(task);
         }
 
         private void OnComplete(Task task)
