@@ -29,7 +29,7 @@ namespace logviewer.logic.storage
 
         public void Dispose()
         {
-            this.Store.Dispose();
+            this.Store?.Dispose();
         }
 
         public long FetchCount()

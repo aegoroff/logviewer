@@ -86,7 +86,7 @@ namespace logviewer.logic.ui
                 case nameof(this.viewModel.MessageFilter):
                 case nameof(this.viewModel.SortingOrder):
                 case nameof(this.viewModel.UseRegularExpressions):
-                    this.StartReadingLogOnTextFilterChange();
+                    this.StartReadingLogOnFilterChange();
                     break;
                 case nameof(this.viewModel.Visible):
                     this.UpdateCount();
@@ -198,7 +198,7 @@ namespace logviewer.logic.ui
         [PublicAPI]
         public bool PendingStart { get; private set; }
 
-        public void StartReadingLogOnTextFilterChange()
+        public void StartReadingLogOnFilterChange()
         {
             if (!this.viewModel.MessageFilter.IsValid(this.viewModel.UseRegularExpressions))
             {
@@ -238,15 +238,9 @@ namespace logviewer.logic.ui
             this.cancellation = new CancellationTokenSource();
             var task = Task.Factory.StartNew(this.DoLogReadingTask, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            Action<Task> onSuccess = obj => this.OnComplete(task);
-            Action<Task> onFailure = delegate
-            {
-                this.OnComplete(task);
-            };
-
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.UiSyncContext);
-            task.ContinueWith(onSuccess, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.UiSyncContext);
-            task.ContinueWith(onFailure, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
+            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.UiSyncContext);
+            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.UiSyncContext);
+            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
 
             this.runningTasks.Add(task, this.viewModel.LogPath);
         }
@@ -257,7 +251,7 @@ namespace logviewer.logic.ui
             {
                 if (!this.cancellation.IsCancellationRequested)
                 {
-                    this.viewModel.Datasource.LoadCount((int) this.viewModel.Provider.FetchCount());
+                    this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
                 }
                 this.viewModel.UiControlsEnabled = true;
             }
@@ -319,6 +313,7 @@ namespace logviewer.logic.ui
             this.totalReadTimeWatch.Restart();
             if (this.viewModel.MinLevel > this.viewModel.MaxLevel && (LogLevel)this.viewModel.MaxLevel >= LogLevel.Trace)
             {
+                this.AfterDatabaseCreation(false);
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
             this.reader = new LogReader(this.charsetDetector, this.matcher);
@@ -527,7 +522,8 @@ namespace logviewer.logic.ui
             this.viewModel.Provider.Store = this.store;
             this.viewModel.Datasource.Clear();
 
-            this.viewModel.ToDisplayMessages = this.viewModel.Provider.FetchCount().ToString("N0", CultureInfo.CurrentCulture); // Not L10N
+            this.viewModel.MessageCount = this.viewModel.Provider.FetchCount();
+            this.viewModel.ToDisplayMessages = this.viewModel.MessageCount.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
                 this.CountMessages(LogLevel.Trace),
                 this.CountMessages(LogLevel.Debug),

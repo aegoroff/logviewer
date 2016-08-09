@@ -142,7 +142,7 @@ namespace logviewer.tests
 
             this.controller.ClearCache();
             this.controller.UpdateSettings(false);
-            this.controller.StartReadingLogOnTextFilterChange();
+            this.controller.StartReadingLogOnFilterChange();
             this.WaitReadingComplete();
             this.controller.Store.CountMessages().Should().Be(4);
         }

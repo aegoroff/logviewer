@@ -49,6 +49,7 @@ namespace logviewer.logic.ui
         Range Visible { get; set; }
         string GithubAccount { get; }
         string GithubProject { get; }
+        long MessageCount { get; set; }
     }
 
     public struct Range

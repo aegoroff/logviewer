@@ -200,6 +200,8 @@ namespace logviewer.ui
 
         public string GithubProject => ConfigurationManager.AppSettings["GitHubProject"];
 
+        public long MessageCount { get; set; }
+
         internal IWin32Window Window { get; set; }
 
         public int LogProgress
