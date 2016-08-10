@@ -115,7 +115,6 @@
     <Compile Include="DefectSender.cs" />
     <Compile Include="ui\IItemsProvider.cs" />
     <Compile Include="IOptionsProvider.cs" />
-    <Compile Include="ui\IViewModel.cs" />
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ui\ColorPickResult.cs" />
     <Compile Include="storage\ColumnAttribute.cs" />
@@ -135,9 +134,11 @@
     <Compile Include="storage\LogProvider.cs" />
     <Compile Include="models\LogReadCompletedEventArgs.cs" />
     <Compile Include="storage\LogStore.cs" />
-    <Compile Include="models\MessageFilterModel.cs" />
+    <Compile Include="models\MessageFilterViewModel.cs" />
     <Compile Include="support\FixedSizeDictionary.cs" />
     <Compile Include="models\MessageMatcher.cs" />
+    <Compile Include="ui\main\IMainViewModel.cs" />
+    <Compile Include="ui\main\MainModel.cs" />
     <Compile Include="ui\network\Constants.cs" />
     <Compile Include="ui\network\INetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\ManualProxyState.cs" />
@@ -151,7 +152,6 @@
     <Compile Include="ui\network\NetworkStateResolver.cs" />
     <Compile Include="ui\network\ProxyMode.cs" />
     <Compile Include="ui\network\StateMachineMode.cs" />
-    <Compile Include="ui\UiController.cs" />
     <Compile Include="ui\MainController.cs" />
     <Compile Include="support\Maybe.cs" />
     <Compile Include="models\ParsingTemplate.cs" />
@@ -192,7 +192,9 @@
       <Name>logviewer.engine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ui\main" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

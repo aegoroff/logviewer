@@ -77,33 +77,33 @@ namespace logviewer.tests
         [PublicAPI]
         public static IEnumerable<object[]> FilterCases => new[]
         {
-            new object[] { new MessageFilterModel(), 2  },
-            new object[] { new MessageFilterModel { Max = LogLevel.Info }, 1  },
-            new object[] { new MessageFilterModel { Min = LogLevel.Error }, 1  },
-            new object[] { new MessageFilterModel { Filter = "body 1" }, 1  },
-            new object[] { new MessageFilterModel { Filter = @"body\s+(\d).*", UseRegexp = true }, 2  },
-            new object[] { new MessageFilterModel { Filter = @"body\s+(\d).*", UseRegexp = false }, 0  },
-            new object[] { new MessageFilterModel { Max = LogLevel.Debug }, 0  },
-            new object[] { new MessageFilterModel { Min = LogLevel.Fatal }, 0  },
-            new object[] { new MessageFilterModel { Start = DateTime.Parse("2008-12-27 19:40") }, 1  },
-            new object[] { new MessageFilterModel { Finish = DateTime.Parse("2008-12-27 19:40") }, 1  },
-            new object[] { new MessageFilterModel { Start = DateTime.MaxValue }, 0  },
-            new object[] { new MessageFilterModel { Finish = new DateTime(2000, 1, 1) }, 0  }
+            new object[] { new MessageFilterViewModel(), 2  },
+            new object[] { new MessageFilterViewModel { Max = LogLevel.Info }, 1  },
+            new object[] { new MessageFilterViewModel { Min = LogLevel.Error }, 1  },
+            new object[] { new MessageFilterViewModel { Filter = "body 1" }, 1  },
+            new object[] { new MessageFilterViewModel { Filter = @"body\s+(\d).*", UseRegexp = true }, 2  },
+            new object[] { new MessageFilterViewModel { Filter = @"body\s+(\d).*", UseRegexp = false }, 0  },
+            new object[] { new MessageFilterViewModel { Max = LogLevel.Debug }, 0  },
+            new object[] { new MessageFilterViewModel { Min = LogLevel.Fatal }, 0  },
+            new object[] { new MessageFilterViewModel { Start = DateTime.Parse("2008-12-27 19:40") }, 1  },
+            new object[] { new MessageFilterViewModel { Finish = DateTime.Parse("2008-12-27 19:40") }, 1  },
+            new object[] { new MessageFilterViewModel { Start = DateTime.MaxValue }, 0  },
+            new object[] { new MessageFilterViewModel { Finish = new DateTime(2000, 1, 1) }, 0  }
         };
 
         [Theory, MemberData(nameof(FilterCases))]
-        public void FetchCount(MessageFilterModel filterModel, int expectation)
+        public void FetchCount(MessageFilterViewModel filterViewModel, int expectation)
         {
             this.FillStore();
-            this.provider.FilterModel = filterModel;
+            this.provider.FilterViewModel = filterViewModel;
             this.provider.FetchCount().Should().Be(expectation);
         }
 
         [Theory, MemberData(nameof(FilterCases))]
-        public void FetchRangeFiltered(MessageFilterModel filterModel, int expectation)
+        public void FetchRangeFiltered(MessageFilterViewModel filterViewModel, int expectation)
         {
             this.FillStore();
-            this.provider.FilterModel = filterModel;
+            this.provider.FilterViewModel = filterViewModel;
             var result = this.provider.FetchRange(0, 2);
             var lastIndex = expectation - 1;
             if (lastIndex < 0)
@@ -120,7 +120,7 @@ namespace logviewer.tests
         public void FetchLimit()
         {
             this.FillStore();
-            this.provider.FilterModel = new MessageFilterModel();
+            this.provider.FilterViewModel = new MessageFilterViewModel();
             var result = this.provider.FetchRange(0, 1);
             result.Length.Should().Be(1);
             result[0].Should().MatchRegex("message body 1");
@@ -130,7 +130,7 @@ namespace logviewer.tests
         public void FetchNotZeroOffset()
         {
             this.FillStore();
-            this.provider.FilterModel = new MessageFilterModel();
+            this.provider.FilterViewModel = new MessageFilterViewModel();
             var result = this.provider.FetchRange(1, 2);
             result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 2");
@@ -141,7 +141,7 @@ namespace logviewer.tests
         public void FetchAll()
         {
             this.FillStore();
-            this.provider.FilterModel = new MessageFilterModel();
+            this.provider.FilterViewModel = new MessageFilterViewModel();
             var result = this.provider.FetchRange(0, 2);
             result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 1");
@@ -152,7 +152,7 @@ namespace logviewer.tests
         public void FetchFilterLevelMin()
         {
             this.FillStore();
-            this.provider.FilterModel = new MessageFilterModel { Min = LogLevel.Error };
+            this.provider.FilterViewModel = new MessageFilterViewModel { Min = LogLevel.Error };
             var result = this.provider.FetchRange(0, 2);
             result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 2");
@@ -163,7 +163,7 @@ namespace logviewer.tests
         public void FetchFilterLevelMax()
         {
             this.FillStore();
-            this.provider.FilterModel = new MessageFilterModel { Max = LogLevel.Info };
+            this.provider.FilterViewModel = new MessageFilterViewModel { Max = LogLevel.Info };
             var result = this.provider.FetchRange(0, 2);
             result.Length.Should().Be(2);
             result[0].Should().MatchRegex("message body 1");
@@ -175,7 +175,7 @@ namespace logviewer.tests
         {
             this.CreateStream("2008-12-27 19:31:47,250 [4688] INFO h1\n2008-12-27 19:40:11,906 [5272] ERROR h2");
             this.ReadFromStream();
-            this.provider.FilterModel = new MessageFilterModel();
+            this.provider.FilterViewModel = new MessageFilterViewModel();
             var result = this.provider.FetchRange(0, 2);
             result.Length.Should().Be(2);
             result[0].Should().NotMatchRegex("message body 1");

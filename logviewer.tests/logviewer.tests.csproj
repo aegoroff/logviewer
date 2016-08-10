@@ -94,7 +94,7 @@
     <Compile Include="TstNetworkSettingsModel.cs" />
     <Compile Include="TstNetworkSettingsViewModel.cs" />
     <Compile Include="TstSolidMachine.cs" />
-    <Compile Include="TstUiController.cs" />
+    <Compile Include="TstMainModel.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />
     <Compile Include="TstMainController.cs" />

@@ -1,6 +1,6 @@
 // Created by: egr
 // Created at: 07.11.2015
-// © 2012-2016 Alexander Egorov
+// ï¿½ 2012-2016 Alexander Egorov
 
 using System;
 using System.Collections.Concurrent;
@@ -27,9 +27,9 @@ using logviewer.logic.support;
 using LogLevel = logviewer.engine.LogLevel;
 
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.main
 {
-    public sealed class UiController : BaseGuiController, IDisposable
+    public sealed class MainModel : BaseGuiController, IDisposable
     {
         private readonly ISettingsProvider settings;
 
@@ -49,7 +49,7 @@ namespace logviewer.logic.ui
         private MessageMatcher matcher;
         private LogStore store;
         private long totalMessages;
-        private readonly IViewModel viewModel;
+        private readonly IMainViewModel viewModel;
 
         private readonly ProducerConsumerMessageQueue queue =
             new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -64,7 +64,7 @@ namespace logviewer.logic.ui
 
         #region Constructors and Destructors
 
-        public UiController(IViewModel viewModel)
+        public MainModel(IMainViewModel viewModel)
         {
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
@@ -508,7 +508,7 @@ namespace logviewer.logic.ui
                 this.viewModel.To = this.SelectDateUsingFunc("max"); // Not L10N
             }
 
-            this.viewModel.Provider.FilterModel = new MessageFilterModel
+            this.viewModel.Provider.FilterViewModel = new MessageFilterViewModel
             {
                 Filter = this.viewModel.MessageFilter,
                 Finish = this.viewModel.To,
