@@ -1,8 +1,11 @@
-﻿using System;
+﻿// Created by: egr
+// Created at: 25.11.2015
+// © 2012-2016 Alexander Egorov
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
-using logviewer.logic;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
 using Xunit;
