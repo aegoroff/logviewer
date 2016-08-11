@@ -145,11 +145,8 @@
     <Compile Include="SettingsDlg.Designer.cs">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="StatisticDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="StatisticDlg.Designer.cs">
-      <DependentUpon>StatisticDlg.cs</DependentUpon>
+    <Compile Include="Statistic.xaml.cs">
+      <DependentUpon>Statistic.xaml</DependentUpon>
     </Compile>
     <Compile Include="Update.xaml.cs">
       <DependentUpon>Update.xaml</DependentUpon>
@@ -169,6 +166,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Network.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Statistic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -216,12 +217,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsDlg.ru.resx">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StatisticDlg.resx">
-      <DependentUpon>StatisticDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StatisticDlg.ru.resx">
-      <DependentUpon>StatisticDlg.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>

@@ -111,8 +111,9 @@ namespace logviewer.ui
 
         private void OnStatistic(object sender, ExecutedRoutedEventArgs e)
         {
-            var dlg = new StatisticDlg(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding);
-            dlg.Show(MainViewModel.Current.Window);
+            //var dlg = new StatisticDlg(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding);
+            //dlg.Show(MainViewModel.Current.Window);
+            new Statistic(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding).Show();
         }
 
         private void OnSettings(object sender, ExecutedRoutedEventArgs e)

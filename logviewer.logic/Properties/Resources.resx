@@ -291,4 +291,40 @@
   <data name="NewVersionAvailable" xml:space="preserve">
     <value>The new version of logviewer available. Current version is {0} but the new is {1}. Download it now?</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>Fatal</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Warn" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Trace" xml:space="preserve">
+    <value>Trace</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Encoding" xml:space="preserve">
+    <value>File encoding</value>
+  </data>
+  <data name="DatabaseSize" xml:space="preserve">
+    <value>Database size</value>
+  </data>
+  <data name="MaxMessageDate" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="MinMessageDate" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="TotalMessages" xml:space="preserve">
+    <value>Total messages</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
 </root>

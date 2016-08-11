@@ -106,6 +106,15 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Database size.
+        /// </summary>
+        internal static string DatabaseSize {
+            get {
+                return ResourceManager.GetString("DatabaseSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to days.
         /// </summary>
         internal static string DaysGenitivePlural {
@@ -129,6 +138,15 @@ namespace logviewer.logic.Properties {
         internal static string DaysNominative {
             get {
                 return ResourceManager.GetString("DaysNominative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debug.
+        /// </summary>
+        internal static string Debug {
+            get {
+                return ResourceManager.GetString("Debug", resourceCulture);
             }
         }
         
@@ -160,11 +178,38 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File encoding.
+        /// </summary>
+        internal static string Encoding {
+            get {
+                return ResourceManager.GetString("Encoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding detection in progress ....
         /// </summary>
         internal static string EncodingDetectionInProgress {
             get {
                 return ResourceManager.GetString("EncodingDetectionInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fatal.
+        /// </summary>
+        internal static string Fatal {
+            get {
+                return ResourceManager.GetString("Fatal", resourceCulture);
             }
         }
         
@@ -205,6 +250,15 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        internal static string Info {
+            get {
+                return ResourceManager.GetString("Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The template you entered is invalid. Fix it..
         /// </summary>
         internal static string InvalidTemplate {
@@ -241,11 +295,29 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last.
+        /// </summary>
+        internal static string MaxMessageDate {
+            get {
+                return ResourceManager.GetString("MaxMessageDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min level must be less or equal then max level.
         /// </summary>
         internal static string MinLevelGreaterThenMax {
             get {
                 return ResourceManager.GetString("MinLevelGreaterThenMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First.
+        /// </summary>
+        internal static string MinMessageDate {
+            get {
+                return ResourceManager.GetString("MinMessageDate", resourceCulture);
             }
         }
         
@@ -484,6 +556,15 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        internal static string Size {
+            get {
+                return ResourceManager.GetString("Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bytes.
         /// </summary>
         internal static string SizeBytes {
@@ -565,11 +646,38 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total messages.
+        /// </summary>
+        internal static string TotalMessages {
+            get {
+                return ResourceManager.GetString("TotalMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trace.
+        /// </summary>
+        internal static string Trace {
+            get {
+                return ResourceManager.GetString("Trace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloaded {0} of {1}   {2}%.
         /// </summary>
         internal static string UpdateDownloadProgressFormat {
             get {
                 return ResourceManager.GetString("UpdateDownloadProgressFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string Warn {
+            get {
+                return ResourceManager.GetString("Warn", resourceCulture);
             }
         }
         

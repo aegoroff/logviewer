@@ -135,32 +135,17 @@
   <data name="CurrentPageTemplate" xml:space="preserve">
     <value>{0} / {1}</value>
   </data>
-  <data name="DatabaseSize" xml:space="preserve">
-    <value>Database size</value>
-  </data>
   <data name="DateFilter" xml:space="preserve">
     <value>Date filter</value>
   </data>
-  <data name="Debug" xml:space="preserve">
-    <value>Debug</value>
-  </data>
   <data name="DebugLabel" xml:space="preserve">
     <value>Debug - 1</value>
-  </data>
-  <data name="Encoding" xml:space="preserve">
-    <value>File encoding</value>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>Error</value>
   </data>
   <data name="ErrorLabel" xml:space="preserve">
     <value>Error - 4</value>
   </data>
   <data name="Export" xml:space="preserve">
     <value>Export</value>
-  </data>
-  <data name="Fatal" xml:space="preserve">
-    <value>Fatal</value>
   </data>
   <data name="FatalErrorCaption" xml:space="preserve">
     <value>Fatal error</value>
@@ -201,14 +186,8 @@
   <data name="MaxLabel" xml:space="preserve">
     <value>Max: </value>
   </data>
-  <data name="MaxMessageDate" xml:space="preserve">
-    <value>Last</value>
-  </data>
   <data name="MinLabel" xml:space="preserve">
     <value>Min: </value>
-  </data>
-  <data name="MinMessageDate" xml:space="preserve">
-    <value>First</value>
   </data>
   <data name="NetworkSettings" xml:space="preserve">
     <value>Network Settings</value>
@@ -258,9 +237,6 @@
   <data name="Total" xml:space="preserve">
     <value>Total:</value>
   </data>
-  <data name="TotalMessages" xml:space="preserve">
-    <value>Total messages</value>
-  </data>
   <data name="Trace" xml:space="preserve">
     <value>Trace</value>
   </data>
@@ -278,9 +254,6 @@
   </data>
   <data name="View" xml:space="preserve">
     <value>View</value>
-  </data>
-  <data name="Warn" xml:space="preserve">
-    <value>Warning</value>
   </data>
   <data name="WarnLabel" xml:space="preserve">
     <value>Warn - 3</value>

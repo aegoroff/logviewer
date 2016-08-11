@@ -135,26 +135,11 @@
   <data name="CurrentPageTemplate" xml:space="preserve">
     <value>{0} / {1}</value>
   </data>
-  <data name="DatabaseSize" xml:space="preserve">
-    <value>Размер базы</value>
-  </data>
   <data name="DateFilter" xml:space="preserve">
     <value>Фильтр по дате</value>
   </data>
-  <data name="Debug" xml:space="preserve">
-    <value>Debug</value>
-  </data>
-  <data name="Encoding" xml:space="preserve">
-    <value>Кодировка файла</value>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>Error</value>
-  </data>
   <data name="Export" xml:space="preserve">
     <value>Экспорт</value>
-  </data>
-  <data name="Fatal" xml:space="preserve">
-    <value>Fatal</value>
   </data>
   <data name="FatalErrorCaption" xml:space="preserve">
     <value>Фатальная ошибка</value>
@@ -167,9 +152,6 @@
   </data>
   <data name="From" xml:space="preserve">
     <value>От:</value>
-  </data>
-  <data name="Info" xml:space="preserve">
-    <value>Info</value>
   </data>
   <data name="LevelFilter" xml:space="preserve">
     <value>Фильтр по уровню</value>
@@ -186,14 +168,8 @@
   <data name="MaxLabel" xml:space="preserve">
     <value>Макс: </value>
   </data>
-  <data name="MaxMessageDate" xml:space="preserve">
-    <value>Последнее</value>
-  </data>
   <data name="MinLabel" xml:space="preserve">
     <value>Мин: </value>
-  </data>
-  <data name="MinMessageDate" xml:space="preserve">
-    <value>Первое</value>
   </data>
   <data name="NetworkSettings" xml:space="preserve">
     <value>Настройки сети</value>
