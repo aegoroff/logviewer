@@ -18,7 +18,7 @@
             <Button Margin="0,0,10,0" Content="Filter" Width="50"></Button>
             <CheckBox Content="Use regexp" VerticalAlignment="Center"></CheckBox>
         </StackPanel>
-        <ListView Grid.Row="1" Name="ListView" Margin="5">
+        <ListView Grid.Row="1" x:Name="ListView" Margin="5">
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
