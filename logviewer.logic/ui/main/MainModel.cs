@@ -201,7 +201,6 @@ namespace logviewer.logic.ui.main
             }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
         }
 
-        
 
         private void StartLogReadingTask()
         {
@@ -209,15 +208,17 @@ namespace logviewer.logic.ui.main
 
             var o = Observable.Start(this.DoLogReadingTask, Scheduler.Default);
             o.ObserveOn(this.uiThreadContext)
-                .Subscribe(unit => { }, exception =>
-                {
-                    this.viewModel.UiControlsEnabled = true;
-                    this.viewModel.LogProgressText = exception.Message;
-                },  () =>
-                {
-                    this.viewModel.UiControlsEnabled = true;
-                    this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
-                }, this.cancellation.Token);
+                .Subscribe(unit => { },
+                    exception =>
+                    {
+                        this.viewModel.UiControlsEnabled = true;
+                        this.viewModel.LogProgressText = exception.Message;
+                    },
+                    () =>
+                    {
+                        this.viewModel.UiControlsEnabled = true;
+                        this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
+                    }, this.cancellation.Token);
         }
 
         public void UpdateLog(string path)
