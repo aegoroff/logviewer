@@ -49,6 +49,7 @@ namespace logviewer.logic.ui.statistic
 
         public void LoadStatistic()
         {
+            this.items.Clear();
             var source = Observable.Create<StatItemViewModel>(observer =>
             {
                 for (var i = 0; i < (int)LogLevel.Fatal + 1; i++)

@@ -192,9 +192,6 @@
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
   </data>
-  <data name="Size" xml:space="preserve">
-    <value>Размер</value>
-  </data>
   <data name="SortAsc" xml:space="preserve">
     <value>Дата, ВОЗР.</value>
   </data>
@@ -281,5 +278,14 @@
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Да</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Фильтр</value>
+  </data>
+  <data name="LogStatistics" xml:space="preserve">
+    <value>Статистика по логу</value>
+  </data>
+  <data name="UseRegexpShort" xml:space="preserve">
+    <value>Исп. регулярные выражения</value>
   </data>
 </root>

@@ -205,6 +205,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter.
+        /// </summary>
+        public static string Filter {
+            get {
+                return ResourceManager.GetString("Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shown:.
         /// </summary>
         public static string Filtered {
@@ -282,6 +291,15 @@ namespace logviewer.ui.Properties {
         public static string Login {
             get {
                 return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log statistics.
+        /// </summary>
+        public static string LogStatistics {
+            get {
+                return ResourceManager.GetString("LogStatistics", resourceCulture);
             }
         }
         
@@ -430,15 +448,6 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Size.
-        /// </summary>
-        public static string Size {
-            get {
-                return ResourceManager.GetString("Size", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Date, ASC.
         /// </summary>
         public static string SortAsc {
@@ -570,6 +579,15 @@ namespace logviewer.ui.Properties {
         public static string UseRegexp {
             get {
                 return ResourceManager.GetString("UseRegexp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use regular expressions.
+        /// </summary>
+        public static string UseRegexpShort {
+            get {
+                return ResourceManager.GetString("UseRegexpShort", resourceCulture);
             }
         }
         

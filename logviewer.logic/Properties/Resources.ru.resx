@@ -252,6 +252,9 @@
   <data name="SecondsNominative" xml:space="preserve">
     <value>секунда</value>
   </data>
+  <data name="Size" xml:space="preserve">
+    <value>Размер</value>
+  </data>
   <data name="SizeBytes" xml:space="preserve">
     <value>байт</value>
   </data>

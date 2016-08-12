@@ -11,13 +11,25 @@ namespace logviewer.ui
     [PublicAPI]
     public partial class Statistic : Window
     {
+        private StatisticModel model;
+
         public Statistic(LogStore store, string size, string encoding)
         {
             this.InitializeComponent();
-            var model = new StatisticModel(store, size, encoding);
-            this.ListView.ItemsSource = model.Items;
-            this.DataContext = model.FilterViewModel;
-            model.LoadStatistic();
+            this.model = new StatisticModel(store, size, encoding);
+            this.ListView.ItemsSource = this.model.Items;
+            this.DataContext = this.model.FilterViewModel;
+            this.model.LoadStatistic();
+        }
+
+        private void OnOk(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void OnFilter(object sender, RoutedEventArgs e)
+        {
+            this.model.LoadStatistic();
         }
     }
 }

@@ -210,9 +210,6 @@
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="Size" xml:space="preserve">
-    <value>Size</value>
-  </data>
   <data name="SortAsc" xml:space="preserve">
     <value>Date, ASC</value>
   </data>
@@ -299,5 +296,14 @@
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="LogStatistics" xml:space="preserve">
+    <value>Log statistics</value>
+  </data>
+  <data name="UseRegexpShort" xml:space="preserve">
+    <value>Use regular expressions</value>
   </data>
 </root>
