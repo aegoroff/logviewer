@@ -160,8 +160,8 @@ namespace logviewer.logic.ui.main
                 this.viewModel.LogProgressText = Resources.CancelPrevious;
                 SafeRunner.Run(this.cancellation.Cancel);
             }
-            this.queue.CleanupPendingTasks();
             this.WaitRunningTasks();
+            this.queue.CleanupPendingTasks();
             SafeRunner.Run(this.cancellation.Dispose);
             this.DisposeRunningTasks();
             this.runningTasks.Clear();
@@ -322,6 +322,7 @@ namespace logviewer.logic.ui.main
                 this.AfterDatabaseCreation(false);
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
+
             this.reader = new LogReader(this.charsetDetector, this.matcher);
             var logPath = this.viewModel.LogPath;
             
