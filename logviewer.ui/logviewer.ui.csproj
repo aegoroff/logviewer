@@ -218,6 +218,9 @@
     <EmbeddedResource Include="SettingsDlg.ru.resx">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

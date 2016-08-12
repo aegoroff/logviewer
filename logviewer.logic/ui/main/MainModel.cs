@@ -213,6 +213,7 @@ namespace logviewer.logic.ui.main
                     {
                         this.viewModel.UiControlsEnabled = true;
                         this.viewModel.LogProgressText = exception.Message;
+                        Log.Instance.Info(exception.Message, exception);
                     },
                     () =>
                     {
