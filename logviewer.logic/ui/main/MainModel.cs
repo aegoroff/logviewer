@@ -9,7 +9,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
@@ -38,8 +37,6 @@ namespace logviewer.logic.ui.main
         private readonly Dictionary<LogLevel, ulong> byLevel = new Dictionary<LogLevel, ulong>();
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
-        private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
-
         private CancellationTokenSource cancellation = new CancellationTokenSource();
         private readonly LogCharsetDetector charsetDetector = new LogCharsetDetector();
         private LogReader reader;
@@ -59,6 +56,7 @@ namespace logviewer.logic.ui.main
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         public event EventHandler<EventArgs> ReadCompleted;
         private const int CheckUpdatesEveryDays = 7;
+        private readonly SynchronizationContextScheduler uiThreadContext;
 
         #endregion
 
@@ -71,6 +69,7 @@ namespace logviewer.logic.ui.main
             this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
             this.prevInput = DateTime.Now;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
+            this.uiThreadContext = new SynchronizationContextScheduler(this.WinformsOrDefaultContext);
         }
 
         private VersionsReader VersionsReader { get; }
@@ -160,37 +159,8 @@ namespace logviewer.logic.ui.main
                 this.viewModel.LogProgressText = Resources.CancelPrevious;
                 SafeRunner.Run(this.cancellation.Cancel);
             }
-            this.WaitRunningTasks();
             this.queue.CleanupPendingTasks();
             SafeRunner.Run(this.cancellation.Dispose);
-            this.DisposeRunningTasks();
-            this.runningTasks.Clear();
-        }
-
-        private void DisposeRunningTasks()
-        {
-            foreach (
-                var task in
-                    this.runningTasks.Keys.Where(
-                        task =>
-                            task.Status == TaskStatus.RanToCompletion || task.Status == TaskStatus.Faulted ||
-                            task.Status == TaskStatus.Canceled))
-            {
-                SafeRunner.Run(task.Dispose);
-            }
-        }
-
-        private void WaitRunningTasks()
-        {
-            foreach (
-                var task in
-                    this.runningTasks.Keys.Where(
-                        task =>
-                            task.Status == TaskStatus.Running || task.Status == TaskStatus.WaitingForChildrenToComplete ||
-                            task.Status == TaskStatus.WaitingForActivation))
-            {
-                SafeRunner.Run(task.Wait);
-            }
         }
 
         private DateTime prevInput;
@@ -236,39 +206,18 @@ namespace logviewer.logic.ui.main
         private void StartLogReadingTask()
         {
             this.cancellation = new CancellationTokenSource();
-            var task = Task.Factory.StartNew(this.DoLogReadingTask, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.UiSyncContext);
-            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.UiSyncContext);
-            task.ContinueWith(this.OnError, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
-
-            this.runningTasks.Add(task, this.viewModel.LogPath);
-        }
-
-        private void OnError(Task task)
-        {
-            this.viewModel.LogProgressText = task.Exception?.InnerException.Message;
-            this.OnComplete(task);
-        }
-
-        private void OnComplete(Task task)
-        {
-            try
-            {
-                if (!this.cancellation.IsCancellationRequested)
+            var o = Observable.Start(this.DoLogReadingTask, Scheduler.Default);
+            o.ObserveOn(this.uiThreadContext)
+                .Subscribe(unit => { }, exception =>
                 {
+                    this.viewModel.UiControlsEnabled = true;
+                    this.viewModel.LogProgressText = exception.Message;
+                },  () =>
+                {
+                    this.viewModel.UiControlsEnabled = true;
                     this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
-                }
-                this.viewModel.UiControlsEnabled = true;
-            }
-            finally
-            {
-                if (this.runningTasks.ContainsKey(task))
-                {
-                    this.runningTasks.Remove(task);
-                    task.Dispose();
-                }
-            }
+                }, this.cancellation.Token);
         }
 
         public void UpdateLog(string path)
@@ -280,7 +229,6 @@ namespace logviewer.logic.ui.main
             }
             Action action = delegate
             {
-                this.WaitRunningTasks();
                 var f = new FileInfo(path);
                 if (f.Length < this.logSize)
                 {
