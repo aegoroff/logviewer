@@ -356,7 +356,12 @@ namespace logviewer.logic.ui
             if (!this.pages.ContainsKey(pageIndex))
             {
                 this.pages.Add(pageIndex, new T[0]);
-                this.pageTouchTimes.Add(pageIndex, DateTime.Now);
+
+                if (!this.pageTouchTimes.ContainsKey(pageIndex))
+                {
+                    this.pageTouchTimes.Add(pageIndex, DateTime.Now);
+                }
+
                 Trace.WriteLine("Added page: " + pageIndex);
                 this.LoadPage(pageIndex);
             }
