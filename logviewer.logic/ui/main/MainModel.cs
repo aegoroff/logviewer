@@ -57,6 +57,8 @@ namespace logviewer.logic.ui.main
         public event EventHandler<EventArgs> ReadCompleted;
         private const int CheckUpdatesEveryDays = 7;
         private readonly SynchronizationContextScheduler uiThreadContext;
+        private bool readCompleted = true;
+        private const int WaitCancelSeconds = 5;
 
         #endregion
 
@@ -148,18 +150,24 @@ namespace logviewer.logic.ui.main
                 });
         }
 
-
-        private bool NotCancelled => !this.cancellation.IsCancellationRequested;
-
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void CancelPreviousTask()
+        private void CancelPreviousRead()
         {
+            if (this.reader == null)
+            {
+                return;
+            }
+
             if (!this.cancellation.IsCancellationRequested)
             {
+                this.reader.Cancel();
                 this.viewModel.LogProgressText = Resources.CancelPrevious;
                 SafeRunner.Run(this.cancellation.Cancel);
             }
             this.queue.CleanupPendingTasks();
+
+            SpinWait.SpinUntil(() => this.readCompleted, TimeSpan.FromSeconds(WaitCancelSeconds));
+
             SafeRunner.Run(this.cancellation.Dispose);
         }
 
@@ -213,7 +221,7 @@ namespace logviewer.logic.ui.main
                     {
                         this.viewModel.UiControlsEnabled = true;
                         this.viewModel.LogProgressText = exception.Message;
-                        Log.Instance.Info(exception.Message, exception);
+                        Log.Instance.Warn(exception.Message, exception);
                     },
                     () =>
                     {
@@ -300,7 +308,6 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
-
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
             this.ChangeTotalOnUi("0"); // Not L10N
 
@@ -308,6 +315,7 @@ namespace logviewer.logic.ui.main
 
             GC.Collect();
             this.store.StartAddMessages();
+            this.readCompleted = false;
 
             if (!append)
             {
@@ -327,27 +335,32 @@ namespace logviewer.logic.ui.main
                 this.RunReading(logPath, inputEncoding, offset);
 
                 this.probeWatch.Stop();
-                if (!this.NotCancelled)
-                {
-                    return;
-                }
+
                 this.FinishLoading();
 
                 SpinWait.SpinUntil(
-                    () => this.queue.ReadCompleted || this.cancellation.IsCancellationRequested);
+                    () => this.queue.ReadCompleted || this.reader.Cancelled);
             }
             finally
             {
-                this.viewModel.LogProgressText = Resources.LogIndexing;
-                if (this.NotCancelled)
-                {
-                    this.store.FinishAddMessages();
-                }
                 this.reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 this.reader.CompilationStarted -= this.OnCompilationStarted;
                 this.reader.CompilationFinished -= this.OnCompilationFinished;
                 this.reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 this.reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
+
+                this.viewModel.LogProgressText = Resources.LogIndexing;
+                try
+                {
+                    if (!this.reader.Cancelled)
+                    {
+                        this.store.FinishAddMessages();
+                    }
+                }
+                finally
+                {
+                    this.readCompleted = true;
+                }
             }
             this.UpdateStatisticByLevel();
             this.AfterDatabaseCreation(false);
@@ -525,17 +538,6 @@ namespace logviewer.logic.ui.main
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
         }
 
-        [PublicAPI]
-        public void CancelReading()
-        {
-            if (this.cancellation.IsCancellationRequested)
-            {
-                return;
-            }
-            this.cancellation.Cancel();
-            this.reader?.Cancel();
-        }
-
         public string GetLogSize(bool showBytes)
         {
             return new FileSize(this.logSize, !showBytes).Format();
@@ -570,8 +572,7 @@ namespace logviewer.logic.ui.main
 
         public void ReadNewLog()
         {
-            this.CancelReading();
-            this.CancelPreviousTask();
+            this.CancelPreviousRead();
             this.ClearCache();
             this.UpdateSettings(true);
         }
@@ -612,7 +613,7 @@ namespace logviewer.logic.ui.main
             this.queue.Shutdown(true);
             try
             {
-                SafeRunner.Run(this.CancelPreviousTask);
+                SafeRunner.Run(this.CancelPreviousRead);
             }
             finally
             {
