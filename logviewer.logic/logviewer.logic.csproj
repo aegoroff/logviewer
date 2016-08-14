@@ -108,6 +108,7 @@
     <Compile Include="fsm\StateConfiguration.cs" />
     <Compile Include="fsm\TriggerConfiguration.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="storage\ILogStore.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\BaseGuiController.cs" />
     <Compile Include="support\AsymCrypt.cs" />
@@ -181,6 +182,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ru.resx" />
   </ItemGroup>

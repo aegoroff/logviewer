@@ -11,13 +11,14 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using logviewer.engine;
+using logviewer.logic.Properties;
 using logviewer.logic.storage;
 
 namespace logviewer.logic.ui.statistic
 {
     public class StatisticModel
     {
-        private readonly LogStore store;
+        private readonly ILogStore store;
         private readonly string size;
         private readonly string encoding;
 
@@ -26,15 +27,15 @@ namespace logviewer.logic.ui.statistic
 
         private readonly string[] levelDescriptions =
         {
-            Properties.Resources.Trace,
-            Properties.Resources.Debug,
-            Properties.Resources.Info,
-            Properties.Resources.Warn,
-            Properties.Resources.Error,
-            Properties.Resources.Fatal
+            Resources.Trace,
+            Resources.Debug,
+            Resources.Info,
+            Resources.Warn,
+            Resources.Error,
+            Resources.Fatal
         };
 
-        public StatisticModel(LogStore store, string size, string encoding)
+        public StatisticModel(ILogStore store, string size, string encoding)
         {
             this.store = store;
             this.size = size;
@@ -66,22 +67,26 @@ namespace logviewer.logic.ui.statistic
 
                 if (minDateTime != maxDateTime || minDateTime != DateTime.MinValue)
                 {
-                    observer.OnNext(CreateItem(Properties.Resources.MinMessageDate, minDateTime));
-                    observer.OnNext(CreateItem(Properties.Resources.MaxMessageDate, maxDateTime));
+                    observer.OnNext(CreateItem(Resources.MinMessageDate, minDateTime));
+                    observer.OnNext(CreateItem(Resources.MaxMessageDate, maxDateTime));
                 }
 
                 observer.OnNext(new StatItemViewModel());
 
                 var total = (ulong)this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
-                observer.OnNext(CreateItem(Properties.Resources.TotalMessages, total));
+                observer.OnNext(CreateItem(Resources.TotalMessages, total));
 
-                observer.OnNext(CreateItem(Properties.Resources.Size, this.size));
-                observer.OnNext(CreateItem(Properties.Resources.Encoding, this.encoding));
+                observer.OnNext(CreateItem(Resources.Size, this.size));
+                observer.OnNext(CreateItem(Resources.Encoding, this.encoding));
 
-                var fi = new FileInfo(this.store.DatabasePath);
-                var dbSize = fi.Length;
-                observer.OnNext(CreateItem(Properties.Resources.DatabaseSize, new FileSize(dbSize).Format()));
+                if (!string.IsNullOrWhiteSpace(this.store.DatabasePath) && File.Exists(this.store.DatabasePath))
+                {
+                    var fi = new FileInfo(this.store.DatabasePath);
+                    var dbSize = fi.Length;
+                    observer.OnNext(CreateItem(Resources.DatabaseSize, new FileSize(dbSize).Format()));
+                }
 
+                observer.OnCompleted();
                 return Disposable.Empty;
             });
 
