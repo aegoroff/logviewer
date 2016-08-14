@@ -16,7 +16,7 @@ namespace logviewer.tests
 {
     public class TstStatisticModel
     {
-        private const int DelayMilliseconds = 500;
+        private const int DelayMilliseconds = 1000;
 
         [Fact]
         public void LoadStatistic_EmptyStore_AllLevelsCountZero()
@@ -38,9 +38,9 @@ namespace logviewer.tests
 
             // Act
             model.LoadStatistic();
-            Thread.Sleep(DelayMilliseconds);
 
             // Assert
+            SpinWait.SpinUntil(() => model.Items.Count == 10, TimeSpan.FromMilliseconds(DelayMilliseconds));
             model.Items.Single(x => x.Key == LogLevel.Trace.ToString()).Value.Should().Be("0");
             model.Items.Single(x => x.Key == LogLevel.Debug.ToString()).Value.Should().Be("0");
             model.Items.Single(x => x.Key == LogLevel.Info.ToString()).Value.Should().Be("0");
@@ -73,9 +73,9 @@ namespace logviewer.tests
 
             // Act
             model.LoadStatistic();
-            Thread.Sleep(DelayMilliseconds);
 
             // Assert
+            SpinWait.SpinUntil(() => model.Items.Count == 10, TimeSpan.FromMilliseconds(DelayMilliseconds));
             model.Items.Single(x => x.Key == LogLevel.Trace.ToString()).Value.Should().Be("1");
         }
 
@@ -99,9 +99,9 @@ namespace logviewer.tests
 
             // Act
             model.LoadStatistic();
-            Thread.Sleep(DelayMilliseconds);
 
             // Assert
+            SpinWait.SpinUntil(() => model.Items.Count == 12, TimeSpan.FromMilliseconds(DelayMilliseconds));
             model.Items.Where(x => x.Key == "First").Should().HaveCount(1);
             model.Items.Where(x => x.Key == "Last").Should().HaveCount(1);
         }
