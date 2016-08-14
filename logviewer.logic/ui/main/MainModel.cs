@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -59,6 +60,8 @@ namespace logviewer.logic.ui.main
         private readonly SynchronizationContextScheduler uiThreadContext;
         private bool readCompleted = true;
         private const int WaitCancelSeconds = 5;
+        private const int LogChangedThrottleIntervalMilliseconds = 500;
+        private IObserver<string> logChangedObserver;
 
         #endregion
 
@@ -72,6 +75,15 @@ namespace logviewer.logic.ui.main
             this.prevInput = DateTime.Now;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
             this.uiThreadContext = new SynchronizationContextScheduler(this.WinformsOrDefaultContext);
+            var logChangedObservable = Observable.Create<string>(observer =>
+            {
+                this.logChangedObserver = observer;
+                return Disposable.Empty;
+            });
+
+            logChangedObservable.SubscribeOn(Scheduler.Default)
+                .Throttle(TimeSpan.FromMilliseconds(LogChangedThrottleIntervalMilliseconds))
+                .Subscribe(this.OnChangeLog);
         }
 
         private VersionsReader VersionsReader { get; }
@@ -237,9 +249,14 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
-            Action action = delegate
+            this.logChangedObserver.OnNext(path);
+        }
+
+        private void OnChangeLog(string s)
+        {
+            try
             {
-                var f = new FileInfo(path);
+                var f = new FileInfo(s);
                 if (f.Length < this.logSize)
                 {
                     this.currentPath = string.Empty;
@@ -252,8 +269,11 @@ namespace logviewer.logic.ui.main
                     return;
                 }
                 this.StartLogReadingTask();
-            };
-            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+            }
         }
 
         private void UpdateRecentFilters(string value = null)

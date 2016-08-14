@@ -13,7 +13,7 @@ namespace logviewer.ui
     {
         private StatisticModel model;
 
-        public Statistic(LogStore store, string size, string encoding)
+        public Statistic(ILogStore store, string size, string encoding)
         {
             this.InitializeComponent();
             this.model = new StatisticModel(store, size, encoding);

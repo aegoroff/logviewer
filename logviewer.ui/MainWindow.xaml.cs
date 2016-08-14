@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using logviewer.logic.support;
 using logviewer.logic.ui;
 using logviewer.logic.ui.main;
 using MenuItem = Fluent.MenuItem;
@@ -30,6 +31,7 @@ namespace logviewer.ui
             this.model = new MainModel(MainViewModel.Current);
             this.logWatch = new FileSystemWatcher();
             this.logWatch.Changed += this.OnChangeLog;
+            this.logWatch.NotifyFilter = NotifyFilters.Size;
         }
 
         private void WatchLogFile(string path)
@@ -105,6 +107,7 @@ namespace logviewer.ui
         {
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
+                Log.Instance.TraceFormatted("Log {0} change event: {1}", e.FullPath, e.ChangeType);
                 this.model.UpdateLog(e.FullPath);
             }
         }
