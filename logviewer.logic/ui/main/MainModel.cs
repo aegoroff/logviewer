@@ -16,7 +16,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Humanizer;
 using logviewer.engine;
 using logviewer.logic.Annotations;
@@ -62,6 +61,7 @@ namespace logviewer.logic.ui.main
         private const int WaitCancelSeconds = 5;
         private const int LogChangedThrottleIntervalMilliseconds = 500;
         private IObserver<string> logChangedObserver;
+        private IObserver<string> filterChangedObserver;
 
         #endregion
 
@@ -72,18 +72,28 @@ namespace logviewer.logic.ui.main
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
             this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
-            this.prevInput = DateTime.Now;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
             this.uiThreadContext = new SynchronizationContextScheduler(this.WinformsOrDefaultContext);
+
             var logChangedObservable = Observable.Create<string>(observer =>
             {
                 this.logChangedObserver = observer;
                 return Disposable.Empty;
             });
 
+            var filterChangedObservable = Observable.Create<string>(observer =>
+            {
+                this.filterChangedObserver = observer;
+                return Disposable.Empty;
+            });
+
             logChangedObservable.SubscribeOn(Scheduler.Default)
                 .Throttle(TimeSpan.FromMilliseconds(LogChangedThrottleIntervalMilliseconds))
                 .Subscribe(this.OnChangeLog);
+
+            filterChangedObservable.SubscribeOn(Scheduler.Default)
+                .Throttle(this.filterUpdateDelay)
+                .Subscribe(this.StartReadingLogOnFilterChange);
         }
 
         private VersionsReader VersionsReader { get; }
@@ -183,42 +193,25 @@ namespace logviewer.logic.ui.main
             SafeRunner.Run(this.cancellation.Dispose);
         }
 
-        private DateTime prevInput;
-
-        [PublicAPI]
-        public bool PendingStart { get; private set; }
-
         public void StartReadingLogOnFilterChange()
         {
-            if (!this.viewModel.MessageFilter.IsValid(this.viewModel.UseRegularExpressions))
+            if (!this.viewModel.UiControlsEnabled)
             {
                 return;
             }
 
-            this.prevInput = DateTime.Now;
+            this.filterChangedObserver.OnNext(this.viewModel.MessageFilter);
+        }
 
-            if (this.PendingStart || !this.viewModel.UiControlsEnabled)
+        private void StartReadingLogOnFilterChange(string filter)
+        {
+            if (!filter.IsValid(this.viewModel.UseRegularExpressions))
             {
                 return;
             }
-            Task.Factory.StartNew(delegate
-            {
-                this.PendingStart = true;
-                try
-                {
-                    SpinWait.SpinUntil(() =>
-                    {
-                        var diff = DateTime.Now - this.prevInput;
-                        return diff > this.filterUpdateDelay;
-                    });
-                    this.UpdateRecentFilters(this.viewModel.MessageFilter);
-                    this.StartLogReadingTask();
-                }
-                finally
-                {
-                    this.PendingStart = false;
-                }
-            }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
+
+            this.UpdateRecentFilters(filter);
+            this.StartLogReadingTask();
         }
 
 
