@@ -13,6 +13,7 @@ using System.Threading;
 using logviewer.engine;
 using logviewer.logic.Properties;
 using logviewer.logic.storage;
+using logviewer.logic.support;
 
 namespace logviewer.logic.ui.statistic
 {
@@ -92,10 +93,10 @@ namespace logviewer.logic.ui.statistic
 
             source.SubscribeOn(Scheduler.Default)
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(model =>
-                {
-                    this.items.Add(model);
-                });
+                .Subscribe(
+                    model => { this.items.Add(model); },
+                    exception => { Log.Instance.Error(exception.Message, exception); },
+                    () => { Log.Instance.TraceFormatted("Statistic loading completed"); });
         }
 
         private static StatItemViewModel CreateItem(string key, string value)
