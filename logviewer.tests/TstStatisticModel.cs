@@ -16,6 +16,8 @@ namespace logviewer.tests
 {
     public class TstStatisticModel
     {
+        private const int DelayMilliseconds = 500;
+
         [Fact]
         public void LoadStatistic_EmptyStore_AllLevelsCountZero()
         {
@@ -36,7 +38,7 @@ namespace logviewer.tests
 
             // Act
             model.LoadStatistic();
-            Thread.Sleep(200);
+            Thread.Sleep(DelayMilliseconds);
 
             // Assert
             model.Items.Single(x => x.Key == LogLevel.Trace.ToString()).Value.Should().Be("0");
@@ -71,7 +73,7 @@ namespace logviewer.tests
 
             // Act
             model.LoadStatistic();
-            Thread.Sleep(200);
+            Thread.Sleep(DelayMilliseconds);
 
             // Assert
             model.Items.Single(x => x.Key == LogLevel.Trace.ToString()).Value.Should().Be("1");
@@ -97,7 +99,7 @@ namespace logviewer.tests
 
             // Act
             model.LoadStatistic();
-            Thread.Sleep(200);
+            Thread.Sleep(DelayMilliseconds);
 
             // Assert
             model.Items.Where(x => x.Key == "First").Should().HaveCount(1);
