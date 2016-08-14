@@ -2,12 +2,44 @@
 // Created at: 12.08.2016
 // © 2012-2016 Alexander Egorov
 
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using logviewer.logic.Annotations;
+
 namespace logviewer.logic.ui.statistic
 {
-    public class StatFilterViewModel
+    [PublicAPI]
+    public class StatFilterViewModel : INotifyPropertyChanged
     {
-        public string Filter { get; set; }
+        private string filter;
+        private bool userRegexp;
 
-        public bool UserRegexp { get; set; }
+        public string Filter
+        {
+            get { return this.filter; }
+            set
+            {
+                this.OnPropertyChanged(nameof(this.Filter));
+                this.filter = value;
+            }
+        }
+
+        public bool UserRegexp
+        {
+            get { return this.userRegexp; }
+            set
+            {
+                this.OnPropertyChanged(nameof(this.UserRegexp));
+                this.userRegexp = value;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

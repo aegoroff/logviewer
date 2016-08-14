@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using logviewer.logic.storage;
 using logviewer.logic.ui.statistic;
 using logviewer.ui.Annotations;
@@ -22,14 +23,9 @@ namespace logviewer.ui
             this.model.LoadStatistic();
         }
 
-        private void OnOk(object sender, RoutedEventArgs e)
+        private void OnClose(object sender, ExecutedRoutedEventArgs e)
         {
             this.Close();
-        }
-
-        private void OnFilter(object sender, RoutedEventArgs e)
-        {
-            this.model.LoadStatistic();
         }
     }
 }

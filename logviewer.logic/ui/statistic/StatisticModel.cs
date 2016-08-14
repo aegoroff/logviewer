@@ -42,6 +42,7 @@ namespace logviewer.logic.ui.statistic
             this.size = size;
             this.encoding = encoding;
             this.filterViewModel = new StatFilterViewModel();
+            this.filterViewModel.PropertyChanged += (sender, args) => this.LoadStatistic();
             this.items = new ObservableCollection<StatItemViewModel>();
         }
 

@@ -7,6 +7,9 @@
         xmlns:properties="clr-namespace:logviewer.ui.Properties"
         mc:Ignorable="d"
         Title="{x:Static properties:Resources.LogStatistics}" Height="405" Width="529" ResizeMode="NoResize">
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="OnClose" />
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
@@ -15,9 +18,8 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left"
                     FlowDirection="LeftToRight">
-            <TextBox Width="240" Margin="5,0,10,0" Text="{Binding Path=Filter}"></TextBox>
-            <Button Margin="0,0,10,0" Content="{x:Static properties:Resources.Filter}" Width="50" Click="OnFilter"></Button>
-            <CheckBox Content="{x:Static properties:Resources.UseRegexpShort}" VerticalAlignment="Center" IsChecked="{Binding Path=UserRegexp}"></CheckBox>
+            <TextBox Width="240" Margin="5,0,10,0" Text="{Binding Path=Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <CheckBox Content="{x:Static properties:Resources.UseRegexp}" VerticalAlignment="Center" IsChecked="{Binding Path=UserRegexp}"></CheckBox>
         </StackPanel>
         <ListView Grid.Row="1" x:Name="ListView" Margin="5">
             <ListView.Resources>
@@ -35,7 +37,7 @@
              </ListView.View>
         </ListView>
         <StackPanel Grid.Row="2" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft">
-            <Button Margin="5,0,0,0" Content="OK" Width="80" Click="OnOk"></Button>
+            <Button Margin="5,0,0,0" Content="OK" Width="80" Command="Close"></Button>
         </StackPanel>
     </Grid>
 </Window>

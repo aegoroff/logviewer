@@ -583,15 +583,6 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use regular expressions.
-        /// </summary>
-        public static string UseRegexpShort {
-            get {
-                return ResourceManager.GetString("UseRegexpShort", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Version {0}.
         /// </summary>
         public static string VersionTemplate {

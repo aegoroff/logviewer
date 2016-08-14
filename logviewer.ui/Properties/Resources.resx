@@ -303,7 +303,4 @@
   <data name="LogStatistics" xml:space="preserve">
     <value>Log statistics</value>
   </data>
-  <data name="UseRegexpShort" xml:space="preserve">
-    <value>Use regular expressions</value>
-  </data>
 </root>

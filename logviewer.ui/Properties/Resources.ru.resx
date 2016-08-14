@@ -285,7 +285,4 @@
   <data name="LogStatistics" xml:space="preserve">
     <value>Статистика по логу</value>
   </data>
-  <data name="UseRegexpShort" xml:space="preserve">
-    <value>Исп. регулярные выражения</value>
-  </data>
 </root>
