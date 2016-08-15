@@ -9,21 +9,19 @@ using System.Threading.Tasks;
 
 namespace logviewer.logic.ui
 {
-    public abstract class BaseGuiController
+    public abstract class UiSynchronizeModel
     {
+        private readonly TaskScheduler uiSyncContext;
         private readonly SynchronizationContext winformsOrDefaultContext;
-        private readonly SynchronizationContextScheduler uiContextScheduler;
 
-        protected BaseGuiController()
+        protected UiSynchronizeModel()
         {
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
-            this.UiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
-            this.uiContextScheduler = new SynchronizationContextScheduler(this.winformsOrDefaultContext);
+            this.uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+            this.UiContextScheduler = new SynchronizationContextScheduler(this.winformsOrDefaultContext);
         }
 
-        protected TaskScheduler UiSyncContext { get; }
-
-        protected SynchronizationContextScheduler UiContextScheduler => this.uiContextScheduler;
+        protected SynchronizationContextScheduler UiContextScheduler { get; }
 
         protected void RunOnGuiThread(Action action)
         {
@@ -36,7 +34,7 @@ namespace logviewer.logic.ui
             {
                 action(task);
                 task.Dispose();
-            }, CancellationToken.None, options, this.UiSyncContext);
+            }, CancellationToken.None, options, this.uiSyncContext);
         }
     }
 }

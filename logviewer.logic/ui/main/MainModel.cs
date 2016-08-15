@@ -28,7 +28,7 @@ using LogLevel = logviewer.engine.LogLevel;
 
 namespace logviewer.logic.ui.main
 {
-    public sealed class MainModel : BaseGuiController, IDisposable
+    public sealed class MainModel : UiSynchronizeModel, IDisposable
     {
         private readonly ISettingsProvider settings;
 

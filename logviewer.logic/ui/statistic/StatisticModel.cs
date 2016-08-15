@@ -17,7 +17,7 @@ using logviewer.logic.support;
 
 namespace logviewer.logic.ui.statistic
 {
-    public class StatisticModel : BaseGuiController
+    public class StatisticModel : UiSynchronizeModel
     {
         private readonly ILogStore store;
         private readonly string size;

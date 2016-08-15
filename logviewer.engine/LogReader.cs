@@ -105,16 +105,7 @@ namespace logviewer.engine
                 var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
                     MemoryMappedFileAccess.Read))
             {
-                if (encoding == null)
-                {
-                    this.EncodingDetectionStarted?.Invoke(this, new EventArgs());
-
-                    using (var stream = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
-                    {
-                        encoding = this.detector.Detect(stream);
-                    }
-                }
-                this.EncodingDetectionFinished?.Invoke(this, new EncodingDetectedEventArgs(encoding));
+                encoding = this.DetectEncoding(encoding, mmf, length);
 
                 using (var stream = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
                 {
@@ -127,6 +118,21 @@ namespace logviewer.engine
                     }
                 }
             }
+        }
+
+        private Encoding DetectEncoding(Encoding encoding, MemoryMappedFile mmf, long length)
+        {
+            if (encoding == null)
+            {
+                this.EncodingDetectionStarted?.Invoke(this, new EventArgs());
+
+                using (var stream = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
+                {
+                    encoding = this.detector.Detect(stream);
+                }
+            }
+            this.EncodingDetectionFinished?.Invoke(this, new EncodingDetectedEventArgs(encoding));
+            return encoding;
         }
 
         /// <summary>

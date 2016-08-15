@@ -12,7 +12,7 @@ using logviewer.logic.Properties;
 
 namespace logviewer.logic.ui
 {
-    public class LogParseTemplateController : BaseGuiController
+    public class LogParseTemplateController : UiSynchronizeModel
     {
         private readonly IParsingTemplateView view;
 

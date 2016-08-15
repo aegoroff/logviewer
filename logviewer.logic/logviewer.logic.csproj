@@ -110,7 +110,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="storage\ILogStore.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
-    <Compile Include="ui\BaseGuiController.cs" />
+    <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />
     <Compile Include="DefectSender.cs" />

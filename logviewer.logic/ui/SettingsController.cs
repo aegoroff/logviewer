@@ -19,7 +19,7 @@ using logviewer.logic.Properties;
 
 namespace logviewer.logic.ui
 {
-    public class SettingsController : BaseGuiController
+    public class SettingsController : UiSynchronizeModel
     {
         private readonly FormData formData = new FormData();
         private readonly ISettingsProvider settings;
