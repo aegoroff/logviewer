@@ -141,7 +141,7 @@
                             <xctk:DateTimePicker
                                 Format="FullDateTime"
                                 Margin="5"
-                                Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=From, IsAsync=True}"
+                                Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=From}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
                                 ShowButtonSpinner="False"
                                 Grid.Column="1"
@@ -149,7 +149,7 @@
                             <xctk:DateTimePicker
                                 Format="FullDateTime"
                                 Margin="5"
-                                Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=To, IsAsync=True}"
+                                Value="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=To}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}"
                                 ShowButtonSpinner="False"
                                 Grid.Column="1"
