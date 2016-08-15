@@ -3,8 +3,9 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
@@ -62,15 +63,10 @@ namespace logviewer.logic.ui
             {
                 this.view.ShowInvalidTemplateError(Resources.InvalidTemplate, control);
                 this.TemplateChangeFailure?.Invoke(this, new EventArgs());
-                var task = Task.Factory.StartNew(delegate
-                {
-                    Thread.Sleep(millisecondsToShowTooltip);
-                });
 
-                this.CompleteTask(
-                    task, 
-                    TaskContinuationOptions.OnlyOnRanToCompletion,
-                    delegate { this.view.HideInvalidTemplateError(control); });
+                var o = Observable.Start(() => Thread.Sleep(millisecondsToShowTooltip), Scheduler.Default);
+
+                o.ObserveOn(this.UiContextScheduler).Subscribe(unit => this.view.HideInvalidTemplateError(control));
                 return;
             }
             assignAction(value);

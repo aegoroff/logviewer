@@ -56,7 +56,6 @@ namespace logviewer.logic.ui.main
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         public event EventHandler<EventArgs> ReadCompleted;
         private const int CheckUpdatesEveryDays = 7;
-        private readonly SynchronizationContextScheduler uiThreadContext;
         private bool readCompleted = true;
         private const int WaitCancelSeconds = 5;
         private const int LogChangedThrottleIntervalMilliseconds = 500;
@@ -73,7 +72,6 @@ namespace logviewer.logic.ui.main
             this.viewModel = viewModel;
             this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
-            this.uiThreadContext = new SynchronizationContextScheduler(this.WinformsOrDefaultContext);
 
             var logChangedObservable = Observable.Create<string>(observer =>
             {
@@ -132,8 +130,6 @@ namespace logviewer.logic.ui.main
         }
 
         #endregion
-
-        #region Public Methods and Operators
 
         /// <summary>
         /// Check updates available
@@ -220,7 +216,7 @@ namespace logviewer.logic.ui.main
             this.cancellation = new CancellationTokenSource();
 
             var o = Observable.Start(this.DoLogReadingTask, Scheduler.Default);
-            o.ObserveOn(this.uiThreadContext)
+            o.ObserveOn(this.UiContextScheduler)
                 .Subscribe(unit => { },
                     exception =>
                     {
@@ -601,10 +597,6 @@ namespace logviewer.logic.ui.main
             return ToHumanReadableString(this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0);
         }
 
-        #endregion
-
-        #region Methods
-
         private long logSize;
 
         private bool CurrentPathCached => !string.IsNullOrWhiteSpace(this.currentPath) &&
@@ -613,8 +605,6 @@ namespace logviewer.logic.ui.main
         private long TotalMessages => this.store?.CountMessages() ?? 0;
 
         public LogStore Store => this.store;
-
-        #endregion
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "cancellation"),

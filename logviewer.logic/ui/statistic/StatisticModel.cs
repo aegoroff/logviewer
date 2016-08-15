@@ -17,7 +17,7 @@ using logviewer.logic.support;
 
 namespace logviewer.logic.ui.statistic
 {
-    public class StatisticModel
+    public class StatisticModel : BaseGuiController
     {
         private readonly ILogStore store;
         private readonly string size;
@@ -93,7 +93,7 @@ namespace logviewer.logic.ui.statistic
             });
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(SynchronizationContext.Current)
+                .ObserveOn(this.UiContextScheduler)
                 .Subscribe(
                     model => { this.items.Add(model); },
                     exception => { Log.Instance.Error(exception.Message, exception); },

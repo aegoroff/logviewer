@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,16 +12,18 @@ namespace logviewer.logic.ui
     public abstract class BaseGuiController
     {
         private readonly SynchronizationContext winformsOrDefaultContext;
+        private readonly SynchronizationContextScheduler uiContextScheduler;
 
         protected BaseGuiController()
         {
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
             this.UiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+            this.uiContextScheduler = new SynchronizationContextScheduler(this.winformsOrDefaultContext);
         }
 
         protected TaskScheduler UiSyncContext { get; }
 
-        protected SynchronizationContext WinformsOrDefaultContext => this.winformsOrDefaultContext;
+        protected SynchronizationContextScheduler UiContextScheduler => this.uiContextScheduler;
 
         protected void RunOnGuiThread(Action action)
         {

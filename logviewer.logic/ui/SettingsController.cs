@@ -247,7 +247,7 @@ namespace logviewer.logic.ui
             });
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(SynchronizationContext.Current)
+                .ObserveOn(this.UiContextScheduler)
                 .Subscribe(list =>
                 {
                     for (var i = t.Index; i < list.Count; i++)
@@ -274,7 +274,7 @@ namespace logviewer.logic.ui
             });
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(SynchronizationContext.Current)
+                .ObserveOn(this.UiContextScheduler)
                 .Subscribe(i =>
                 {
                     this.view.RemoveParsingTemplateName(i);
@@ -352,7 +352,7 @@ namespace logviewer.logic.ui
             });
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(SynchronizationContext.Current)
+                .ObserveOn(this.UiContextScheduler)
                 .Subscribe(parsingTemplate =>
                 {
                     this.template = parsingTemplate;
