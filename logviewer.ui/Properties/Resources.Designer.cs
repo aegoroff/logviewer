@@ -133,29 +133,11 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Database size.
-        /// </summary>
-        public static string DatabaseSize {
-            get {
-                return ResourceManager.GetString("DatabaseSize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Date filter.
         /// </summary>
         public static string DateFilter {
             get {
                 return ResourceManager.GetString("DateFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Debug.
-        /// </summary>
-        public static string Debug {
-            get {
-                return ResourceManager.GetString("Debug", resourceCulture);
             }
         }
         
@@ -178,24 +160,6 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File encoding.
-        /// </summary>
-        public static string Encoding {
-            get {
-                return ResourceManager.GetString("Encoding", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error.
-        /// </summary>
-        public static string Error {
-            get {
-                return ResourceManager.GetString("Error", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error - 4.
         /// </summary>
         public static string ErrorLabel {
@@ -210,15 +174,6 @@ namespace logviewer.ui.Properties {
         public static string Export {
             get {
                 return ResourceManager.GetString("Export", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fatal.
-        /// </summary>
-        public static string Fatal {
-            get {
-                return ResourceManager.GetString("Fatal", resourceCulture);
             }
         }
         
@@ -246,6 +201,15 @@ namespace logviewer.ui.Properties {
         public static string FatalLabel {
             get {
                 return ResourceManager.GetString("FatalLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter.
+        /// </summary>
+        public static string Filter {
+            get {
+                return ResourceManager.GetString("Filter", resourceCulture);
             }
         }
         
@@ -331,6 +295,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log statistics.
+        /// </summary>
+        public static string LogStatistics {
+            get {
+                return ResourceManager.GetString("LogStatistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log Viewer.
         /// </summary>
         public static string MainWindowCaptionPrefix {
@@ -358,29 +331,11 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Last.
-        /// </summary>
-        public static string MaxMessageDate {
-            get {
-                return ResourceManager.GetString("MaxMessageDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Min: .
         /// </summary>
         public static string MinLabel {
             get {
                 return ResourceManager.GetString("MinLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First.
-        /// </summary>
-        public static string MinMessageDate {
-            get {
-                return ResourceManager.GetString("MinMessageDate", resourceCulture);
             }
         }
         
@@ -493,15 +448,6 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Size.
-        /// </summary>
-        public static string Size {
-            get {
-                return ResourceManager.GetString("Size", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Date, ASC.
         /// </summary>
         public static string SortAsc {
@@ -570,15 +516,6 @@ namespace logviewer.ui.Properties {
         public static string Total {
             get {
                 return ResourceManager.GetString("Total", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total messages.
-        /// </summary>
-        public static string TotalMessages {
-            get {
-                return ResourceManager.GetString("TotalMessages", resourceCulture);
             }
         }
         
@@ -660,15 +597,6 @@ namespace logviewer.ui.Properties {
         public static string View {
             get {
                 return ResourceManager.GetString("View", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string Warn {
-            get {
-                return ResourceManager.GetString("Warn", resourceCulture);
             }
         }
         

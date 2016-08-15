@@ -148,7 +148,11 @@ namespace logviewer.logic.storage
             this.RunSqlQuery(delegate(IDbCommand cmd)
             {
                 actionBeforeExecute?.Invoke(cmd);
-                result = (T)cmd.ExecuteScalar();
+                var r = cmd.ExecuteScalar();
+                if (r != DBNull.Value)
+                {
+                    result = (T) r;
+                }
             }, query);
             return result;
         }

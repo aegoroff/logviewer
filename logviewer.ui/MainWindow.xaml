@@ -165,7 +165,7 @@
                             <fluent:TextBox
                                 Width="250"
                                 Margin="5"
-                                Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter, IsAsync=True}"
+                                Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter, UpdateSourceTrigger=PropertyChanged}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}" />
                             <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"
                                                  SizeDefinition="Small, Small, Small"

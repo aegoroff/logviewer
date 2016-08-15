@@ -54,6 +54,7 @@ namespace logviewer.logic
                 createIssue.Labels.Add(@"severity-high");
                 var issue = await github.Issue.Create(this.account, this.project, createIssue);
                 Log.Instance.InfoFormatted(@"Issue #{0} created", issue.Number);
+                Log.Instance.Fatal(exception.Message, exception);
                 return issue.Number;
             }
             catch (Exception e)

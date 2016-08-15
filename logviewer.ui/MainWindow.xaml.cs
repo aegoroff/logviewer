@@ -8,7 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using logviewer.logic.support;
 using logviewer.logic.ui;
+using logviewer.logic.ui.main;
 using MenuItem = Fluent.MenuItem;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -19,16 +21,17 @@ namespace logviewer.ui
     /// </summary>
     public partial class MainWindow
     {
-        private readonly UiController controller;
+        private readonly MainModel model;
         private readonly FileSystemWatcher logWatch;
 
         public MainWindow()
         {
             this.InitializeComponent();
             MainViewModel.Current.Window = new WindowWrapper(this);
-            this.controller = new UiController(MainViewModel.Current);
+            this.model = new MainModel(MainViewModel.Current);
             this.logWatch = new FileSystemWatcher();
             this.logWatch.Changed += this.OnChangeLog;
+            this.logWatch.NotifyFilter = NotifyFilters.Size;
         }
 
         private void WatchLogFile(string path)
@@ -78,40 +81,42 @@ namespace logviewer.ui
                 return;
             }
             MainViewModel.Current.LogPath = openFileDialog.FileName;
-            this.controller.ReadNewLog();
+            this.model.ReadNewLog();
             this.WatchLogFile(MainViewModel.Current.LogPath);
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
             this.logWatch.Dispose();
-            this.controller.Dispose();
+            this.model.Dispose();
             MainViewModel.Current.Dispose();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            this.controller.LoadLastOpenedFile();
+            this.model.LoadLastOpenedFile();
             this.WatchLogFile(MainViewModel.Current.LogPath);
         }
 
         private void OnUpdate(object sender, ExecutedRoutedEventArgs e)
         {
-            this.controller.ReadNewLog();
+            this.model.ReadNewLog();
         }
 
         private void OnChangeLog(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                this.controller.UpdateLog(e.FullPath);
+                Log.Instance.TraceFormatted("Log {0} change event: {1}", e.FullPath, e.ChangeType);
+                this.model.UpdateLog(e.FullPath);
             }
         }
 
         private void OnStatistic(object sender, ExecutedRoutedEventArgs e)
         {
-            var dlg = new StatisticDlg(this.controller.Store, this.controller.GetLogSize(true), this.controller.CurrentEncoding);
-            dlg.Show(MainViewModel.Current.Window);
+            //var dlg = new StatisticDlg(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding);
+            //dlg.Show(MainViewModel.Current.Window);
+            new Statistic(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding).Show();
         }
 
         private void OnSettings(object sender, ExecutedRoutedEventArgs e)
@@ -119,7 +124,7 @@ namespace logviewer.ui
             var dlg = new SettingsDlg(MainViewModel.Current.SettingsProvider);
             using (dlg)
             {
-                dlg.SetApplyAction(refresh => this.controller.UpdateSettings(refresh));
+                dlg.SetApplyAction(refresh => this.model.UpdateSettings(refresh));
                 dlg.ShowDialog();
             }
             ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
@@ -163,7 +168,7 @@ namespace logviewer.ui
 
         private void OnCheckUpdates(object sender, ExecutedRoutedEventArgs e)
         {
-            this.controller.CheckUpdates(true);
+            this.model.CheckUpdates(true);
         }
 
         private void OnHelp(object sender, ExecutedRoutedEventArgs e)

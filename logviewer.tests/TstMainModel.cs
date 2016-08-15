@@ -12,6 +12,7 @@ using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.storage;
 using logviewer.logic.ui;
+using logviewer.logic.ui.main;
 using Moq;
 using Net.Sgoliver.NRtfTree.Util;
 using Xunit;
@@ -20,7 +21,7 @@ using Xunit.Sdk;
 namespace logviewer.tests
 {
     [Collection("SerialTests")]
-    public class TstUiController : IDisposable
+    public class TstMainModel : IDisposable
     {
         private const string f1 = "1";
         private const string f2 = "2";
@@ -29,11 +30,10 @@ namespace logviewer.tests
 
         #region Setup/Teardown
 
-        public TstUiController()
+        public TstMainModel()
         {
             CleanupTestFiles();
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-            this.viewModel = new Mock<IViewModel>();
+            this.viewModel = new Mock<IMainViewModel>();
             this.settings = new Mock<ISettingsProvider>();
             var itemsProvider = new Mock<IItemsProvider<string>>();
             this.viewModel.SetupGet(_ => _.SettingsProvider).Returns(this.settings.Object);
@@ -45,7 +45,7 @@ namespace logviewer.tests
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
 
-            this.controller = new UiController(this.viewModel.Object);
+            this.controller = new MainModel(this.viewModel.Object);
             this.controller.ReadCompleted += this.OnReadCompleted;
         }
 
@@ -115,9 +115,9 @@ namespace logviewer.tests
 
         private const string TestPath = "f";
         private const string RecentPath = "r";
-        private readonly Mock<IViewModel> viewModel;
+        private readonly Mock<IMainViewModel> viewModel;
         private readonly Mock<ISettingsProvider> settings;
-        private readonly UiController controller;
+        private readonly MainModel controller;
 
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";

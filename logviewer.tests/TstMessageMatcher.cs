@@ -1,4 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿// Created by: egr
+// Created at: 10.12.2015
+// © 2012-2016 Alexander Egorov
+
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using logviewer.logic.models;
 using Xunit;

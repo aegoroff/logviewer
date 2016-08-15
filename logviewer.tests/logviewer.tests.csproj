@@ -54,13 +54,17 @@
       <HintPath>..\packages\FluentAssertions.4.13.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.5.16.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.5.16\lib\net45\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.5.19.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.5.19\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nrtftree-library, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\nrtftree-library.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture, Version=3.49.1.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoFixture.3.49.1\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -94,10 +98,11 @@
     <Compile Include="TstNetworkSettingsModel.cs" />
     <Compile Include="TstNetworkSettingsViewModel.cs" />
     <Compile Include="TstSolidMachine.cs" />
-    <Compile Include="TstUiController.cs" />
+    <Compile Include="TstMainModel.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />
     <Compile Include="TstMainController.cs" />
+    <Compile Include="TstStatisticModel.cs" />
     <Compile Include="TstUpdatesChecker.cs" />
     <Compile Include="TstUtils.cs" />
   </ItemGroup>

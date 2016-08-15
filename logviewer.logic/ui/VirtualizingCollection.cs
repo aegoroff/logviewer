@@ -8,10 +8,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
+using logviewer.logic.ui.main;
 
 namespace logviewer.logic.ui
 {
@@ -63,8 +66,6 @@ namespace logviewer.logic.ui
         [PublicAPI]
         public long PageCacheTimeoutMilliseconds { get; } = 10000;
 
-        private readonly TaskScheduler uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
-
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -110,21 +111,22 @@ namespace logviewer.logic.ui
         private void LoadPage(int pageIndex)
         {
             this.IsLoading = true;
-            var task = Task<T[]>.Factory.StartNew(() => this.FetchPage(pageIndex));
 
-            task.ContinueWith(delegate (Task<T[]> t)
+            var source = Observable.Create<T[]>(observer =>
             {
-                this.PopulatePage(pageIndex, t.Result);
-                this.FireCollectionReset();
-                this.IsLoading = false;
-                task.Dispose();
-            }, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.uiSyncContext);
+                observer.OnNext(this.FetchPage(pageIndex));
+                return Disposable.Empty;
+            });
 
-            task.ContinueWith(obj =>
-            {
-                task.Dispose();
-                this.IsLoading = false;
-            }, CancellationToken.None, TaskContinuationOptions.NotOnRanToCompletion, this.uiSyncContext);
+            source
+                .SubscribeOn(Scheduler.Default)
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(result =>
+                {
+                    this.PopulatePage(pageIndex, result);
+                    this.FireCollectionReset();
+                    this.IsLoading = false;
+                }, exception => { this.IsLoading = false; });
         }
 
         public void ChangeVisible(Range range)
@@ -354,7 +356,12 @@ namespace logviewer.logic.ui
             if (!this.pages.ContainsKey(pageIndex))
             {
                 this.pages.Add(pageIndex, new T[0]);
-                this.pageTouchTimes.Add(pageIndex, DateTime.Now);
+
+                if (!this.pageTouchTimes.ContainsKey(pageIndex))
+                {
+                    this.pageTouchTimes.Add(pageIndex, DateTime.Now);
+                }
+
                 Trace.WriteLine("Added page: " + pageIndex);
                 this.LoadPage(pageIndex);
             }

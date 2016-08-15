@@ -108,6 +108,7 @@
     <Compile Include="fsm\StateConfiguration.cs" />
     <Compile Include="fsm\TriggerConfiguration.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="storage\ILogStore.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\BaseGuiController.cs" />
     <Compile Include="support\AsymCrypt.cs" />
@@ -115,7 +116,6 @@
     <Compile Include="DefectSender.cs" />
     <Compile Include="ui\IItemsProvider.cs" />
     <Compile Include="IOptionsProvider.cs" />
-    <Compile Include="ui\IViewModel.cs" />
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ui\ColorPickResult.cs" />
     <Compile Include="storage\ColumnAttribute.cs" />
@@ -135,9 +135,11 @@
     <Compile Include="storage\LogProvider.cs" />
     <Compile Include="models\LogReadCompletedEventArgs.cs" />
     <Compile Include="storage\LogStore.cs" />
-    <Compile Include="models\MessageFilterModel.cs" />
+    <Compile Include="models\MessageFilterViewModel.cs" />
     <Compile Include="support\FixedSizeDictionary.cs" />
     <Compile Include="models\MessageMatcher.cs" />
+    <Compile Include="ui\main\IMainViewModel.cs" />
+    <Compile Include="ui\main\MainModel.cs" />
     <Compile Include="ui\network\Constants.cs" />
     <Compile Include="ui\network\INetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\ManualProxyState.cs" />
@@ -151,7 +153,6 @@
     <Compile Include="ui\network\NetworkStateResolver.cs" />
     <Compile Include="ui\network\ProxyMode.cs" />
     <Compile Include="ui\network\StateMachineMode.cs" />
-    <Compile Include="ui\UiController.cs" />
     <Compile Include="ui\MainController.cs" />
     <Compile Include="support\Maybe.cs" />
     <Compile Include="models\ParsingTemplate.cs" />
@@ -168,6 +169,9 @@
     <Compile Include="ui\SettingsController.cs" />
     <Compile Include="storage\SqliteSettingsProvider.cs" />
     <Compile Include="storage\SqliteRegEx.cs" />
+    <Compile Include="ui\statistic\StatFilterViewModel.cs" />
+    <Compile Include="ui\statistic\StatisticModel.cs" />
+    <Compile Include="ui\statistic\StatItemViewModel.cs" />
     <Compile Include="ui\update\UpdateViewModel.cs" />
     <Compile Include="UpdatesChecker.cs" />
     <Compile Include="models\VersionModel.cs" />
@@ -178,6 +182,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ru.resx" />
   </ItemGroup>

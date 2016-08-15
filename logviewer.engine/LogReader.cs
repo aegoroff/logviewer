@@ -73,6 +73,11 @@ namespace logviewer.engine
         public event EventHandler CompilationFinished;
 
         /// <summary>
+        /// Gets whether read has been cancelled
+        /// </summary>
+        public bool Cancelled => this.cancelled;
+
+        /// <summary>
         /// Cancels reading
         /// </summary>
         public void Cancel()

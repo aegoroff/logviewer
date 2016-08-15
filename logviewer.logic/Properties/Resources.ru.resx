@@ -132,6 +132,9 @@
   <data name="CreateRtfInProgress" xml:space="preserve">
     <value>Создание страницы для показа ...</value>
   </data>
+  <data name="DatabaseSize" xml:space="preserve">
+    <value>Размер базы</value>
+  </data>
   <data name="DaysGenitivePlural" xml:space="preserve">
     <value>дней</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="DeleteCurrentTemplateMessage" xml:space="preserve">
     <value>Эту операцию нельзя отменить. Вы уверены?</value>
+  </data>
+  <data name="Encoding" xml:space="preserve">
+    <value>Кодировка файла</value>
   </data>
   <data name="EncodingDetectionInProgress" xml:space="preserve">
     <value>Определение кодировки файла ...</value>
@@ -174,8 +180,14 @@
   <data name="LogInfoFormatString" xml:space="preserve">
     <value>Всего: {0}  к показу: {7} T: {1}  D: {2}  I: {3}  W: {4}  E: {5}  F: {6}</value>
   </data>
+  <data name="MaxMessageDate" xml:space="preserve">
+    <value>Последнее</value>
+  </data>
   <data name="MinLevelGreaterThenMax" xml:space="preserve">
     <value>Минимальный уровень должен быть меньше или равен максимальному</value>
+  </data>
+  <data name="MinMessageDate" xml:space="preserve">
+    <value>Первое</value>
   </data>
   <data name="MinutesGenitivePlural" xml:space="preserve">
     <value>минут</value>
@@ -240,6 +252,9 @@
   <data name="SecondsNominative" xml:space="preserve">
     <value>секунда</value>
   </data>
+  <data name="Size" xml:space="preserve">
+    <value>Размер</value>
+  </data>
   <data name="SizeBytes" xml:space="preserve">
     <value>байт</value>
   </data>
@@ -266,6 +281,9 @@
   </data>
   <data name="SpeedPercentWithRemain" xml:space="preserve">
     <value>{0} %  ({1}/сек.) осталось {2}</value>
+  </data>
+  <data name="TotalMessages" xml:space="preserve">
+    <value>Всего сообщений</value>
   </data>
   <data name="UpdateDownloadProgressFormat" xml:space="preserve">
     <value>Загружено {0} из {1}   {2}%</value>

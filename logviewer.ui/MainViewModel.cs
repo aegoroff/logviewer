@@ -13,13 +13,14 @@ using System.Windows;
 using logviewer.logic;
 using logviewer.logic.storage;
 using logviewer.logic.ui;
+using logviewer.logic.ui.main;
 using logviewer.logic.ui.update;
 using logviewer.ui.Annotations;
 using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public sealed class MainViewModel : IViewModel, IDisposable
+    public sealed class MainViewModel : IMainViewModel, IDisposable
     {
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);

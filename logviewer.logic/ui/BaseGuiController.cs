@@ -20,6 +20,8 @@ namespace logviewer.logic.ui
 
         protected TaskScheduler UiSyncContext { get; }
 
+        protected SynchronizationContext WinformsOrDefaultContext => this.winformsOrDefaultContext;
+
         protected void RunOnGuiThread(Action action)
         {
             this.winformsOrDefaultContext.Post(o => action(), null);

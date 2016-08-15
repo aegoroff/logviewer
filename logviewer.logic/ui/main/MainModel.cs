@@ -1,6 +1,6 @@
 // Created by: egr
 // Created at: 07.11.2015
-// © 2012-2016 Alexander Egorov
+// Â© 2012-2016 Alexander Egorov
 
 using System;
 using System.Collections.Concurrent;
@@ -9,14 +9,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Humanizer;
 using logviewer.engine;
 using logviewer.logic.Annotations;
@@ -27,9 +26,9 @@ using logviewer.logic.support;
 using LogLevel = logviewer.engine.LogLevel;
 
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.main
 {
-    public sealed class UiController : BaseGuiController, IDisposable
+    public sealed class MainModel : BaseGuiController, IDisposable
     {
         private readonly ISettingsProvider settings;
 
@@ -37,8 +36,6 @@ namespace logviewer.logic.ui
 
         private readonly Dictionary<LogLevel, ulong> byLevel = new Dictionary<LogLevel, ulong>();
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
-
-        private readonly IDictionary<Task, string> runningTasks = new ConcurrentDictionary<Task, string>();
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
         private readonly LogCharsetDetector charsetDetector = new LogCharsetDetector();
@@ -49,7 +46,7 @@ namespace logviewer.logic.ui
         private MessageMatcher matcher;
         private LogStore store;
         private long totalMessages;
-        private readonly IViewModel viewModel;
+        private readonly IMainViewModel viewModel;
 
         private readonly ProducerConsumerMessageQueue queue =
             new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -59,18 +56,44 @@ namespace logviewer.logic.ui
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         public event EventHandler<EventArgs> ReadCompleted;
         private const int CheckUpdatesEveryDays = 7;
+        private readonly SynchronizationContextScheduler uiThreadContext;
+        private bool readCompleted = true;
+        private const int WaitCancelSeconds = 5;
+        private const int LogChangedThrottleIntervalMilliseconds = 500;
+        private IObserver<string> logChangedObserver;
+        private IObserver<string> filterChangedObserver;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public UiController(IViewModel viewModel)
+        public MainModel(IMainViewModel viewModel)
         {
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
             this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
-            this.prevInput = DateTime.Now;
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
+            this.uiThreadContext = new SynchronizationContextScheduler(this.WinformsOrDefaultContext);
+
+            var logChangedObservable = Observable.Create<string>(observer =>
+            {
+                this.logChangedObserver = observer;
+                return Disposable.Empty;
+            });
+
+            var filterChangedObservable = Observable.Create<string>(observer =>
+            {
+                this.filterChangedObserver = observer;
+                return Disposable.Empty;
+            });
+
+            logChangedObservable.SubscribeOn(Scheduler.Default)
+                .Throttle(TimeSpan.FromMilliseconds(LogChangedThrottleIntervalMilliseconds))
+                .Subscribe(this.OnChangeLog);
+
+            filterChangedObservable.SubscribeOn(Scheduler.Default)
+                .Throttle(this.filterUpdateDelay)
+                .Subscribe(this.StartReadingLogOnFilterChange);
         }
 
         private VersionsReader VersionsReader { get; }
@@ -149,126 +172,67 @@ namespace logviewer.logic.ui
                 });
         }
 
-
-        private bool NotCancelled => !this.cancellation.IsCancellationRequested;
-
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void CancelPreviousTask()
+        private void CancelPreviousRead()
         {
+            if (this.reader == null)
+            {
+                return;
+            }
+
             if (!this.cancellation.IsCancellationRequested)
             {
+                this.reader.Cancel();
                 this.viewModel.LogProgressText = Resources.CancelPrevious;
                 SafeRunner.Run(this.cancellation.Cancel);
             }
             this.queue.CleanupPendingTasks();
-            this.WaitRunningTasks();
+
+            SpinWait.SpinUntil(() => this.readCompleted, TimeSpan.FromSeconds(WaitCancelSeconds));
+
             SafeRunner.Run(this.cancellation.Dispose);
-            this.DisposeRunningTasks();
-            this.runningTasks.Clear();
         }
-
-        private void DisposeRunningTasks()
-        {
-            foreach (
-                var task in
-                    this.runningTasks.Keys.Where(
-                        task =>
-                            task.Status == TaskStatus.RanToCompletion || task.Status == TaskStatus.Faulted ||
-                            task.Status == TaskStatus.Canceled))
-            {
-                SafeRunner.Run(task.Dispose);
-            }
-        }
-
-        private void WaitRunningTasks()
-        {
-            foreach (
-                var task in
-                    this.runningTasks.Keys.Where(
-                        task =>
-                            task.Status == TaskStatus.Running || task.Status == TaskStatus.WaitingForChildrenToComplete ||
-                            task.Status == TaskStatus.WaitingForActivation))
-            {
-                SafeRunner.Run(task.Wait);
-            }
-        }
-
-        private DateTime prevInput;
-
-        [PublicAPI]
-        public bool PendingStart { get; private set; }
 
         public void StartReadingLogOnFilterChange()
         {
-            if (!this.viewModel.MessageFilter.IsValid(this.viewModel.UseRegularExpressions))
+            if (!this.viewModel.UiControlsEnabled)
             {
                 return;
             }
 
-            this.prevInput = DateTime.Now;
-
-            if (this.PendingStart || !this.viewModel.UiControlsEnabled)
-            {
-                return;
-            }
-            Task.Factory.StartNew(delegate
-            {
-                this.PendingStart = true;
-                try
-                {
-                    SpinWait.SpinUntil(() =>
-                    {
-                        var diff = DateTime.Now - this.prevInput;
-                        return diff > this.filterUpdateDelay;
-                    });
-                    this.UpdateRecentFilters(this.viewModel.MessageFilter);
-                    this.StartLogReadingTask();
-                }
-                finally
-                {
-                    this.PendingStart = false;
-                }
-            }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
+            this.filterChangedObserver.OnNext(this.viewModel.MessageFilter);
         }
 
-        
+        private void StartReadingLogOnFilterChange(string filter)
+        {
+            if (!filter.IsValid(this.viewModel.UseRegularExpressions))
+            {
+                return;
+            }
+
+            this.UpdateRecentFilters(filter);
+            this.StartLogReadingTask();
+        }
+
 
         private void StartLogReadingTask()
         {
             this.cancellation = new CancellationTokenSource();
-            var task = Task.Factory.StartNew(this.DoLogReadingTask, this.cancellation.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, this.UiSyncContext);
-            task.ContinueWith(this.OnComplete, CancellationToken.None, TaskContinuationOptions.OnlyOnRanToCompletion, this.UiSyncContext);
-            task.ContinueWith(this.OnError, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, this.UiSyncContext);
-
-            this.runningTasks.Add(task, this.viewModel.LogPath);
-        }
-
-        private void OnError(Task task)
-        {
-            this.viewModel.LogProgressText = task.Exception?.InnerException.Message;
-            this.OnComplete(task);
-        }
-
-        private void OnComplete(Task task)
-        {
-            try
-            {
-                if (!this.cancellation.IsCancellationRequested)
-                {
-                    this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
-                }
-                this.viewModel.UiControlsEnabled = true;
-            }
-            finally
-            {
-                if (this.runningTasks.ContainsKey(task))
-                {
-                    this.runningTasks.Remove(task);
-                    task.Dispose();
-                }
-            }
+            var o = Observable.Start(this.DoLogReadingTask, Scheduler.Default);
+            o.ObserveOn(this.uiThreadContext)
+                .Subscribe(unit => { },
+                    exception =>
+                    {
+                        this.viewModel.UiControlsEnabled = true;
+                        this.viewModel.LogProgressText = exception.Message;
+                        Log.Instance.Warn(exception.Message, exception);
+                    },
+                    () =>
+                    {
+                        this.viewModel.UiControlsEnabled = true;
+                        this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
+                    }, this.cancellation.Token);
         }
 
         public void UpdateLog(string path)
@@ -278,10 +242,14 @@ namespace logviewer.logic.ui
             {
                 return;
             }
-            Action action = delegate
+            this.logChangedObserver.OnNext(path);
+        }
+
+        private void OnChangeLog(string s)
+        {
+            try
             {
-                this.WaitRunningTasks();
-                var f = new FileInfo(path);
+                var f = new FileInfo(s);
                 if (f.Length < this.logSize)
                 {
                     this.currentPath = string.Empty;
@@ -294,8 +262,11 @@ namespace logviewer.logic.ui
                     return;
                 }
                 this.StartLogReadingTask();
-            };
-            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+            }
         }
 
         private void UpdateRecentFilters(string value = null)
@@ -322,6 +293,7 @@ namespace logviewer.logic.ui
                 this.AfterDatabaseCreation(false);
                 throw new ArgumentException(Resources.MinLevelGreaterThenMax);
             }
+
             this.reader = new LogReader(this.charsetDetector, this.matcher);
             var logPath = this.viewModel.LogPath;
             
@@ -349,7 +321,6 @@ namespace logviewer.logic.ui
             {
                 return;
             }
-
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
             this.ChangeTotalOnUi("0"); // Not L10N
 
@@ -357,6 +328,7 @@ namespace logviewer.logic.ui
 
             GC.Collect();
             this.store.StartAddMessages();
+            this.readCompleted = false;
 
             if (!append)
             {
@@ -376,27 +348,32 @@ namespace logviewer.logic.ui
                 this.RunReading(logPath, inputEncoding, offset);
 
                 this.probeWatch.Stop();
-                if (!this.NotCancelled)
-                {
-                    return;
-                }
+
                 this.FinishLoading();
 
                 SpinWait.SpinUntil(
-                    () => this.queue.ReadCompleted || this.cancellation.IsCancellationRequested);
+                    () => this.queue.ReadCompleted || this.reader.Cancelled);
             }
             finally
             {
-                this.viewModel.LogProgressText = Resources.LogIndexing;
-                if (this.NotCancelled)
-                {
-                    this.store.FinishAddMessages();
-                }
                 this.reader.ProgressChanged -= this.OnReadLogProgressChanged;
                 this.reader.CompilationStarted -= this.OnCompilationStarted;
                 this.reader.CompilationFinished -= this.OnCompilationFinished;
                 this.reader.EncodingDetectionStarted -= this.OnEncodingDetectionStarted;
                 this.reader.EncodingDetectionFinished -= this.OnEncodingDetectionFinished;
+
+                this.viewModel.LogProgressText = Resources.LogIndexing;
+                try
+                {
+                    if (!this.reader.Cancelled)
+                    {
+                        this.store.FinishAddMessages();
+                    }
+                }
+                finally
+                {
+                    this.readCompleted = true;
+                }
             }
             this.UpdateStatisticByLevel();
             this.AfterDatabaseCreation(false);
@@ -508,7 +485,7 @@ namespace logviewer.logic.ui
                 this.viewModel.To = this.SelectDateUsingFunc("max"); // Not L10N
             }
 
-            this.viewModel.Provider.FilterModel = new MessageFilterModel
+            this.viewModel.Provider.FilterViewModel = new MessageFilterViewModel
             {
                 Filter = this.viewModel.MessageFilter,
                 Finish = this.viewModel.To,
@@ -574,17 +551,6 @@ namespace logviewer.logic.ui
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
         }
 
-        [PublicAPI]
-        public void CancelReading()
-        {
-            if (this.cancellation.IsCancellationRequested)
-            {
-                return;
-            }
-            this.cancellation.Cancel();
-            this.reader?.Cancel();
-        }
-
         public string GetLogSize(bool showBytes)
         {
             return new FileSize(this.logSize, !showBytes).Format();
@@ -619,8 +585,7 @@ namespace logviewer.logic.ui
 
         public void ReadNewLog()
         {
-            this.CancelReading();
-            this.CancelPreviousTask();
+            this.CancelPreviousRead();
             this.ClearCache();
             this.UpdateSettings(true);
         }
@@ -661,7 +626,7 @@ namespace logviewer.logic.ui
             this.queue.Shutdown(true);
             try
             {
-                SafeRunner.Run(this.CancelPreviousTask);
+                SafeRunner.Run(this.CancelPreviousRead);
             }
             finally
             {

@@ -8,9 +8,9 @@ using logviewer.logic.Annotations;
 
 namespace logviewer.logic.models
 {
-    public class MessageFilterModel
+    public class MessageFilterViewModel
     {
-        public MessageFilterModel()
+        public MessageFilterViewModel()
         {
             this.Start = DateTime.MinValue;
             this.Finish = DateTime.MaxValue;

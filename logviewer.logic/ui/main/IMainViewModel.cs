@@ -7,9 +7,9 @@ using System.ComponentModel;
 using logviewer.logic.Annotations;
 using logviewer.logic.storage;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.main
 {
-    public interface IViewModel : INotifyPropertyChanged, IUpdatable
+    public interface IMainViewModel : INotifyPropertyChanged, IUpdatable
     {
         int MinLevel { get; }
         int MaxLevel { get; }

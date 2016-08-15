@@ -9,6 +9,7 @@ using logviewer.logic;
 using logviewer.logic.support;
 using logviewer.logic.ui;
 using logviewer.tests.support;
+using Ploeh.AutoFixture;
 using Xunit;
 
 namespace logviewer.tests
@@ -116,7 +117,8 @@ namespace logviewer.tests
         public void EncryptDecrypt_WithGenerateKeys_CorrectStringAfterDecrypt()
         {
             // Arrange
-            const string plain = "string";
+            Fixture fixture = new Fixture();
+            string plain = fixture.Create<string>(); ;
             var crypt = new AsymCrypt();
 
             // Act

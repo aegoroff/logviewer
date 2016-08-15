@@ -14,7 +14,7 @@ using Microsoft.VisualBasic.Devices;
 
 namespace logviewer.logic.storage
 {
-    public sealed class LogStore : IDisposable
+    public sealed class LogStore : IDisposable, ILogStore
     {
         #region Constants and Fields
 
