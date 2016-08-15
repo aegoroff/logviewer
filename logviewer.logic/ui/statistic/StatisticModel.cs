@@ -9,7 +9,6 @@ using System.IO;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
 using logviewer.engine;
 using logviewer.logic.Properties;
 using logviewer.logic.storage;
