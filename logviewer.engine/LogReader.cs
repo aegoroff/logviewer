@@ -208,7 +208,7 @@ namespace logviewer.engine
                     var elapsed = stopWatch.Elapsed;
                     stopWatch.Restart();
 
-                    measureStart = this.ReportProgress(stream, measureStart, elapsed, total, ref signalCounter);
+                    measureStart = this.ReportProgress(stream, measureStart, elapsed, ref signalCounter);
                 }
                 if (!this.cancelled)
                 {
@@ -219,19 +219,19 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private long ReportProgress(Stream stream, long measureStart, TimeSpan elapsed, long total, ref int signalCounter)
+        private long ReportProgress(Stream stream, long measureStart, TimeSpan elapsed, ref int signalCounter)
         {
             var read = stream.Position - measureStart;
             measureStart = stream.Position;
             var speed = read / elapsed.TotalSeconds;
 
             ++signalCounter;
-            var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position) / speed;
+            var remain = Math.Abs(speed) < 0.001 ? 0 : (stream.Length - stream.Position) / speed;
             var progress = new LoadProgress
             {
                 Speed = new FileSize((ulong) speed, true),
                 Remainig = TimeSpan.FromSeconds(remain),
-                Percent = stream.Position.PercentOf(total)
+                Percent = stream.Position.PercentOf(stream.Length)
             };
             this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(progress.Percent, progress));
             return measureStart;
