@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:logviewer.ui"
         xmlns:properties="clr-namespace:logviewer.ui.Properties"
         mc:Ignorable="d"
-        Title="{x:Static properties:Resources.LogStatistics}" Height="405" Width="529" ResizeMode="NoResize">
+        Title="{x:Static properties:Resources.LogStatistics}" Height="405" Width="529" ResizeMode="NoResize"
+        TextOptions.TextFormattingMode="Display">
     <Window.CommandBindings>
         <CommandBinding Command="Close" Executed="OnClose" />
     </Window.CommandBindings>

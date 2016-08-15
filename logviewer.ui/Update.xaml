@@ -9,7 +9,8 @@
         Title="{x:Static properties:Resources.UpdatesChecking}"
         Height="203" Width="528"
         MaxHeight="203" MaxWidth="528"
-        MinHeight="203" MinWidth="528" ResizeMode="NoResize">
+        MinHeight="203" MinWidth="528" ResizeMode="NoResize"
+        TextOptions.TextFormattingMode="Display">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

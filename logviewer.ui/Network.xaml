@@ -11,7 +11,8 @@
         Title="{x:Static properties:Resources.NetworkSettings}"
         Height="320" Width="475"
         MaxHeight="340" MaxWidth="475"
-        MinHeight="340" MinWidth="475" ResizeMode="NoResize">
+        MinHeight="340" MinWidth="475" ResizeMode="NoResize"
+        TextOptions.TextFormattingMode="Display">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="27" />

@@ -9,7 +9,7 @@
     Closing="OnClosing"
     Loaded="OnLoaded"
     Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption, IsAsync=True}"
-    Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png">
+    Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png" TextOptions.TextFormattingMode="Display">
     <Window.Resources>
         <CollectionViewSource
             Source="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MinLevelLabeles, IsAsync=True}"
