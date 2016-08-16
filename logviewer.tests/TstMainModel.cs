@@ -180,6 +180,44 @@ namespace logviewer.tests
             this.viewModel.VerifyGet(x => x.UiControlsEnabled, Times.Once);
         }
 
+        [Theory]
+        [InlineData("From")]
+        [InlineData("To")]
+        [InlineData("MinLevel")]
+        [InlineData("MaxLevel")]
+        [InlineData("SortingOrder")]
+        public void StartReadingLogOnFilterChange_ChangeAllFilterRelatedProperties_UiControlsEnabledGetOnce(string property)
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.UiControlsEnabled).Returns(false);
+
+            // Act
+            this.viewModel.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(property));
+
+            // Assert
+            this.viewModel.VerifyGet(x => x.UiControlsEnabled, Times.Once);
+        }
+
+        [Theory]
+        [InlineData("LogSize")]
+        [InlineData("LogEncoding")]
+        [InlineData("LogStatistic")]
+        [InlineData("ToDisplayMessages")]
+        [InlineData("TotalMessages")]
+        [InlineData("IsTextFilterFocused")]
+        [InlineData("UiControlsEnabled")]
+        public void StartReadingLogOnFilterChange_ChangeAllNotFilterRelatedProperties_UiControlsEnabledNeverGet(string property)
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.UiControlsEnabled).Returns(false);
+
+            // Act
+            this.viewModel.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(property));
+
+            // Assert
+            this.viewModel.VerifyGet(x => x.UiControlsEnabled, Times.Never);
+        }
+
         /*
         public static IEnumerable<object[]> MaxDates => new[]
         {
