@@ -47,6 +47,7 @@ namespace logviewer.logic.ui.main
         private LogStore store;
         private long totalMessages;
         private readonly IMainViewModel viewModel;
+        private readonly IScheduler backgroundScheduler;
 
         private readonly ProducerConsumerMessageQueue queue =
             new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
@@ -66,10 +67,11 @@ namespace logviewer.logic.ui.main
 
         #region Constructors and Destructors
 
-        public MainModel(IMainViewModel viewModel)
+        public MainModel(IMainViewModel viewModel, IScheduler backgroundScheduler = null)
         {
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
+            this.backgroundScheduler = backgroundScheduler ?? Scheduler.Default;
             this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
 
@@ -85,11 +87,11 @@ namespace logviewer.logic.ui.main
                 return Disposable.Empty;
             });
 
-            logChangedObservable.SubscribeOn(Scheduler.Default)
+            logChangedObservable.SubscribeOn(this.backgroundScheduler)
                 .Throttle(TimeSpan.FromMilliseconds(LogChangedThrottleIntervalMilliseconds))
                 .Subscribe(this.OnChangeLog);
 
-            filterChangedObservable.SubscribeOn(Scheduler.Default)
+            filterChangedObservable.SubscribeOn(this.backgroundScheduler)
                 .Throttle(this.filterUpdateDelay)
                 .Subscribe(this.StartReadingLogOnFilterChange);
         }
@@ -154,7 +156,7 @@ namespace logviewer.logic.ui.main
             }
             var checker = new UpdatesChecker(this.VersionsReader);
 
-            var observable = Observable.Return(checker, Scheduler.Default);
+            var observable = Observable.Return(checker, this.backgroundScheduler);
 
             this.settings.LastUpdateCheckTime = DateTime.UtcNow;
 
@@ -223,7 +225,7 @@ namespace logviewer.logic.ui.main
         {
             this.cancellation = new CancellationTokenSource();
 
-            var o = Observable.Start(this.DoLogReadingTask, Scheduler.Default);
+            var o = Observable.Start(this.DoLogReadingTask, this.backgroundScheduler);
             o.ObserveOn(this.UiContextScheduler)
                 .Finally(this.FinalizeLogReadingTask)
                 .Subscribe(unit => { },
