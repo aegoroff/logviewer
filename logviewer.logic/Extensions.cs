@@ -26,21 +26,18 @@ namespace logviewer.logic
             return level.ToString(@"G") + @"Color";
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
         internal static bool HasProperty(this ICollection<Semantic> schema, ParserType type)
         {
             return schema.FilterSchema(type).Any();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
         internal static string PropertyNameOf(this ICollection<Semantic> schema, ParserType type)
         {
             return schema.FilterSchema(type).Select(s => s.Property).FirstOrDefault();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IEnumerable<Semantic> FilterSchema(this ICollection<Semantic> schema, ParserType type)
         {
             return from s in schema from rule in s.CastingRules where rule.Type == type select s;

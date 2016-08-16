@@ -113,7 +113,7 @@ namespace logviewer.logic.storage
         public Color ReadColor(LogLevel level)
         {
             var argb = this.optionsProvider.ReadIntegerOption(level.ToParameterName(), -1);
-            return (argb == -1) ? defaultColors[level] : Color.FromArgb(argb);
+            return argb == -1 ? defaultColors[level] : Color.FromArgb(argb);
         }
 
         public IDictionary<LogLevel, Color> DefaultColors => defaultColors;

@@ -369,22 +369,30 @@ namespace logviewer.logic.storage
 
         private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish)
         {
-            if (min != LogLevel.Trace && this.hasLogLevelProperty)
+            if (this.hasLogLevelProperty)
             {
-                command.AddParameter("@Min", (int) min); // Not L10N
+                if (min != LogLevel.Trace)
+                {
+                    command.AddParameter("@Min", (int) min); // Not L10N
+                }
+                if (max != LogLevel.Fatal)
+                {
+                    command.AddParameter("@Max", (int) max); // Not L10N
+                }
             }
-            if (max != LogLevel.Fatal && this.hasLogLevelProperty)
+
+            if (this.hasDateTimeProperty)
             {
-                command.AddParameter("@Max", (int) max); // Not L10N
+                if (start != DateTime.MinValue)
+                {
+                    command.AddParameter("@Start", start.ToFileTimeUtc()); // Not L10N
+                }
+                if (finish != DateTime.MaxValue)
+                {
+                    command.AddParameter("@Finish", finish.ToFileTimeUtc()); // Not L10N
+                }
             }
-            if (start != DateTime.MinValue && this.hasDateTimeProperty)
-            {
-                command.AddParameter("@Start", start.ToFileTimeUtc()); // Not L10N
-            }
-            if (finish != DateTime.MaxValue && this.hasDateTimeProperty)
-            {
-                command.AddParameter("@Finish", finish.ToFileTimeUtc()); // Not L10N
-            }
+
             if (string.IsNullOrWhiteSpace(filter))
             {
                 return;
