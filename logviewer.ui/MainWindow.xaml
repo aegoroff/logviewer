@@ -37,6 +37,20 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="LogTextFilter" TargetType="{x:Type fluent:TextBox}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=IsTextFilterFocused}" Value="True">
+                    <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Ribbon" TargetType="{x:Type fluent:Ribbon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=IsTextFilterFocused}" Value="True">
+                    <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="OnOpenFile" />
@@ -50,7 +64,7 @@
     </Window.CommandBindings>
     <Grid>
         <DockPanel Grid.Row="0">
-            <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
+            <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top" Style="{StaticResource Ribbon}">
                 <fluent:Ribbon.Menu>
                     <fluent:Backstage>
                         <fluent:BackstageTabControl>
@@ -165,6 +179,7 @@
                             <fluent:TextBox
                                 Width="250"
                                 Margin="5"
+                                Style="{StaticResource LogTextFilter}"
                                 Text="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=MessageFilter, UpdateSourceTrigger=PropertyChanged}"
                                 IsEnabled="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=UiControlsEnabled, IsAsync=True}" />
                             <fluent:ToggleButton Grid.Column="1" Icon="Images\Small\x_ray.png" Margin="5, 0, 0, 0"

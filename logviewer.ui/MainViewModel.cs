@@ -32,6 +32,7 @@ namespace logviewer.ui
         private DateTime to;
         private DateTime from;
         private bool uiControlsEnabled;
+        private bool isTextFilterFocused;
         private string logStatistic;
         private string logSize;
         private string logEncoding;
@@ -130,6 +131,16 @@ namespace logviewer.ui
             {
                 this.uiControlsEnabled = value;
                 this.OnPropertyChanged(nameof(this.UiControlsEnabled));
+            }
+        }
+
+        public bool IsTextFilterFocused
+        {
+            get { return this.isTextFilterFocused; }
+            set
+            {
+                this.isTextFilterFocused = value;
+                this.OnPropertyChanged(nameof(this.IsTextFilterFocused));
             }
         }
 

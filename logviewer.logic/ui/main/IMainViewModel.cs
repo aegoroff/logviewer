@@ -28,6 +28,7 @@ namespace logviewer.logic.ui.main
         DateTime From { get; set; }
         DateTime To { get; set; }
         bool UiControlsEnabled { get; set; }
+        bool IsTextFilterFocused { get; set; }
 
         [PublicAPI]
         string TotalMessages { get; set; }

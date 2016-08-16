@@ -104,9 +104,12 @@ namespace logviewer.logic.ui.main
                 case nameof(this.viewModel.To):
                 case nameof(this.viewModel.MinLevel):
                 case nameof(this.viewModel.MaxLevel):
-                case nameof(this.viewModel.MessageFilter):
                 case nameof(this.viewModel.SortingOrder):
                 case nameof(this.viewModel.UseRegularExpressions):
+                    this.StartReadingLogOnFilterChange();
+                    break;
+                case nameof(this.viewModel.MessageFilter):
+                    this.viewModel.IsTextFilterFocused = false;
                     this.StartReadingLogOnFilterChange();
                     break;
                 case nameof(this.viewModel.Visible):
@@ -221,12 +224,14 @@ namespace logviewer.logic.ui.main
                     exception =>
                     {
                         this.viewModel.UiControlsEnabled = true;
+                        this.viewModel.IsTextFilterFocused = true;
                         this.viewModel.LogProgressText = exception.Message;
                         Log.Instance.Warn(exception.Message, exception);
                     },
                     () =>
                     {
                         this.viewModel.UiControlsEnabled = true;
+                        this.viewModel.IsTextFilterFocused = true;
                         this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
                     }, this.cancellation.Token);
         }
