@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -45,8 +46,8 @@ namespace logviewer.tests
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
 
-            this.controller = new MainModel(this.viewModel.Object);
-            this.controller.ReadCompleted += this.OnReadCompleted;
+            this.model = new MainModel(this.viewModel.Object);
+            this.model.ReadCompleted += this.OnReadCompleted;
         }
 
         private bool completed;
@@ -69,7 +70,7 @@ namespace logviewer.tests
         {
             Cleanup(TestPath, RecentPath, FullPathToTestDb);
             CleanupTestFiles();
-            this.controller.Dispose();
+            this.model.Dispose();
         }
 
         private static string FullPathToTestDb => Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb);
@@ -117,7 +118,7 @@ namespace logviewer.tests
         private const string RecentPath = "r";
         private readonly Mock<IMainViewModel> viewModel;
         private readonly Mock<ISettingsProvider> settings;
-        private readonly MainModel controller;
+        private readonly MainModel model;
 
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
@@ -140,12 +141,45 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.UiControlsEnabled).Returns(true);
             this.viewModel.SetupSet(v => v.UiControlsEnabled = false);
 
-            this.controller.ClearCache();
-            this.controller.UpdateSettings(false);
-            this.controller.StartReadingLogOnFilterChange();
+            this.model.ClearCache();
+            this.model.UpdateSettings(false);
+            this.model.StartReadingLogOnFilterChange();
             this.WaitReadingComplete();
-            this.controller.Store.CountMessages().Should().Be(4);
+            this.model.Store.CountMessages().Should().Be(4);
         }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public void StartReadingLogOnFilterChange_ChangeUseRegularExpressionsWhenFilterNotSet_UiControlsEnabledNeverGet(string filter)
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.MessageFilter).Returns(filter);
+            this.viewModel.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(nameof(this.viewModel.Object.UseRegularExpressions)));
+
+            // Act
+            this.viewModel.SetupSet(x => x.UseRegularExpressions = true);
+
+            // Assert
+            this.viewModel.VerifyGet(x => x.UiControlsEnabled, Times.Never);
+        }
+
+        [Fact]
+        public void StartReadingLogOnFilterChange_ChangeUseRegularExpressionsWhenFilterSet_UiControlsEnabledGetOnce()
+        {
+            // Arrange
+            this.viewModel.SetupGet(v => v.UiControlsEnabled).Returns(false);
+            this.viewModel.SetupGet(v => v.MessageFilter).Returns("1");
+            this.viewModel.Raise(x => x.PropertyChanged += null, new PropertyChangedEventArgs(nameof(this.viewModel.Object.UseRegularExpressions)));
+
+            // Act
+            this.viewModel.SetupSet(x => x.UseRegularExpressions = true);
+
+            // Assert
+            this.viewModel.VerifyGet(x => x.UiControlsEnabled, Times.Once);
+        }
+
         /*
         public static IEnumerable<object[]> MaxDates => new[]
         {
@@ -167,7 +201,7 @@ namespace logviewer.tests
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.viewModel.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
             this.viewModel.Setup(v => v.OpenExport(TestPath + ".rtf")).Returns(false); // 1
-            this.controller.ExportToRtf();
+            this.model.ExportToRtf();
             this.viewModel.Verify();
         }
 
@@ -178,7 +212,7 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
             this.viewModel.Setup(v => v.OpenExport(TestPath + ".rtf")).Returns(true); // 1
             this.viewModel.Setup(v => v.SaveRtf()); // 1
-            this.controller.ExportToRtf();
+            this.model.ExportToRtf();
             this.viewModel.Verify();
         }
 
@@ -187,7 +221,7 @@ namespace logviewer.tests
         {
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.viewModel.Setup(v => v.OpenLogFile()).Returns(false); // 1
-            this.controller.OpenLogFile();
+            this.model.OpenLogFile();
         }
 
         [Fact]
@@ -196,7 +230,7 @@ namespace logviewer.tests
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.viewModel.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
             File.Create(TestPath).Dispose();
-            Assert.Throws<ArgumentException>(() => this.controller.StartReadLog());
+            Assert.Throws<ArgumentException>(() => this.model.StartReadLog());
         }
 
         [Fact]
@@ -204,10 +238,10 @@ namespace logviewer.tests
         {
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
 
-            this.controller.MinFilter((int)LogLevel.Error);
-            this.controller.MaxFilter((int)LogLevel.Info);
+            this.model.MinFilter((int)LogLevel.Error);
+            this.model.MaxFilter((int)LogLevel.Info);
             File.Create(TestPath).Dispose();
-            Assert.Throws<ArgumentException>(() => this.controller.StartReadLog());
+            Assert.Throws<ArgumentException>(() => this.model.StartReadLog());
         }
 
         [Fact]
@@ -217,7 +251,7 @@ namespace logviewer.tests
 
             this.viewModel.SetupGet(v => v.LogPath).Returns(TestPath); // 1+
             this.viewModel.SetupGet(v => v.LogPath).Returns(string.Empty); // 0
-            Assert.Throws<ArgumentException>(() => this.controller.StartReadLog());
+            Assert.Throws<ArgumentException>(() => this.model.StartReadLog());
         }
 
         [Fact]
@@ -234,9 +268,9 @@ namespace logviewer.tests
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 2
             this.viewModel.Setup(v => v.SetLoadedFileCapltion(TestPath)); // 1
             File.WriteAllText(TestPath, sb.ToString());
-            this.controller.StartReadLog();
+            this.model.StartReadLog();
             this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(2000);
+            this.model.MessagesCount.Should().Be(2000);
         }
 
         void ReadNormalLogInternal(Encoding encoding)
@@ -244,9 +278,9 @@ namespace logviewer.tests
             this.ReadLogExpectations();
 
             File.WriteAllText(TestPath, MessageExamples, encoding);
-            this.controller.StartReadLog();
+            this.model.StartReadLog();
             this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(2);
+            this.model.MessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -261,9 +295,9 @@ namespace logviewer.tests
             this.ReadLogExpectations();
 
             File.WriteAllText(TestPath, "test log");
-            this.controller.StartReadLog();
+            this.model.StartReadLog();
             this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(1);
+            this.model.MessagesCount.Should().Be(1);
         }
         
         [Theory]
@@ -274,10 +308,10 @@ namespace logviewer.tests
             this.ReadLogExpectations();
 
             File.WriteAllText(TestPath, examples);
-            this.controller.MinFilter((int)LogLevel.Info);
-            this.controller.StartReadLog();
+            this.model.MinFilter((int)LogLevel.Info);
+            this.model.StartReadLog();
             this.WaitReadingComplete();
-            this.controller.MessagesCount.Should().Be(2);
+            this.model.MessagesCount.Should().Be(2);
         }
 
         [Theory]
@@ -305,8 +339,8 @@ namespace logviewer.tests
             this.viewModel.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // Any
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.viewModel.Setup(v => v.StartReading()); // 0
-            this.controller.StartReadingCachedLog("f", false);
-            this.controller.StartReadingCachedLog("f", false);
+            this.model.StartReadingCachedLog("f", false);
+            this.model.StartReadingCachedLog("f", false);
         }
         
         [Fact]
@@ -320,9 +354,9 @@ namespace logviewer.tests
             this.viewModel.Setup(v => v.SetProgress(It.IsAny<LoadProgress>())); // Any
             this.viewModel.Setup(v => v.SetLogProgressCustomText(It.IsAny<string>())); // 1
             this.viewModel.Setup(v => v.StartReading()); // 1
-            this.controller.StartReadingCachedLog("f", false);
+            this.model.StartReadingCachedLog("f", false);
             Thread.Sleep(TimeSpan.FromMilliseconds(300));
-            this.controller.PendingStart.Should().BeFalse();
+            this.model.PendingStart.Should().BeFalse();
         }
         */
     }

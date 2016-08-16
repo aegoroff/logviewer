@@ -23,7 +23,7 @@ namespace logviewer.logic.ui.main
 
         string LogPath { get; }
         string MessageFilter { get; }
-        bool UseRegularExpressions { get; }
+        bool UseRegularExpressions { get; set; }
         ISettingsProvider SettingsProvider { get; }
         DateTime From { get; set; }
         DateTime To { get; set; }
