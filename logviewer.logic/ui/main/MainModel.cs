@@ -105,8 +105,13 @@ namespace logviewer.logic.ui.main
                 case nameof(this.viewModel.MinLevel):
                 case nameof(this.viewModel.MaxLevel):
                 case nameof(this.viewModel.SortingOrder):
-                case nameof(this.viewModel.UseRegularExpressions):
                     this.StartReadingLogOnFilterChange();
+                    break;
+                case nameof(this.viewModel.UseRegularExpressions):
+                    if (!string.IsNullOrWhiteSpace(this.viewModel.MessageFilter))
+                    {
+                        this.StartReadingLogOnFilterChange();
+                    }
                     break;
                 case nameof(this.viewModel.MessageFilter):
                     this.viewModel.IsTextFilterFocused = false;
