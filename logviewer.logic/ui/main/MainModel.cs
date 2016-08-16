@@ -225,20 +225,20 @@ namespace logviewer.logic.ui.main
 
             var o = Observable.Start(this.DoLogReadingTask, Scheduler.Default);
             o.ObserveOn(this.UiContextScheduler)
+                .Finally(this.FinalizeLogReadingTask)
                 .Subscribe(unit => { },
                     exception =>
                     {
-                        this.viewModel.UiControlsEnabled = true;
-                        this.viewModel.IsTextFilterFocused = true;
                         this.viewModel.LogProgressText = exception.Message;
                         Log.Instance.Warn(exception.Message, exception);
                     },
-                    () =>
-                    {
-                        this.viewModel.UiControlsEnabled = true;
-                        this.viewModel.IsTextFilterFocused = true;
-                        this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount);
-                    }, this.cancellation.Token);
+                    () => this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount), this.cancellation.Token);
+        }
+
+        private void FinalizeLogReadingTask()
+        {
+            this.viewModel.UiControlsEnabled = true;
+            this.viewModel.IsTextFilterFocused = true;
         }
 
         public void UpdateLog(string path)
