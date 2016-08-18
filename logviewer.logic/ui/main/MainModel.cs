@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -18,11 +19,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Humanizer;
 using logviewer.engine;
-using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
 using logviewer.logic.storage;
 using logviewer.logic.support;
+using logviewer.logic.ui.statistic;
 using LogLevel = logviewer.engine.LogLevel;
 
 
@@ -34,7 +35,7 @@ namespace logviewer.logic.ui.main
 
         #region Constants and Fields
 
-        private readonly Dictionary<LogLevel, ulong> byLevel = new Dictionary<LogLevel, ulong>();
+        private string[] byLevel = new string[(int)LogLevel.Fatal + 1];
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
@@ -94,6 +95,41 @@ namespace logviewer.logic.ui.main
             filterChangedObservable.SubscribeOn(this.backgroundScheduler)
                 .Throttle(this.filterUpdateDelay)
                 .Subscribe(this.StartReadingLogOnFilterChange);
+        }
+
+        private void OnChangeLog(string s)
+        {
+            try
+            {
+                var f = new FileInfo(s);
+                if (f.Length < this.logSize)
+                {
+                    this.currentPath = string.Empty;
+                    this.logSize = 0;
+                    this.store?.Dispose();
+                    this.store = null;
+                }
+                if (f.Length == this.logSize)
+                {
+                    return;
+                }
+                this.StartLogReadingTask();
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+            }
+        }
+
+        private void StartReadingLogOnFilterChange(string filter)
+        {
+            if (!filter.IsValid(this.viewModel.UseRegularExpressions))
+            {
+                return;
+            }
+
+            this.UpdateRecentFilters(filter);
+            this.StartLogReadingTask();
         }
 
         private VersionsReader VersionsReader { get; }
@@ -209,18 +245,6 @@ namespace logviewer.logic.ui.main
             this.filterChangedObserver.OnNext(this.viewModel.MessageFilter);
         }
 
-        private void StartReadingLogOnFilterChange(string filter)
-        {
-            if (!filter.IsValid(this.viewModel.UseRegularExpressions))
-            {
-                return;
-            }
-
-            this.UpdateRecentFilters(filter);
-            this.StartLogReadingTask();
-        }
-
-
         private void StartLogReadingTask()
         {
             this.cancellation = new CancellationTokenSource();
@@ -251,30 +275,6 @@ namespace logviewer.logic.ui.main
                 return;
             }
             this.logChangedObserver.OnNext(path);
-        }
-
-        private void OnChangeLog(string s)
-        {
-            try
-            {
-                var f = new FileInfo(s);
-                if (f.Length < this.logSize)
-                {
-                    this.currentPath = string.Empty;
-                    this.logSize = 0;
-                    this.store?.Dispose();
-                    this.store = null;
-                }
-                if (f.Length == this.logSize)
-                {
-                    return;
-                }
-                this.StartLogReadingTask();
-            }
-            catch (Exception e)
-            {
-                Log.Instance.Error(e.Message, e);
-            }
         }
 
         private void UpdateRecentFilters(string value = null)
@@ -330,7 +330,7 @@ namespace logviewer.logic.ui.main
                 return;
             }
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
-            this.ChangeTotalOnUi("0"); // Not L10N
+            this.UpdateLogStatistic(0);
 
             this.InitNewStoreIfNecessary(append);
 
@@ -412,12 +412,7 @@ namespace logviewer.logic.ui.main
 
         private void UpdateStatisticByLevel()
         {
-            for (var i = 0; i < (int) LogLevel.Fatal + 1; i++)
-            {
-                var level = (LogLevel) i;
-                this.byLevel[level] =
-                    (ulong) this.store.CountMessages(level, level, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions, true);
-            }
+            this.byLevel = StatisticModel.ReadStatisticByLevel(this.store, string.Empty, true).Select(x => ToHumanReadableString(x.Value)).ToArray();
         }
 
         private void FinishLoading()
@@ -457,7 +452,6 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
-            this.queue.IncrementQueuedCount();
             message.Ix = Interlocked.Increment(ref this.totalMessages);
             this.queue.EnqueueItem(message);
         }
@@ -503,8 +497,6 @@ namespace logviewer.logic.ui.main
                 UseRegexp = this.viewModel.UseRegularExpressions,
                 Reverse = this.viewModel.SortingOrder == 0
             };
-
-            this.viewModel.TotalMessages = ToHumanReadableString((ulong) this.TotalMessages);
             
             this.totalReadTimeWatch.Stop();
             var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.Humanize());
@@ -514,15 +506,8 @@ namespace logviewer.logic.ui.main
             this.viewModel.Datasource.Clear();
 
             this.viewModel.MessageCount = this.viewModel.Provider.FetchCount();
-            this.viewModel.ToDisplayMessages = this.viewModel.MessageCount.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
-            this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString,
-                this.CountMessages(LogLevel.Trace),
-                this.CountMessages(LogLevel.Debug),
-                this.CountMessages(LogLevel.Info),
-                this.CountMessages(LogLevel.Warn),
-                this.CountMessages(LogLevel.Error),
-                this.CountMessages(LogLevel.Fatal)
-                );
+
+            this.UpdateLogStatistic(this.TotalMessages, this.viewModel.MessageCount, this.byLevel);
 
             this.ReadCompleted?.Invoke(this, new EventArgs());
         }
@@ -532,7 +517,7 @@ namespace logviewer.logic.ui.main
             return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
         }
 
-        private static string ToHumanReadableString(ulong value)
+        private static string ToHumanReadableString(long value)
         {
             return value.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
         }
@@ -544,19 +529,20 @@ namespace logviewer.logic.ui.main
 
         private void OnLogReadProgress(object progress)
         {
-            var total = this.totalMessages.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
-
             var logProgress = (LoadProgress) progress;
             this.viewModel.LogProgress = logProgress.Percent;
             this.viewModel.LogProgressText = logProgress.Format();
-            this.ChangeTotalOnUi(total);
+            this.UpdateLogStatistic(this.totalMessages);
         }
 
-        private void ChangeTotalOnUi(string total)
+        private void UpdateLogStatistic(long total, long toDisplay = 0, IEnumerable<string> levels = null)
         {
-            this.viewModel.TotalMessages = total;
-            this.viewModel.ToDisplayMessages = "0"; // Not L10N
-            this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, 0, 0, 0, 0, 0, 0);
+            this.viewModel.TotalMessages = ToHumanReadableString(total);
+            this.viewModel.ToDisplayMessages = ToHumanReadableString(toDisplay);
+
+            var statByLevel = (levels ?? new long[(int) LogLevel.Fatal + 1].Select(ToHumanReadableString)).ToArray();
+
+            this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, statByLevel);
         }
 
         public string GetLogSize(bool showBytes)
@@ -601,12 +587,6 @@ namespace logviewer.logic.ui.main
         public void AddCurrentFileToRecentFilesList()
         {
             this.settings.UseRecentFilesStore(s => s.Add(this.viewModel.LogPath));
-        }
-
-        [PublicAPI]
-        public string CountMessages(LogLevel level)
-        {
-            return ToHumanReadableString(this.byLevel.ContainsKey(level) ? this.byLevel[level] : 0);
         }
 
         private long logSize;

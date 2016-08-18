@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -54,15 +55,11 @@ namespace logviewer.logic.ui.statistic
             this.items.Clear();
             var source = Observable.Create<StatItemViewModel>(observer =>
             {
-                for (var i = 0; i < (int)LogLevel.Fatal + 1; i++)
+                foreach (var item in ReadStatisticByLevel(this.store, this.filterViewModel.Filter, this.filterViewModel.UserRegexp))
                 {
-                    var level = (LogLevel)i;
-                    var value = (ulong)this.store.CountMessages(level, level, this.filterViewModel.Filter, this.filterViewModel.UserRegexp, true);
-                    var item = CreateItem(this.levelDescriptions[i], value);
-
-                    observer.OnNext(item);
+                    observer.OnNext(CreateItem(this.levelDescriptions[(int)item.Key], item.Value));
                 }
-                
+
                 var minDateTime = this.store.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
                 var maxDateTime = this.store.SelectDateUsingFunc("max", LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
 
@@ -74,7 +71,7 @@ namespace logviewer.logic.ui.statistic
 
                 observer.OnNext(new StatItemViewModel());
 
-                var total = (ulong)this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
+                var total = this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
                 observer.OnNext(CreateItem(Resources.TotalMessages, total));
 
                 observer.OnNext(CreateItem(Resources.Size, this.size));
@@ -99,12 +96,25 @@ namespace logviewer.logic.ui.statistic
                     () => { Log.Instance.TraceFormatted("Statistic loading completed"); });
         }
 
+        public static IEnumerable<KeyValuePair<LogLevel, long>> ReadStatisticByLevel(ILogStore store, string filter, bool useRegexp)
+        {
+            var levels = Enum.GetValues(typeof(LogLevel));
+            foreach (LogLevel level in levels)
+            {
+                if (level == LogLevel.None)
+                {
+                    continue;
+                }
+                yield return new KeyValuePair<LogLevel, long>(level, store.CountMessages(level, level, filter, useRegexp, true));
+            }
+        }
+
         private static StatItemViewModel CreateItem(string key, string value)
         {
             return new StatItemViewModel { Key = key, Value = value };
         }
 
-        private static StatItemViewModel CreateItem(string key, ulong value)
+        private static StatItemViewModel CreateItem(string key, long value)
         {
             return CreateItem(key, value.ToString("N0", CultureInfo.CurrentCulture));
         }

@@ -583,7 +583,6 @@ namespace logviewer.logic.ui
             {
                 return;
             }
-            this.queue.IncrementQueuedCount();
             message.Ix = Interlocked.Increment(ref this.totalMessages);
             this.queue.EnqueueItem(message);
         }

@@ -31,9 +31,10 @@ namespace logviewer.logic.support
             }
         }
 
-        internal void IncrementQueuedCount()
+        public override void EnqueueItem(LogMessage item)
         {
             Interlocked.Increment(ref this.queuedMessages);
+            base.EnqueueItem(item);
         }
 
         internal void ResetQueuedCount()

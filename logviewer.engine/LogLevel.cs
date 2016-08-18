@@ -10,7 +10,7 @@ namespace logviewer.engine
     public enum LogLevel
     {
         /// <summary>
-        /// No level detected
+        /// -1 No level detected
         /// </summary>
         None = -1,
         
