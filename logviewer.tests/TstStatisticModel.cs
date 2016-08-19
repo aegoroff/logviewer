@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
@@ -15,11 +16,12 @@ using Xunit;
 
 namespace logviewer.tests
 {
-    public class TstStatisticModel
+    public class TstStatisticModel : IDisposable
     {
         private const int DelayMilliseconds = 1000;
         private readonly Mock<ILogStore> store;
         private readonly StatisticModel model;
+        private readonly string testPath = Guid.NewGuid().ToString();
 
         public TstStatisticModel()
         {
@@ -135,6 +137,47 @@ namespace logviewer.tests
             SpinWait.SpinUntil(() => this.model.Items.Count == 12, TimeSpan.FromMilliseconds(DelayMilliseconds));
             this.model.Items.Where(x => x.Key == "First").Should().HaveCount(1);
             this.model.Items.Where(x => x.Key == "Last").Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void LoadStatistic_AllItemsPresent_ItemsCountShouldBeAsSpecified()
+        {
+            // Arrange
+            var stat = new Dictionary<LogLevel, long>
+            {
+                { LogLevel.Trace, 0 },
+                { LogLevel.Debug, 0 },
+                { LogLevel.Info, 0 },
+                { LogLevel.Warn, 0 },
+                { LogLevel.Error, 0 },
+                { LogLevel.Fatal, 0 }
+            };
+
+            this.store.Setup(x => x.CountByLevel(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(stat.OrderBy(x => x.Key));
+
+            this.store.Setup(
+                x => x.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, null, false)).Returns(DateTime.Now);
+
+            this.store.Setup(
+                x => x.SelectDateUsingFunc("max", LogLevel.Trace, LogLevel.Fatal, null, false)).Returns(DateTime.Now.AddYears(1));
+
+            File.WriteAllText(this.testPath, "1");
+
+            this.store.SetupGet(x => x.DatabasePath).Returns(this.testPath);
+
+            // Act
+            this.model.LoadStatistic();
+
+            // Assert
+            SpinWait.SpinUntil(() => this.model.Items.Count == 13, TimeSpan.FromMilliseconds(DelayMilliseconds)).Should().BeTrue();
+        }
+
+        public void Dispose()
+        {
+            if (File.Exists(this.testPath))
+            {
+                File.Delete(this.testPath);
+            }
         }
     }
 }
