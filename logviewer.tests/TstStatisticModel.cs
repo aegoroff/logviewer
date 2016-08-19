@@ -65,19 +65,26 @@ namespace logviewer.tests
             this.model.Items.Single(x => x.Key == LogLevel.Fatal.ToString()).Value.Should().Be("0");
         }
 
-        [Fact]
-        public void LoadStatistic_OnlyTrace_TraceReturnNotZero()
+        [Theory]
+        [InlineData(LogLevel.Trace, "Trace")]
+        [InlineData(LogLevel.Debug, "Debug")]
+        [InlineData(LogLevel.Info, "Info")]
+        [InlineData(LogLevel.Warn, "Warning")]
+        [InlineData(LogLevel.Error, "Error")]
+        [InlineData(LogLevel.Fatal, "Fatal")]
+        public void LoadStatistic_OnlyOneLevel_LevelReturnNotZero(LogLevel level, string name)
         {
             // Arrange
             var stat = new Dictionary<LogLevel, long>
             {
-                { LogLevel.Trace, 1 },
+                { LogLevel.Trace, 0 },
                 { LogLevel.Debug, 0 },
                 { LogLevel.Info, 0 },
                 { LogLevel.Warn, 0 },
                 { LogLevel.Error, 0 },
                 { LogLevel.Fatal, 0 }
             };
+            stat[level] = 1;
 
             this.store.Setup(x => x.CountByLevel(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(stat.OrderBy(x => x.Key));
 
@@ -94,7 +101,7 @@ namespace logviewer.tests
 
             // Assert
             SpinWait.SpinUntil(() => this.model.Items.Count == 10, TimeSpan.FromMilliseconds(DelayMilliseconds));
-            this.model.Items.Single(x => x.Key == LogLevel.Trace.ToString()).Value.Should().Be("1");
+            this.model.Items.Single(x => x.Key == name).Value.Should().Be("1");
         }
 
         [Fact]
