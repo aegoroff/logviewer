@@ -14,6 +14,7 @@ namespace logviewer.logic.storage
     public sealed class LogProvider : IItemsProvider<string>, IDisposable
     {
         private readonly ISettingsProvider settings;
+        private LogStore store;
 
         public LogProvider(LogStore store, ISettingsProvider settings)
         {
@@ -25,16 +26,20 @@ namespace logviewer.logic.storage
         public MessageFilterViewModel FilterViewModel { get; set; }
 
         [PublicAPI]
-        public LogStore Store { get; set; }
+        public LogStore Store
+        {
+            get { return this.store; }
+            set { this.store = value; }
+        }
 
         public void Dispose()
         {
-            this.Store?.Dispose();
+            this.store?.Dispose();
         }
 
         public long FetchCount()
         {
-            return this.Store?.CountMessages(this.FilterViewModel.Start, this.FilterViewModel.Finish, this.FilterViewModel.Min, this.FilterViewModel.Max, this.FilterViewModel.Filter,
+            return this.store?.CountMessages(this.FilterViewModel.Start, this.FilterViewModel.Finish, this.FilterViewModel.Min, this.FilterViewModel.Max, this.FilterViewModel.Filter,
                 this.FilterViewModel.UseRegexp, this.FilterViewModel.ExcludeNoLevel) ?? 0;
         }
 
@@ -42,7 +47,7 @@ namespace logviewer.logic.storage
         {
             var result = new string[limit];
             var ix = 0;
-            this.Store?.ReadMessages(limit, message => result[ix++] = this.CreateRtf(message), () => true, this.FilterViewModel.Start,
+            this.store?.ReadMessages(limit, message => result[ix++] = this.CreateRtf(message), () => true, this.FilterViewModel.Start,
                 this.FilterViewModel.Finish, offset,
                 this.FilterViewModel.Reverse,
                 this.FilterViewModel.Min, this.FilterViewModel.Max, this.FilterViewModel.Filter, this.FilterViewModel.UseRegexp);
@@ -53,9 +58,9 @@ namespace logviewer.logic.storage
         {
             var doc = new RtfDocument();
             var logLvel = LogLevel.None;
-            if (this.Store.HasLogLevelProperty)
+            if (this.store.HasLogLevelProperty)
             {
-                logLvel = (LogLevel) message.IntegerProperty(this.Store.LogLevelProperty);
+                logLvel = (LogLevel) message.IntegerProperty(this.store.LogLevelProperty);
             }
 
             doc.AddText(message.Header.Trim(), this.settings.FormatHead(logLvel));
