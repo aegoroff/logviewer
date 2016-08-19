@@ -3,7 +3,6 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -55,7 +54,7 @@ namespace logviewer.logic.ui.statistic
             this.items.Clear();
             var source = Observable.Create<StatItemViewModel>(observer =>
             {
-                foreach (var item in ReadStatisticByLevel(this.store, this.filterViewModel.Filter, this.filterViewModel.UserRegexp))
+                foreach (var item in this.store.CountByLevel(this.filterViewModel.Filter, this.filterViewModel.UserRegexp, true))
                 {
                     observer.OnNext(CreateItem(this.levelDescriptions[(int)item.Key], item.Value));
                 }
@@ -94,19 +93,6 @@ namespace logviewer.logic.ui.statistic
                     model => { this.items.Add(model); },
                     exception => { Log.Instance.Error(exception.Message, exception); },
                     () => { Log.Instance.TraceFormatted("Statistic loading completed"); });
-        }
-
-        public static IEnumerable<KeyValuePair<LogLevel, long>> ReadStatisticByLevel(ILogStore store, string filter, bool useRegexp)
-        {
-            var levels = Enum.GetValues(typeof(LogLevel));
-            foreach (LogLevel level in levels)
-            {
-                if (level == LogLevel.None)
-                {
-                    continue;
-                }
-                yield return new KeyValuePair<LogLevel, long>(level, store.CountMessages(level, level, filter, useRegexp, true));
-            }
         }
 
         private static StatItemViewModel CreateItem(string key, string value)

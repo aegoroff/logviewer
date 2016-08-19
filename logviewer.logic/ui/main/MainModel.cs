@@ -23,7 +23,6 @@ using logviewer.logic.models;
 using logviewer.logic.Properties;
 using logviewer.logic.storage;
 using logviewer.logic.support;
-using logviewer.logic.ui.statistic;
 using LogLevel = logviewer.engine.LogLevel;
 
 
@@ -32,9 +31,6 @@ namespace logviewer.logic.ui.main
     public sealed class MainModel : UiSynchronizeModel, IDisposable
     {
         private readonly ISettingsProvider settings;
-
-        #region Constants and Fields
-
         private string[] byLevel = new string[(int)LogLevel.Fatal + 1];
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
@@ -63,10 +59,6 @@ namespace logviewer.logic.ui.main
         private const int LogChangedThrottleIntervalMilliseconds = 500;
         private IObserver<string> logChangedObserver;
         private IObserver<string> filterChangedObserver;
-
-        #endregion
-
-        #region Constructors and Destructors
 
         public MainModel(IMainViewModel viewModel, IScheduler backgroundScheduler = null)
         {
@@ -174,8 +166,6 @@ namespace logviewer.logic.ui.main
                 this.StartLogReadingTask();
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Check updates available
@@ -288,9 +278,6 @@ namespace logviewer.logic.ui.main
             });
         }
 
-        /// <summary>
-        ///     Reads log from file
-        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
         private void DoLogReadingTask()
         {
@@ -412,7 +399,7 @@ namespace logviewer.logic.ui.main
 
         private void UpdateStatisticByLevel()
         {
-            this.byLevel = StatisticModel.ReadStatisticByLevel(this.store, string.Empty, true).Select(x => ToHumanReadableString(x.Value)).ToArray();
+            this.byLevel = this.store.CountByLevel(string.Empty, false, true).Select(x => ToHumanReadableString(x.Value)).ToArray();
         }
 
         private void FinishLoading()

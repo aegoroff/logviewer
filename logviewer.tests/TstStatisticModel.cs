@@ -3,6 +3,7 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using FluentAssertions;
@@ -31,8 +32,17 @@ namespace logviewer.tests
         public void LoadStatistic_EmptyStore_AllLevelsCountZero()
         {
             // Arrange
-            this.store.Setup(
-                x => x.CountMessages(It.IsAny<LogLevel>(), It.IsAny<LogLevel>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(0);
+            var stat = new Dictionary<LogLevel, long>
+            {
+                { LogLevel.Trace, 0 },
+                { LogLevel.Debug, 0 },
+                { LogLevel.Info, 0 },
+                { LogLevel.Warn, 0 },
+                { LogLevel.Error, 0 },
+                { LogLevel.Fatal, 0 }
+            };
+
+            this.store.Setup(x => x.CountByLevel(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(stat.OrderBy(x => x.Key));
 
             this.store.Setup(
                 x => x.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, null, false)).Returns(DateTime.MinValue);
@@ -59,12 +69,17 @@ namespace logviewer.tests
         public void LoadStatistic_OnlyTrace_TraceReturnNotZero()
         {
             // Arrange
-            this.store.Setup(x => x.CountMessages(LogLevel.Trace, LogLevel.Trace, null, false, true)).Returns(1);
-            this.store.Setup(x => x.CountMessages(LogLevel.Debug, LogLevel.Debug, null, false, true)).Returns(0);
-            this.store.Setup(x => x.CountMessages(LogLevel.Info, LogLevel.Info, null, false, true)).Returns(0);
-            this.store.Setup(x => x.CountMessages(LogLevel.Warn, LogLevel.Warn, null, false, true)).Returns(0);
-            this.store.Setup(x => x.CountMessages(LogLevel.Error, LogLevel.Error, null, false, true)).Returns(0);
-            this.store.Setup(x => x.CountMessages(LogLevel.Fatal, LogLevel.Fatal, null, false, true)).Returns(0);
+            var stat = new Dictionary<LogLevel, long>
+            {
+                { LogLevel.Trace, 1 },
+                { LogLevel.Debug, 0 },
+                { LogLevel.Info, 0 },
+                { LogLevel.Warn, 0 },
+                { LogLevel.Error, 0 },
+                { LogLevel.Fatal, 0 }
+            };
+
+            this.store.Setup(x => x.CountByLevel(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(stat.OrderBy(x => x.Key));
 
             this.store.Setup(
                 x => x.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, null, false)).Returns(DateTime.MinValue);
@@ -86,8 +101,17 @@ namespace logviewer.tests
         public void LoadStatistic_DatesNotDefault_ItemsContainsDates()
         {
             // Arrange
-            this.store.Setup(
-                x => x.CountMessages(It.IsAny<LogLevel>(), It.IsAny<LogLevel>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(0);
+            var stat = new Dictionary<LogLevel, long>
+            {
+                { LogLevel.Trace, 0 },
+                { LogLevel.Debug, 0 },
+                { LogLevel.Info, 0 },
+                { LogLevel.Warn, 0 },
+                { LogLevel.Error, 0 },
+                { LogLevel.Fatal, 0 }
+            };
+
+            this.store.Setup(x => x.CountByLevel(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(stat.OrderBy(x => x.Key));
 
             this.store.Setup(
                 x => x.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, null, false)).Returns(DateTime.Now);

@@ -84,7 +84,6 @@ namespace logviewer.logic.storage
             return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums; // Not L10N
         }
 
-
         public string DatabasePath { get; }
 
         public bool HasLogLevelProperty => this.hasLogLevelProperty;
@@ -301,6 +300,21 @@ namespace logviewer.logic.storage
             Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return DateTime.FromFileTime(result);
+        }
+
+        public IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(string filter = null, bool useRegexp = true, bool excludeNoLevel = false)
+        {
+            return this.CountByLevel(DateTime.MinValue, DateTime.MaxValue, filter, useRegexp, excludeNoLevel);
+        }
+
+        public IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(DateTime start, DateTime finish, string filter = null, bool useRegexp = true, bool excludeNoLevel = false)
+        {
+            var levels = Enum.GetValues(typeof(LogLevel));
+
+            return levels.Cast<LogLevel>()
+                .Where(level => level != LogLevel.None)
+                .ToDictionary(level => level, level => this.CountMessages(start, finish, level, level, filter, useRegexp, excludeNoLevel))
+                .OrderBy(x => x.Key);
         }
 
         private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish, bool excludeNoLevel = false)

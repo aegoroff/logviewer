@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using logviewer.engine;
 using logviewer.logic.Annotations;
 
@@ -27,6 +28,18 @@ namespace logviewer.logic.storage
             LogLevel max = LogLevel.Fatal,
             string filter = null,
             bool useRegexp = true);
+
+        IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(
+            string filter = null,
+            bool useRegexp = true,
+            bool excludeNoLevel = false);
+
+        IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(
+            DateTime start,
+            DateTime finish,
+            string filter = null,
+            bool useRegexp = true,
+            bool excludeNoLevel = false);
 
         string DatabasePath { get; }
     }
