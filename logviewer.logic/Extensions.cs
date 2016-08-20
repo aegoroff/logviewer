@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -91,6 +92,28 @@ namespace logviewer.logic
                 ? string.Format(Resources.SpeedPercent, progress.Percent)
                 : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(), progress.Remainig.Humanize());
         
+        }
+
+        /// <summary>
+        /// If the file can be opened for exclusive access it means that the file
+        /// is no longer locked by another process.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool IsFileReady(this string path)
+        {
+            try
+            {
+                using (var inputStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    return inputStream.Length > 0;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Debug(e);
+                return false;
+            }
         }
 
         private const string BigFileFormatNoBytes = @"{0:F2} {1}";

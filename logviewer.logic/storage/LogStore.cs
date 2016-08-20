@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using logviewer.engine;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
@@ -22,6 +23,7 @@ namespace logviewer.logic.storage
         private const string CreateIndexTemplate = @"CREATE INDEX IF NOT EXISTS IX_{0} ON Log ({0})";
         private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
         private const int PageSize = 1024;
+        private const int DelaySeconds = 10;
         private readonly DatabaseConnection connection;
         private string[] additionalColumns;
         private readonly bool hasLogLevelProperty;
@@ -417,8 +419,6 @@ namespace logviewer.logic.storage
 
         #endregion
 
-        #region Methods
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
         private void Dispose(bool disposing)
@@ -426,13 +426,28 @@ namespace logviewer.logic.storage
             if (disposing)
             {
                 this.connection?.Dispose();
-                if (File.Exists(this.DatabasePath))
-                {
-                    File.Delete(this.DatabasePath);
-                }
+                this.DeleteFile();
             }
         }
 
-        #endregion
+        private void DeleteFile()
+        {
+            while (true)
+            {
+                try
+                {
+                    if (File.Exists(this.DatabasePath))
+                    {
+                        File.Delete(this.DatabasePath);
+                    }
+                    return;
+                }
+                catch (IOException e)
+                {
+                    Log.Instance.Error(e.Message, e);
+                    SpinWait.SpinUntil(() => this.DatabasePath.IsFileReady(), TimeSpan.FromSeconds(DelaySeconds));
+                }
+            }
+        }
     }
 }
