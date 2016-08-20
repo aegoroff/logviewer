@@ -67,8 +67,19 @@
             <fluent:Ribbon x:Name="Ribbon" DockPanel.Dock="Top" Style="{StaticResource Ribbon}">
                 <fluent:Ribbon.Menu>
                     <fluent:Backstage>
-                        <fluent:BackstageTabControl>
-                            <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}" />
+                        <fluent:BackstageTabControl x:Name="MainBackstage">
+                            <fluent:BackstageTabItem Header="{x:Static properties:Resources.Open}">
+                                <!--
+                                <fluent:BackstageTabControl>
+                                    <fluent:BackstageTabItem Header="Recent Documents"></fluent:BackstageTabItem>
+                                    <fluent:BackstageTabItem Header="Computer"></fluent:BackstageTabItem>
+                                </fluent:BackstageTabControl>
+                                -->
+                                <TabControl TabStripPlacement="Left" Margin="20" Padding="0" BorderBrush="White" BorderThickness="0" FontSize="15">
+                                    <TabItem Header="Recent Documents" Padding="10"></TabItem>
+                                    <TabItem Header="Computer" Padding="10"></TabItem>
+                                </TabControl>
+                            </fluent:BackstageTabItem>
                             <fluent:Button x:Name="ButtonExport" Header="{x:Static properties:Resources.Export}"
                                            LargeIcon="Images\Large\report_go.png" Icon="Images\Small\report_go.png" />
                             <fluent:Button x:Name="ButtonCloseApp" Header="{x:Static properties:Resources.Close}"
