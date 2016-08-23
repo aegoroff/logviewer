@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using logviewer.logic.models;
 using logviewer.logic.ui.main;
 
@@ -9,16 +10,17 @@ namespace logviewer.logic.ui
         public static IEnumerable<TemplateCommandViewModel> ToCommands(this IEnumerable<ParsingTemplate> templates, int selected)
         {
             var ix = 0;
-            foreach (var t in templates)
+            return from t in templates select CreateTemplateCommand(selected, t, ix++);
+        }
+
+        private static TemplateCommandViewModel CreateTemplateCommand(int selected, ParsingTemplate template, int ix)
+        {
+            return new TemplateCommandViewModel
             {
-                yield return new TemplateCommandViewModel
-                {
-                    Text = t.DisplayName,
-                    Checked = ix == selected,
-                    Index = ix
-                };
-                ++ix;
-            }
+                Text = template.DisplayName,
+                Checked = ix == selected,
+                Index = ix
+            };
         }
     }
 }

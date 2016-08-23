@@ -44,8 +44,7 @@ namespace logviewer.ui
 
         private MainViewModel()
         {
-            var commands = this.ReadParsingTemplateCommands();
-            this.Templates = new ObservableCollection<TemplateCommandViewModel>(commands);
+            this.Templates = new ObservableCollection<TemplateCommandViewModel>(this.ReadParsingTemplateCommands());
             this.Provider = new LogProvider(null, this.settingsProvider);
             this.Datasource = new VirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
             
