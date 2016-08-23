@@ -2,10 +2,13 @@
 // Created at: 24.10.2012
 // © 2012-2016 Alexander Egorov
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using FluentAssertions;
 using logviewer.engine;
 using logviewer.logic;
+using logviewer.logic.models;
 using logviewer.logic.support;
 using logviewer.logic.ui;
 using logviewer.tests.support;
@@ -147,6 +150,42 @@ namespace logviewer.tests
 
             // Assert
             valid.Should().Be(result);
+        }
+
+        [Theory]
+        [InlineData(0, "1")]
+        [InlineData(1, "2")]
+        public void ToCommands_ManyTemplatesWithSelectedSpecifiedInRange_TemplateByIndexChecked(int index, string text)
+        {
+            // Arrange
+            var templates = new List<ParsingTemplate>
+            {
+                new ParsingTemplate { Name = "1", StartMessage = string.Empty },
+                new ParsingTemplate { Name = "2", StartMessage = string.Empty  }
+            };
+
+            // Act
+            var commands = templates.ToCommands(index);
+
+            // Assert
+            commands.Single(x => x.Text == text).Checked.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ToCommands_ManyTemplatesWithSelectedSpecifiedOutOfRange_NoneTemplateChecked()
+        {
+            // Arrange
+            var templates = new List<ParsingTemplate>
+            {
+                new ParsingTemplate { Name = "1", StartMessage = string.Empty },
+                new ParsingTemplate { Name = "2", StartMessage = string.Empty  }
+            };
+
+            // Act
+            var commands = templates.ToCommands(2);
+
+            // Assert
+            commands.All(x => !x.Checked).Should().BeTrue();
         }
     }
 }

@@ -44,8 +44,7 @@ namespace logviewer.ui
 
         private MainViewModel()
         {
-            var templates = this.CreateTemplateCommands();
-            this.Templates = new ObservableCollection<TemplateCommand>(templates);
+            this.Templates = new ObservableCollection<TemplateCommandViewModel>(this.ReadParsingTemplateCommands());
             this.Provider = new LogProvider(null, this.settingsProvider);
             this.Datasource = new VirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
             
@@ -55,23 +54,13 @@ namespace logviewer.ui
             {
                 this.settingsProvider.UseRecentFilesStore(filesStore => this.LogPath = filesStore.ReadLastUsedItem());
             }
+
             this.uiControlsEnabled = true;
         }
 
-        public IEnumerable<TemplateCommand> CreateTemplateCommands()
+        public IEnumerable<TemplateCommandViewModel> ReadParsingTemplateCommands()
         {
-            var fromDb = this.settingsProvider.ReadAllParsingTemplates();
-            var ix = 0;
-            foreach (var t in fromDb)
-            {
-                yield return new TemplateCommand
-                {
-                    Text = t.DisplayName,
-                    Checked = ix == this.settingsProvider.SelectedParsingTemplate,
-                    Index = ix
-                };
-                ++ix;
-            }
+            return this.settingsProvider.ReadAllParsingTemplates().ToCommands(this.settingsProvider.SelectedParsingTemplate);
         }
 
         public static MainViewModel Current { get; } = new MainViewModel();
@@ -102,7 +91,7 @@ namespace logviewer.ui
             Resources.SortAsc
         };
 
-        public ObservableCollection<TemplateCommand> Templates { get; }
+        public ObservableCollection<TemplateCommandViewModel> Templates { get; }
 
         public DateTime From
         {
@@ -343,12 +332,5 @@ namespace logviewer.ui
                 this.Provider.Dispose();
             }
         }
-    }
-
-    public class TemplateCommand
-    {
-        public string Text { get; set; }
-        public bool Checked { get; set; }
-        public int Index { get; set; }
     }
 }
