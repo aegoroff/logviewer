@@ -5,6 +5,7 @@
     xmlns:logviewer="clr-namespace:logviewer.ui"
     xmlns:fluent="clr-namespace:Fluent;assembly=Fluent"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:main="clr-namespace:logviewer.logic.ui.main;assembly=logviewer.logic"
     x:Class="logviewer.ui.MainWindow"
     Closing="OnClosing"
     Loaded="OnLoaded"
@@ -118,9 +119,9 @@
                             <fluent:DropDownButton.ItemContainerStyle>
                                 <Style TargetType="MenuItem">
                                     <Setter Property="IsChecked"
-                                            Value="{Binding Path=(logviewer:TemplateCommand.Checked), IsAsync=True}" />
+                                            Value="{Binding Path=(main:TemplateCommandViewModel.Checked), IsAsync=True}" />
                                     <Setter Property="Header"
-                                            Value="{Binding Path=(logviewer:TemplateCommand.Text), IsAsync=True}" />
+                                            Value="{Binding Path=(main:TemplateCommandViewModel.Text), IsAsync=True}" />
                                     <EventSetter Event="Click" Handler="OnTemplateSelect" />
                                 </Style>
                             </fluent:DropDownButton.ItemContainerStyle>

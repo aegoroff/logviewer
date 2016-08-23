@@ -31,7 +31,6 @@ namespace logviewer.ui
             this.logWatch = new FileSystemWatcher();
             this.logWatch.Changed += this.OnChangeLog;
             this.logWatch.NotifyFilter = NotifyFilters.Size;
-            this.CreateTemplateCommands();
         }
 
         private void WatchLogFile(string path)
@@ -63,12 +62,7 @@ namespace logviewer.ui
             MainViewModel.Current.Templates.Clear();
 
             MainViewModel.Current.SelectedParsingTemplate = selected;
-            this.CreateTemplateCommands();
-        }
-
-        private void CreateTemplateCommands()
-        {
-            var commands = this.model.CreateTemplateCommands();
+            var commands = MainViewModel.Current.ReadParsingTemplateCommands();
             foreach (var command in commands)
             {
                 MainViewModel.Current.Templates.Add(command);

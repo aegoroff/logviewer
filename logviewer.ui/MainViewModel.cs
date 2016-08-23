@@ -44,7 +44,8 @@ namespace logviewer.ui
 
         private MainViewModel()
         {
-            this.Templates = new ObservableCollection<TemplateCommandViewModel>();
+            var commands = this.ReadParsingTemplateCommands();
+            this.Templates = new ObservableCollection<TemplateCommandViewModel>(commands);
             this.Provider = new LogProvider(null, this.settingsProvider);
             this.Datasource = new VirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
             
@@ -54,7 +55,13 @@ namespace logviewer.ui
             {
                 this.settingsProvider.UseRecentFilesStore(filesStore => this.LogPath = filesStore.ReadLastUsedItem());
             }
+
             this.uiControlsEnabled = true;
+        }
+
+        public IEnumerable<TemplateCommandViewModel> ReadParsingTemplateCommands()
+        {
+            return this.settingsProvider.ReadAllParsingTemplates().ToCommands(this.settingsProvider.SelectedParsingTemplate);
         }
 
         public static MainViewModel Current { get; } = new MainViewModel();
