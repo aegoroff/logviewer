@@ -167,6 +167,22 @@ namespace logviewer.logic.ui.main
             }
         }
 
+        public IEnumerable<TemplateCommandViewModel> CreateTemplateCommands()
+        {
+            var fromDb = this.settings.ReadAllParsingTemplates();
+            var ix = 0;
+            foreach (var t in fromDb)
+            {
+                yield return new TemplateCommandViewModel
+                {
+                    Text = t.DisplayName,
+                    Checked = ix == this.settings.SelectedParsingTemplate,
+                    Index = ix
+                };
+                ++ix;
+            }
+        }
+
         /// <summary>
         /// Check updates available
         /// </summary>

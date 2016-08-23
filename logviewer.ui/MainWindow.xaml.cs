@@ -31,6 +31,7 @@ namespace logviewer.ui
             this.logWatch = new FileSystemWatcher();
             this.logWatch.Changed += this.OnChangeLog;
             this.logWatch.NotifyFilter = NotifyFilters.Size;
+            this.CreateTemplateCommands();
         }
 
         private void WatchLogFile(string path)
@@ -52,17 +53,22 @@ namespace logviewer.ui
         private void OnTemplateSelect(object sender, RoutedEventArgs e)
         {
             var src = (MenuItem)e.OriginalSource;
-            var cmd = (TemplateCommand)src.DataContext;
+            var cmd = (TemplateCommandViewModel)src.DataContext;
 
-            ReloadTemplates(cmd.Index);
+            this.ReloadTemplates(cmd.Index);
         }
 
-        private static void ReloadTemplates(int selected)
+        private void ReloadTemplates(int selected)
         {
             MainViewModel.Current.Templates.Clear();
 
             MainViewModel.Current.SelectedParsingTemplate = selected;
-            var commands = MainViewModel.Current.CreateTemplateCommands();
+            this.CreateTemplateCommands();
+        }
+
+        private void CreateTemplateCommands()
+        {
+            var commands = this.model.CreateTemplateCommands();
             foreach (var command in commands)
             {
                 MainViewModel.Current.Templates.Add(command);
@@ -126,7 +132,7 @@ namespace logviewer.ui
                 dlg.SetApplyAction(refresh => this.model.UpdateSettings(refresh));
                 dlg.ShowDialog();
             }
-            ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
+            this.ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
         }
 
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
