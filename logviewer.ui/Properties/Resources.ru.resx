@@ -285,4 +285,7 @@
   <data name="LogStatistics" xml:space="preserve">
     <value>Статистика по логу</value>
   </data>
+  <data name="LogFilesFilterTemplate" xml:space="preserve">
+    <value>Файлы журналов|*.log|Все файлы|*.*</value>
+  </data>
 </root>

@@ -54,10 +54,10 @@ namespace logviewer.ui
             var src = (MenuItem)e.OriginalSource;
             var cmd = (TemplateCommandViewModel)src.DataContext;
 
-            this.ReloadTemplates(cmd.Index);
+            ReloadTemplates(cmd.Index);
         }
 
-        private void ReloadTemplates(int selected)
+        private static void ReloadTemplates(int selected)
         {
             MainViewModel.Current.Templates.Clear();
 
@@ -73,7 +73,7 @@ namespace logviewer.ui
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "Log files|*.log|All files|*.*"
+                Filter = Properties.Resources.LogFilesFilterTemplate
             };
             if (openFileDialog.ShowDialog() != true)
             {
@@ -113,8 +113,6 @@ namespace logviewer.ui
 
         private void OnStatistic(object sender, ExecutedRoutedEventArgs e)
         {
-            //var dlg = new StatisticDlg(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding);
-            //dlg.Show(MainViewModel.Current.Window);
             new Statistic(this.model.Store, this.model.GetLogSize(true), this.model.CurrentEncoding).Show();
         }
 
@@ -126,7 +124,7 @@ namespace logviewer.ui
                 dlg.SetApplyAction(refresh => this.model.UpdateSettings(refresh));
                 dlg.ShowDialog();
             }
-            this.ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
+            ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
         }
 
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)

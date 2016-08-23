@@ -303,4 +303,7 @@
   <data name="LogStatistics" xml:space="preserve">
     <value>Log statistics</value>
   </data>
+  <data name="LogFilesFilterTemplate" xml:space="preserve">
+    <value>Log files|*.log|All files|*.*</value>
+  </data>
 </root>

@@ -286,6 +286,15 @@ namespace logviewer.ui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log files|*.log|All files|*.*.
+        /// </summary>
+        public static string LogFilesFilterTemplate {
+            get {
+                return ResourceManager.GetString("LogFilesFilterTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {
