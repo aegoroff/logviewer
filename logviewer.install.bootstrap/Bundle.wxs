@@ -7,7 +7,7 @@
     Manufacturer="Alexander Egorov"
     UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e"
     Condition="VersionNT > v6.0 AND VersionNT64"
-    IconSourceFile="..\logviewer\Lv.ico">
+    IconSourceFile="..\logviewer.ui\Lv.ico">
 
     <WixVariable Id="WixStdbaThemeXml" Value="Theme.xml" />
     <WixVariable Id="WixStdbaThemeWxl" Value="Theme.wxl" />
