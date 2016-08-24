@@ -1,17 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "logviewer", "logviewer\logviewer.csproj", "{161E82E5-E732-434C-B400-99D253D6CBFA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{383C08FC-9CAC-42E5-9B02-471561479A74} = {383C08FC-9CAC-42E5-9B02-471561479A74}
-	EndProjectSection
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "logviewer.install", "logviewer.install\logviewer.install.wixproj", "{27060CA7-FB29-42BC-BA66-7FC80D498354}"
 	ProjectSection(ProjectDependencies) = postProject
 		{405827CB-84E1-46F3-82C9-D889892645AC} = {405827CB-84E1-46F3-82C9-D889892645AC}
-		{161E82E5-E732-434C-B400-99D253D6CBFA} = {161E82E5-E732-434C-B400-99D253D6CBFA}
 		{CFBAE2FB-6E3F-44CF-9FC9-372D6EA8DD3D} = {CFBAE2FB-6E3F-44CF-9FC9-372D6EA8DD3D}
 	EndProjectSection
 EndProject
@@ -55,16 +49,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{161E82E5-E732-434C-B400-99D253D6CBFA}.Release|x86.ActiveCfg = Release|Any CPU
 		{27060CA7-FB29-42BC-BA66-7FC80D498354}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{27060CA7-FB29-42BC-BA66-7FC80D498354}.Debug|Any CPU.Build.0 = Debug|x86
 		{27060CA7-FB29-42BC-BA66-7FC80D498354}.Debug|Mixed Platforms.ActiveCfg = Debug|x86

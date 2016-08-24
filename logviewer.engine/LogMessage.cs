@@ -211,46 +211,52 @@ namespace logviewer.engine
             // Ugly but allows to avoid on allocation per call
             // This code is rather performance critical
             var enumerator = this.rawProperties.GetEnumerator();
-            while (enumerator.MoveNext())
+            using (enumerator)
             {
-                var property = enumerator.Current;
-                if (!schema.ContainsKey(property.Key))
+                while (enumerator.MoveNext())
                 {
-                    continue;
-                }
-                var semanticProperty = default(SemanticProperty);
-
-                var schemaEnumarator = schema.GetEnumerator();
-                while (schemaEnumarator.MoveNext())
-                {
-                    if (schemaEnumarator.Current.Key != property.Key)
+                    var property = enumerator.Current;
+                    if (!schema.ContainsKey(property.Key))
                     {
                         continue;
                     }
-                    semanticProperty = schemaEnumarator.Current.Key;
-                    break;
-                }
+                    var semanticProperty = default(SemanticProperty);
 
-                var rules = schema[property.Key];
-                var matchedData = property.Value;
+                    var schemaEnumarator = schema.GetEnumerator();
+                    using (schemaEnumarator)
+                    {
+                        while (schemaEnumarator.MoveNext())
+                        {
+                            if (schemaEnumarator.Current.Key != property.Key)
+                            {
+                                continue;
+                            }
+                            semanticProperty = schemaEnumarator.Current.Key;
+                            break;
+                        }
+                    }
 
-                switch (semanticProperty.Parser)
-                {
-                    case ParserType.LogLevel:
-                        this.ParseLogLevel(matchedData, rules, property.Key);
-                        break;
-                    case ParserType.Datetime:
-                        this.ParseDateTime(matchedData, property.Key);
-                        break;
-                    case ParserType.Interger:
-                        this.ParseInteger(matchedData, property.Key);
-                        break;
-                    case ParserType.String:
-                        this.ParseString(matchedData, property.Key);
-                        break;
-                    default:
-                        this.ParseString(matchedData, property.Key);
-                        break;
+                    var rules = schema[property.Key];
+                    var matchedData = property.Value;
+
+                    switch (semanticProperty.Parser)
+                    {
+                        case ParserType.LogLevel:
+                            this.ParseLogLevel(matchedData, rules, property.Key);
+                            break;
+                        case ParserType.Datetime:
+                            this.ParseDateTime(matchedData, property.Key);
+                            break;
+                        case ParserType.Interger:
+                            this.ParseInteger(matchedData, property.Key);
+                            break;
+                        case ParserType.String:
+                            this.ParseString(matchedData, property.Key);
+                            break;
+                        default:
+                            this.ParseString(matchedData, property.Key);
+                            break;
+                    }
                 }
             }
         }
@@ -259,24 +265,27 @@ namespace logviewer.engine
         private static bool TryRunSemanticAction(string dataToParse, IEnumerable<GrokRule> rules, out LogLevel level) //-V3009
         {
             var enumerator = rules.GetEnumerator();
-            while (enumerator.MoveNext())
+            using (enumerator)
             {
-                var rule = enumerator.Current;
-                if (!dataToParse.Contains(rule.Pattern))
+                while (enumerator.MoveNext())
                 {
-                    continue;
-                }
-                level = rule.Level;
-                return true;
-            }
-            enumerator.Reset();
-            level = LogLevel.None;
-            while (enumerator.MoveNext())
-            {
-                var rule = enumerator.Current;
-                if (rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase))
-                {
+                    var rule = enumerator.Current;
+                    if (!dataToParse.Contains(rule.Pattern))
+                    {
+                        continue;
+                    }
                     level = rule.Level;
+                    return true;
+                }
+                enumerator.Reset();
+                level = LogLevel.None;
+                while (enumerator.MoveNext())
+                {
+                    var rule = enumerator.Current;
+                    if (rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase))
+                    {
+                        level = rule.Level;
+                    }
                 }
             }
             return true;

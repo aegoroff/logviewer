@@ -11,6 +11,7 @@ using logviewer.logic;
 using logviewer.logic.models;
 using logviewer.logic.support;
 using logviewer.logic.ui;
+using logviewer.logic.ui.main;
 using logviewer.tests.support;
 using Ploeh.AutoFixture;
 using Xunit;
@@ -86,7 +87,7 @@ namespace logviewer.tests
         public void EnsureNoAsyncVoidMethods()
         {
             Helpers.AssertNoAsyncVoidMethods(this.GetType().Assembly);
-            Helpers.AssertNoAsyncVoidMethods(typeof(MainController).Assembly);
+            Helpers.AssertNoAsyncVoidMethods(typeof(MainModel).Assembly);
         }
         
         [Fact]

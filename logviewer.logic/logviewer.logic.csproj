@@ -155,7 +155,6 @@
     <Compile Include="ui\network\NetworkStateResolver.cs" />
     <Compile Include="ui\network\ProxyMode.cs" />
     <Compile Include="ui\network\StateMachineMode.cs" />
-    <Compile Include="ui\MainController.cs" />
     <Compile Include="support\Maybe.cs" />
     <Compile Include="models\ParsingTemplate.cs" />
     <Compile Include="support\ProducerConsumerQueue.cs" />
