@@ -4,7 +4,7 @@
 
 using System.Drawing;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.settings
 {
     public struct ColorPickResult
     {

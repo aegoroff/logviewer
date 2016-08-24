@@ -17,7 +17,7 @@ using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.settings
 {
     public class SettingsController : UiSynchronizeModel
     {

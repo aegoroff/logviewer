@@ -5,7 +5,7 @@
 using logviewer.logic.Annotations;
 using logviewer.logic.models;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.settings
 {
     public interface IParsingTemplateView
     {

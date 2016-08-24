@@ -49,9 +49,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Ninject">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.3.7\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
@@ -119,21 +116,18 @@
     <Compile Include="ui\IItemsProvider.cs" />
     <Compile Include="IOptionsProvider.cs" />
     <Compile Include="LogCharsetDetector.cs" />
-    <Compile Include="ui\ColorPickResult.cs" />
+    <Compile Include="ui\settings\ColorPickResult.cs" />
     <Compile Include="storage\ColumnAttribute.cs" />
-    <Compile Include="CoreModule.cs" />
     <Compile Include="storage\DatabaseConnection.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="ui\FormData.cs" />
-    <Compile Include="ui\ILogView.cs" />
-    <Compile Include="ui\IParsingTemplateView.cs" />
+    <Compile Include="ui\settings\FormData.cs" />
+    <Compile Include="ui\settings\IParsingTemplateView.cs" />
     <Compile Include="ISettingsProvider.cs" />
-    <Compile Include="ui\ISettingsView.cs" />
-    <Compile Include="ui\IUpdatable.cs" />
-    <Compile Include="ui\IUpdateView.cs" />
+    <Compile Include="ui\settings\ISettingsView.cs" />
+    <Compile Include="ui\main\IUpdatable.cs" />
     <Compile Include="IVersionsReader.cs" />
     <Compile Include="support\LoggingService.cs" />
-    <Compile Include="ui\LogParseTemplateController.cs" />
+    <Compile Include="ui\settings\LogParseTemplateController.cs" />
     <Compile Include="storage\LogProvider.cs" />
     <Compile Include="models\LogReadCompletedEventArgs.cs" />
     <Compile Include="storage\LogStore.cs" />
@@ -167,7 +161,7 @@
     <Compile Include="storage\PropertyType.cs" />
     <Compile Include="storage\RecentItemsStore.cs" />
     <Compile Include="support\SafeRunner.cs" />
-    <Compile Include="ui\SettingsController.cs" />
+    <Compile Include="ui\settings\SettingsController.cs" />
     <Compile Include="storage\SqliteSettingsProvider.cs" />
     <Compile Include="storage\SqliteRegEx.cs" />
     <Compile Include="ui\statistic\StatFilterViewModel.cs" />

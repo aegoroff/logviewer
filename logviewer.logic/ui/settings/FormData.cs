@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using logviewer.engine;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.settings
 {
     public class FormData
     {

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using logviewer.engine;
 using logviewer.logic;
 using logviewer.logic.models;
-using logviewer.logic.ui;
+using logviewer.logic.ui.settings;
 
 namespace logviewer.ui
 {

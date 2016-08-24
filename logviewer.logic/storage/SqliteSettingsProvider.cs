@@ -14,6 +14,7 @@ using logviewer.logic.models;
 using logviewer.logic.Properties;
 using logviewer.logic.support;
 using logviewer.logic.ui;
+using logviewer.logic.ui.settings;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
 

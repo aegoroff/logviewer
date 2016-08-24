@@ -4,9 +4,8 @@
 
 using System;
 using System.Windows.Forms;
-using logviewer.logic;
 using logviewer.logic.models;
-using logviewer.logic.ui;
+using logviewer.logic.ui.settings;
 using Color = System.Drawing.Color;
 
 namespace logviewer.ui

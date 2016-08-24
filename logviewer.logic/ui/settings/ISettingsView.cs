@@ -5,7 +5,7 @@
 using System.Drawing;
 using logviewer.logic.models;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.settings
 {
     public interface ISettingsView
     {

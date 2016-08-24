@@ -4,7 +4,7 @@
 
 using System;
 
-namespace logviewer.logic.ui
+namespace logviewer.logic.ui.main
 {
     public interface IUpdatable
     {
