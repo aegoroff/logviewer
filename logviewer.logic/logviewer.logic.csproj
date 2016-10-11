@@ -129,7 +129,6 @@
     <Compile Include="support\LoggingService.cs" />
     <Compile Include="ui\settings\LogParseTemplateController.cs" />
     <Compile Include="storage\LogProvider.cs" />
-    <Compile Include="models\LogReadCompletedEventArgs.cs" />
     <Compile Include="storage\LogStore.cs" />
     <Compile Include="models\MessageFilterViewModel.cs" />
     <Compile Include="support\FixedSizeDictionary.cs" />
