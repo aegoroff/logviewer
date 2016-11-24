@@ -304,7 +304,7 @@ namespace logviewer.logic.fsm
             {
                 this.isProcessingQueue = true;
 
-                do
+                while (true)
                 {
                     Action nextAction;
 
@@ -321,7 +321,7 @@ namespace logviewer.logic.fsm
                     }
 
                     nextAction?.Invoke();
-                } while (true);
+                }
             }
             finally
             {

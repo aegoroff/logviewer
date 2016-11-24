@@ -6,16 +6,16 @@ namespace logviewer.logic.fsm
 {
     public static class SolidStateConstants
     {
-        public static int ErrorStateMachineNotStarted = 1000;
-        public static int ErrorTriggerNotValidForState = 1001;
-        public static int ErrorMultipleGuardClausesAreTrue = 1002;
-        public static int ErrorNoGuardClauseIsTrue = 1003;
-        public static int ErrorStateResolverCouldNotResolveType = 1004;
-        public static int ErrorNoStatesHaveBeenConfigured = 1005;
-        public static int ErrorStatesNeedParameterlessConstructor = 1006;
-        public static int ErrorStateMachineIsStarted = 1007;
-        public static int ErrorMultipleInitialStates = 1008;
-        public static int ErrorCannotMixGuardedAndGuardlessTransitions = 1009;
-        public static int ErrorTriggerAlreadyConfiguredForState = 1010;
+        public const int ErrorStateMachineNotStarted = 1000;
+        public const int ErrorTriggerNotValidForState = 1001;
+        public const int ErrorMultipleGuardClausesAreTrue = 1002;
+        public const int ErrorNoGuardClauseIsTrue = 1003;
+        public const int ErrorStateResolverCouldNotResolveType = 1004;
+        public const int ErrorNoStatesHaveBeenConfigured = 1005;
+        public const int ErrorStatesNeedParameterlessConstructor = 1006;
+        public const int ErrorStateMachineIsStarted = 1007;
+        public const int ErrorMultipleInitialStates = 1008;
+        public const int ErrorCannotMixGuardedAndGuardlessTransitions = 1009;
+        public const int ErrorTriggerAlreadyConfiguredForState = 1010;
     }
 }
