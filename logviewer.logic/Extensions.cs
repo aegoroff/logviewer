@@ -40,7 +40,7 @@ namespace logviewer.logic
             return schema.FilterSchema(type).Select(s => s.Property).FirstOrDefault();
         }
 
-        private static IEnumerable<Semantic> FilterSchema(this ICollection<Semantic> schema, ParserType type)
+        private static IEnumerable<Semantic> FilterSchema(this IEnumerable<Semantic> schema, ParserType type)
         {
             return from s in schema from rule in s.CastingRules where rule.Type == type select s;
         }
@@ -120,7 +120,7 @@ namespace logviewer.logic
         private const string BigFileFormatNoBytes = @"{0:F2} {1}";
         private const string SmallFileFormat = @"{0} {1}";
 
-        static readonly string[] sizes =
+        private static readonly string[] sizes =
         {
             Resources.SizeBytes,
             Resources.SizeKBytes,
@@ -187,7 +187,7 @@ namespace logviewer.logic
              return genitivePlural;
          }
         
-        /// <summary>
+         /// <summary>
          /// Does a word declension after a number.
          /// </summary>
          /// <param name="number"></param>
