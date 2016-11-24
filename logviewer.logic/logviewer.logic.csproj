@@ -48,6 +48,10 @@
       <HintPath>..\packages\Enums.NET.1.0.0\lib\net45\Enums.NET.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
       <Private>True</Private>
@@ -104,9 +108,11 @@
     <Compile Include="fsm\ISolidState.cs" />
     <Compile Include="fsm\IStateResolver.cs" />
     <Compile Include="fsm\SolidMachine.cs" />
+    <Compile Include="fsm\SolidMachineStartValidator.cs" />
     <Compile Include="fsm\SolidState.cs" />
     <Compile Include="fsm\SolidStateConstants.cs" />
     <Compile Include="fsm\StateConfiguration.cs" />
+    <Compile Include="fsm\StateInstantiationMode.cs" />
     <Compile Include="fsm\TriggerConfiguration.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="storage\ILogStore.cs" />

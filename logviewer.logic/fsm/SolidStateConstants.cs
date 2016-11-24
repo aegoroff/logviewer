@@ -11,8 +11,6 @@ namespace logviewer.logic.fsm
         public const int ErrorMultipleGuardClausesAreTrue = 1002;
         public const int ErrorNoGuardClauseIsTrue = 1003;
         public const int ErrorStateResolverCouldNotResolveType = 1004;
-        public const int ErrorNoStatesHaveBeenConfigured = 1005;
-        public const int ErrorStatesNeedParameterlessConstructor = 1006;
         public const int ErrorStateMachineIsStarted = 1007;
         public const int ErrorMultipleInitialStates = 1008;
         public const int ErrorCannotMixGuardedAndGuardlessTransitions = 1009;

@@ -4,6 +4,7 @@
 
 using System;
 using FluentAssertions;
+using FluentValidation;
 using logviewer.logic.fsm;
 using logviewer.tests.support;
 using Xunit;
@@ -272,7 +273,7 @@ namespace logviewer.tests
             var sm = new SolidMachine<TelephoneTrigger>();
 
             // Act
-            var exception = Assert.Throws<SolidStateException>(delegate
+            var exception = Assert.Throws<ValidationException>(delegate
             {
                 sm.State<IdleState>()
                     .On(TelephoneTrigger.IncomingCall).GoesTo<StateWithoutParameterlessConstructor>();
@@ -280,7 +281,7 @@ namespace logviewer.tests
             });
 
             // Assert
-            exception.ErrorId.Should().Be(SolidStateConstants.ErrorStatesNeedParameterlessConstructor);
+            exception.Message.Should().Contain("One or more configured states has no parameterless constructor. Add such constructors or make sure that the StateResolver property is set!");
         }
 
         [Fact]
@@ -290,13 +291,10 @@ namespace logviewer.tests
             var sm = new SolidMachine<TelephoneTrigger>();
 
             // Act
-            var exception = Assert.Throws<SolidStateException>(delegate
-            {
-                sm.Start();
-            });
+            var exception = Assert.Throws<ValidationException>(() => sm.Start());
 
             // Assert
-            exception.ErrorId.Should().Be(SolidStateConstants.ErrorNoStatesHaveBeenConfigured);
+            exception.Message.Should().Contain("No states have been configured!");
         }
 
         [Fact]

@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using FluentValidation;
 using logviewer.logic.Annotations;
 
 namespace logviewer.logic.fsm
 {
+    [PublicAPI]
     public partial class SolidMachine<TTrigger>
     {
         private const int DefaultStatehistoryTrimThreshold = 100;
@@ -47,13 +49,11 @@ namespace logviewer.logic.fsm
             this.stateHistoryTrimThreshold = DefaultStatehistoryTrimThreshold;
         }
 
-        [PublicAPI]
         public SolidMachine(object context) : this()
         {
             this.Context = context;
         }
 
-        [PublicAPI]
         public SolidMachine(object context, IStateResolver stateResolver) : this(context)
         {
             this.Context = context;
@@ -65,41 +65,37 @@ namespace logviewer.logic.fsm
         /// <summary>
         ///     The type of the machines initial state.
         /// </summary>
-        [PublicAPI]
-        public Type InitialState => this.initialState.StateType;
+        public Type InitialStateType => this.initialState.StateType;
+
+        internal StateConfiguration InitialState => this.initialState;
 
         /// <summary>
         ///     Returns the state that the state machine is currently in.
         /// </summary>
-        [PublicAPI]
         public ISolidState CurrentState => this.currentState?.StateInstance;
 
         /// <summary>
         ///     A list of the triggers that are valid to use on the current state.
         ///     If the machine hasn't been started yet, this list is empty.
         /// </summary>
-        [PublicAPI]
         public List<TTrigger> ValidTriggers => this.GetValidTriggers();
 
         /// <summary>
         ///     An arbitrary object that will be passed on to the states in their entry and exit methods.
         ///     If no context is defined, the state machine instance will be used as context.
         /// </summary>
-        [PublicAPI]
         public object Context { get; set; }
 
         /// <summary>
         ///     The resolver for state machine states. If this is not specified the standard
         ///     .NET activator is used and all states must then have parameterless constructors.
         /// </summary>
-        [PublicAPI]
         public IStateResolver StateResolver { get; set; }
 
         /// <summary>
         ///     Controls whether state class instances should be Singletons or if they should be instantiated
         ///     for each transition. Default value is Singleton.
         /// </summary>
-        [PublicAPI]
         public StateInstantiationMode StateInstantiationMode
         {
             get { return this.stateInstantiationMode; }
@@ -134,7 +130,6 @@ namespace logviewer.logic.fsm
         ///     The number of entries that will be kept in the state history before an automatic
         ///     trim is performed.
         /// </summary>
-        [PublicAPI]
         public int StateHistoryTrimThreshold
         {
             get { return this.stateHistoryTrimThreshold; }
@@ -152,6 +147,8 @@ namespace logviewer.logic.fsm
                 this.AddStateToHistory(null);
             }
         }
+
+        public bool StateResolverRequired => this.stateResolverRequired;
 
         // Private methods
 
@@ -445,17 +442,8 @@ namespace logviewer.logic.fsm
         /// </summary>
         public void Start()
         {
-            if (this.initialState == null)
-            {
-                throw new SolidStateException(SolidStateConstants.ErrorNoStatesHaveBeenConfigured, "No states have been configured!");
-            }
-
-            // If there are states that has no parameterless constructor, we must have set the StateResolver property.
-            if (this.stateResolverRequired && (this.StateResolver == null))
-            {
-                throw new SolidStateException(SolidStateConstants.ErrorStatesNeedParameterlessConstructor,
-                    "One or more configured states has no parameterless constructor. Add such constructors or make sure that the StateResolver property is set!");
-            }
+            var validator = new SolidMachineStartValidator<TTrigger>();
+            validator.ValidateAndThrow(this);
 
             this.isStarted = true;
 
@@ -548,22 +536,5 @@ namespace logviewer.logic.fsm
                 this.EnterNewState(previousStateType, targetState);
             }
         }
-    }
-
-    /// <summary>
-    ///     Enumeration of possible state instantiation modes.
-    /// </summary>
-    public enum StateInstantiationMode
-    {
-        /// <summary>
-        ///     The state class is instantiated the first time it is used. All following
-        ///     transitions into that state will use the same instance.
-        /// </summary>
-        Singleton,
-
-        /// <summary>
-        ///     The target state of a transition is instantiated on each transition.
-        /// </summary>
-        PerTransition
     }
 }

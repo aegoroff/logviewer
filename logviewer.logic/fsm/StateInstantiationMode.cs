@@ -1,0 +1,26 @@
+﻿// Created by: egr
+// Created at: 24.11.2016
+// © 2012-2016 Alexander Egorov
+
+using logviewer.logic.Annotations;
+
+namespace logviewer.logic.fsm
+{
+    /// <summary>
+    ///     Enumeration of possible state instantiation modes.
+    /// </summary>
+    [PublicAPI]
+    public enum StateInstantiationMode
+    {
+        /// <summary>
+        ///     The state class is instantiated the first time it is used. All following
+        ///     transitions into that state will use the same instance.
+        /// </summary>
+        Singleton,
+
+        /// <summary>
+        ///     The target state of a transition is instantiated on each transition.
+        /// </summary>
+        PerTransition
+    }
+}
