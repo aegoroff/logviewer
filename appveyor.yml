@@ -18,9 +18,9 @@ environment:
   LogviewerSnkPath: C:\projects\logviewer\logviewer.snk
   # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
   CertPassword:
-    secure: QDWBD+3IIAYVFCfHFY7YCw==
+    secure: 5n0HdCq2h73RfJa+kz2bHA==
   PfxUri:
-    secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwvJe7+ifJ5IqCV7hkdkSzqKcKkuWllqmNDvO5PK+KTTP/2wks9LCpMBSMnIHFnvB/
+    secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6Znw3T/ZU+090sYOayq7AFv1hOLFxAT15mZ5PdQg3X6lYRr7xrDrNTtAqmeYrKD+So90
   SnkUri:
     secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwWkZOmP1fCRP5m2Bclrbc22uOBlleZWaxVycTis9Jb4QCSI2FFddeTQAxehQypUsI
 
