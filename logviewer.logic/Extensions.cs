@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using EnumsNET;
 using Humanizer;
 using logviewer.engine;
 using logviewer.logic.Annotations;
@@ -24,7 +25,7 @@ namespace logviewer.logic
         [Pure]
         internal static string ToParameterName(this LogLevel level)
         {
-            return level.ToString(@"G") + @"Color";
+            return level.GetName() + @"Color";
         }
 
         [Pure]
