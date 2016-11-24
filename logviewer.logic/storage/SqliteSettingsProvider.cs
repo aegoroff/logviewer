@@ -13,7 +13,6 @@ using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
 using logviewer.logic.support;
-using logviewer.logic.ui;
 using logviewer.logic.ui.settings;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
@@ -216,7 +215,7 @@ namespace logviewer.logic.storage
 
         public void UpdateParsingTemplate(ParsingTemplate template)
         {
-            var propertiesSet = string.Join(@",", from string member in this.parsingTemplatePropertiesNames select string.Format(@"{0} = @{0}", member));
+            var propertiesSet = string.Join(@",", from string member in this.parsingTemplatePropertiesNames select $"{member} = @{member}");
 
             this.optionsProvider.ExecuteNonQuery(
                 $@"
@@ -276,7 +275,7 @@ namespace logviewer.logic.storage
 
             var result = new List<ParsingTemplate>();
 
-            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)((long)rdr[0]), Name = rdr[1] as string, StartMessage = rdr[2] as string });
+            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)(long)rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string });
             Action<DatabaseConnection> action = connection => connection.ExecuteReader(cmd, onRead);
 
             this.optionsProvider.ExecuteQuery(action);
