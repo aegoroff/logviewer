@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
+// Created at: 14.08.2016
+// © 2007-2016 Alexander Egorov
+
+using System;
 using System.Collections.Generic;
 using logviewer.engine;
 using logviewer.logic.Annotations;

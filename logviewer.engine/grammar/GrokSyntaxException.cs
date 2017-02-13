@@ -1,4 +1,6 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 12.07.2015
 // © 2012-2016 Alexander Egorov
 
@@ -11,9 +13,6 @@ namespace logviewer.engine.grammar
     [Serializable]
     internal class GrokSyntaxException : Exception
     {
-
-        private readonly string message;
-
         /// <summary>Creates new empty exception instance.</summary>
         public GrokSyntaxException()
         {
@@ -23,7 +22,7 @@ namespace logviewer.engine.grammar
         /// <param name="message">Error message.</param>
         public GrokSyntaxException(string message)
         {
-            this.message = message;
+            this.Message = message;
         }
 
         /// <summary>Initializes a new instance of the GrokSyntaxException class with serialized data.</summary>
@@ -37,7 +36,7 @@ namespace logviewer.engine.grammar
             {
                 throw new ArgumentNullException(nameof(info));
             }
-            this.message = info.GetString("message");
+            this.Message = info.GetString("message");
         }
 
         /// <summary>Creates new exception instance with keeping inner exception.</summary>
@@ -46,10 +45,10 @@ namespace logviewer.engine.grammar
         public GrokSyntaxException(string message, Exception innerException) :
             base(message, innerException)
         {
-            this.message = message;
+            this.Message = message;
         }
 
-        public override string Message => this.message;
+        public override string Message { get; }
 
         /// <summary>Sets the SerializationInfo with information about the exception.</summary>
         /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
@@ -62,7 +61,7 @@ namespace logviewer.engine.grammar
             {
                 throw new ArgumentNullException(nameof(info));
             }
-            info.AddValue("message", this.message);
+            info.AddValue("message", this.Message);
             base.GetObjectData(info, context);
         }
     }
