@@ -61,8 +61,8 @@ namespace logviewer.logic.ui.statistic
                     observer.OnNext(CreateItem(this.levelDescriptions[(int)item.Key], item.Value));
                 }
 
-                var minDateTime = this.store.SelectDateUsingFunc("min", LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
-                var maxDateTime = this.store.SelectDateUsingFunc("max", LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
+                var minDateTime = this.SelectDateUsingFunc("min");
+                var maxDateTime = this.SelectDateUsingFunc("max");
 
                 if (minDateTime != maxDateTime || minDateTime != DateTime.MinValue)
                 {
@@ -95,6 +95,11 @@ namespace logviewer.logic.ui.statistic
                     model => { this.items.Add(model); },
                     exception => { Log.Instance.Error(exception.Message, exception); },
                     () => { Log.Instance.TraceFormatted("Statistic loading completed"); });
+        }
+
+        private DateTime SelectDateUsingFunc(string func)
+        {
+            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
         }
 
         private static StatItemViewModel CreateItem(string key, string value)
