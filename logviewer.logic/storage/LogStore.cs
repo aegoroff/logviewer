@@ -281,7 +281,7 @@ namespace logviewer.logic.storage
             }
 
             var where = this.Where(min, max, filter, useRegexp, start, finish);
-            var query = $@"SELECT count(1) FROM Log {@where}";
+            var query = $@"SELECT count(1) FROM Log {where}";
             Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, start, finish);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
