@@ -1,4 +1,6 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 29.05.2015
 // © 2012-2016 Alexander Egorov
 
@@ -163,7 +165,7 @@ namespace logviewer.install.mca
                 var node in
                     from XmlNode setting in tgtNodes
                     where setting.Attributes?[keyAttr] != null && setting.Attributes[valueAttr] != null
-                    where srcDict.ContainsKey(setting.Attributes[keyAttr].Value)
+                    where srcDict.ContainsKey(setting.Attributes?[keyAttr].Value)
                     select setting)
             {
                 node.Attributes[valueAttr].Value = srcDict[node.Attributes[keyAttr].Value];

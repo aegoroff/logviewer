@@ -1,6 +1,8 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 04.12.2015
-// © 2007-2015 Alexander Egorov
+// © 2007-2016 Alexander Egorov
 
 using System.Data;
 using System.Data.SQLite;

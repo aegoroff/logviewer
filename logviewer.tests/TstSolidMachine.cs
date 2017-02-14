@@ -1,4 +1,6 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 11.12.2015
 // © 2012-2016 Alexander Egorov
 
@@ -227,8 +229,8 @@ namespace logviewer.tests
 
             sm.State<IdleState>()
                 .IsInitialState()
-                .On(TelephoneTrigger.PickingUpPhone, () => 1 + 1 == 2).GoesTo<DiallingState>() //-V3022
-                .On(TelephoneTrigger.PickingUpPhone, () => 6 / 2 == 3).GoesTo<RingingState>(); //-V3022
+                .On(TelephoneTrigger.PickingUpPhone, () => 1 + 1 == 2).GoesTo<DiallingState>() //-V3001
+                .On(TelephoneTrigger.PickingUpPhone, () => 6 / 2 == 3).GoesTo<RingingState>(); //-V3001
 
             sm.Start();
 
