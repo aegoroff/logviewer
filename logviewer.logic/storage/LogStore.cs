@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using logviewer.engine;
 using logviewer.logic.Annotations;
@@ -219,11 +220,17 @@ namespace logviewer.logic.storage
             string filter = null,
             bool useRegexp = true)
         {
-            var order = reverse ? "DESC" : "ASC"; // Not L10N
-
-            var where = this.Where(min, max, filter, useRegexp, start, finish);
-
-            var query = $"SELECT Header, Body {this.CreateAdditionalColumnsList()} FROM Log {where} ORDER BY Ix {order} LIMIT {limit} OFFSET {offset}";
+            var query = new StringBuilder();
+            query.Append("SELECT Header, Body ");
+            query.Append(this.CreateAdditionalColumnsList());
+            query.Append(" FROM Log ");
+            query.Append(this.Where(min, max, filter, useRegexp, start, finish));
+            query.Append(" ORDER BY Ix ");
+            query.Append(reverse ? "DESC" : "ASC");
+            query.Append(" LIMIT ");
+            query.Append(limit);
+            query.Append(" OFFSET ");
+            query.Append(offset);
 
             Action<IDbCommand> beforeRead = command => this.AddParameters(command, min, max, filter, useRegexp, start, finish);
             Action<IDataReader> onRead = delegate(IDataReader rdr)
@@ -245,7 +252,7 @@ namespace logviewer.logic.storage
 
                 onReadMessage(msg);
             };
-            this.connection.ExecuteReader(query, onRead, beforeRead, notCancelled);
+            this.connection.ExecuteReader(query.ToString(), onRead, beforeRead, notCancelled);
         }
 
         private PropertyType DefinePropertyType(string param)
@@ -280,8 +287,7 @@ namespace logviewer.logic.storage
                 return 0;
             }
 
-            var where = this.Where(min, max, filter, useRegexp, start, finish);
-            var query = $@"SELECT count(1) FROM Log {where}";
+            var query = @"SELECT count(1) FROM Log " + this.Where(min, max, filter, useRegexp, start, finish);
             Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, start, finish);
             var result = this.connection.ExecuteScalar<long>(query, addParameters);
             return result;
