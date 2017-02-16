@@ -17,15 +17,15 @@ namespace logviewer.tests
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.1.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class ReadLogFeature : Xunit.IClassFixture<ReadLogFeature.FixtureData>, System.IDisposable
+    public partial class SpecReadLogFeature : Xunit.IClassFixture<SpecReadLogFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "ReadLog.feature"
+#line 1 "SpecReadLog.feature"
 #line hidden
         
-        public ReadLogFeature()
+        public SpecReadLogFeature()
         {
             this.TestInitialize();
         }
@@ -33,7 +33,7 @@ namespace logviewer.tests
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "ReadLog", "\tReading log tests", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "SpecReadLog", "\tReading log tests", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -62,7 +62,7 @@ namespace logviewer.tests
             testRunner.CollectScenarioErrors();
         }
         
-        public virtual void SetFixture(ReadLogFeature.FixtureData fixtureData)
+        public virtual void SetFixture(SpecReadLogFeature.FixtureData fixtureData)
         {
         }
         
@@ -72,7 +72,7 @@ namespace logviewer.tests
         }
         
         [Xunit.FactAttribute(DisplayName="Read log from memory stream")]
-        [Xunit.TraitAttribute("FeatureTitle", "ReadLog")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecReadLog")]
         [Xunit.TraitAttribute("Description", "Read log from memory stream")]
         [Xunit.TraitAttribute("Category", "readlog")]
         public virtual void ReadLogFromMemoryStream()
@@ -101,12 +101,12 @@ this.ScenarioSetup(scenarioInfo);
             
             public FixtureData()
             {
-                ReadLogFeature.FeatureSetup();
+                SpecReadLogFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                ReadLogFeature.FeatureTearDown();
+                SpecReadLogFeature.FeatureTearDown();
             }
         }
     }

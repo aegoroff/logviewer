@@ -1,4 +1,4 @@
-﻿Feature: ReadLog
+﻿Feature: SpecReadLog
 	Reading log tests
 
 @readlog
