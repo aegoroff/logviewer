@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,14 +10,14 @@ using TechTalk.SpecFlow;
 namespace logviewer.tests
 {
     [Binding]
-    public class ReadLogSteps
+    public class SpecReadLog
     {
         private readonly Mock<ICharsetDetector> detector;
-        private LogReader reader;
         private readonly MemoryStream stream;
+        private LogReader reader;
         private List<LogMessage> result;
 
-        public ReadLogSteps()
+        public SpecReadLog()
         {
             this.detector = new Mock<ICharsetDetector>();
             this.stream = new MemoryStream();
@@ -50,6 +49,5 @@ namespace logviewer.tests
         {
             this.result[0].Header.Should().Be(msg);
         }
-
     }
 }
