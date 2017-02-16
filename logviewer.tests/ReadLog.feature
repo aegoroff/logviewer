@@ -1,11 +1,9 @@
 ﻿Feature: ReadLog
-	In order to avoid silly mistakes
-	As a math idiot
-	I want to be told the sum of two numbers
+	Reading log tests
 
-@mytag
+@readlog
 Scenario: Read log from memory stream
-	Given I have entered 50 into the calculator
-	And I have entered 70 into the calculator
-	When I press add
-	Then the result should be 120 on the screen
+	Given I have grok "^\[?%{TIMESTAMP_ISO8601:Occured:DateTime}\]?%{DATA}%{LOGLEVEL:Level:LogLevel}%{DATA}"
+	And I have "2008-12-27 19:31:47,250 [4688] INFO" message in the stream
+	When I start read log from stream
+	Then the read result should be "2008-12-27 19:31:47,250 [4688] INFO"
