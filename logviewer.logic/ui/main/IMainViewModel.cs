@@ -11,7 +11,7 @@ using logviewer.logic.storage;
 
 namespace logviewer.logic.ui.main
 {
-    public interface IMainViewModel : INotifyPropertyChanged, IUpdatable
+    public interface IMainViewModel : INotifyPropertyChanged, IUpdatable, IDisposable
     {
         int MinLevel { get; }
         int MaxLevel { get; }
@@ -23,7 +23,7 @@ namespace logviewer.logic.ui.main
         [PublicAPI]
         string LogProgressText { get; set; }
 
-        string LogPath { get; }
+        string LogPath { get; set; }
         string MessageFilter { get; }
         bool UseRegularExpressions { get; set; }
         ISettingsProvider SettingsProvider { get; }

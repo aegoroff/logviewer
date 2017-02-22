@@ -22,7 +22,7 @@ using logviewer.ui.Properties;
 
 namespace logviewer.ui
 {
-    public sealed class MainViewModel : IMainViewModel, IDisposable
+    public sealed class MainViewModel : IMainViewModel
     {
         private readonly ISettingsProvider settingsProvider =
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
