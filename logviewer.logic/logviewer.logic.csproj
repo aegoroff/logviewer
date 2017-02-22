@@ -72,6 +72,10 @@
       <HintPath>..\packages\Octokit.0.24.0\lib\net45\Octokit.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Stateless, Version=3.0.0.0, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stateless.3.1.0\lib\net45\Stateless.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -118,6 +122,8 @@
     <Compile Include="storage\ILogStore.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\Extensions.cs" />
+    <Compile Include="ui\main\LogWatcher.cs" />
+    <Compile Include="ui\main\MainMachine.cs" />
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
     <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />

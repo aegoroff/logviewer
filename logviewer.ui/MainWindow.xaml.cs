@@ -5,12 +5,10 @@
 // © 2012-2016 Alexander Egorov
 
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using logviewer.logic.support;
 using logviewer.logic.ui.main;
 using MenuItem = Fluent.MenuItem;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
@@ -23,27 +21,14 @@ namespace logviewer.ui
     public partial class MainWindow
     {
         private readonly MainModel model;
-        private readonly FileSystemWatcher logWatch;
+        private readonly MainMachine machine;
 
         public MainWindow()
         {
             this.InitializeComponent();
             MainViewModel.Current.Window = new WindowWrapper(this);
             this.model = new MainModel(MainViewModel.Current);
-            this.logWatch = new FileSystemWatcher();
-            this.logWatch.Changed += this.OnChangeLog;
-            this.logWatch.NotifyFilter = NotifyFilters.Size;
-        }
-
-        private void WatchLogFile(string path)
-        {
-            if (!File.Exists(path))
-            {
-                return;
-            }
-            this.logWatch.Path = Path.GetDirectoryName(path);
-            this.logWatch.Filter = Path.GetFileName(path);
-            this.logWatch.EnableRaisingEvents = true;
+            this.machine = new MainMachine(this.model, MainViewModel.Current);
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)
@@ -81,36 +66,22 @@ namespace logviewer.ui
             {
                 return;
             }
-            MainViewModel.Current.LogPath = openFileDialog.FileName;
-            this.model.ReadNewLog();
-            this.WatchLogFile(MainViewModel.Current.LogPath);
+            this.machine.Open(openFileDialog.FileName);
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            this.logWatch.Dispose();
-            this.model.Dispose();
-            MainViewModel.Current.Dispose();
+            this.machine.Close();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            this.model.LoadLastOpenedFile();
-            this.WatchLogFile(MainViewModel.Current.LogPath);
+            this.machine.Start();
         }
 
         private void OnUpdate(object sender, ExecutedRoutedEventArgs e)
         {
-            this.model.ReadNewLog();
-        }
-
-        private void OnChangeLog(object sender, FileSystemEventArgs e)
-        {
-            if (e.ChangeType == WatcherChangeTypes.Changed)
-            {
-                Log.Instance.TraceFormatted("Log {0} change event: {1}", e.FullPath, e.ChangeType);
-                this.model.UpdateLog(e.FullPath);
-            }
+            this.machine.Reload();
         }
 
         private void OnStatistic(object sender, ExecutedRoutedEventArgs e)
@@ -123,7 +94,7 @@ namespace logviewer.ui
             var dlg = new SettingsDlg(MainViewModel.Current.SettingsProvider);
             using (dlg)
             {
-                dlg.SetApplyAction(refresh => this.model.UpdateSettings(refresh));
+                dlg.SetApplyAction(refresh => this.model.UpdateMatcherAndRefreshLog(refresh));
                 dlg.ShowDialog();
             }
             ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);

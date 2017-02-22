@@ -160,7 +160,7 @@ namespace logviewer.logic.ui.main
             this.viewModel.Datasource.ChangeVisible(this.viewModel.Visible);
         }
 
-        public void UpdateSettings(bool refresh)
+        public void UpdateMatcherAndRefreshLog(bool refresh)
         {
             this.matcher = new MessageMatcher(this.settings.ReadParsingTemplate(), RegexOptions.ExplicitCapture);
             if (refresh)
@@ -570,7 +570,7 @@ namespace logviewer.logic.ui.main
         {
             this.CancelPreviousRead();
             this.ClearCache();
-            this.UpdateSettings(true);
+            this.UpdateMatcherAndRefreshLog(true);
         }
 
         public void AddCurrentFileToRecentFilesList()
