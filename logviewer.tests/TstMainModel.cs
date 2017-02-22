@@ -144,7 +144,7 @@ namespace logviewer.tests
             this.viewModel.SetupSet(v => v.UiControlsEnabled = false);
 
             this.model.ClearCache();
-            this.model.UpdateSettings(false);
+            this.model.UpdateMatcherAndRefreshLog(false);
             this.model.StartReadingLogOnFilterChange();
             this.WaitReadingComplete();
             this.model.Store.CountMessages().Should().Be(4);

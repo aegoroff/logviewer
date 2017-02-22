@@ -94,7 +94,7 @@ namespace logviewer.ui
             var dlg = new SettingsDlg(MainViewModel.Current.SettingsProvider);
             using (dlg)
             {
-                dlg.SetApplyAction(refresh => this.model.UpdateSettings(refresh));
+                dlg.SetApplyAction(refresh => this.model.UpdateMatcherAndRefreshLog(refresh));
                 dlg.ShowDialog();
             }
             ReloadTemplates(MainViewModel.Current.SelectedParsingTemplate);
