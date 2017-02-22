@@ -26,6 +26,7 @@ namespace logviewer.tests
         private readonly MainModel model;
         private readonly Mock<IMainViewModel> viewModel;
         private bool completed;
+        private bool waitResult;
 
         private string path;
 
@@ -60,13 +61,15 @@ namespace logviewer.tests
         [When(@"I press open with default filtering parameters")]
         public void WhenIPressOpenWithDefaultFilteringParameters()
         {
-            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int) LogLevel.Trace);
-            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int) LogLevel.Fatal);
-            this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
-            this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
-            this.machine.Open(this.path);
+            this.Open(LogLevel.Trace, LogLevel.Fatal);
         }
 
+        [When(@"I press open with default filtering parameters and then reload")]
+        public void WhenIPressOpenWithDefaultFilteringParametersAndThenReload()
+        {
+            this.Open(LogLevel.Trace, LogLevel.Fatal);
+            this.Reload();
+        }
 
         [When(@"I press open with min level ""(.*)"" and max level ""(.*)""")]
         public void WhenIPressOpenWithMinLevelAndMaxLevel(string min, string max)
@@ -77,19 +80,14 @@ namespace logviewer.tests
             LogLevel maxLevel;
             Enum.TryParse(max, out maxLevel);
 
-            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int) minLevel);
-            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int) maxLevel);
-            this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
-            this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
-            this.machine.Open(this.path);
+            this.Open(minLevel, maxLevel);
         }
 
 
         [Then(@"the number of shown messages should be (.*)")]
         public void ThenTheNumberOfReadMessagesShouldBeInTheLogStore(int messagesCount)
         {
-            var result = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(2));
-            result.Should().BeTrue("Read should be completed in 2 second but it didn't");
+            this.waitResult.Should().BeTrue("Read should be completed in 2 second but it didn't");
             this.viewModel.VerifySet(x => x.MessageCount = messagesCount);
             this.model.Store.CountMessages().Should().Be(2);
         }
@@ -100,6 +98,22 @@ namespace logviewer.tests
             if (File.Exists(this.path))
                 File.Delete(this.path);
             this.machine.Close();
+        }
+
+        private void Open(LogLevel minLevel, LogLevel maxLevel)
+        {
+            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int)minLevel);
+            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int)maxLevel);
+            this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
+            this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
+            this.machine.Open(this.path);
+            this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(2));
+        }
+
+        private void Reload()
+        {
+            this.machine.Reload();
+            this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(2));
         }
 
         private void OnReadCompleted(object sender, EventArgs e)
