@@ -64,12 +64,12 @@ namespace logviewer.tests
             this.Open(LogLevel.Trace, LogLevel.Fatal);
         }
 
-        [When(@"I press open with default filtering parameters and then reload")]
-        public void WhenIPressOpenWithDefaultFilteringParametersAndThenReload()
+        [When(@"I press reload")]
+        public void WhenIPressReload()
         {
-            this.Open(LogLevel.Trace, LogLevel.Fatal);
-            this.Reload();
+            this.machine.Reload();
         }
+
 
         [When(@"I press open with min level ""(.*)"" and max level ""(.*)""")]
         public void WhenIPressOpenWithMinLevelAndMaxLevel(string min, string max)
@@ -83,6 +83,11 @@ namespace logviewer.tests
             this.Open(minLevel, maxLevel);
         }
 
+        [When(@"wait (.*) seconds")]
+        public void WhenWaitSeconds(int seconds)
+        {
+            this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(seconds));
+        }
 
         [Then(@"the number of shown messages should be (.*)")]
         public void ThenTheNumberOfReadMessagesShouldBeInTheLogStore(int messagesCount)
@@ -107,13 +112,6 @@ namespace logviewer.tests
             this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
             this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
             this.machine.Open(this.path);
-            this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(2));
-        }
-
-        private void Reload()
-        {
-            this.machine.Reload();
-            this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(2));
         }
 
         private void OnReadCompleted(object sender, EventArgs e)
