@@ -99,12 +99,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpecReadLog.feature.cs">
+    <Compile Include="SpecOpenLogFile.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>SpecReadLog.feature</DependentUpon>
+      <DependentUpon>SpecOpenLogFile.feature</DependentUpon>
     </Compile>
-    <Compile Include="SpecReadLog.cs" />
+    <Compile Include="SpecOpenLogFileSteps.cs" />
     <Compile Include="support\Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="support\States.cs" />
@@ -140,9 +140,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="SpecReadLog.feature">
+    <None Include="SpecOpenLogFile.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>SpecReadLog.feature.cs</LastGenOutput>
+      <LastGenOutput>SpecOpenLogFile.feature.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
