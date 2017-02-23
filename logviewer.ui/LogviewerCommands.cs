@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 11.11.2015
-// © 2012-2016 Alexander Egorov
+// © 2012-2017 Alexander Egorov
 
 using System.Windows.Input;
 

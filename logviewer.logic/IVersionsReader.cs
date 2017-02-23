@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 29.03.2014
-// © 2012-2016 Alexander Egorov
+// © 2012-2017 Alexander Egorov
 
 using System;
 using logviewer.logic.Annotations;
@@ -10,7 +10,7 @@ using logviewer.logic.models;
 
 namespace logviewer.logic
 {
-    public interface IVersionsReader
+    public interface IVersionsReader : IDisposable
     {
         [PublicAPI]
         void ReadReleases();

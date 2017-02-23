@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 07.11.2015
-// © 2012-2016 Alexander Egorov
+// © 2012-2017 Alexander Egorov
 
 using System;
 using System.Collections.Concurrent;
@@ -54,7 +54,6 @@ namespace logviewer.logic.ui.main
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         public event EventHandler<EventArgs> ReadCompleted;
-        private const int CheckUpdatesEveryDays = 7;
         private bool readCompleted = true;
         private const int WaitCancelSeconds = 5;
         private const int LogChangedThrottleIntervalMilliseconds = 500;
@@ -66,7 +65,6 @@ namespace logviewer.logic.ui.main
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
             this.backgroundScheduler = backgroundScheduler ?? Scheduler.Default;
-            this.VersionsReader = new VersionsReader(this.viewModel.GithubAccount, this.viewModel.GithubProject);
             viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
 
             var logChangedObservable = Observable.Create<string>(observer =>
@@ -125,8 +123,6 @@ namespace logviewer.logic.ui.main
             this.StartLogReadingTask();
         }
 
-        private VersionsReader VersionsReader { get; }
-
         private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
             switch (propertyChangedEventArgs.PropertyName)
@@ -166,43 +162,6 @@ namespace logviewer.logic.ui.main
             {
                 this.StartLogReadingTask();
             }
-        }
-
-        /// <summary>
-        /// Check updates available
-        /// </summary>
-        /// <param name="manualInvoke">Whether to show no update available in GUI. False by default</param>
-        public void CheckUpdates(bool manualInvoke = false)
-        {
-            if (!manualInvoke)
-            {
-                if (DateTime.UtcNow < this.settings.LastUpdateCheckTime.AddDays(CheckUpdatesEveryDays))
-                {
-                    return;
-                }
-            }
-            var checker = new UpdatesChecker(this.VersionsReader);
-
-            var observable = Observable.Return(checker, this.backgroundScheduler);
-
-            this.settings.LastUpdateCheckTime = DateTime.UtcNow;
-
-            observable.Subscribe(
-                c =>
-                {
-                    c.CheckUpdatesAvaliable(result =>
-                    {
-                        if (!result)
-                        {
-                            if (manualInvoke)
-                            {
-                                this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
-                            }
-                            return;
-                        }
-                        this.RunOnGuiThread(() => this.viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
-                    });
-                });
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -597,7 +556,6 @@ namespace logviewer.logic.ui.main
              MessageId = "store")]
         public void Dispose()
         {
-            this.VersionsReader.Dispose();
             this.queue.Shutdown(true);
             try
             {
