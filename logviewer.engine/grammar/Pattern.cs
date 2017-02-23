@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{content}")]
+    [DebuggerDisplay("{" + nameof(content) + "}")]
     internal class Pattern : IPattern
     {
         private readonly string content;

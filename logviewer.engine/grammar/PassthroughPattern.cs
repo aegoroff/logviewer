@@ -11,7 +11,7 @@ namespace logviewer.engine.grammar
     [DebuggerDisplay("{content}")]
     internal class PassthroughPattern : Pattern
     {
-        internal const string Start = "%{";
+        private const string Start = "%{";
         private const string Stop = "}";
 
         internal PassthroughPattern(string content)
