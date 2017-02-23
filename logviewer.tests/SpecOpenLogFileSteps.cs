@@ -26,14 +26,15 @@ namespace logviewer.tests
         private const string MessageTemplate =
             "2008-12-27 19:31:47,250 [4688] {0} \nmessage body {1}";
 
-        private readonly MainMachine machine;
         private readonly MainModel model;
         private readonly Mock<IMainViewModel> viewModel;
-        private Mock<ISettingsProvider> settings;
+
+        private readonly LogWorkflow workflow;
         private bool completed;
-        private bool waitResult;
 
         private string path;
+        private Mock<ISettingsProvider> settings;
+        private bool waitResult;
 
         public SpecOpenLogFileSteps()
         {
@@ -52,7 +53,7 @@ namespace logviewer.tests
 
             this.model = new MainModel(this.viewModel.Object);
             this.model.ReadCompleted += this.OnReadCompleted;
-            this.machine = new MainMachine(this.model, this.viewModel.Object);
+            this.workflow = new LogWorkflow(this.model, this.viewModel.Object);
         }
 
         [Given(@"I have file ""(.*)"" on disk")]
@@ -84,7 +85,7 @@ namespace logviewer.tests
         [When(@"I press reload")]
         public void WhenIPressReload()
         {
-            this.machine.Reload();
+            this.workflow.Reload();
         }
 
 
@@ -113,12 +114,12 @@ namespace logviewer.tests
 
             this.settings.Setup(x => x.GetUsingRecentFilesStore(It.IsAny<Func<RecentItemsStore, string>>())).Returns(this.path);
 
-            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int)LogLevel.Trace);
-            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int)LogLevel.Fatal);
+            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int) LogLevel.Trace);
+            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int) LogLevel.Fatal);
             this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
             this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
 
-            this.machine.Start();
+            this.workflow.Start();
         }
 
         [Then(@"the number of shown messages should be (.*)")]
@@ -132,17 +133,19 @@ namespace logviewer.tests
         public void AfterScenario()
         {
             if (File.Exists(this.path))
+            {
                 File.Delete(this.path);
-            this.machine.Close();
+            }
+            this.workflow.Close();
         }
 
         private void Open(LogLevel minLevel, LogLevel maxLevel)
         {
-            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int)minLevel);
-            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int)maxLevel);
+            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int) minLevel);
+            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int) maxLevel);
             this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
             this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
-            this.machine.Open(this.path);
+            this.workflow.Open(this.path);
         }
 
         private void OnReadCompleted(object sender, EventArgs e)

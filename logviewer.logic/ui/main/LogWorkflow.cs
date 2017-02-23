@@ -3,16 +3,16 @@ using Stateless;
 
 namespace logviewer.logic.ui.main
 {
-    public class MainMachine : IDisposable
+    public class LogWorkflow : IDisposable
     {
-        private readonly MainModel model;
-        private readonly IMainViewModel viewModel;
-        private readonly StateMachine<State, Trigger>.TriggerWithParameters<string> openTrigger;
-        private readonly StateMachine<State, Trigger> machine;
-        private State state = State.Closed;
         private readonly LogWatcher logWatch;
+        private readonly StateMachine<State, Trigger> machine;
+        private readonly MainModel model;
+        private readonly StateMachine<State, Trigger>.TriggerWithParameters<string> openTrigger;
+        private readonly IMainViewModel viewModel;
+        private State state = State.Closed;
 
-        public MainMachine(MainModel model, IMainViewModel viewModel)
+        public LogWorkflow(MainModel model, IMainViewModel viewModel)
         {
             this.model = model;
             this.viewModel = viewModel;
@@ -33,6 +33,13 @@ namespace logviewer.logic.ui.main
                 .PermitReentry(Trigger.Open)
                 .PermitReentry(Trigger.Reload)
                 .Permit(Trigger.Close, State.Closed);
+        }
+
+        public void Dispose()
+        {
+            this.model?.Dispose();
+            this.viewModel?.Dispose();
+            this.logWatch?.Dispose();
         }
 
 
@@ -86,13 +93,6 @@ namespace logviewer.logic.ui.main
             Start,
             Reload,
             Close
-        }
-
-        public void Dispose()
-        {
-            this.model?.Dispose();
-            this.viewModel?.Dispose();
-            this.logWatch?.Dispose();
         }
     }
 }

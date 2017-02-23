@@ -123,7 +123,7 @@
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\Extensions.cs" />
     <Compile Include="ui\main\LogWatcher.cs" />
-    <Compile Include="ui\main\MainMachine.cs" />
+    <Compile Include="ui\main\LogWorkflow.cs" />
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
     <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />
