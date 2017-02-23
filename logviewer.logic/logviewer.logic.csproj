@@ -125,6 +125,7 @@
     <Compile Include="ui\main\LogWatcher.cs" />
     <Compile Include="ui\main\LogWorkflow.cs" />
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
+    <Compile Include="ui\main\UpdatesCheckingModel.cs" />
     <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />

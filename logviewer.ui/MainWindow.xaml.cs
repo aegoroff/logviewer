@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 04.08.2015
-// © 2012-2016 Alexander Egorov
+// © 2012-2017 Alexander Egorov
 
 using System.ComponentModel;
 using System.Windows;
@@ -21,6 +21,7 @@ namespace logviewer.ui
     public partial class MainWindow
     {
         private readonly MainModel model;
+        private readonly UpdatesCheckingModel updatesCheckingModel;
         private readonly LogWorkflow workflow;
 
         public MainWindow()
@@ -28,11 +29,13 @@ namespace logviewer.ui
             this.InitializeComponent();
             MainViewModel.Current.Window = new WindowWrapper(this);
             this.model = new MainModel(MainViewModel.Current);
+            this.updatesCheckingModel = new UpdatesCheckingModel(MainViewModel.Current);
             this.workflow = new LogWorkflow(this.model, MainViewModel.Current);
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)
         {
+            this.updatesCheckingModel.Dispose();
             this.Close();
         }
 
@@ -138,7 +141,7 @@ namespace logviewer.ui
 
         private void OnCheckUpdates(object sender, ExecutedRoutedEventArgs e)
         {
-            this.model.CheckUpdates(true);
+            this.updatesCheckingModel.CheckUpdates(true);
         }
 
         private void OnHelp(object sender, ExecutedRoutedEventArgs e)

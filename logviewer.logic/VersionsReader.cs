@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 29.03.2014
-// © 2012-2016 Alexander Egorov
+// © 2012-2017 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using Octokit;
 
 namespace logviewer.logic
 {
-    internal class VersionsReader : IVersionsReader, IDisposable
+    internal class VersionsReader : IVersionsReader
     {
         private readonly string account;
         private readonly string project;
