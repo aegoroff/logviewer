@@ -23,7 +23,8 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
-            this.logWatch.Path = Path.GetDirectoryName(path);
+            var directory = Path.GetDirectoryName(path);
+            this.logWatch.Path = string.IsNullOrWhiteSpace(directory) ? "." : directory;
             this.logWatch.Filter = Path.GetFileName(path);
             this.logWatch.EnableRaisingEvents = true;
         }

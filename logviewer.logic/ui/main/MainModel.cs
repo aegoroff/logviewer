@@ -51,7 +51,6 @@ namespace logviewer.logic.ui.main
         private readonly ProducerConsumerMessageQueue queue =
             new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
 
-        private readonly Stopwatch probeWatch = new Stopwatch();
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
         public event EventHandler<EventArgs> ReadCompleted;
@@ -271,7 +270,7 @@ namespace logviewer.logic.ui.main
 
         private void UpdateRecentFilters(string value = null)
         {
-            this.settings.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
+            this.settings.ExecuteUsingRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -331,22 +330,34 @@ namespace logviewer.logic.ui.main
             {
                 this.totalMessages = 0;
             }
+            this.ReadLog(logPath, offset);
+            this.UpdateStatisticByLevel();
+            this.AfterDatabaseCreation(false);
+        }
+
+        private void ReadLog(string logPath, long offset)
+        {
+            var probeWatch = new Stopwatch();
+            probeWatch.Start();
+
             this.reader.ProgressChanged += this.OnReadLogProgressChanged;
             this.reader.CompilationStarted += this.OnCompilationStarted;
             this.reader.CompilationFinished += this.OnCompilationFinished;
             this.reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             this.reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
+
             Encoding inputEncoding;
             this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
+
             try
             {
                 this.queue.ResetQueuedCount();
 
                 this.RunReading(logPath, inputEncoding, offset);
 
-                this.probeWatch.Stop();
+                probeWatch.Stop();
 
-                this.FinishLoading();
+                this.FinishLoading(probeWatch.Elapsed);
 
                 SpinWait.SpinUntil(
                     () => this.queue.ReadCompleted || this.reader.Cancelled);
@@ -372,8 +383,6 @@ namespace logviewer.logic.ui.main
                     this.readCompleted = true;
                 }
             }
-            this.UpdateStatisticByLevel();
-            this.AfterDatabaseCreation(false);
         }
 
         private void InitNewStoreIfNecessary(bool append)
@@ -404,9 +413,8 @@ namespace logviewer.logic.ui.main
             this.byLevel = this.store.CountByLevel(string.Empty, false, true).Select(x => ToHumanReadableString(x.Value)).ToArray();
         }
 
-        private void FinishLoading()
+        private void FinishLoading(TimeSpan elapsed)
         {
-            var elapsed = this.probeWatch.Elapsed;
             var pending = this.queue.QueuedMessages;
             var inserted = this.totalMessages - pending;
             var insertRatio = inserted / elapsed.TotalSeconds;
@@ -447,7 +455,6 @@ namespace logviewer.logic.ui.main
 
         private void OnEncodingDetectionFinished(object sender, EncodingDetectedEventArgs e)
         {
-            this.probeWatch.Restart();
             this.viewModel.LogProgressText = string.Empty;
             this.viewModel.LogEncoding = e.ToString();
 
@@ -455,7 +462,6 @@ namespace logviewer.logic.ui.main
             {
                 this.filesEncodingCache.Add(this.currentPath, e.Encoding);
             }
-
         }
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
@@ -555,9 +561,7 @@ namespace logviewer.logic.ui.main
                 return;
             }
 
-            var lastOpenedFile = string.Empty;
-
-            this.settings.UseRecentFilesStore(filesStore => lastOpenedFile = filesStore.ReadLastUsedItem());
+            var lastOpenedFile = this.settings.GetUsingRecentFilesStore(filesStore => filesStore.ReadLastUsedItem());
 
             if (string.IsNullOrWhiteSpace(lastOpenedFile))
             {
@@ -575,7 +579,7 @@ namespace logviewer.logic.ui.main
 
         public void AddCurrentFileToRecentFilesList()
         {
-            this.settings.UseRecentFilesStore(s => s.Add(this.viewModel.LogPath));
+            this.settings.ExecuteUsingRecentFilesStore(s => s.Add(this.viewModel.LogPath));
         }
 
         private long logSize;

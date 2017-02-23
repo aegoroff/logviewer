@@ -55,16 +55,18 @@ namespace logviewer.logic.storage
         private const int HeaderFontSize = 10;
         private const int BodyFontSize = 9;
         private const int KeepLastFilters = 20;
+        private const string RecentFiles = @"RecentFiles";
+        private const string RecentFilters = @"RecentFilters";
 
         private static readonly Dictionary<LogLevel, Color> defaultColors = new Dictionary<LogLevel, Color>
         {
-            {LogLevel.None, Color.Black},
-            {LogLevel.Trace, Color.FromArgb(200, 200, 200)},
-            {LogLevel.Debug, Color.FromArgb(100, 100, 100)},
-            {LogLevel.Info, Color.Green},
-            {LogLevel.Warn, Color.Orange},
-            {LogLevel.Error, Color.Red},
-            {LogLevel.Fatal, Color.DarkViolet}
+            { LogLevel.None, Color.Black },
+            { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
+            { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
+            { LogLevel.Info, Color.Green },
+            { LogLevel.Warn, Color.Orange },
+            { LogLevel.Error, Color.Red },
+            { LogLevel.Fatal, Color.DarkViolet }
         };
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
@@ -419,14 +421,24 @@ namespace logviewer.logic.storage
             return this.bodyFormatsMap[level];
         }
 
-        public void UseRecentFilesStore(Action<RecentItemsStore> action)
+        public void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action)
         {
-            this.UseRecentItemsStore(action, @"RecentFiles");
+            this.RunUsingRecentItemsStore(action, RecentFiles);
         }
 
-        public void UseRecentFiltersStore(Action<RecentItemsStore> action)
+        public void ExecuteUsingRecentFiltersStore(Action<RecentItemsStore> action)
         {
-            this.UseRecentItemsStore(action, @"RecentFilters", KeepLastFilters);
+            this.RunUsingRecentItemsStore(action, RecentFilters, KeepLastFilters);
+        }
+
+        public T GetUsingRecentFilesStore<T>(Func<RecentItemsStore, T> function)
+        {
+            return this.GetUsingRecentItemsStore(function, RecentFiles);
+        }
+
+        public T GetUsingRecentFiltersStore<T>(Func<RecentItemsStore, T> function)
+        {
+            return this.GetUsingRecentItemsStore(function, RecentFilters, KeepLastFilters);
         }
 
         public IOptionsProvider OptionsProvider => this.optionsProvider;
@@ -728,7 +740,7 @@ namespace logviewer.logic.storage
             return GetIntValue(key) == 1;
         }
 
-        private void UseRecentItemsStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
+        private void RunUsingRecentItemsStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
         {
             try
             {
@@ -741,6 +753,22 @@ namespace logviewer.logic.storage
             {
                 Log.Instance.Debug(e);
             }
+        }
+
+        private T GetUsingRecentItemsStore<T>(Func<RecentItemsStore, T> function, string table, int maxItems = 0)
+        {
+            try
+            {
+                using (var itemsStore = new RecentItemsStore(this, table, maxItems))
+                {
+                    return function(itemsStore);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Debug(e);
+            }
+            return default(T);
         }
     }
 }

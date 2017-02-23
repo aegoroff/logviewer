@@ -21,14 +21,14 @@ namespace logviewer.ui
     public partial class MainWindow
     {
         private readonly MainModel model;
-        private readonly MainMachine machine;
+        private readonly LogWorkflow workflow;
 
         public MainWindow()
         {
             this.InitializeComponent();
             MainViewModel.Current.Window = new WindowWrapper(this);
             this.model = new MainModel(MainViewModel.Current);
-            this.machine = new MainMachine(this.model, MainViewModel.Current);
+            this.workflow = new LogWorkflow(this.model, MainViewModel.Current);
         }
 
         private void OnExitApp(object sender, RoutedEventArgs e)
@@ -66,22 +66,22 @@ namespace logviewer.ui
             {
                 return;
             }
-            this.machine.Open(openFileDialog.FileName);
+            this.workflow.Open(openFileDialog.FileName);
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            this.machine.Close();
+            this.workflow.Close();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            this.machine.Start();
+            this.workflow.Start();
         }
 
         private void OnUpdate(object sender, ExecutedRoutedEventArgs e)
         {
-            this.machine.Reload();
+            this.workflow.Reload();
         }
 
         private void OnStatistic(object sender, ExecutedRoutedEventArgs e)

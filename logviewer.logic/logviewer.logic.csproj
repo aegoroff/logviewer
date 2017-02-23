@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.3\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -123,7 +123,7 @@
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\Extensions.cs" />
     <Compile Include="ui\main\LogWatcher.cs" />
-    <Compile Include="ui\main\MainMachine.cs" />
+    <Compile Include="ui\main\LogWorkflow.cs" />
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
     <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />

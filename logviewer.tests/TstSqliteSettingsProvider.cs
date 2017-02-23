@@ -5,7 +5,6 @@
 // © 2012-2016 Alexander Egorov
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -189,8 +188,7 @@ namespace logviewer.tests
         [Fact]
         public void ReadRecentFilesEmpty()
         {
-            IEnumerable<string> files = null;
-            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            var files = this.provider.GetUsingRecentFilesStore(store => store.ReadItems());
             files.Should().BeEmpty();
         }
 
@@ -198,10 +196,8 @@ namespace logviewer.tests
         public void SaveAndReadRecentFilesOneFile()
         {
             const string f = "f1";
-            IEnumerable<string> files = null;
-
-            this.provider.UseRecentFilesStore(store => store.Add(f));
-            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            this.provider.ExecuteUsingRecentFilesStore(store => store.Add(f));
+            var files = this.provider.GetUsingRecentFilesStore(store => store.ReadItems());
             files.Should().BeEquivalentTo(f);
         }
 
@@ -210,11 +206,10 @@ namespace logviewer.tests
         {
             const string f1 = "f1";
             const string f2 = "f2";
-            IEnumerable<string> files = null;
 
-            this.provider.UseRecentFilesStore(store => store.Add(f1));
-            this.provider.UseRecentFilesStore(store => store.Add(f2));
-            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            this.provider.ExecuteUsingRecentFilesStore(store => store.Add(f1));
+            this.provider.ExecuteUsingRecentFilesStore(store => store.Add(f2));
+            var files = this.provider.GetUsingRecentFilesStore(store => store.ReadItems());
             files.Should().BeEquivalentTo(f1, f2);
         }
 
@@ -224,14 +219,13 @@ namespace logviewer.tests
             const string f1 = "f1";
             const string f2 = "f2";
             const string f3 = "f3";
-            IEnumerable<string> files = null;
 
-            this.provider.UseRecentFilesStore(store => store.Add(f1));
+            this.provider.ExecuteUsingRecentFilesStore(store => store.Add(f1));
             Thread.Sleep(60);
-            this.provider.UseRecentFilesStore(store => store.Add(f2));
+            this.provider.ExecuteUsingRecentFilesStore(store => store.Add(f2));
             Thread.Sleep(60);
-            this.provider.UseRecentFilesStore(store => store.Add(f3));
-            this.provider.UseRecentFilesStore(store => files = store.ReadItems());
+            this.provider.ExecuteUsingRecentFilesStore(store => store.Add(f3));
+            var files = this.provider.GetUsingRecentFilesStore(store => store.ReadItems());
             files.Should().BeEquivalentTo(f2, f3);
         }
     }
