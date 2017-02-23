@@ -88,7 +88,6 @@ namespace logviewer.tests
             this.workflow.Reload();
         }
 
-
         [When(@"I press open with min level ""(.*)"" and max level ""(.*)""")]
         public void WhenIPressOpenWithMinLevelAndMaxLevel(string min, string max)
         {
