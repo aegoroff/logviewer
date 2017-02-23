@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using FluentAssertions;
 using logviewer.engine;
@@ -21,6 +22,9 @@ namespace logviewer.tests
     {
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
+
+        private const string MessageTemplate =
+            "2008-12-27 19:31:47,250 [4688] {0} \nmessage body {1}";
 
         private readonly MainMachine machine;
         private readonly MainModel model;
@@ -55,7 +59,19 @@ namespace logviewer.tests
         {
             this.path = filePath;
             this.viewModel.SetupGet(_ => _.LogPath).Returns(this.path);
-            File.WriteAllText(this.path, MessageExamples);
+        }
+
+        [Given(@"The file contains (.*) messages with levels ""(.*)"" and ""(.*)""")]
+        public void GivenTheFileContainsMessagesWithLevelsAnd(int count, string level1, string level2)
+        {
+            var sb = new StringBuilder();
+            var levels = new[] { level1, level2 };
+            for (var i = 0; i < count; i++)
+            {
+                sb.AppendFormat(MessageTemplate, levels[i % levels.Length], i + 1);
+                sb.AppendLine();
+            }
+            File.WriteAllText(this.path, sb.ToString());
         }
 
         [When(@"I press open with default filtering parameters")]
@@ -94,7 +110,6 @@ namespace logviewer.tests
         {
             this.waitResult.Should().BeTrue("Read should be completed in 2 second but it didn't");
             this.viewModel.VerifySet(x => x.MessageCount = messagesCount);
-            this.model.Store.CountMessages().Should().Be(2);
         }
 
         [AfterScenario("mainmodel")]

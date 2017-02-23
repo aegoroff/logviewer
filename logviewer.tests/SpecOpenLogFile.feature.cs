@@ -84,33 +84,109 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
  testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 7
- testRunner.When("I press open with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 8
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I press open with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
+   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 10
  testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
-        [Xunit.FactAttribute(DisplayName="Filtering by level")]
+        [Xunit.FactAttribute(DisplayName="All messages filtered by level")]
         [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
-        [Xunit.TraitAttribute("Description", "Filtering by level")]
+        [Xunit.TraitAttribute("Description", "All messages filtered by level")]
         [Xunit.TraitAttribute("Category", "mainmodel")]
-        public virtual void FilteringByLevel()
+        public virtual void AllMessagesFilteredByLevel()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Filtering by level", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("All messages filtered by level", new string[] {
                         "mainmodel"});
-#line 12
-this.ScenarioSetup(scenarioInfo);
 #line 13
- testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
 #line 14
- testRunner.When("I press open with min level \"Fatal\" and max level \"Fatal\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 15
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 16
+ testRunner.When("I press open with min level \"Fatal\" and max level \"Fatal\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 17
+   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
  testRunner.Then("the number of shown messages should be 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Some messages filtered by level min equal max")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Some messages filtered by level min equal max")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void SomeMessagesFilteredByLevelMinEqualMax()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Some messages filtered by level min equal max", new string[] {
+                        "mainmodel"});
+#line 21
+this.ScenarioSetup(scenarioInfo);
+#line 22
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 23
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
+ testRunner.When("I press open with min level \"Info\" and max level \"Info\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 25
+   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 26
+ testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Some messages filtered by level min less max")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Some messages filtered by level min less max")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void SomeMessagesFilteredByLevelMinLessMax()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Some messages filtered by level min less max", new string[] {
+                        "mainmodel"});
+#line 29
+this.ScenarioSetup(scenarioInfo);
+#line 30
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 31
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 32
+ testRunner.When("I press open with min level \"Trace\" and max level \"Info\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 33
+   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 34
+ testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Some messages filtered by level min greater max")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Some messages filtered by level min greater max")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void SomeMessagesFilteredByLevelMinGreaterMax()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Some messages filtered by level min greater max", new string[] {
+                        "mainmodel"});
+#line 37
+this.ScenarioSetup(scenarioInfo);
+#line 38
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 39
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 40
+ testRunner.When("I press open with min level \"Info\" and max level \"Warn\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 41
+   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 42
+ testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -123,19 +199,21 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("No filtering case. reload", new string[] {
                         "mainmodel"});
-#line 19
+#line 45
 this.ScenarioSetup(scenarioInfo);
-#line 20
+#line 46
  testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 21
+#line 47
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 48
  testRunner.When("I press open with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 22
+#line 49
    testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 23
+#line 50
    testRunner.And("I press reload", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 24
+#line 51
    testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 25
+#line 52
  testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
