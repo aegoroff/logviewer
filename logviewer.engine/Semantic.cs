@@ -13,7 +13,7 @@ namespace logviewer.engine
     /// <summary>
     /// Represent all possible transformations for a named property
     /// </summary>
-    [DebuggerDisplay("{Property}")]
+    [DebuggerDisplay("{" + nameof(Property) + "}")]
     public struct Semantic
     {
         private readonly string property;

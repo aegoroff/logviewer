@@ -13,7 +13,7 @@ namespace logviewer.engine
     /// <summary>
     /// Represents metadata rule
     /// </summary>
-    [DebuggerDisplay("{Pattern}")]
+    [DebuggerDisplay("{" + nameof(Pattern) + "}")]
     public struct GrokRule
     {
         internal const string DefaultPattern = @"*";
