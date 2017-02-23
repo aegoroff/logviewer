@@ -29,6 +29,7 @@ namespace logviewer.tests
         private readonly MainMachine machine;
         private readonly MainModel model;
         private readonly Mock<IMainViewModel> viewModel;
+        private Mock<ISettingsProvider> settings;
         private bool completed;
         private bool waitResult;
 
@@ -37,17 +38,17 @@ namespace logviewer.tests
         public SpecOpenLogFileSteps()
         {
             this.viewModel = new Mock<IMainViewModel>();
-            var settings = new Mock<ISettingsProvider>();
+            this.settings = new Mock<ISettingsProvider>();
             var itemsProvider = new Mock<IItemsProvider<string>>();
-            this.viewModel.SetupGet(_ => _.SettingsProvider).Returns(settings.Object);
-            var logProvider = new LogProvider(null, settings.Object);
+            this.viewModel.SetupGet(_ => _.SettingsProvider).Returns(this.settings.Object);
+            var logProvider = new LogProvider(null, this.settings.Object);
             this.viewModel.SetupGet(_ => _.Provider).Returns(logProvider);
             this.viewModel.SetupGet(_ => _.Datasource).Returns(new VirtualizingCollection<string>(itemsProvider.Object));
             this.viewModel.SetupGet(_ => _.GithubAccount).Returns("egoroff");
             this.viewModel.SetupGet(_ => _.GithubProject).Returns("logviewer");
 
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
-            settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
+            this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
 
             this.model = new MainModel(this.viewModel.Object);
             this.model.ReadCompleted += this.OnReadCompleted;
@@ -105,10 +106,25 @@ namespace logviewer.tests
             this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(seconds));
         }
 
+        [When(@"I start application with default filtering parameters")]
+        public void WhenIStartApplicationWithDefaultFilteringParameters()
+        {
+            this.settings.SetupGet(x => x.OpenLastFile).Returns(true);
+
+            this.settings.Setup(x => x.GetUsingRecentFilesStore(It.IsAny<Func<RecentItemsStore, string>>())).Returns(this.path);
+
+            this.viewModel.SetupGet(_ => _.MinLevel).Returns((int)LogLevel.Trace);
+            this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int)LogLevel.Fatal);
+            this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
+            this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
+
+            this.machine.Start();
+        }
+
         [Then(@"the number of shown messages should be (.*)")]
         public void ThenTheNumberOfReadMessagesShouldBeInTheLogStore(int messagesCount)
         {
-            this.waitResult.Should().BeTrue("Read should be completed in 2 second but it didn't");
+            this.waitResult.Should().BeTrue("Read should be completed in 2 second");
             this.viewModel.VerifySet(x => x.MessageCount = messagesCount);
         }
 

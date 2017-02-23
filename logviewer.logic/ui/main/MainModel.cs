@@ -271,7 +271,7 @@ namespace logviewer.logic.ui.main
 
         private void UpdateRecentFilters(string value = null)
         {
-            this.settings.UseRecentFiltersStore(delegate(RecentItemsStore itemsStore)
+            this.settings.ExecuteUsingRecentFiltersStore(delegate(RecentItemsStore itemsStore)
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -455,7 +455,6 @@ namespace logviewer.logic.ui.main
             {
                 this.filesEncodingCache.Add(this.currentPath, e.Encoding);
             }
-
         }
 
         private void OnEncodingDetectionStarted(object sender, EventArgs e)
@@ -555,9 +554,7 @@ namespace logviewer.logic.ui.main
                 return;
             }
 
-            var lastOpenedFile = string.Empty;
-
-            this.settings.UseRecentFilesStore(filesStore => lastOpenedFile = filesStore.ReadLastUsedItem());
+            var lastOpenedFile = this.settings.GetUsingRecentFilesStore(filesStore => filesStore.ReadLastUsedItem());
 
             if (string.IsNullOrWhiteSpace(lastOpenedFile))
             {
@@ -575,7 +572,7 @@ namespace logviewer.logic.ui.main
 
         public void AddCurrentFileToRecentFilesList()
         {
-            this.settings.UseRecentFilesStore(s => s.Add(this.viewModel.LogPath));
+            this.settings.ExecuteUsingRecentFilesStore(s => s.Add(this.viewModel.LogPath));
         }
 
         private long logSize;

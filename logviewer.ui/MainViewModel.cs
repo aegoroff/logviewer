@@ -54,7 +54,7 @@ namespace logviewer.ui
             this.To = DateTime.MaxValue;
             if (this.settingsProvider.OpenLastFile)
             {
-                this.settingsProvider.UseRecentFilesStore(filesStore => this.LogPath = filesStore.ReadLastUsedItem());
+                this.LogPath = this.settingsProvider.GetUsingRecentFilesStore(store => store.ReadLastUsedItem());
             }
 
             this.uiControlsEnabled = true;
@@ -233,7 +233,7 @@ namespace logviewer.ui
             set
             {
                 this.logPath = value;
-                this.settingsProvider.UseRecentFilesStore(s => s.Add(this.logPath));
+                this.settingsProvider.ExecuteUsingRecentFilesStore(s => s.Add(this.logPath));
                 this.OnPropertyChanged(nameof(this.Caption));
             }
         }

@@ -50,3 +50,11 @@ Scenario: No filtering case. reload
 	  And I press reload
 	  And wait 1 seconds
 	Then the number of shown messages should be 2
+	
+@mainmodel
+Scenario: Read last opened log on start
+	Given I have file "test.log" on disk
+	  And The file contains 2 messages with levels "INFO" and "ERROR"
+	When I start application with default filtering parameters
+	  And wait 1 seconds
+	Then the number of shown messages should be 2

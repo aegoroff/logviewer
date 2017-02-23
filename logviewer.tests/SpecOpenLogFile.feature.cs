@@ -219,6 +219,30 @@ this.ScenarioSetup(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Read last opened log on start")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Read last opened log on start")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void ReadLastOpenedLogOnStart()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Read last opened log on start", new string[] {
+                        "mainmodel"});
+#line 55
+this.ScenarioSetup(scenarioInfo);
+#line 56
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 57
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 58
+ testRunner.When("I start application with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 59
+   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 60
+ testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.1.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

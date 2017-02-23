@@ -27,6 +27,9 @@ namespace logviewer.logic
         int PageSize { get; set; }
         bool Sorting { get; set; }
         bool UseRegexp { get; set; }
+        IDictionary<LogLevel, Color> DefaultColors { get; }
+        int SelectedParsingTemplate { get; set; }
+        IOptionsProvider OptionsProvider { get; }
         ParsingTemplate ReadParsingTemplate();
         IList<string> ReadParsingTemplateList();
         IList<ParsingTemplate> ReadAllParsingTemplates();
@@ -38,10 +41,9 @@ namespace logviewer.logic
         RtfCharFormat FormatBody(LogLevel level);
         void UpdateColor(LogLevel level, Color color);
         Color ReadColor(LogLevel level);
-        IDictionary<LogLevel, Color> DefaultColors { get; }
-        int SelectedParsingTemplate { get; set; }
-        void UseRecentFilesStore(Action<RecentItemsStore> action);
-        void UseRecentFiltersStore(Action<RecentItemsStore> action);
-        IOptionsProvider OptionsProvider { get; }
+        void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action);
+        T GetUsingRecentFilesStore<T>(Func<RecentItemsStore, T> function);
+        void ExecuteUsingRecentFiltersStore(Action<RecentItemsStore> action);
+        T GetUsingRecentFiltersStore<T>(Func<RecentItemsStore, T> function);
     }
 }
