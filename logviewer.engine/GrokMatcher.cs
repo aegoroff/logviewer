@@ -111,19 +111,17 @@ namespace logviewer.engine
         //public IDictionary<string, string> Parse(string s)
         public ICollection<KeyValuePair<string, string>> Parse(string s)
         {
-            // This implementation so verbose to avoid extra allocations using foreach and delegates if using LINQ or system helpers
             var match = this.regex.Match(s);
             if (!match.Success)
             {
                 return null;
             }
 
-            var result = new KeyValuePair<string, string>[this.MessageSchema.Count];
-            var ix = 0;
-            foreach (var semantic in this.MessageSchema)
+            var result = new KeyValuePair<string, string>[this.messageSchema.Count];
+            for (var i = 0; i < this.messageSchema.Count; i++)
             {
-                var property = semantic.Property;
-                result[ix++] = new KeyValuePair<string, string>(property, match.Groups[property].Value);
+                var property = this.messageSchema[i].Property;
+                result[i] = new KeyValuePair<string, string>(property, match.Groups[property].Value);
             }
             return result;
         }
