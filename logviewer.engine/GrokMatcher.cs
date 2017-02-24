@@ -106,11 +106,11 @@ namespace logviewer.engine
         /// <summary>
         /// Parse line and extract metadata that message schema defines
         /// </summary>
-        /// <param name="str">String to parse</param>
+        /// <param name="input">String to parse</param>
         /// <returns>Metadata dictionary or null</returns>
-        public ICollection<KeyValuePair<string, string>> Parse(string str)
+        public ICollection<KeyValuePair<string, string>> Parse(string input)
         {
-            var match = this.regex.Match(str);
+            var match = this.regex.Match(input);
             if (!match.Success)
             {
                 return null;

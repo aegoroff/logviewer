@@ -349,9 +349,10 @@ namespace logviewer.engine
             {
                 return;
             }
-            if (this.bodyBuilder.Length > 0)
+            var length = this.bodyBuilder.Length;
+            if (length > 0)
             {
-                this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
+                this.bodyBuilder.Remove(length - 1, 1);
             }
             this.ApplySemanticRules(schema);
             this.body = this.bodyBuilder.ToString();
