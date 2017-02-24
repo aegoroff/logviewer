@@ -220,7 +220,8 @@ namespace logviewer.engine
             for (var i = 0; i < this.rawProperties.Length; i++)
             {
                 var property = this.rawProperties[i];
-                if (!schema.ContainsKey(property.Key))
+                var key = property.Key;
+                if (!schema.ContainsKey(key))
                 {
                     continue;
                 }
@@ -228,7 +229,7 @@ namespace logviewer.engine
 
                 foreach (var prop in schema)
                 {
-                    if (prop.Key != property.Key)
+                    if (prop.Key != key)
                     {
                         continue;
                     }
@@ -236,25 +237,22 @@ namespace logviewer.engine
                     break;
                 }
 
-                var rules = schema[property.Key];
-                var matchedData = property.Value;
-
                 switch (semanticProperty.Parser)
                 {
                     case ParserType.LogLevel:
-                        this.ParseLogLevel(matchedData, rules, property.Key);
+                        this.ParseLogLevel(property.Value, schema[key], key);
                         break;
                     case ParserType.Datetime:
-                        this.ParseDateTime(matchedData, property.Key);
+                        this.ParseDateTime(property.Value, key);
                         break;
                     case ParserType.Interger:
-                        this.ParseInteger(matchedData, property.Key);
+                        this.ParseInteger(property.Value, key);
                         break;
                     case ParserType.String:
-                        this.ParseString(matchedData, property.Key);
+                        this.ParseString(property.Value, key);
                         break;
                     default:
-                        this.ParseString(matchedData, property.Key);
+                        this.ParseString(property.Value, key);
                         break;
                 }
             }
