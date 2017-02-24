@@ -108,7 +108,6 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="str">String to parse</param>
         /// <returns>Metadata dictionary or null</returns>
-        //public IDictionary<string, string> Parse(string s)
         public ICollection<KeyValuePair<string, string>> Parse(string str)
         {
             var match = this.regex.Match(str);
