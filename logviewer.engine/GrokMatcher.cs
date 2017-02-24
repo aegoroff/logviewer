@@ -108,7 +108,8 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="s">String to parse</param>
         /// <returns>Metadata dictionary or null</returns>
-        public IDictionary<string, string> Parse(string s)
+        //public IDictionary<string, string> Parse(string s)
+        public ICollection<KeyValuePair<string, string>> Parse(string s)
         {
             // This implementation so verbose to avoid extra allocations using foreach and delegates if using LINQ or system helpers
             var match = this.regex.Match(s);
@@ -116,15 +117,13 @@ namespace logviewer.engine
             {
                 return null;
             }
-            
-            var result = new Dictionary<string, string>(this.MessageSchema.Count);
-            using (var enumerator = this.MessageSchema.GetEnumerator())
+
+            var result = new KeyValuePair<string, string>[this.MessageSchema.Count];
+            var ix = 0;
+            foreach (var semantic in this.MessageSchema)
             {
-                while (enumerator.MoveNext())
-                {
-                    var property = enumerator.Current.Property;
-                    result.Add(property, match.Groups[property].Value);
-                }
+                var property = semantic.Property;
+                result[ix++] = new KeyValuePair<string, string>(property, match.Groups[property].Value);
             }
             return result;
         }

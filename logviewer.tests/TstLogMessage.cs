@@ -232,17 +232,15 @@ namespace logviewer.tests
         private void ParseTest(string prop, ParserType parser, string input, params GrokRule[] rules)
         {
             this.m.AddLine(H);
-            IDictionary<SemanticProperty, ISet<GrokRule>> schema = new Dictionary<SemanticProperty, ISet<GrokRule>>
+            var schema = new Dictionary<SemanticProperty, ISet<GrokRule>>
             {
                 {
                     new SemanticProperty(prop, parser), new HashSet<GrokRule>(rules)
                 }
             };
-            IDictionary<string, string> props = new Dictionary<string, string>
+            var props = new[]
             {
-                {
-                    prop, input
-                }
+                new KeyValuePair<string, string>(prop, input)
             };
             this.m.AddProperties(props);
             this.m.Cache(schema);

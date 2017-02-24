@@ -4,7 +4,6 @@
 // Created at: 02.10.2014
 // © 2012-2017 Alexander Egorov
 
-using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FluentAssertions;
@@ -217,11 +216,14 @@ namespace logviewer.tests
             // Assert
             matcher.MessageSchema.Count.Should().Be(4);
             matcher.CompilationFailed.Should().BeFalse();
-            
-            result.ContainsKey("datetime").Should().BeTrue();
-            result.ContainsKey("meta").Should().BeTrue();
-            result.ContainsKey("level").Should().BeTrue();
-            result.ContainsKey("head").Should().BeTrue();
+
+
+            var keys = result.Select(x => x.Key).ToArray();
+
+            keys.Should().Contain("datetime");
+            keys.Should().Contain("meta");
+            keys.Should().Contain("level");
+            keys.Should().Contain("head");
         }
 
         [Fact]
@@ -237,8 +239,8 @@ namespace logviewer.tests
             Assert.Equal(1, matcher.MessageSchema.Count);
             Assert.False(matcher.CompilationFailed);
 
-            result.ContainsKey("datetime").Should().BeTrue();
-            result.Keys.Count.Should().Be(1);
+            result.Select(x => x.Key).Should().Contain("datetime");
+            result.Count.Should().Be(1);
             matcher.MessageSchema.First().CastingRules.Contains(new GrokRule(ParserType.Datetime)).Should().BeTrue();
             var rule = new GrokRule(ParserType.Datetime);
             matcher.MessageSchema.First().Contains(rule).Should().BeTrue();
@@ -256,19 +258,6 @@ namespace logviewer.tests
 
             // Assert
             result.Should().BeNull();
-        }
-
-        [Fact]
-        public void Parse_SemanticWithTheSameName_Throw()
-        {
-            // Arrange
-            var matcher = new GrokMatcher("%{TIMESTAMP_ISO8601:dt}%{DATA:meta}%{LOGLEVEL:dt}%{DATA:head}", RegexOptions.None, this.output.WriteLine);
-
-            // Act
-            Assert.Throws<ArgumentException>(delegate
-            {
-                matcher.Parse("2008-12-27 19:31:47,250 [4688] INFO Head");
-            });
         }
     }
 }

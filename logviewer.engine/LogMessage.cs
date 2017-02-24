@@ -110,51 +110,57 @@ namespace logviewer.engine
         /// Adds metadata into message
         /// </summary>
         /// <param name="extractedProperties">Concrete messate properties extracted by template</param>
-        public void AddProperties(IDictionary<string, string> extractedProperties)
+        /// <remarks>For performance reasons the real type of extractedProperties must be KeyValuePair&lt;string, string&gt;[] otherwise parsing will not work</remarks>
+        public void AddProperties(IEnumerable<KeyValuePair<string, string>> extractedProperties)
         {
-            this.rawProperties = extractedProperties;
+            this.rawProperties = extractedProperties as KeyValuePair<string, string>[];
         }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static bool TryParseLogLevel(string s, out LogLevel level)
+        private static bool TryParseLogLevel(string str, out LogLevel level)
         {
-            if (string.Equals(s, @"TRACE", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(str, @"TRACE", StringComparison.OrdinalIgnoreCase))
             {
                 level = LogLevel.Trace;
                 return true;
             }
-            if (string.Equals(s, @"DEBUG", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
             {
                 level = LogLevel.Debug;
                 return true;
             }
-            if (string.Equals(s, @"INFO", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(s, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
             {
                 level = LogLevel.Info;
                 return true;
             }
-            if (string.Equals(s, @"WARN", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"WARNING", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
             {
                 level = LogLevel.Warn;
                 return true;
             }
-            if (string.Equals(s, @"ERROR", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"ERR", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(s, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
             {
                 level = LogLevel.Error;
                 return true;
             }
-            if (string.Equals(s, @"FATAL", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"SEVERE", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(s, @"EMERG", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(s, @"EMERGENCY", StringComparison.OrdinalIgnoreCase) || string.Equals(s, @"PANIC", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(s, @"ALERT", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"FATAL", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"SEVERE", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"EMERG", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"EMERGENCY", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"PANIC", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"ALERT", StringComparison.OrdinalIgnoreCase))
             {
                 level = LogLevel.Fatal;
                 return true;
             }
-            level = LogLevel.None;
-            return false;
+            else
+            {
+                level = LogLevel.None;
+                return false;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -202,7 +208,7 @@ namespace logviewer.engine
             this.stringProperties[property] = dataToParse;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.rawProperties == null || schema == null)
@@ -210,55 +216,46 @@ namespace logviewer.engine
                 return;
             }
 
-            // Ugly but allows to avoid on allocation per call
-            // This code is rather performance critical
-            var enumerator = this.rawProperties.GetEnumerator();
-            using (enumerator)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < this.rawProperties.Length; i++)
             {
-                while (enumerator.MoveNext())
+                var property = this.rawProperties[i];
+                if (!schema.ContainsKey(property.Key))
                 {
-                    var property = enumerator.Current;
-                    if (!schema.ContainsKey(property.Key))
+                    continue;
+                }
+                var semanticProperty = default(SemanticProperty);
+
+                foreach (var prop in schema)
+                {
+                    if (prop.Key != property.Key)
                     {
                         continue;
                     }
-                    var semanticProperty = default(SemanticProperty);
+                    semanticProperty = prop.Key;
+                    break;
+                }
 
-                    var schemaEnumarator = schema.GetEnumerator();
-                    using (schemaEnumarator)
-                    {
-                        while (schemaEnumarator.MoveNext())
-                        {
-                            if (schemaEnumarator.Current.Key != property.Key)
-                            {
-                                continue;
-                            }
-                            semanticProperty = schemaEnumarator.Current.Key;
-                            break;
-                        }
-                    }
+                var rules = schema[property.Key];
+                var matchedData = property.Value;
 
-                    var rules = schema[property.Key];
-                    var matchedData = property.Value;
-
-                    switch (semanticProperty.Parser)
-                    {
-                        case ParserType.LogLevel:
-                            this.ParseLogLevel(matchedData, rules, property.Key);
-                            break;
-                        case ParserType.Datetime:
-                            this.ParseDateTime(matchedData, property.Key);
-                            break;
-                        case ParserType.Interger:
-                            this.ParseInteger(matchedData, property.Key);
-                            break;
-                        case ParserType.String:
-                            this.ParseString(matchedData, property.Key);
-                            break;
-                        default:
-                            this.ParseString(matchedData, property.Key);
-                            break;
-                    }
+                switch (semanticProperty.Parser)
+                {
+                    case ParserType.LogLevel:
+                        this.ParseLogLevel(matchedData, rules, property.Key);
+                        break;
+                    case ParserType.Datetime:
+                        this.ParseDateTime(matchedData, property.Key);
+                        break;
+                    case ParserType.Interger:
+                        this.ParseInteger(matchedData, property.Key);
+                        break;
+                    case ParserType.String:
+                        this.ParseString(matchedData, property.Key);
+                        break;
+                    default:
+                        this.ParseString(matchedData, property.Key);
+                        break;
                 }
             }
         }
@@ -388,7 +385,7 @@ namespace logviewer.engine
         private string body;
         private StringBuilder bodyBuilder;
         private string head;
-        private IDictionary<string, string> rawProperties;
+        private KeyValuePair<string, string>[] rawProperties;
         private long ix;
 
         #endregion
