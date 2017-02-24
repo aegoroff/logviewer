@@ -221,26 +221,29 @@ namespace logviewer.engine
             {
                 var property = this.rawProperties[i];
                 var key = property.Key;
-                if (!schema.ContainsKey(key))
+
+                ISet<GrokRule> rules;
+                if (!schema.TryGetValue(key, out rules))
                 {
                     continue;
                 }
+
                 var semanticProperty = default(SemanticProperty);
 
-                foreach (var k in schema.Keys)
+                foreach (var prop in schema)
                 {
-                    if (k != key)
+                    if (prop.Key != key)
                     {
                         continue;
                     }
-                    semanticProperty = k;
+                    semanticProperty = prop.Key;
                     break;
                 }
 
                 switch (semanticProperty.Parser)
                 {
                     case ParserType.LogLevel:
-                        this.ParseLogLevel(property.Value, schema[key], key);
+                        this.ParseLogLevel(property.Value, rules, key);
                         break;
                     case ParserType.Datetime:
                         this.ParseDateTime(property.Value, key);
