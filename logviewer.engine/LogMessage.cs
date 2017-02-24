@@ -227,13 +227,13 @@ namespace logviewer.engine
                 }
                 var semanticProperty = default(SemanticProperty);
 
-                foreach (var prop in schema)
+                foreach (var k in schema.Keys)
                 {
-                    if (prop.Key != key)
+                    if (k != key)
                     {
                         continue;
                     }
-                    semanticProperty = prop.Key;
+                    semanticProperty = k;
                     break;
                 }
 
