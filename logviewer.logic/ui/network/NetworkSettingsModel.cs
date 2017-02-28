@@ -15,7 +15,7 @@ namespace logviewer.logic.ui.network
     {
         private readonly INetworkSettingsViewModel viewModel;
         private readonly IOptionsProvider provider;
-        private readonly StateMachine stateMachine;
+        private readonly NetworkWorflow stateMachine;
 
         /// <summary>
         ///     Creates new controller class
@@ -26,7 +26,7 @@ namespace logviewer.logic.ui.network
         {
             this.viewModel = viewModel;
             this.provider = provider;
-            this.stateMachine = new StateMachine(viewModel, provider, StateMachineMode.Read);
+            this.stateMachine = new NetworkWorflow(viewModel, provider, StateMachineMode.Read);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace logviewer.logic.ui.network
 
         private void WriteUnsafe()
         {
-            var sm = new StateMachine(this.viewModel, this.provider, StateMachineMode.Write);
+            var sm = new NetworkWorflow(this.viewModel, this.provider, StateMachineMode.Write);
             sm.Trigger(this.viewModel.ProxyMode);
         }
     }

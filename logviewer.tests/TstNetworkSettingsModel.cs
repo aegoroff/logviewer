@@ -184,11 +184,11 @@ namespace logviewer.tests
 
             // Assert
             this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.None, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Host = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Host = null, Times.Once);
             this.viewModel.VerifySet(vm => vm.Port = 0, Times.Once);
-            this.viewModel.VerifySet(vm => vm.UserName = string.Empty, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Password = string.Empty, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Domain = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = null, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = null, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = null, Times.Once);
         }
 
         [Fact]
@@ -204,11 +204,11 @@ namespace logviewer.tests
 
             // Assert
             this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.AutoProxyDetection, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Host = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Host = null, Times.Once);
             this.viewModel.VerifySet(vm => vm.Port = 0, Times.Once);
-            this.viewModel.VerifySet(vm => vm.UserName = string.Empty, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Password = string.Empty, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Domain = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = null, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = null, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = null, Times.Once);
         }
 
         [Fact]
@@ -233,9 +233,9 @@ namespace logviewer.tests
             this.viewModel.VerifySet(vm => vm.ProxyMode = ProxyMode.Custom, Times.Once);
             this.viewModel.VerifySet(vm => vm.Host = HostValue, Times.Once);
             this.viewModel.VerifySet(vm => vm.Port = PortValue, Times.Once);
-            this.viewModel.VerifySet(vm => vm.UserName = string.Empty, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Password = string.Empty, Times.Once);
-            this.viewModel.VerifySet(vm => vm.Domain = string.Empty, Times.Once);
+            this.viewModel.VerifySet(vm => vm.UserName = null, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Password = null, Times.Once);
+            this.viewModel.VerifySet(vm => vm.Domain = null, Times.Once);
         }
 
         [Fact]

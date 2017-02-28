@@ -108,7 +108,6 @@
     <Compile Include="SpecOpenLogFileSteps.cs" />
     <Compile Include="support\Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="support\States.cs" />
     <Compile Include="TstFixedSizeDictionary.cs" />
     <Compile Include="TstGrokMatcher.cs" />
     <Compile Include="TstLogProvider.cs" />
@@ -116,7 +115,6 @@
     <Compile Include="TstMessageMatcher.cs" />
     <Compile Include="TstNetworkSettingsModel.cs" />
     <Compile Include="TstNetworkSettingsViewModel.cs" />
-    <Compile Include="TstSolidMachine.cs" />
     <Compile Include="TstMainModel.cs" />
     <Compile Include="TstSqliteSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />

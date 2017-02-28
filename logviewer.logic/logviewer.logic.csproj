@@ -107,17 +107,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fsm\Events.cs" />
-    <Compile Include="fsm\Exceptions.cs" />
-    <Compile Include="fsm\ISolidState.cs" />
-    <Compile Include="fsm\IStateResolver.cs" />
-    <Compile Include="fsm\SolidMachine.cs" />
-    <Compile Include="fsm\SolidMachineStartValidator.cs" />
-    <Compile Include="fsm\SolidState.cs" />
-    <Compile Include="fsm\SolidStateConstants.cs" />
-    <Compile Include="fsm\StateConfiguration.cs" />
-    <Compile Include="fsm\StateInstantiationMode.cs" />
-    <Compile Include="fsm\TriggerConfiguration.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="storage\ILogStore.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
@@ -126,6 +115,7 @@
     <Compile Include="ui\main\LogWorkflow.cs" />
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
     <Compile Include="ui\main\UpdatesCheckingModel.cs" />
+    <Compile Include="ui\network\NetworkWorflow.cs" />
     <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />
@@ -154,15 +144,9 @@
     <Compile Include="ui\main\MainModel.cs" />
     <Compile Include="ui\network\Constants.cs" />
     <Compile Include="ui\network\INetworkSettingsViewModel.cs" />
-    <Compile Include="ui\network\ManualProxyState.cs" />
-    <Compile Include="ui\network\ManualProxyStateCustomUser.cs" />
-    <Compile Include="ui\network\ManualProxyStateDefaultUser.cs" />
     <Compile Include="ui\network\NetworkSettingsModel.cs" />
     <Compile Include="storage\OptionsProvider.cs" />
     <Compile Include="ui\network\NetworkSettingsViewModel.cs" />
-    <Compile Include="ui\network\ProxyStateImplementations.cs" />
-    <Compile Include="ui\network\StateMachine.cs" />
-    <Compile Include="ui\network\NetworkStateResolver.cs" />
     <Compile Include="ui\network\ProxyMode.cs" />
     <Compile Include="ui\network\StateMachineMode.cs" />
     <Compile Include="support\Maybe.cs" />
