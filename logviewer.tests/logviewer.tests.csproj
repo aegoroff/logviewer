@@ -100,6 +100,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpecNetworkSettings.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SpecNetworkSettings.feature</DependentUpon>
+    </Compile>
+    <Compile Include="SpecNetworkSettingsSteps.cs" />
     <Compile Include="SpecOpenLogFile.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -138,6 +144,10 @@
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="SpecNetworkSettings.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>SpecNetworkSettings.feature.cs</LastGenOutput>
     </None>
     <None Include="SpecOpenLogFile.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

@@ -116,6 +116,7 @@
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
     <Compile Include="ui\main\UpdatesCheckingModel.cs" />
     <Compile Include="ui\network\NetworkWorflow.cs" />
+    <Compile Include="ui\network\ProxyModeTransition.cs" />
     <Compile Include="ui\UiSynchronizeModel.cs" />
     <Compile Include="support\AsymCrypt.cs" />
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />

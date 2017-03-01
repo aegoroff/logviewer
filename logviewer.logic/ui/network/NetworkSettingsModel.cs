@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 05.09.2007
-// © 2007-2008 Alexander Egorov
+// © 2007-2017 Alexander Egorov
 
 using logviewer.logic.support;
 
@@ -39,10 +39,15 @@ namespace logviewer.logic.ui.network
             var useDefalutCredentials = this.provider.ReadBooleanOption(Constants.IsUseDefaultCredentialsProperty, true);
             this.viewModel.Initialize(mode, useDefalutCredentials);
             this.viewModel.ModeChanged += this.OnModeChanged;
-            this.stateMachine.Trigger(this.viewModel.ProxyMode);
+            var transition = this.GetTransition();
+            this.stateMachine.Trigger(transition);
+            if (transition == ProxyModeTransition.ToCustom)
+            {
+                this.stateMachine.Trigger(useDefalutCredentials ? ProxyModeTransition.ToCustomDefaultUser : ProxyModeTransition.ToCustomWithManualUser);
+            }
         }
 
-        private void OnModeChanged(object sender, ProxyMode e)
+        private void OnModeChanged(object sender, ProxyModeTransition e)
         {
             this.stateMachine.Trigger(e);
             this.InvokeSettingsChange();
@@ -68,7 +73,27 @@ namespace logviewer.logic.ui.network
         private void WriteUnsafe()
         {
             var sm = new NetworkWorflow(this.viewModel, this.provider, StateMachineMode.Write);
-            sm.Trigger(this.viewModel.ProxyMode);
+            sm.Trigger(this.GetTransition());
+        }
+
+        private ProxyModeTransition GetTransition()
+        {
+            return ToTransition(this.viewModel.ProxyMode);
+        }
+
+        private static ProxyModeTransition ToTransition(ProxyMode mode)
+        {
+            switch (mode)
+            {
+                case ProxyMode.None:
+                    return ProxyModeTransition.ToNone;
+                case ProxyMode.AutoProxyDetection:
+                    return ProxyModeTransition.ToAutoProxyDetection;
+                case ProxyMode.Custom:
+                    return ProxyModeTransition.ToCustom;
+                default:
+                    return ProxyModeTransition.ToNone;
+            }
         }
     }
 }

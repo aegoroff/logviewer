@@ -1,3 +1,9 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
+// Created at: 28.02.2017
+// © 2007-2017 Alexander Egorov
+
 using System;
 using logviewer.logic.support;
 using Stateless;
@@ -11,7 +17,7 @@ namespace logviewer.logic.ui.network
         private static string login;
         private static string password;
         private static string domain;
-        private readonly StateMachine<ProxyMode, ProxyMode> machine;
+        private readonly StateMachine<ProxyMode, ProxyModeTransition> machine;
         private readonly IOptionsProvider provider;
         private readonly INetworkSettingsViewModel viewModel;
         private AsymCrypt crypt;
@@ -24,31 +30,33 @@ namespace logviewer.logic.ui.network
 
             this.InitCrypter();
 
-            this.machine = new StateMachine<ProxyMode, ProxyMode>(() => this.mode, s => this.mode = s);
+            this.machine = new StateMachine<ProxyMode, ProxyModeTransition>(() => this.mode, s => this.mode = s);
 
             this.machine.Configure(ProxyMode.None)
                 .OnEntry(t => this.OnEnter(machineMode, this.Read, () => { }))
-                .Permit(ProxyMode.AutoProxyDetection, ProxyMode.AutoProxyDetection)
-                .Permit(ProxyMode.Custom, ProxyMode.Custom)
-                .PermitReentry(ProxyMode.None);
+                .Permit(ProxyModeTransition.ToAutoProxyDetection, ProxyMode.AutoProxyDetection)
+                .Permit(ProxyModeTransition.ToCustom, ProxyMode.Custom)
+                .PermitReentry(ProxyModeTransition.ToNone);
 
             this.machine.Configure(ProxyMode.AutoProxyDetection)
                 .OnEntry(t => this.OnEnter(machineMode, this.Read, () => { }))
-                .Permit(ProxyMode.None, ProxyMode.None)
-                .Permit(ProxyMode.Custom, ProxyMode.Custom)
-                .PermitReentry(ProxyMode.AutoProxyDetection);
+                .Permit(ProxyModeTransition.ToNone, ProxyMode.None)
+                .Permit(ProxyModeTransition.ToCustom, ProxyMode.Custom)
+                .PermitReentry(ProxyModeTransition.ToAutoProxyDetection);
 
             this.machine.Configure(ProxyMode.Custom)
                 .OnEntry(t => this.OnEnter(machineMode, this.ReadOnEnterIntoCustom, this.WriteOnEnterIntoCustom))
                 .OnExit(this.OnExitCustom)
-                .Permit(ProxyMode.None, ProxyMode.None)
-                .Permit(ProxyMode.AutoProxyDetection, ProxyMode.AutoProxyDetection)
-                .PermitReentry(ProxyMode.Custom);
+                .Permit(ProxyModeTransition.ToNone, ProxyMode.None)
+                .Permit(ProxyModeTransition.ToAutoProxyDetection, ProxyMode.AutoProxyDetection)
+                .PermitReentry(ProxyModeTransition.ToCustom)
+                .InternalTransition(ProxyModeTransition.ToCustomDefaultUser, this.ReadOnEnterToCustomDefaultUser)
+                .InternalTransition(ProxyModeTransition.ToCustomWithManualUser,this.ReadOnEnterToCustomManualUser);
         }
 
-        public void Trigger(ProxyMode proxyMode)
+        public void Trigger(ProxyModeTransition transition)
         {
-            this.machine.Fire(proxyMode);
+            this.machine.Fire(transition);
         }
 
         private void InitCrypter()
@@ -91,17 +99,12 @@ namespace logviewer.logic.ui.network
             host = this.viewModel.Host;
             port = this.viewModel.Port;
 
-            if (!this.viewModel.IsUseDefaultCredentials)
-            {
-                return;
-            }
-
             if (!string.IsNullOrWhiteSpace(this.viewModel.UserName))
             {
                 login = this.viewModel.UserName;
             }
 
-            if (this.viewModel.Password != null)
+            if (!string.IsNullOrWhiteSpace(this.viewModel.Password))
             {
                 password = this.crypt.Encrypt(this.viewModel.Password);
             }
@@ -126,19 +129,20 @@ namespace logviewer.logic.ui.network
         {
             this.viewModel.Host = host ?? this.provider.ReadStringOption(Constants.HostProperty);
             this.viewModel.Port = port > 0 ? port : this.provider.ReadIntegerOption(Constants.PortProperty);
+        }
 
-            if (this.viewModel.IsUseDefaultCredentials)
-            {
-                this.viewModel.UserName = null;
-                this.viewModel.Password = null;
-                this.viewModel.Domain = null;
-            }
-            else
-            {
-                this.viewModel.UserName = login ?? this.provider.ReadStringOption(Constants.LoginProperty);
-                this.viewModel.Password = this.crypt.Decrypt(password ?? this.provider.ReadStringOption(Constants.PasswordProperty));
-                this.viewModel.Domain = domain ?? this.provider.ReadStringOption(Constants.DomainProperty);
-            }
+        private void ReadOnEnterToCustomManualUser(StateMachine<ProxyMode, ProxyModeTransition>.Transition transition)
+        {
+            this.viewModel.UserName = login ?? this.provider.ReadStringOption(Constants.LoginProperty);
+            this.viewModel.Password = this.crypt.Decrypt(password ?? this.provider.ReadStringOption(Constants.PasswordProperty));
+            this.viewModel.Domain = domain ?? this.provider.ReadStringOption(Constants.DomainProperty);
+        }
+
+        private void ReadOnEnterToCustomDefaultUser()
+        {
+            this.viewModel.UserName = null;
+            this.viewModel.Password = null;
+            this.viewModel.Domain = null;
         }
 
         private void WriteOnEnterIntoCustom()

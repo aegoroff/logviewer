@@ -22,7 +22,7 @@ namespace logviewer.logic.ui.network
         string UserName { get; set; }
         string Password { get; set; }
         string Domain { get; set; }
-        event EventHandler<ProxyMode> ModeChanged;
+        event EventHandler<ProxyModeTransition> ModeChanged;
         event EventHandler<string> PasswordUpdated;
     }
 }

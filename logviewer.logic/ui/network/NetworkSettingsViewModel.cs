@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 04.09.2007
-// © 2007-2015 Alexander Egorov
+// © 2007-2017 Alexander Egorov
 
 using System;
 using System.ComponentModel;
@@ -90,19 +90,26 @@ namespace logviewer.logic.ui.network
         public bool IsNoUseProxy
         {
             get { return this.isNoUseProxy; }
-            set { this.OnModeChange(value, ref this.isNoUseProxy, ProxyMode.None); }
+            set { this.OnModeChange(value, ref this.isNoUseProxy, ProxyModeTransition.ToNone); }
         }
 
         public bool IsUseAutoProxy
         {
             get { return this.isUseAutoProxy; }
-            set { this.OnModeChange(value, ref this.isUseAutoProxy, ProxyMode.AutoProxyDetection); }
+            set { this.OnModeChange(value, ref this.isUseAutoProxy, ProxyModeTransition.ToAutoProxyDetection); }
         }
 
         public bool IsUseManualProxy
         {
             get { return this.isUseManualProxy; }
-            set { this.OnModeChange(value, ref this.isUseManualProxy, ProxyMode.Custom); }
+            set
+            {
+                this.OnModeChange(value, ref this.isUseManualProxy, ProxyModeTransition.ToCustom);
+                if (value)
+                {
+                    this.OnModeChanged(this.GetCustomModeTransition());
+                }
+            }
         }
 
         public bool IsUseDefaultCredentials
@@ -112,7 +119,7 @@ namespace logviewer.logic.ui.network
             {
                 this.isUseDefaultCredentials = value;
                 this.EnableCustomCredentials = !value;
-                this.OnModeChanged(ProxyMode.Custom);
+                this.OnModeChanged(this.GetCustomModeTransition());
             }
         }
 
@@ -176,18 +183,18 @@ namespace logviewer.logic.ui.network
             }
         }
 
-        public event EventHandler<ProxyMode> ModeChanged;
+        public event EventHandler<ProxyModeTransition> ModeChanged;
         public event EventHandler<string> PasswordUpdated;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnModeChange(bool newValue, ref bool field, ProxyMode mode)
+        private void OnModeChange(bool newValue, ref bool field, ProxyModeTransition transition)
         {
             var notifyModeChange = newValue && !field;
             field = newValue;
             if (notifyModeChange)
             {
-                this.OnModeChanged(mode);
+                this.OnModeChanged(transition);
             }
         }
 
@@ -197,9 +204,14 @@ namespace logviewer.logic.ui.network
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void OnModeChanged(ProxyMode mode)
+        private void OnModeChanged(ProxyModeTransition transition)
         {
-            this.ModeChanged?.Invoke(this, mode);
+            this.ModeChanged?.Invoke(this, transition);
+        }
+
+        private ProxyModeTransition GetCustomModeTransition()
+        {
+            return this.isUseDefaultCredentials ? ProxyModeTransition.ToCustomDefaultUser : ProxyModeTransition.ToCustomWithManualUser;
         }
     }
 }

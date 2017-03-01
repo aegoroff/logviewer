@@ -83,15 +83,15 @@ namespace logviewer.tests
         public void IsNoUseProxy_Set_ModeChangedWithNone()
         {
             // Arrange
-            var proxyMode = (ProxyMode) 10000;
+            var transition = (ProxyModeTransition) 10000;
             var model = new NetworkSettingsViewModel();
-            model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
+            model.ModeChanged += delegate(object sender, ProxyModeTransition mode) { transition = mode; };
 
             // Act
             model.IsNoUseProxy = true;
 
             // Assert
-            proxyMode.Should().Be(ProxyMode.None);
+            transition.Should().Be(ProxyModeTransition.ToNone);
             model.IsNoUseProxy.Should().BeTrue();
         }
 
@@ -99,15 +99,15 @@ namespace logviewer.tests
         public void IsUseAutoProxy_Set_ModeChangedWithAutoProxyDetection()
         {
             // Arrange
-            var proxyMode = (ProxyMode) 10000;
+            var proxyMode = (ProxyModeTransition) 10000;
             var model = new NetworkSettingsViewModel();
-            model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
+            model.ModeChanged += delegate(object sender, ProxyModeTransition mode) { proxyMode = mode; };
 
             // Act
             model.IsUseAutoProxy = true;
 
             // Assert
-            proxyMode.Should().Be(ProxyMode.AutoProxyDetection);
+            proxyMode.Should().Be(ProxyModeTransition.ToAutoProxyDetection);
             model.IsUseAutoProxy.Should().BeTrue();
         }
 
@@ -115,37 +115,37 @@ namespace logviewer.tests
         public void IsUseManualProxy_Set_ModeChangedWithCustom()
         {
             // Arrange
-            var proxyMode = (ProxyMode) 10000;
+            var transition = (ProxyModeTransition) 10000;
             var model = new NetworkSettingsViewModel();
-            model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
+            model.ModeChanged += delegate(object sender, ProxyModeTransition mode) { transition = mode; };
 
             // Act
             model.IsUseManualProxy = true;
 
             // Assert
-            proxyMode.Should().Be(ProxyMode.Custom);
+            transition.Should().Be(ProxyModeTransition.ToCustomWithManualUser);
             model.IsUseManualProxy.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void IsUseDefaultCredentials_Set_ModeChangedWithCustomPropertyChanged(bool value)
+        [InlineData(true, ProxyModeTransition.ToCustomDefaultUser)]
+        [InlineData(false, ProxyModeTransition.ToCustomWithManualUser)]
+        public void IsUseDefaultCredentials_Set_ModeChangedWithCustomPropertyChanged(bool useDefaultCredentials, ProxyModeTransition result)
         {
             // Arrange
-            var proxyMode = (ProxyMode) 10000;
+            var transition = (ProxyModeTransition) 10000;
             string property = null;
             var model = new NetworkSettingsViewModel();
-            model.ModeChanged += delegate(object sender, ProxyMode mode) { proxyMode = mode; };
+            model.ModeChanged += delegate(object sender, ProxyModeTransition mode) { transition = mode; };
             model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs args) { property = args.PropertyName; };
 
             // Act
-            model.IsUseDefaultCredentials = value;
+            model.IsUseDefaultCredentials = useDefaultCredentials;
 
             // Assert
-            proxyMode.Should().Be(ProxyMode.Custom);
+            transition.Should().Be(result);
             property.Should().Be(nameof(model.EnableCustomCredentials));
-            model.IsUseDefaultCredentials.Should().Be(value);
+            model.IsUseDefaultCredentials.Should().Be(useDefaultCredentials);
         }
 
         [Fact]
@@ -249,7 +249,7 @@ namespace logviewer.tests
         }
 
         [Fact]
-        public void IsUseManualProxy_SetTwiceToTrue_ModeChangedCalledOnce()
+        public void IsUseManualProxy_SetTwiceToTrue_ModeChangedCalledThreeTimes()
         {
             // Arrange
             var count = 0;
@@ -261,11 +261,11 @@ namespace logviewer.tests
             model.IsUseManualProxy = true;
 
             // Assert
-            count.Should().Be(1);
+            count.Should().Be(3);
         }
 
         [Fact]
-        public void IsUseManualProxy_SetTrueTrueFalse_ModeChangedCalledOnce()
+        public void IsUseManualProxy_SetTrueTrueFalse_ModeChangedCalledThreeTimes()
         {
             // Arrange
             var count = 0;
@@ -278,11 +278,11 @@ namespace logviewer.tests
             model.IsUseManualProxy = false;
 
             // Assert
-            count.Should().Be(1);
+            count.Should().Be(3);
         }
 
         [Fact]
-        public void IsUseManualProxy_SetTrueFalseTrue_ModeChangedCalledTwice()
+        public void IsUseManualProxy_SetTrueFalseTrue_ModeChangedCalledFourTimes()
         {
             // Arrange
             var count = 0;
@@ -295,7 +295,7 @@ namespace logviewer.tests
             model.IsUseManualProxy = true;
 
             // Assert
-            count.Should().Be(2);
+            count.Should().Be(4);
         }
 
         [Fact]
