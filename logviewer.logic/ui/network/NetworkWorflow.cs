@@ -99,19 +99,12 @@ namespace logviewer.logic.ui.network
             this.host = this.viewModel.Host;
             this.port = this.viewModel.Port;
 
-            if (!string.IsNullOrWhiteSpace(this.viewModel.UserName))
-            {
-                this.login = this.viewModel.UserName;
-            }
+            this.login = this.viewModel.UserName;
+            this.domain = this.viewModel.Domain;
 
-            if (!string.IsNullOrWhiteSpace(this.viewModel.Password))
+            if (this.viewModel.Password != null)
             {
                 this.password = this.crypt.Encrypt(this.viewModel.Password);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.viewModel.Domain))
-            {
-                this.domain = this.viewModel.Domain;
             }
         }
 
