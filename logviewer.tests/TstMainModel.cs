@@ -96,6 +96,7 @@ namespace logviewer.tests
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
+                        Thread.Sleep(100);
                     }
                 }
             }
