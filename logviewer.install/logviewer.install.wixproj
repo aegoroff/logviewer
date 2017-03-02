@@ -51,7 +51,7 @@
       <BinFile Include="bin\logviewer\**\*.dll" />
     </ItemGroup>
     <PropertyGroup Condition="$(KeyFile) != '' AND $(CertPassword) != '' AND $(SignTool) != '' AND Exists('$(KeyFile)')">
-      <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
+      <SignCommand>"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.verisign.com/scripts/timestamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer %251</SignCommand>
     </PropertyGroup>
     <PropertyGroup Condition="$(SignCommand) != ''">
       <TmpFile>tmp.bat</TmpFile>
