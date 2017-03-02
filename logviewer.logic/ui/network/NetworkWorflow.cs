@@ -12,11 +12,11 @@ namespace logviewer.logic.ui.network
 {
     internal class NetworkWorflow
     {
-        private static string host;
-        private static int port;
-        private static string login;
-        private static string password;
-        private static string domain;
+        private string host;
+        private int port;
+        private string login;
+        private string password;
+        private string domain;
         private readonly StateMachine<ProxyMode, ProxyModeTransition> machine;
         private readonly IOptionsProvider provider;
         private readonly INetworkSettingsViewModel viewModel;
@@ -96,22 +96,22 @@ namespace logviewer.logic.ui.network
 
         private void OnExitCustom()
         {
-            host = this.viewModel.Host;
-            port = this.viewModel.Port;
+            this.host = this.viewModel.Host;
+            this.port = this.viewModel.Port;
 
             if (!string.IsNullOrWhiteSpace(this.viewModel.UserName))
             {
-                login = this.viewModel.UserName;
+                this.login = this.viewModel.UserName;
             }
 
             if (!string.IsNullOrWhiteSpace(this.viewModel.Password))
             {
-                password = this.crypt.Encrypt(this.viewModel.Password);
+                this.password = this.crypt.Encrypt(this.viewModel.Password);
             }
 
             if (!string.IsNullOrWhiteSpace(this.viewModel.Domain))
             {
-                domain = this.viewModel.Domain;
+                this.domain = this.viewModel.Domain;
             }
         }
 
@@ -127,15 +127,15 @@ namespace logviewer.logic.ui.network
 
         private void ReadOnEnterIntoCustom()
         {
-            this.viewModel.Host = host ?? this.provider.ReadStringOption(Constants.HostProperty);
-            this.viewModel.Port = port > 0 ? port : this.provider.ReadIntegerOption(Constants.PortProperty);
+            this.viewModel.Host = this.host ?? this.provider.ReadStringOption(Constants.HostProperty);
+            this.viewModel.Port = this.port > 0 ? this.port : this.provider.ReadIntegerOption(Constants.PortProperty);
         }
 
         private void ReadOnEnterToCustomManualUser(StateMachine<ProxyMode, ProxyModeTransition>.Transition transition)
         {
-            this.viewModel.UserName = login ?? this.provider.ReadStringOption(Constants.LoginProperty);
-            this.viewModel.Password = this.crypt.Decrypt(password ?? this.provider.ReadStringOption(Constants.PasswordProperty));
-            this.viewModel.Domain = domain ?? this.provider.ReadStringOption(Constants.DomainProperty);
+            this.viewModel.UserName = this.login ?? this.provider.ReadStringOption(Constants.LoginProperty);
+            this.viewModel.Password = this.crypt.Decrypt(this.password ?? this.provider.ReadStringOption(Constants.PasswordProperty));
+            this.viewModel.Domain = this.domain ?? this.provider.ReadStringOption(Constants.DomainProperty);
         }
 
         private void ReadOnEnterToCustomDefaultUser()
