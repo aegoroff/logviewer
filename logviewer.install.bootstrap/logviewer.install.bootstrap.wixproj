@@ -54,28 +54,24 @@
 	<Exec
 		Condition="$(SignCommand) != ''" 
 		Command="$(TmpFile) &quot;@(SignBundleEngine)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
-		IgnoreExitCode="true"
 	/>
   </Target>
   <Target Name="SignBundle">
 	<Exec
 		Condition="$(SignCommand) != ''" 
 		Command="$(TmpFile) &quot;@(SignBundle)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
-		IgnoreExitCode="true"
 	/>
   </Target>
   <Target Name="SignMsi">
 	<Exec
 		Condition="$(SignCommand) != ''" 
 		Command="$(TmpFile) &quot;@(SignMsi)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
-		IgnoreExitCode="true"
 	/>
   </Target>
   <Target Name="SignCabs">
 	<Exec
 		Condition="$(SignCommand) != ''" 
 		Command="$(TmpFile) &quot;@(SignCabs)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
-		IgnoreExitCode="true"
 	/>
   </Target>
   
@@ -87,7 +83,6 @@
 	<Exec
 		Condition="$(SignCommand) != ''" 
 		Command="$(TmpFile) &quot;%(MsiFile.Identity)&quot; > NUL 2>&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)"
-		IgnoreExitCode="true"
 	/>
   </Target>
   
