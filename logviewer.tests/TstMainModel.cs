@@ -86,13 +86,17 @@ namespace logviewer.tests
         {
             foreach (var file in files.Where(File.Exists))
             {
-                try
+                for (var i = 0; i < 5; i++)
                 {
-                    File.Delete(file);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                    try
+                    {
+                        File.Delete(file);
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 }
             }
         }

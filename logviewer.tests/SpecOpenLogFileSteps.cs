@@ -137,10 +137,22 @@ namespace logviewer.tests
         [AfterScenario("mainmodel")]
         public void AfterScenario()
         {
-            if (File.Exists(this.path))
+            for (var i = 0; i < 5; i++)
             {
-                File.Delete(this.path);
+                try
+                {
+                    if (File.Exists(this.path))
+                    {
+                        File.Delete(this.path);
+                    }
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
+
             this.workflow.Close();
         }
 
