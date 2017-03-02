@@ -104,11 +104,8 @@ namespace logviewer.tests
 
         private void WaitReadingComplete()
         {
-            var result = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(4));
-            if (!result)
-            {
-                throw new XunitException("Wait expired");
-            }
+            var result = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(6));
+            result.Should().BeTrue("Wait expired");
         }
 
         private void ReadLogExpectations()

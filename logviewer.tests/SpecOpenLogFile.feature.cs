@@ -88,7 +88,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 8
  testRunner.When("I press open with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
  testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -112,7 +112,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 16
  testRunner.When("I press open with min level \"Fatal\" and max level \"Fatal\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 17
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 18
  testRunner.Then("the number of shown messages should be 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -136,7 +136,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 24
  testRunner.When("I press open with min level \"Info\" and max level \"Info\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 25
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 26
  testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -160,7 +160,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 32
  testRunner.When("I press open with min level \"Trace\" and max level \"Info\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 33
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 34
  testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -184,7 +184,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 40
  testRunner.When("I press open with min level \"Info\" and max level \"Warn\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 41
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 42
  testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -208,11 +208,11 @@ this.ScenarioSetup(scenarioInfo);
 #line 48
  testRunner.When("I press open with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 49
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 50
    testRunner.And("I press reload", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 51
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 52
  testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -236,7 +236,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 58
  testRunner.When("I start application with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 59
-   testRunner.And("wait 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+   testRunner.And("wait 6 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 60
  testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
