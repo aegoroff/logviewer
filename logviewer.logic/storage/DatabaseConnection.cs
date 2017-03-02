@@ -16,7 +16,7 @@ namespace logviewer.logic.storage
 {
     internal sealed class DatabaseConnection : IDisposable
     {
-        private readonly SQLiteConnection connection;
+        private SQLiteConnection connection;
         private SQLiteTransaction transaction;
         private readonly SynchronizationContext creationContext;
         private bool disposed;
@@ -58,6 +58,8 @@ namespace logviewer.logic.storage
             SafeRunner.Run(() => this.transaction?.Dispose());
             SafeRunner.Run(() => this.connection?.Close());
             SafeRunner.Run(() => this.connection?.Dispose());
+            this.transaction = null;
+            this.connection = null;
             this.disposed = true;
         }
 
