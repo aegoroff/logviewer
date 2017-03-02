@@ -128,8 +128,7 @@
       <TmpFile>tmp.bat</TmpFile>
     </PropertyGroup>
     <WriteLinesToFile File="$(TmpFile)" Condition="$(SignCommand) != ''" Lines="$(SignCommand)" />
-    <!--Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(OutputPath)$(AssemblyName).dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" /-->
-    <Exec Condition="$(SignCommand) != ''" Command='"$(SignTool)" sign /f "$(KeyFile)" /p $(CertPassword) /t http://timestamp.globalsign.com/scripts/timstamp.dll /v /d "logviewer" /du https://github.com/aegoroff/logviewer &quot;$(OutputPath)$(AssemblyName).dll&quot;' WorkingDirectory="$(MsBuildThisFileDirectory)" />
+    <Exec Condition="$(SignCommand) != ''" Command="$(TmpFile) &quot;$(OutputPath)$(AssemblyName).dll&quot; &gt; NUL 2&gt;&amp;1" WorkingDirectory="$(MsBuildThisFileDirectory)" />
     <Delete Files="$(TmpFile)" Condition="$(SignCommand) != ''" />
   </Target>
   <Target Name="BeforeBuild" DependsOnTargets="YltBuildGen" />
