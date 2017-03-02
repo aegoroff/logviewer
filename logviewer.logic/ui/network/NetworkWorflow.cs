@@ -20,15 +20,14 @@ namespace logviewer.logic.ui.network
         private readonly StateMachine<ProxyMode, ProxyModeTransition> machine;
         private readonly IOptionsProvider provider;
         private readonly INetworkSettingsViewModel viewModel;
-        private AsymCrypt crypt;
+        private readonly IAsymCrypt crypt;
         private ProxyMode mode;
 
-        public NetworkWorflow(INetworkSettingsViewModel viewModel, IOptionsProvider provider, StateMachineMode machineMode)
+        public NetworkWorflow(INetworkSettingsViewModel viewModel, IOptionsProvider provider, IAsymCrypt crypt, StateMachineMode machineMode)
         {
             this.viewModel = viewModel;
             this.provider = provider;
-
-            this.InitCrypter();
+            this.crypt = crypt;
 
             this.machine = new StateMachine<ProxyMode, ProxyModeTransition>(() => this.mode, s => this.mode = s);
 
@@ -57,27 +56,6 @@ namespace logviewer.logic.ui.network
         public void Trigger(ProxyModeTransition transition)
         {
             this.machine.Fire(transition);
-        }
-
-        private void InitCrypter()
-        {
-            var privateKey = this.provider.ReadStringOption(Constants.PrivateKey);
-            var publicKey = this.provider.ReadStringOption(Constants.PublicKey);
-            if (string.IsNullOrEmpty(privateKey) || string.IsNullOrEmpty(publicKey))
-            {
-                this.crypt = new AsymCrypt();
-                this.crypt.GenerateKeys();
-                this.provider.UpdateStringOption(Constants.PrivateKey, this.crypt.PrivateKey);
-                this.provider.UpdateStringOption(Constants.PublicKey, this.crypt.PublicKey);
-            }
-            else
-            {
-                this.crypt = new AsymCrypt
-                {
-                    PublicKey = publicKey,
-                    PrivateKey = privateKey
-                };
-            }
         }
 
         private void OnEnter(StateMachineMode machineMode, Action readAction, Action writeAction)

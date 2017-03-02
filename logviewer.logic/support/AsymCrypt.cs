@@ -14,7 +14,7 @@ using logviewer.logic.Annotations;
 
 namespace logviewer.logic.support
 {
-    public class AsymCrypt
+    public class AsymCrypt : IAsymCrypt
     {
         /// <summary>
         ///     Must be set as base64 encoded

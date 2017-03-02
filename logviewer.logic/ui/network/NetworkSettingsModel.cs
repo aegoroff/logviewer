@@ -16,6 +16,7 @@ namespace logviewer.logic.ui.network
         private readonly INetworkSettingsViewModel viewModel;
         private readonly IOptionsProvider provider;
         private readonly NetworkWorflow stateMachine;
+        private AsymCrypt crypt;
 
         /// <summary>
         ///     Creates new controller class
@@ -26,7 +27,8 @@ namespace logviewer.logic.ui.network
         {
             this.viewModel = viewModel;
             this.provider = provider;
-            this.stateMachine = new NetworkWorflow(viewModel, provider, StateMachineMode.Read);
+            this.InitCrypter();
+            this.stateMachine = new NetworkWorflow(viewModel, provider, this.crypt, StateMachineMode.Read);
         }
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace logviewer.logic.ui.network
 
         private void WriteUnsafe()
         {
-            var sm = new NetworkWorflow(this.viewModel, this.provider, StateMachineMode.Write);
+            var sm = new NetworkWorflow(this.viewModel, this.provider, this.crypt, StateMachineMode.Write);
             sm.Trigger(this.GetTransition());
         }
 
@@ -93,6 +95,27 @@ namespace logviewer.logic.ui.network
                     return ProxyModeTransition.ToCustom;
                 default:
                     return ProxyModeTransition.ToNone;
+            }
+        }
+
+        private void InitCrypter()
+        {
+            var privateKey = this.provider.ReadStringOption(Constants.PrivateKey);
+            var publicKey = this.provider.ReadStringOption(Constants.PublicKey);
+            if (string.IsNullOrEmpty(privateKey) || string.IsNullOrEmpty(publicKey))
+            {
+                this.crypt = new AsymCrypt();
+                this.crypt.GenerateKeys();
+                this.provider.UpdateStringOption(Constants.PrivateKey, this.crypt.PrivateKey);
+                this.provider.UpdateStringOption(Constants.PublicKey, this.crypt.PublicKey);
+            }
+            else
+            {
+                this.crypt = new AsymCrypt
+                {
+                    PublicKey = publicKey,
+                    PrivateKey = privateKey
+                };
             }
         }
     }

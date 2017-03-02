@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="storage\ILogStore.cs" />
+    <Compile Include="support\IAsymCrypt.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\Extensions.cs" />
     <Compile Include="ui\main\LogWatcher.cs" />
