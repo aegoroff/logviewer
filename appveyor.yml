@@ -13,7 +13,7 @@ skip_tags: true
 
 # environment variables
 environment:
-  SignTool: C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
+  SignTool: %WindowsSdkDir%bin\x64\signtool.exe
   KeyFile: C:\projects\logviewer\logviewer.pfx
   LogviewerSnkPath: C:\projects\logviewer\logviewer.snk
   # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
