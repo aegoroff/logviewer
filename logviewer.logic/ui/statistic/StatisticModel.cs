@@ -54,40 +54,7 @@ namespace logviewer.logic.ui.statistic
         public void LoadStatistic()
         {
             this.items.Clear();
-            var source = Observable.Create<StatItemViewModel>(observer =>
-            {
-                foreach (var item in this.store.CountByLevel(this.filterViewModel.Filter, this.filterViewModel.UserRegexp, true))
-                {
-                    observer.OnNext(CreateItem(this.levelDescriptions[(int)item.Key], item.Value));
-                }
-
-                var minDateTime = this.SelectDateUsingFunc("min");
-                var maxDateTime = this.SelectDateUsingFunc("max");
-
-                if (minDateTime != maxDateTime || minDateTime != DateTime.MinValue)
-                {
-                    observer.OnNext(CreateItem(Resources.MinMessageDate, minDateTime));
-                    observer.OnNext(CreateItem(Resources.MaxMessageDate, maxDateTime));
-                }
-
-                observer.OnNext(new StatItemViewModel());
-
-                var total = this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
-                observer.OnNext(CreateItem(Resources.TotalMessages, total));
-
-                observer.OnNext(CreateItem(Resources.Size, this.size));
-                observer.OnNext(CreateItem(Resources.Encoding, this.encoding));
-
-                if (!string.IsNullOrWhiteSpace(this.store.DatabasePath) && File.Exists(this.store.DatabasePath))
-                {
-                    var fi = new FileInfo(this.store.DatabasePath);
-                    var dbSize = fi.Length;
-                    observer.OnNext(CreateItem(Resources.DatabaseSize, new FileSize(dbSize).Format()));
-                }
-
-                observer.OnCompleted();
-                return Disposable.Empty;
-            });
+            var source = Observable.Create<StatItemViewModel>(observer => this.LoadFunction(observer));
 
             source.SubscribeOn(Scheduler.Default)
                 .ObserveOn(this.UiContextScheduler)
@@ -95,6 +62,81 @@ namespace logviewer.logic.ui.statistic
                     model => { this.items.Add(model); },
                     exception => { Log.Instance.Error(exception.Message, exception); },
                     () => { Log.Instance.TraceFormatted("Statistic loading completed"); });
+        }
+
+        private IDisposable LoadFunction(IObserver<StatItemViewModel> observer)
+        {
+            this.CreateByLevelRows(observer);
+
+            this.CreateLogPeriodRows(observer);
+
+            CreateEmptyRow(observer);
+
+            this.CreateTotalRow(observer);
+
+            this.CreateSizeRow(observer);
+
+            this.CreateLogEncodingRow(observer);
+
+            this.CreateDatabaseFileInfoRow(observer);
+
+            observer.OnCompleted();
+            return Disposable.Empty;
+        }
+
+        private void CreateByLevelRows(IObserver<StatItemViewModel> observer)
+        {
+            foreach (var item in this.store.CountByLevel(this.filterViewModel.Filter, this.filterViewModel.UserRegexp, true))
+            {
+                observer.OnNext(CreateItem(this.levelDescriptions[(int) item.Key], item.Value));
+            }
+        }
+
+        private void CreateLogPeriodRows(IObserver<StatItemViewModel> observer)
+        {
+            var minDateTime = this.SelectDateUsingFunc("min");
+            var maxDateTime = this.SelectDateUsingFunc("max");
+
+            if (minDateTime == maxDateTime && minDateTime == DateTime.MinValue)
+            {
+                return;
+            }
+
+            observer.OnNext(CreateItem(Resources.MinMessageDate, minDateTime));
+            observer.OnNext(CreateItem(Resources.MaxMessageDate, maxDateTime));
+        }
+
+        private static void CreateEmptyRow(IObserver<StatItemViewModel> observer)
+        {
+            observer.OnNext(new StatItemViewModel());
+        }
+
+        private void CreateTotalRow(IObserver<StatItemViewModel> observer)
+        {
+            var total = this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
+            observer.OnNext(CreateItem(Resources.TotalMessages, total));
+        }
+
+        private void CreateSizeRow(IObserver<StatItemViewModel> observer)
+        {
+            observer.OnNext(CreateItem(Resources.Size, this.size));
+        }
+
+        private void CreateLogEncodingRow(IObserver<StatItemViewModel> observer)
+        {
+            observer.OnNext(CreateItem(Resources.Encoding, this.encoding));
+        }
+
+        private void CreateDatabaseFileInfoRow(IObserver<StatItemViewModel> observer)
+        {
+            if (string.IsNullOrWhiteSpace(this.store.DatabasePath) || !File.Exists(this.store.DatabasePath))
+            {
+                return;
+            }
+
+            var fi = new FileInfo(this.store.DatabasePath);
+            var dbSize = fi.Length;
+            observer.OnNext(CreateItem(Resources.DatabaseSize, new FileSize(dbSize).Format()));
         }
 
         private DateTime SelectDateUsingFunc(string func)
