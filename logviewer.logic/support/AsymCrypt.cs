@@ -57,6 +57,11 @@ namespace logviewer.logic.support
         public string Encrypt(string plain)
         {
             var provider = CreateProvider(this.PublicKey);
+            var maxStringLength = (provider.KeySize / 8) / 2 - 12 / 2;
+            if (plain.Length > maxStringLength)
+            {
+                throw new NotSupportedException($"Max acceptable string length is {maxStringLength} for the key size {provider.KeySize} but this string length is {plain.Length}");
+            }
             var decryptedBytes = Encoding.Unicode.GetBytes(plain);
             var cryptedBytes = provider.Encrypt(decryptedBytes, false);
 

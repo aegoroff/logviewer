@@ -4,6 +4,7 @@
 // Created at: 24.10.2012
 // © 2012-2017 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -123,8 +124,8 @@ namespace logviewer.tests
         public void EncryptDecrypt_WithGenerateKeys_CorrectStringAfterDecrypt()
         {
             // Arrange
-            Fixture fixture = new Fixture();
-            string plain = fixture.Create<string>(); ;
+            var fixture = new Fixture();
+            var plain = fixture.Create<string>();
             var crypt = new AsymCrypt();
 
             // Act
@@ -134,6 +135,36 @@ namespace logviewer.tests
 
             // Assert
             decrypted.Should().Be(plain);
+        }
+
+        [Theory]
+        [InlineData(1024, 59)]
+        [InlineData(2048, 123)]
+        [InlineData(4096, 251)]
+        public void Encrypt_BadStringLength_ThrowNotSupported(int keySize, int firstBadStringSize)
+        {
+            // Arrange
+            var crypt = new AsymCrypt();
+            crypt.GenerateKeys(keySize);
+
+            // Act
+            var plain = RandomString(keySize);
+            Action action = () => crypt.Encrypt(plain);
+
+            // Assert
+            action.ShouldThrow<NotSupportedException>()
+                .And.Message.Should()
+                .Contain(
+                    $"Max acceptable string length is {firstBadStringSize - 1} for the key size {keySize} but this string length is {plain.Length}");
+        }
+
+        private static readonly Random random = new Random();
+
+        private static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         [Theory]
