@@ -138,6 +138,25 @@ namespace logviewer.tests
         }
 
         [Theory]
+        [InlineData(1024, 58)]
+        [InlineData(2048, 122)]
+        [InlineData(4096, 250)]
+        public void EncryptDecrypt_MaxAcceptableStringLength_CorrectStringAfterDecrypt(int keySize, int maxStringSize)
+        {
+            // Arrange
+            var crypt = new AsymCrypt();
+            crypt.GenerateKeys(keySize);
+
+            // Act
+            var plain = RandomString(maxStringSize);
+            var crypted = crypt.Encrypt(plain);
+            var decrypted = crypt.Decrypt(crypted);
+
+            // Assert
+            decrypted.Should().Be(plain);
+        }
+
+        [Theory]
         [InlineData(1024, 59)]
         [InlineData(2048, 123)]
         [InlineData(4096, 251)]
@@ -148,7 +167,7 @@ namespace logviewer.tests
             crypt.GenerateKeys(keySize);
 
             // Act
-            var plain = RandomString(keySize);
+            var plain = RandomString(firstBadStringSize);
             Action action = () => crypt.Encrypt(plain);
 
             // Assert
