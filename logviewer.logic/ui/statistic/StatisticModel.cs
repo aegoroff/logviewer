@@ -56,12 +56,15 @@ namespace logviewer.logic.ui.statistic
             this.items.Clear();
             var source = Observable.Create<StatItemViewModel>(observer => this.LoadFunction(observer));
 
+            void OnNext(StatItemViewModel model) => this.items.Add(model);
+
+            void OnError(Exception exception) => Log.Instance.Error(exception.Message, exception);
+
+            void OnCompleted() => Log.Instance.TraceFormatted("Statistic loading completed");
+
             source.SubscribeOn(Scheduler.Default)
                 .ObserveOn(this.UiContextScheduler)
-                .Subscribe(
-                    model => { this.items.Add(model); },
-                    exception => { Log.Instance.Error(exception.Message, exception); },
-                    () => { Log.Instance.TraceFormatted("Statistic loading completed"); });
+                .Subscribe(OnNext, OnError, OnCompleted);
         }
 
         private IDisposable LoadFunction(IObserver<StatItemViewModel> observer)
