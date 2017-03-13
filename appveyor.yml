@@ -24,6 +24,8 @@ environment:
   SnkUri:
     secure: 96Uy0sDkAp6sTkaD5MptudqaMXrjJkaBQhghxNHvaP9vHbUOcF1R9h9k3LXG6ZnwWkZOmP1fCRP5m2Bclrbc22uOBlleZWaxVycTis9Jb4QCSI2FFddeTQAxehQypUsI
 
+image: Visual Studio 2017
+
 # enable patching of AssemblyInfo.* files
 assembly_info:
   patch: true
