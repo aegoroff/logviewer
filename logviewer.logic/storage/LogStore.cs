@@ -178,7 +178,8 @@ namespace logviewer.logic.storage
             message.Cache(this.rules);
             // ugly but very fast
             var query = this.insertPrefix + message.Ix + this.insertSuffix;
-            this.connection.RunSqlQuery(delegate (IDbCommand command)
+
+            void Action(IDbCommand command)
             {
                 try
                 {
@@ -203,7 +204,9 @@ namespace logviewer.logic.storage
                 {
                     Log.Instance.Debug(e);
                 }
-            }, query);
+            }
+
+            this.connection.RunSqlQuery(Action, query);
         }
 
         [PublicAPI]
