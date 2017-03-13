@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -200,15 +201,22 @@ namespace logviewer.logic.ui.main
             this.cancellation = new CancellationTokenSource();
 
             var o = Observable.Start(this.DoLogReadingTask, this.backgroundScheduler);
+
+            void OnNext(Unit unit)
+            {
+            }
+
+            void OnError(Exception exception)
+            {
+                this.viewModel.LogProgressText = exception.Message;
+                Log.Instance.Warn(exception.Message, exception);
+            }
+
+            void OnCompleted() => this.viewModel.Datasource.LoadCount((int)this.viewModel.MessageCount);
+
             o.ObserveOn(this.UiContextScheduler)
                 .Finally(this.FinalizeLogReadingTask)
-                .Subscribe(unit => { },
-                    exception =>
-                    {
-                        this.viewModel.LogProgressText = exception.Message;
-                        Log.Instance.Warn(exception.Message, exception);
-                    },
-                    () => this.viewModel.Datasource.LoadCount((int) this.viewModel.MessageCount), this.cancellation.Token);
+                .Subscribe(OnNext, OnError, OnCompleted, this.cancellation.Token);
         }
 
         private void FinalizeLogReadingTask()
@@ -229,7 +237,7 @@ namespace logviewer.logic.ui.main
 
         private void UpdateRecentFilters(string value = null)
         {
-            this.settings.ExecuteUsingRecentFiltersStore(delegate(RecentItemsStore itemsStore)
+            this.settings.ExecuteUsingRecentFiltersStore(itemsStore =>
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
