@@ -27,15 +27,5 @@ namespace logviewer.engine
         /// Log read percent
         /// </summary>
         public int Percent { get; set; }
-
-        /// <summary>
-        /// Creates new <see cref="LoadProgress"/> instance using percent specified
-        /// </summary>
-        /// <param name="percent">Percent data</param>
-        /// <returns>New <see cref="LoadProgress"/> instance</returns>
-        public static LoadProgress FromPercent(int percent)
-        {
-            return new LoadProgress { Percent = percent };
-        }
     }
 }
