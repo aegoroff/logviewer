@@ -176,8 +176,6 @@ namespace logviewer.logic.storage
         public void AddMessage(LogMessage message)
         {
             message.Cache(this.rules);
-            // ugly but very fast
-            var query = this.insertPrefix + message.Ix + this.insertSuffix;
 
             void Action(IDbCommand command)
             {
@@ -206,7 +204,8 @@ namespace logviewer.logic.storage
                 }
             }
 
-            this.connection.RunSqlQuery(Action, query);
+            // ugly but very fast
+            this.connection.RunSqlQuery(Action, this.insertPrefix + message.Ix + this.insertSuffix);
         }
 
         [PublicAPI]
