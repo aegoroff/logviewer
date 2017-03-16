@@ -99,10 +99,7 @@ namespace logviewer.logic.ui
 
         public bool IsLoading
         {
-            get
-            {
-                return this.isLoading;
-            }
+            get => this.isLoading;
             set
             {
                 this.isLoading = value;
@@ -145,10 +142,7 @@ namespace logviewer.logic.ui
 
         public int Count
         {
-            get
-            {
-                return this.count;
-            }
+            get => this.count;
             private set
             {
                 this.count = value;
@@ -166,15 +160,14 @@ namespace logviewer.logic.ui
         ///     the corresponding page from the IItemsProvider if required.
         /// </summary>
         /// <value></value>
+        /// <remarks>
+        /// this ugly construction only for performance reasons. This indexer may be called hundred million times for
+        /// 0.5M items collection.
+        /// </remarks>
         public T this[int index]
         {
-            get
-            {
-                // this ugly construction only for performance reasons. This indexer may be called hundred million times for
-                // 0.5M items collection.
-                return (T)((IList)this)[index];
-            }
-            set { throw new NotSupportedException(); }
+            get => (T)((IList)this)[index];
+            set => throw new NotSupportedException();
         }
 
         object IList.this[int index]

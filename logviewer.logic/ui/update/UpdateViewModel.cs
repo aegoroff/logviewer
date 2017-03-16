@@ -46,7 +46,7 @@ namespace logviewer.logic.ui.update
 
         public bool UpdateEnabled
         {
-            get { return this.updateEnabled; }
+            get => this.updateEnabled;
             set
             {
                 this.updateEnabled = value;
@@ -56,7 +56,7 @@ namespace logviewer.logic.ui.update
 
         public bool YesEnabled
         {
-            get { return this.yesEnabled; }
+            get => this.yesEnabled;
             set
             {
                 this.yesEnabled = value;
@@ -66,7 +66,7 @@ namespace logviewer.logic.ui.update
 
         public string ReadBytes
         {
-            get { return this.readBytes; }
+            get => this.readBytes;
             set
             {
                 this.readBytes = value;
@@ -76,7 +76,7 @@ namespace logviewer.logic.ui.update
 
         public int Percent
         {
-            get { return this.percent; }
+            get => this.percent;
             set
             {
                 this.percent = value;
@@ -86,7 +86,7 @@ namespace logviewer.logic.ui.update
 
         public string UpdateAvailableText
         {
-            get { return this.updateAvailableText; }
+            get => this.updateAvailableText;
             set
             {
                 this.updateAvailableText = value;

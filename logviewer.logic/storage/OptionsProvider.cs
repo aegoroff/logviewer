@@ -56,9 +56,13 @@ namespace logviewer.logic.storage
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);
-            Action<DatabaseConnection> action =
-                delegate(DatabaseConnection connection) { result = connection.ExecuteScalar<T>(query, actionBeforeExecute); };
-            this.ExecuteQuery(action);
+
+            void Action(DatabaseConnection connection)
+            {
+                result = connection.ExecuteScalar<T>(query, actionBeforeExecute);
+            }
+
+            this.ExecuteQuery(Action);
             return result;
         }
 
@@ -82,7 +86,7 @@ namespace logviewer.logic.storage
             var result = default(T);
             var read = false;
 
-            Action<IDataReader> onRead = delegate(IDataReader rdr)
+            void OnRead(IDataReader rdr)
             {
                 if (rdr[0] is DBNull)
                 {
@@ -90,11 +94,13 @@ namespace logviewer.logic.storage
                 }
                 result = (T) rdr[0];
                 read = true;
-            };
+            }
 
-            Action<IDbCommand> beforeRead = command => command.AddParameter(OptionParameter, option);
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(string.Format(cmd, table), onRead, beforeRead);
-            this.ExecuteQuery(action);
+            void BeforeRead(IDbCommand command) => command.AddParameter(OptionParameter, option);
+
+            void Action(DatabaseConnection connection) => connection.ExecuteReader(string.Format(cmd, table), OnRead, BeforeRead);
+
+            this.ExecuteQuery(Action);
 
 
             if (read)
@@ -112,17 +118,17 @@ namespace logviewer.logic.storage
                 $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}",
                 command => command.AddParameter(OptionParameter, option)) > 0;
 
-            Action<IDbCommand> action = delegate(IDbCommand command)
+            void Action(IDbCommand command)
             {
                 command.AddParameter(OptionParameter, option);
                 command.AddParameter(ValueParameter, value);
-            };
+            }
 
-            var format = exist 
+            var format = exist
                 ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
                 : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
             var updateQuery = string.Format(format, table);
-            this.ExecuteNonQuery(updateQuery, action);
+            this.ExecuteNonQuery(updateQuery, Action);
         }
     }
 }

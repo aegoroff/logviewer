@@ -16,17 +16,18 @@ namespace logviewer.logic.ui
         public static IEnumerable<TemplateCommandViewModel> ToCommands(this IEnumerable<ParsingTemplate> templates, int selected)
         {
             var ix = 0;
-            return from t in templates select CreateTemplateCommand(selected, t, ix++);
-        }
 
-        private static TemplateCommandViewModel CreateTemplateCommand(int selected, ParsingTemplate template, int ix)
-        {
-            return new TemplateCommandViewModel
+            TemplateCommandViewModel CreateTemplateCommand(ParsingTemplate template)
             {
-                Text = template.DisplayName,
-                Checked = ix == selected,
-                Index = ix
-            };
+                return new TemplateCommandViewModel
+                {
+                    Text = template.DisplayName,
+                    Checked = ix == selected,
+                    Index = ix++
+                };
+            }
+
+            return from t in templates select CreateTemplateCommand(t);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace logviewer.logic.storage
             this.DisposeInternal();
         }
 
-        internal bool IsEmpty { get; private set; }
+        internal bool IsEmpty { get; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
@@ -126,7 +126,7 @@ namespace logviewer.logic.storage
 
         internal void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
         {
-            this.RunSqlQuery(delegate(IDbCommand command)
+            this.RunSqlQuery(command =>
             {
                 beforeRead?.Invoke(command);
                 var rdr = command.ExecuteReader();
@@ -149,7 +149,7 @@ namespace logviewer.logic.storage
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);
-            this.RunSqlQuery(delegate(IDbCommand cmd)
+            this.RunSqlQuery(cmd =>
             {
                 actionBeforeExecute?.Invoke(cmd);
                 var r = cmd.ExecuteScalar();
@@ -163,7 +163,7 @@ namespace logviewer.logic.storage
 
         internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
-            this.RunSqlQuery(delegate(IDbCommand command)
+            this.RunSqlQuery(command =>
             {
                 try
                 {

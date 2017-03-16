@@ -10,8 +10,8 @@ namespace logviewer.logic.models
 {
     public sealed class VersionModel
     {
-        public Version Version { get; private set; }
-        public string Url { get; private set; }
+        public Version Version { get; }
+        public string Url { get; }
 
         public VersionModel(Version version, string url)
         {

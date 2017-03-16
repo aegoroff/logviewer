@@ -18,7 +18,7 @@ namespace logviewer.logic.ui.statistic
 
         public string Filter
         {
-            get { return this.filter; }
+            get => this.filter;
             set
             {
                 this.OnPropertyChanged(nameof(this.Filter));
@@ -28,7 +28,7 @@ namespace logviewer.logic.ui.statistic
 
         public bool UserRegexp
         {
-            get { return this.userRegexp; }
+            get => this.userRegexp;
             set
             {
                 this.OnPropertyChanged(nameof(this.UserRegexp));
