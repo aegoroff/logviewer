@@ -104,7 +104,7 @@ namespace logviewer.tests
 
         private void WaitReadingComplete()
         {
-            var result = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(6));
+            var result = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(2));
             result.Should().BeTrue("Wait expired");
         }
 
