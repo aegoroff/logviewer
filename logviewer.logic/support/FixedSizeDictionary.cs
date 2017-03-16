@@ -143,8 +143,8 @@ namespace logviewer.logic.support
 
         public T this[int key]
         {
-            get => this.store[key];
-            set => this.store[key] = value;
+            get { return this.store[key]; }
+            set { this.store[key] = value; }
         }
 
         public ICollection<int> Keys
