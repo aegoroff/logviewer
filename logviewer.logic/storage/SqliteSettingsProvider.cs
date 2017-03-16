@@ -284,15 +284,9 @@ namespace logviewer.logic.storage
 
             var result = new List<ParsingTemplate>();
 
-            void OnRead(IDataReader rdr)
-            {
-                result.Add(new ParsingTemplate {Index = (int) (long) rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string});
-            }
+            void OnRead(IDataReader rdr) => result.Add(new ParsingTemplate {Index = (int) (long) rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string});
 
-            void Action(DatabaseConnection connection)
-            {
-                connection.ExecuteReader(cmd, OnRead);
-            }
+            void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -305,10 +299,7 @@ namespace logviewer.logic.storage
 
             var result = new ParsingTemplate { Index = index };
 
-            void BeforeRead(IDbCommand command)
-            {
-                command.AddParameter(@"@Ix", index);
-            }
+            void BeforeRead(IDbCommand command) => command.AddParameter(@"@Ix", index);
 
             void OnRead(IDataReader rdr)
             {
@@ -336,10 +327,8 @@ namespace logviewer.logic.storage
                     WHERE
                         Ix = @Ix
                     ";
-            void Action(DatabaseConnection connection)
-            {
-                connection.ExecuteReader(query, OnRead, BeforeRead);
-            }
+
+            void Action(DatabaseConnection connection) => connection.ExecuteReader(query, OnRead, BeforeRead);
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -393,10 +382,7 @@ namespace logviewer.logic.storage
 
             var indexesToUpdate = new List<long>();
 
-            void BeforeRead(IDbCommand command)
-            {
-                command.AddParameter(@"@Ix", ix);
-            }
+            void BeforeRead(IDbCommand command) => command.AddParameter(@"@Ix", ix);
 
             void OnRead(IDataReader rdr)
             {
