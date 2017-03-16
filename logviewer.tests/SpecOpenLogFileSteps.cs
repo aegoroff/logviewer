@@ -97,11 +97,9 @@ namespace logviewer.tests
         [When(@"I press open with min level ""(.*)"" and max level ""(.*)""")]
         public void WhenIPressOpenWithMinLevelAndMaxLevel(string min, string max)
         {
-            LogLevel minLevel;
-            Enum.TryParse(min, out minLevel);
+            Enum.TryParse(min, out LogLevel minLevel);
 
-            LogLevel maxLevel;
-            Enum.TryParse(max, out maxLevel);
+            Enum.TryParse(max, out LogLevel maxLevel);
 
             this.Open(minLevel, maxLevel);
         }
@@ -153,7 +151,11 @@ namespace logviewer.tests
                 }
             }
 
-            this.workflow.Close();
+            if (this.waitResult)
+            {
+                this.workflow.Close();
+            }
+            this.workflow.Dispose();
         }
 
         private void Open(LogLevel minLevel, LogLevel maxLevel)

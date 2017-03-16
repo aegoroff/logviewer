@@ -7,7 +7,7 @@ namespace logviewer.logic.ui.main
     public class LogWatcher : IDisposable
     {
         private readonly Action<string> action;
-        private readonly FileSystemWatcher logWatch;
+        private FileSystemWatcher logWatch;
 
         public LogWatcher(Action<string> action)
         {
@@ -41,6 +41,7 @@ namespace logviewer.logic.ui.main
         public void Dispose()
         {
             this.logWatch?.Dispose();
+            this.logWatch = null;
         }
     }
 }
