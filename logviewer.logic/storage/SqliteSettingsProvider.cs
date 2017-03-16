@@ -120,10 +120,7 @@ namespace logviewer.logic.storage
             return argb == -1 ? defaultColors[level] : Color.FromArgb(argb);
         }
 
-        public IDictionary<LogLevel, Color> DefaultColors
-        {
-            get { return defaultColors; }
-        }
+        public IDictionary<LogLevel, Color> DefaultColors => defaultColors;
 
         public int SelectedParsingTemplate
         {
@@ -142,15 +139,9 @@ namespace logviewer.logic.storage
             this.optionsProvider.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
-        private static RegistryKey RegistryKey
-        {
-            get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
-        }
+        private static RegistryKey RegistryKey => GetRegKey(RegistryKeyBase + OptionsSectionName);
 
-        private static bool MigrationNeeded
-        {
-            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
-        }
+        private static bool MigrationNeeded => Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null;
 
         public static string ApplicationFolder
         {
@@ -229,10 +220,7 @@ namespace logviewer.logic.storage
             set { this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
 
-        public string FullPathToDatabase
-        {
-            get { return this.settingsDatabaseFilePath; }
-        }
+        public string FullPathToDatabase => this.settingsDatabaseFilePath;
 
         public void UpdateParsingTemplate(ParsingTemplate template)
         {
@@ -475,10 +463,7 @@ namespace logviewer.logic.storage
             return this.GetUsingRecentItemsStore(function, RecentFilters, KeepLastFilters);
         }
 
-        public IOptionsProvider OptionsProvider
-        {
-            get { return this.optionsProvider; }
-        }
+        public IOptionsProvider OptionsProvider => this.optionsProvider;
 
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {
