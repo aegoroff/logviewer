@@ -124,8 +124,8 @@ namespace logviewer.logic.storage
 
         public int SelectedParsingTemplate
         {
-            get { return this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName); }
-            set { this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName);
+            set => this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value);
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -157,62 +157,62 @@ namespace logviewer.logic.storage
 
         public string MessageFilter
         {
-            get { return this.optionsProvider.ReadStringOption(FilterParameterName); }
-            set { this.optionsProvider.UpdateStringOption(FilterParameterName, value); }
+            get => this.optionsProvider.ReadStringOption(FilterParameterName);
+            set => this.optionsProvider.UpdateStringOption(FilterParameterName, value);
         }
 
         public DateTime LastUpdateCheckTime
         {
-            get { return DateTime.Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O"))).ToUniversalTime(); }
-            set { this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O")); }
+            get => DateTime.Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O"))).ToUniversalTime();
+            set => this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O"));
         }
 
         public bool OpenLastFile
         {
-            get { return this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName); }
-            set { this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value); }
+            get => this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName);
+            set => this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value);
         }
 
         public bool AutoRefreshOnFileChange
         {
-            get { return this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName); }
-            set { this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value); }
+            get => this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName);
+            set => this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value);
         }
 
         public int MinLevel
         {
-            get { return this.optionsProvider.ReadIntegerOption(MinLevelParameterName); }
-            set { this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(MinLevelParameterName);
+            set => this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value);
         }
 
         public int MaxLevel
         {
-            get { return this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal); }
-            set { this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal);
+            set => this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value);
         }
 
         public int PageSize
         {
-            get { return this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
-            set { this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize);
+            set => this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value);
         }
 
         public bool Sorting
         {
-            get { return this.optionsProvider.ReadBooleanOption(SortingParameterName); }
-            set { this.optionsProvider.UpdateBooleanOption(SortingParameterName, value); }
+            get => this.optionsProvider.ReadBooleanOption(SortingParameterName);
+            set => this.optionsProvider.UpdateBooleanOption(SortingParameterName, value);
         }
 
         public bool UseRegexp
         {
-            get { return this.optionsProvider.ReadBooleanOption(UseRegexpParameterName); }
-            set { this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value); }
+            get => this.optionsProvider.ReadBooleanOption(UseRegexpParameterName);
+            set => this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value);
         }
 
         public int KeepLastNFiles
         {
-            get { return this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
-            set { this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles);
+            set => this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value);
         }
 
         public string FullPathToDatabase => this.settingsDatabaseFilePath;
@@ -279,10 +279,11 @@ namespace logviewer.logic.storage
 
             var result = new List<ParsingTemplate>();
 
-            Action<IDataReader> onRead = rdr => result.Add(new ParsingTemplate { Index = (int)(long)rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string });
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(cmd, onRead);
+            void OnRead(IDataReader rdr) => result.Add(new ParsingTemplate {Index = (int) (long) rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string});
 
-            this.optionsProvider.ExecuteQuery(action);
+            void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
+
+            this.optionsProvider.ExecuteQuery(Action);
 
             return result;
         }
@@ -293,9 +294,9 @@ namespace logviewer.logic.storage
 
             var result = new ParsingTemplate { Index = index };
 
-            Action<IDbCommand> beforeRead = command => command.AddParameter(@"@Ix", index);
-           
-            Action<IDataReader> onRead = delegate(IDataReader rdr)
+            void BeforeRead(IDbCommand command) => command.AddParameter(@"@Ix", index);
+
+            void OnRead(IDataReader rdr)
             {
                 foreach (var column in this.parsingTemplateProperties)
                 {
@@ -303,14 +304,14 @@ namespace logviewer.logic.storage
                     if (column.PropertyType == typeof(bool))
                     {
                         var v = rdr[attr.Name];
-                        column.SetValue(result, (bool)v, null);
+                        column.SetValue(result, (bool) v, null);
                     }
                     else
                     {
                         column.SetValue(result, rdr[attr.Name] as string, null);
                     }
                 }
-            };
+            }
 
             var query =
                     $@"
@@ -321,8 +322,9 @@ namespace logviewer.logic.storage
                     WHERE
                         Ix = @Ix
                     ";
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(query, onRead, beforeRead);
-            this.optionsProvider.ExecuteQuery(action);
+            void Action(DatabaseConnection connection) => connection.ExecuteReader(query, OnRead, BeforeRead);
+
+            this.optionsProvider.ExecuteQuery(Action);
 
             return result;
         }
@@ -374,30 +376,30 @@ namespace logviewer.logic.storage
 
             var indexesToUpdate = new List<long>();
 
-            Action<IDbCommand> beforeRead = command => command.AddParameter(@"@Ix", ix);
+            void BeforeRead(IDbCommand command) => command.AddParameter(@"@Ix", ix);
 
-            Action<IDataReader> onRead = delegate(IDataReader rdr)
+            void OnRead(IDataReader rdr)
             {
                 if (rdr[0] is DBNull)
                 {
                     return;
                 }
-                indexesToUpdate.Add((long)rdr[0]);
-            };
+                indexesToUpdate.Add((long) rdr[0]);
+            }
 
-            this.optionsProvider.ExecuteQuery(delegate(DatabaseConnection connection)
+            this.optionsProvider.ExecuteQuery(connection =>
             {
                 connection.BeginTran();
                 try
                 {
                     connection.ExecuteNonQuery(query);
-                    connection.ExecuteReader(selectIndexesCmd, onRead, beforeRead);
+                    connection.ExecuteReader(selectIndexesCmd, OnRead, BeforeRead);
 
-                    foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>)delegate(IDbCommand command)
+                    foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>) (command =>
                     {
                         command.AddParameter(@"@Ix", index);
                         command.AddParameter(@"@NewIx", index - 1);
-                    }))
+                    })))
                     {
                         connection.ExecuteNonQuery(updateIndexesCmd, beforeUpdate);
                     }
@@ -546,13 +548,13 @@ namespace logviewer.logic.storage
 
         private static void InsertSchemaVersion(long version, DatabaseConnection connection)
         {
-            Action<IDbCommand> action = delegate(IDbCommand command)
+            void Action(IDbCommand command)
             {
                 command.AddParameter(@"@Version", version);
                 command.AddParameter(@"@OccurredAt", DateTime.Now.Ticks);
-            };
+            }
 
-            connection.ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", action);
+            connection.ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", Action);
         }
 
         private static void Upgrade1(DatabaseConnection connection)
@@ -572,13 +574,13 @@ namespace logviewer.logic.storage
                         Ix = @Ix
                     ";
 
-            Action<IDbCommand> action = delegate(IDbCommand command)
+            void Action(IDbCommand command)
             {
                 command.AddParameter(@"@Ix", DefaultParsingProfileIndex);
                 command.AddParameter(@"@Name", Resources.ParsingTemplateNlog);
-            };
+            }
 
-            connection.ExecuteNonQuery(cmd, action);
+            connection.ExecuteNonQuery(cmd, Action);
         }
 
         private static void Upgrade2(DatabaseConnection connection)

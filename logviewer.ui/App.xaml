@@ -4,6 +4,6 @@
              StartupUri="MainWindow.xaml" Startup="App_OnStartup">
     <Application.Resources>
         <!--Attach Default Fluent Control's Theme-->
-        <ResourceDictionary Source="pack://application:,,,/Fluent;Component/Themes/Windows8/Generic.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Fluent;Component/Themes/Generic.xaml" />
     </Application.Resources>
 </Application>

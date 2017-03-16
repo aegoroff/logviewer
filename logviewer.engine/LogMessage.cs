@@ -1,8 +1,8 @@
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 19.09.2012
-// � 2012-2017 Alexander Egorov
+// © 2012-2017 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -49,8 +49,8 @@ namespace logviewer.engine
         /// </summary>
         public long Ix
         {
-            get { return this.ix; }
-            set { this.ix = value; }
+            get => this.ix;
+            set => this.ix = value;
         }
 
         /// <summary>
@@ -166,9 +166,8 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseLogLevel(string dataToParse, ICollection<GrokRule> rules, string property)
         {
-            LogLevel level;
             var result = rules.Count > 1
-                ? TryRunSemanticAction(dataToParse, rules, out level) 
+                ? TryRunSemanticAction(dataToParse, rules, out LogLevel level) 
                 : TryParseLogLevel(dataToParse, out level);
             if (result)
             {
@@ -179,8 +178,7 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseDateTime(string dataToParse, string property)
         {
-            DateTime r;
-            var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+            var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out DateTime r);
             if (!success)
             {
                 success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
@@ -194,9 +192,7 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseInteger(string dataToParse, string property)
         {
-            long r;
-            var success = long.TryParse(dataToParse, out r);
-            if (success)
+            if (long.TryParse(dataToParse, out long r))
             {
                 this.integerProperties[property] = r;
             }
@@ -222,8 +218,7 @@ namespace logviewer.engine
                 var property = this.rawProperties[i];
                 var key = property.Key;
 
-                ISet<GrokRule> rules;
-                if (!schema.TryGetValue(key, out rules))
+                if (!schema.TryGetValue(key, out ISet<GrokRule> rules))
                 {
                     continue;
                 }
@@ -314,8 +309,7 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetProperty<T>(IDictionary<string, T> dict, string property)
         {
-            T result;
-            dict.TryGetValue(property, out result);
+            dict.TryGetValue(property, out T result);
             return result;
         }
         

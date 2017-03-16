@@ -50,23 +50,30 @@ namespace logviewer.logic.ui.main
 
             this.settings.LastUpdateCheckTime = DateTime.UtcNow;
 
-            observable.Subscribe(
-                c =>
+            void OnNext(UpdatesChecker chk)
+            {
+                void ShowNewVersionAvailable() => this.viewModel.ShowDialogAboutNewVersionAvaliable(chk.CurrentVersion, chk.LatestVersion, chk.LatestVersionUrl);
+
+                void ShowNoUpdateAvaliable() => this.viewModel.ShowNoUpdateAvaliable();
+
+                void OnComplete(bool result)
                 {
-                    c.CheckUpdatesAvaliable(result =>
+                    if (!result)
                     {
-                        if (!result)
+                        if (manualInvoke)
                         {
-                            if (manualInvoke)
-                            {
-                                this.RunOnGuiThread(() => this.viewModel.ShowNoUpdateAvaliable());
-                            }
-                            return;
+                            this.RunOnGuiThread(ShowNoUpdateAvaliable);
                         }
-                        this.RunOnGuiThread(
-                            () => this.viewModel.ShowDialogAboutNewVersionAvaliable(c.CurrentVersion, c.LatestVersion, c.LatestVersionUrl));
-                    });
-                });
+                        return;
+                    }
+
+                    this.RunOnGuiThread(ShowNewVersionAvailable);
+                }
+
+                chk.CheckUpdatesAvaliable(OnComplete);
+            }
+
+            observable.Subscribe(OnNext);
         }
 
         public void Dispose()

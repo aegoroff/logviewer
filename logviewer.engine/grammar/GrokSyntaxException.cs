@@ -32,7 +32,7 @@ namespace logviewer.engine.grammar
         protected GrokSyntaxException(SerializationInfo info, StreamingContext context) :
             base(info, context)
         {
-            if ((info == null))
+            if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }
@@ -57,7 +57,7 @@ namespace logviewer.engine.grammar
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if ((info == null))
+            if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }

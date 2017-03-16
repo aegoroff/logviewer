@@ -176,9 +176,8 @@ namespace logviewer.logic.storage
         public void AddMessage(LogMessage message)
         {
             message.Cache(this.rules);
-            // ugly but very fast
-            var query = this.insertPrefix + message.Ix + this.insertSuffix;
-            this.connection.RunSqlQuery(delegate (IDbCommand command)
+
+            void Action(IDbCommand command)
             {
                 try
                 {
@@ -203,7 +202,10 @@ namespace logviewer.logic.storage
                 {
                     Log.Instance.Debug(e);
                 }
-            }, query);
+            }
+
+            // ugly but very fast
+            this.connection.RunSqlQuery(Action, this.insertPrefix + message.Ix + this.insertSuffix);
         }
 
         [PublicAPI]
@@ -232,8 +234,9 @@ namespace logviewer.logic.storage
             query.Append(" OFFSET ");
             query.Append(offset);
 
-            Action<IDbCommand> beforeRead = command => this.AddParameters(command, min, max, filter, useRegexp, start, finish);
-            Action<IDataReader> onRead = delegate(IDataReader rdr)
+            void BeforeRead(IDbCommand command) => this.AddParameters(command, min, max, filter, useRegexp, start, finish);
+
+            void OnRead(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
                 // ReSharper disable once ForCanBeConvertedToForeach
@@ -251,8 +254,9 @@ namespace logviewer.logic.storage
                 }
 
                 onReadMessage(msg);
-            };
-            this.connection.ExecuteReader(query.ToString(), onRead, beforeRead, notCancelled);
+            }
+
+            this.connection.ExecuteReader(query.ToString(), OnRead, BeforeRead, notCancelled);
         }
 
         private PropertyType DefinePropertyType(string param)
@@ -288,8 +292,10 @@ namespace logviewer.logic.storage
             }
 
             var query = @"SELECT count(1) FROM Log " + this.Where(min, max, filter, useRegexp, start, finish);
-            Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, start, finish);
-            var result = this.connection.ExecuteScalar<long>(query, addParameters);
+
+            void AddParameters(IDbCommand cmd) => this.AddParameters(cmd, min, max, filter, useRegexp, start, finish);
+
+            var result = this.connection.ExecuteScalar<long>(query, AddParameters);
             return result;
         }
 
@@ -307,8 +313,10 @@ namespace logviewer.logic.storage
             var where = this.Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = $@"SELECT {func}({this.dateTimeProperty}) FROM Log {where}";
 
-            Action<IDbCommand> addParameters = cmd => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
-            var result = this.connection.ExecuteScalar<long>(query, addParameters);
+            void AddParameters(IDbCommand cmd) => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+
+            var result = this.connection.ExecuteScalar<long>(query, AddParameters);
+
             return DateTime.FromFileTime(result);
         }
 

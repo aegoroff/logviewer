@@ -296,7 +296,7 @@ namespace logviewer.logic.ui.settings
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
                 var lastIx = this.settings.ReadAllParsingTemplates().Count - 1;
 
-                for (int i = lastIx; i >= 0; i--)
+                for (var i = lastIx; i >= 0; i--)
                 {
                     this.settings.DeleteParsingTemplate(i);
                 }
