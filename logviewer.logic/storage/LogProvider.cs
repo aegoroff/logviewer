@@ -30,8 +30,8 @@ namespace logviewer.logic.storage
         [PublicAPI]
         public LogStore Store
         {
-            get => this.store;
-            set => this.store = value;
+            get { return this.store; }
+            set { this.store = value; }
         }
 
         public void Dispose()

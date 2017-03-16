@@ -120,12 +120,15 @@ namespace logviewer.logic.storage
             return argb == -1 ? defaultColors[level] : Color.FromArgb(argb);
         }
 
-        public IDictionary<LogLevel, Color> DefaultColors => defaultColors;
+        public IDictionary<LogLevel, Color> DefaultColors
+        {
+            get { return defaultColors; }
+        }
 
         public int SelectedParsingTemplate
         {
-            get => this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName);
-            set => this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value);
+            get { return this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName); }
+            set { this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value); }
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -139,9 +142,15 @@ namespace logviewer.logic.storage
             this.optionsProvider.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
-        private static RegistryKey RegistryKey => GetRegKey(RegistryKeyBase + OptionsSectionName);
+        private static RegistryKey RegistryKey
+        {
+            get { return GetRegKey(RegistryKeyBase + OptionsSectionName); }
+        }
 
-        private static bool MigrationNeeded => Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null;
+        private static bool MigrationNeeded
+        {
+            get { return Registry.CurrentUser.OpenSubKey(RegistryKeyBase + OptionsSectionName, true) != null; }
+        }
 
         public static string ApplicationFolder
         {
@@ -157,65 +166,73 @@ namespace logviewer.logic.storage
 
         public string MessageFilter
         {
-            get => this.optionsProvider.ReadStringOption(FilterParameterName);
-            set => this.optionsProvider.UpdateStringOption(FilterParameterName, value);
+            get { return this.optionsProvider.ReadStringOption(FilterParameterName); }
+            set { this.optionsProvider.UpdateStringOption(FilterParameterName, value); }
         }
 
         public DateTime LastUpdateCheckTime
         {
-            get => DateTime.Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O"))).ToUniversalTime();
-            set => this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O"));
+            get
+            {
+                return DateTime
+                    .Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
+                    .ToUniversalTime();
+            }
+            set { this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O")); }
         }
 
         public bool OpenLastFile
         {
-            get => this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName);
-            set => this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value);
+            get { return this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName); }
+            set { this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value); }
         }
 
         public bool AutoRefreshOnFileChange
         {
-            get => this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName);
-            set => this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value);
+            get { return this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName); }
+            set { this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value); }
         }
 
         public int MinLevel
         {
-            get => this.optionsProvider.ReadIntegerOption(MinLevelParameterName);
-            set => this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value);
+            get { return this.optionsProvider.ReadIntegerOption(MinLevelParameterName); }
+            set { this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value); }
         }
 
         public int MaxLevel
         {
-            get => this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal);
-            set => this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value);
+            get { return this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int) LogLevel.Fatal); }
+            set { this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value); }
         }
 
         public int PageSize
         {
-            get => this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize);
-            set => this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value);
+            get { return this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
+            set { this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value); }
         }
 
         public bool Sorting
         {
-            get => this.optionsProvider.ReadBooleanOption(SortingParameterName);
-            set => this.optionsProvider.UpdateBooleanOption(SortingParameterName, value);
+            get { return this.optionsProvider.ReadBooleanOption(SortingParameterName); }
+            set { this.optionsProvider.UpdateBooleanOption(SortingParameterName, value); }
         }
 
         public bool UseRegexp
         {
-            get => this.optionsProvider.ReadBooleanOption(UseRegexpParameterName);
-            set => this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value);
+            get { return this.optionsProvider.ReadBooleanOption(UseRegexpParameterName); }
+            set { this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value); }
         }
 
         public int KeepLastNFiles
         {
-            get => this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles);
-            set => this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value);
+            get { return this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
+            set { this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
         }
 
-        public string FullPathToDatabase => this.settingsDatabaseFilePath;
+        public string FullPathToDatabase
+        {
+            get { return this.settingsDatabaseFilePath; }
+        }
 
         public void UpdateParsingTemplate(ParsingTemplate template)
         {
@@ -279,9 +296,15 @@ namespace logviewer.logic.storage
 
             var result = new List<ParsingTemplate>();
 
-            void OnRead(IDataReader rdr) => result.Add(new ParsingTemplate {Index = (int) (long) rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string});
+            void OnRead(IDataReader rdr)
+            {
+                result.Add(new ParsingTemplate {Index = (int) (long) rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string});
+            }
 
-            void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
+            void Action(DatabaseConnection connection)
+            {
+                connection.ExecuteReader(cmd, OnRead);
+            }
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -294,7 +317,10 @@ namespace logviewer.logic.storage
 
             var result = new ParsingTemplate { Index = index };
 
-            void BeforeRead(IDbCommand command) => command.AddParameter(@"@Ix", index);
+            void BeforeRead(IDbCommand command)
+            {
+                command.AddParameter(@"@Ix", index);
+            }
 
             void OnRead(IDataReader rdr)
             {
@@ -322,7 +348,10 @@ namespace logviewer.logic.storage
                     WHERE
                         Ix = @Ix
                     ";
-            void Action(DatabaseConnection connection) => connection.ExecuteReader(query, OnRead, BeforeRead);
+            void Action(DatabaseConnection connection)
+            {
+                connection.ExecuteReader(query, OnRead, BeforeRead);
+            }
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -376,7 +405,10 @@ namespace logviewer.logic.storage
 
             var indexesToUpdate = new List<long>();
 
-            void BeforeRead(IDbCommand command) => command.AddParameter(@"@Ix", ix);
+            void BeforeRead(IDbCommand command)
+            {
+                command.AddParameter(@"@Ix", ix);
+            }
 
             void OnRead(IDataReader rdr)
             {
@@ -443,7 +475,10 @@ namespace logviewer.logic.storage
             return this.GetUsingRecentItemsStore(function, RecentFilters, KeepLastFilters);
         }
 
-        public IOptionsProvider OptionsProvider => this.optionsProvider;
+        public IOptionsProvider OptionsProvider
+        {
+            get { return this.optionsProvider; }
+        }
 
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {

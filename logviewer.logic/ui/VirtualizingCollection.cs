@@ -99,7 +99,7 @@ namespace logviewer.logic.ui
 
         public bool IsLoading
         {
-            get => this.isLoading;
+            get { return this.isLoading; }
             set
             {
                 this.isLoading = value;
@@ -142,7 +142,7 @@ namespace logviewer.logic.ui
 
         public int Count
         {
-            get => this.count;
+            get { return this.count; }
             private set
             {
                 this.count = value;
@@ -166,8 +166,8 @@ namespace logviewer.logic.ui
         /// </remarks>
         public T this[int index]
         {
-            get => (T)((IList)this)[index];
-            set => throw new NotSupportedException();
+            get { return (T) ((IList) this)[index]; }
+            set { throw new NotSupportedException(); }
         }
 
         object IList.this[int index]
@@ -286,11 +286,25 @@ namespace logviewer.logic.ui
             throw new NotSupportedException();
         }
 
-        public object SyncRoot => this;
-        public bool IsSynchronized => false;
-        public bool IsReadOnly => true;
+        public object SyncRoot
+        {
+            get { return this; }
+        }
 
-        public bool IsFixedSize => false;
+        public bool IsSynchronized
+        {
+            get { return false; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return true; }
+        }
+
+        public bool IsFixedSize
+        {
+            get { return false; }
+        }
 
         #endregion
 
