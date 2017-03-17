@@ -151,11 +151,18 @@ namespace logviewer.tests
                 }
             }
 
-            if (this.waitResult)
+            try
             {
-                this.workflow.Close();
+                if (this.waitResult)
+                {
+                    this.workflow.Close();
+                }
+                this.workflow.Dispose();
             }
-            this.workflow.Dispose();
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private void Open(LogLevel minLevel, LogLevel maxLevel)
