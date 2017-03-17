@@ -65,11 +65,13 @@ namespace logviewer.logic.storage
 
         private void ExecuteChangeQuery(string item, string commandText)
         {
-            this.connection.ExecuteNonQuery(commandText, delegate(IDbCommand command)
+            void Action(IDbCommand command)
             {
                 command.AddParameter(ItemParameter, item);
                 command.AddParameter(UsedAtParameter, DateTime.Now.Ticks);
-            });
+            }
+
+            this.connection.ExecuteNonQuery(commandText, Action);
         }
 
         public void Remove(params string[] items)

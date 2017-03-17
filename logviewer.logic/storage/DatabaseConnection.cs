@@ -89,15 +89,7 @@ namespace logviewer.logic.storage
                     // ReSharper disable once ForCanBeConvertedToForeach
                     for (var i = 0; i < commands.Length; i++)
                     {
-                        if (this.disposed)
-                        {
-                            return;
-                        }
-                        using (var sqLiteCommand = this.connection.CreateCommand())
-                        {
-                            sqLiteCommand.CommandText = commands[i];
-                            action(sqLiteCommand);
-                        }
+                        this.RunCommand(action, commands[i]);
                     }
                 }
                 catch (SQLiteException e) when (HandleSqlException(e))
@@ -111,6 +103,43 @@ namespace logviewer.logic.storage
             });
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        internal void RunSqlQuery(Action<IDbCommand> action, string command)
+        {
+            this.ExecuteInCreationContext(state =>
+            {
+                try
+                {
+                    this.RunCommand(action, command);
+                }
+                catch (SQLiteException e) when (HandleSqlException(e))
+                {
+                    Log.Instance.Debug(e);
+                }
+                catch (ObjectDisposedException e)
+                {
+                    Log.Instance.Debug(e);
+                }
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void RunCommand(Action<IDbCommand> action, string command)
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            using (var sqLiteCommand = this.connection.CreateCommand())
+            {
+                sqLiteCommand.CommandText = command;
+                action(sqLiteCommand);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HandleSqlException(SQLiteException e)
         {
             switch (e.ResultCode)
@@ -166,7 +195,7 @@ namespace logviewer.logic.storage
             return result;
         }
 
-        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
+        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute)
         {
             void Action(IDbCommand command)
             {
@@ -187,6 +216,11 @@ namespace logviewer.logic.storage
         internal void ExecuteNonQuery(params string[] queries)
         {
             this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
+        }
+
+        internal void ExecuteNonQuery(string query)
+        {
+            this.RunSqlQuery(command => command.ExecuteNonQuery(), query);
         }
     }
 }
