@@ -19,7 +19,6 @@ using logviewer.logic.ui.main;
 using Moq;
 using Net.Sgoliver.NRtfTree.Util;
 using Xunit;
-using Xunit.Sdk;
 
 namespace logviewer.tests
 {
