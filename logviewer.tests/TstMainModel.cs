@@ -45,7 +45,7 @@ namespace logviewer.tests
             this.viewModel.SetupGet(_ => _.GithubProject).Returns("logviewer");
 
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
-            this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
+            this.settings.Setup(x => x.ReadParsingTemplate()).Returns(template);
 
             this.model = new MainModel(this.viewModel.Object);
             this.model.ReadCompleted += this.OnReadCompleted;
@@ -144,9 +144,7 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.UiControlsEnabled).Returns(true);
             this.viewModel.SetupSet(v => v.UiControlsEnabled = false);
 
-            this.model.ClearCache();
-            this.model.UpdateMatcherAndRefreshLog(false);
-            this.model.StartReadingLogOnFilterChange();
+            this.model.UpdateMatcherAndRefreshLog(true);
             this.WaitReadingComplete();
             this.model.Store.CountMessages().Should().Be(4);
         }
