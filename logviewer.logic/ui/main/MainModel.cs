@@ -313,8 +313,7 @@ namespace logviewer.logic.ui.main
             this.reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             this.reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
 
-            Encoding inputEncoding;
-            this.filesEncodingCache.TryGetValue(this.currentPath, out inputEncoding);
+            this.filesEncodingCache.TryGetValue(this.currentPath, out Encoding inputEncoding);
 
             try
             {
