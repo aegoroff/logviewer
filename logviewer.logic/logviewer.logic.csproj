@@ -111,8 +111,10 @@
     <Compile Include="support\IAsymCrypt.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\Extensions.cs" />
+    <Compile Include="ui\IVirtualizingCollection.cs" />
     <Compile Include="ui\main\LogWatcher.cs" />
     <Compile Include="ui\main\LogWorkflow.cs" />
+    <Compile Include="ui\Range.cs" />
     <Compile Include="ui\main\TemplateCommandViewModel.cs" />
     <Compile Include="ui\main\UpdatesCheckingModel.cs" />
     <Compile Include="ui\network\NetworkWorflow.cs" />

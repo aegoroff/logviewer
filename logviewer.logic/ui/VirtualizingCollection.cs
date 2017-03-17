@@ -16,7 +16,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
-using logviewer.logic.ui.main;
 
 namespace logviewer.logic.ui
 {
@@ -32,7 +31,7 @@ namespace logviewer.logic.ui
     ///     data bound to a suitable ItemsControl.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
-    public sealed class VirtualizingCollection<T> : IList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged
+    public sealed class VirtualizingCollection<T> : IVirtualizingCollection<T>, IList
     {
         #region Constructors
 
@@ -59,11 +58,8 @@ namespace logviewer.logic.ui
         public IItemsProvider<T> ItemsProvider { get; }
 
         [PublicAPI]
-        public int PageSize
-        {
-            // ReSharper disable once ConvertPropertyToExpressionBody
-            get { return this.pageSize; }
-        }
+        // ReSharper disable once ConvertToAutoPropertyWhenPossible
+        public int PageSize => this.pageSize;
 
         [PublicAPI]
         public long PageCacheTimeoutMilliseconds { get; } = 10000;
@@ -97,6 +93,7 @@ namespace logviewer.logic.ui
 
         private bool isLoading;
 
+        [PublicAPI]
         public bool IsLoading
         {
             get { return this.isLoading; }
@@ -188,8 +185,7 @@ namespace logviewer.logic.ui
                 }
 
                 // defensive check in case of async load
-                T[] result;
-                if (this.pages.TryGetValue(pageIndex, out result) && result.Length > 0)
+                if (this.pages.TryGetValue(pageIndex, out T[] result) && result.Length > 0)
                 {
                     return result[pageOffset];
                 }
@@ -320,8 +316,7 @@ namespace logviewer.logic.ui
             foreach (var key in keys)
             {
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                DateTime lastUsed;
-                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out lastUsed) && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
+                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed) && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);

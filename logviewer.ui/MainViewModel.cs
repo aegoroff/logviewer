@@ -187,7 +187,7 @@ namespace logviewer.ui
 
         public LogProvider Provider { get; }
 
-        public VirtualizingCollection<string> Datasource { get; }
+        public IVirtualizingCollection<string> Datasource { get; }
 
         public Range Visible
         {
@@ -320,6 +320,11 @@ namespace logviewer.ui
         public void ShowNoUpdateAvaliable()
         {
            System.Windows.MessageBox.Show(Resources.NoUpdateAvailable, Resources.NoUpdateAvailableCaption, MessageBoxButton.OK);
+        }
+
+        public void UpdateCount()
+        {
+            this.Datasource.ChangeVisible(this.Visible);
         }
 
         public void Dispose()

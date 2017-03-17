@@ -114,6 +114,7 @@
     <Compile Include="TstGrokMatcher.cs" />
     <Compile Include="TstLogProvider.cs" />
     <Compile Include="TstLogReader.cs" />
+    <Compile Include="TstLogWorkflow.cs" />
     <Compile Include="TstMessageMatcher.cs" />
     <Compile Include="TstNetworkSettingsModel.cs" />
     <Compile Include="TstNetworkSettingsViewModel.cs" />

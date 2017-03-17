@@ -66,7 +66,6 @@ namespace logviewer.logic.ui.main
             this.settings = viewModel.SettingsProvider;
             this.viewModel = viewModel;
             this.backgroundScheduler = backgroundScheduler ?? Scheduler.Default;
-            viewModel.PropertyChanged += this.ViewModelOnPropertyChanged;
 
             var logChangedObservable = Observable.Create<string>(observer =>
             {
@@ -124,38 +123,6 @@ namespace logviewer.logic.ui.main
             this.StartLogReadingTask();
         }
 
-        private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-        {
-            switch (propertyChangedEventArgs.PropertyName)
-            {
-                case nameof(this.viewModel.From):
-                case nameof(this.viewModel.To):
-                case nameof(this.viewModel.MinLevel):
-                case nameof(this.viewModel.MaxLevel):
-                case nameof(this.viewModel.SortingOrder):
-                    this.StartReadingLogOnFilterChange();
-                    break;
-                case nameof(this.viewModel.UseRegularExpressions):
-                    if (!string.IsNullOrWhiteSpace(this.viewModel.MessageFilter))
-                    {
-                        this.StartReadingLogOnFilterChange();
-                    }
-                    break;
-                case nameof(this.viewModel.MessageFilter):
-                    this.viewModel.IsTextFilterFocused = false;
-                    this.StartReadingLogOnFilterChange();
-                    break;
-                case nameof(this.viewModel.Visible):
-                    this.UpdateCount();
-                    break;
-            }
-        }
-
-        private void UpdateCount()
-        {
-            this.viewModel.Datasource.ChangeVisible(this.viewModel.Visible);
-        }
-
         public void UpdateMatcherAndRefreshLog(bool refresh)
         {
             this.matcher = new MessageMatcher(this.settings.ReadParsingTemplate(), RegexOptions.ExplicitCapture);
@@ -186,7 +153,7 @@ namespace logviewer.logic.ui.main
             SafeRunner.Run(this.cancellation.Dispose);
         }
 
-        public void StartReadingLogOnFilterChange()
+        internal void StartReadingLogOnFilterChange()
         {
             if (!this.viewModel.UiControlsEnabled)
             {

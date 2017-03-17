@@ -48,16 +48,12 @@ namespace logviewer.logic.ui.main
         string LogEncoding { get; set; }
 
         LogProvider Provider { get; }
-        VirtualizingCollection<string> Datasource { get; }
+        IVirtualizingCollection<string> Datasource { get; }
         Range Visible { get; set; }
         string GithubAccount { get; }
         string GithubProject { get; }
         long MessageCount { get; set; }
-    }
 
-    public struct Range
-    {
-        public int First;
-        public int Last;
+        void UpdateCount();
     }
 }
