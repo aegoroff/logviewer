@@ -116,28 +116,32 @@ namespace logviewer.engine
             this.rawProperties = extractedProperties as KeyValuePair<string, string>[];
         }
             
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static LogLevel ParseLogLevel(string str)
         {
             if (string.Equals(str, @"TRACE", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Trace;
             }
-            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Debug;
             }
-            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Info;
             }
-            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Warn;
             }
-            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Error;
             }
