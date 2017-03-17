@@ -126,7 +126,7 @@ namespace logviewer.logic.storage
 
         internal void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
         {
-            this.RunSqlQuery(command =>
+            void Action(IDbCommand command)
             {
                 beforeRead?.Invoke(command);
                 var rdr = command.ExecuteReader();
@@ -137,7 +137,9 @@ namespace logviewer.logic.storage
                         onRead(rdr);
                     }
                 }
-            }, query);
+            }
+
+            this.RunSqlQuery(Action, query);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -149,7 +151,8 @@ namespace logviewer.logic.storage
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);
-            this.RunSqlQuery(cmd =>
+
+            void Action(IDbCommand cmd)
             {
                 actionBeforeExecute?.Invoke(cmd);
                 var r = cmd.ExecuteScalar();
@@ -157,13 +160,15 @@ namespace logviewer.logic.storage
                 {
                     result = (T) r;
                 }
-            }, query);
+            }
+
+            this.RunSqlQuery(Action, query);
             return result;
         }
 
         internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
-            this.RunSqlQuery(command =>
+            void Action(IDbCommand command)
             {
                 try
                 {
@@ -174,7 +179,9 @@ namespace logviewer.logic.storage
                 {
                     Log.Instance.Debug(e);
                 }
-            }, query);
+            }
+
+            this.RunSqlQuery(Action, query);
         }
 
         internal void ExecuteNonQuery(params string[] queries)
