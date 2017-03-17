@@ -8,6 +8,7 @@ using System;
 using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
+using logviewer.logic.support;
 
 namespace logviewer.logic.ui
 {
@@ -19,7 +20,16 @@ namespace logviewer.logic.ui
         protected UiSynchronizeModel()
         {
             this.winformsOrDefaultContext = SynchronizationContext.Current ?? new SynchronizationContext();
-            this.uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+            try
+            {
+                this.uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+            }
+            catch (InvalidOperationException e)
+            {
+                // in some cases TaskScheduler.FromCurrentSynchronizationContext(); may fail for example on running under R# to calculate coverage
+                Log.Instance.Error(e.Message, e);
+                this.uiSyncContext = TaskScheduler.Current;
+            }
             this.UiContextScheduler = new SynchronizationContextScheduler(this.winformsOrDefaultContext);
         }
 
