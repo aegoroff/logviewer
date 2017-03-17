@@ -57,8 +57,6 @@ namespace logviewer.logic.support
             }
         }
 
-        public int WorkersCount => this.workers.Length;
-
         public virtual void EnqueueItem(T item)
         {
             // memory: Freeze queue filling until pending count less then MaxQueueCountBeforeEnqueueDelay and then increase queue length

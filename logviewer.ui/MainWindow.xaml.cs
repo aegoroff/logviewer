@@ -125,8 +125,7 @@ namespace logviewer.ui
             {
                 var child = VisualTreeHelper.GetChild(obj, i);
 
-                var visualChild = child as T;
-                if (visualChild != null)
+                if (child is T visualChild)
                 {
                     return visualChild;
                 }

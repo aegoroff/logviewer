@@ -68,12 +68,12 @@ namespace logviewer.logic.ui.settings
         {
             return new Dictionary<LogLevel, Action<Color>>
             {
-                {LogLevel.Trace, this.view.UpdateTraceColor},
-                {LogLevel.Debug, this.view.UpdateDebugColor},
-                {LogLevel.Info, this.view.UpdateInfoColor},
-                {LogLevel.Warn, this.view.UpdateWarnColor},
-                {LogLevel.Error, this.view.UpdateErrorColor},
-                {LogLevel.Fatal, this.view.UpdateFatalColor},
+                { LogLevel.Trace, this.view.UpdateTraceColor },
+                { LogLevel.Debug, this.view.UpdateDebugColor },
+                { LogLevel.Info, this.view.UpdateInfoColor },
+                { LogLevel.Warn, this.view.UpdateWarnColor },
+                { LogLevel.Error, this.view.UpdateErrorColor },
+                { LogLevel.Fatal, this.view.UpdateFatalColor }
             };
         }
 
@@ -125,8 +125,7 @@ namespace logviewer.logic.ui.settings
             this.view.EnableChangeOrClose(false);
             var task = Task.Factory.StartNew(delegate
             {
-                int pageSize;
-                if (int.TryParse(this.formData.PageSize, out pageSize))
+                if (int.TryParse(this.formData.PageSize, out int pageSize))
                 {
                     if (this.settings.PageSize != pageSize)
                     {
@@ -134,8 +133,7 @@ namespace logviewer.logic.ui.settings
                     }
                     this.settings.PageSize = pageSize;
                 }
-                int value;
-                if (int.TryParse(this.formData.KeepLastNFiles, out value))
+                if (int.TryParse(this.formData.KeepLastNFiles, out int value))
                 {
                     this.settings.KeepLastNFiles = value;
                 }

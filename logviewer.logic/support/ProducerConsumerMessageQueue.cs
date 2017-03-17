@@ -46,10 +46,9 @@ namespace logviewer.logic.support
 
         internal bool ReadCompleted => Interlocked.Read(ref this.queuedMessages) == 0;
 
-        internal LogStore Store
+        internal void SetStore(LogStore value)
         {
-            get { return this.store; }
-            set { this.store = value; }
+            this.store = value;
         }
 
         internal long QueuedMessages => Interlocked.Read(ref this.queuedMessages);
