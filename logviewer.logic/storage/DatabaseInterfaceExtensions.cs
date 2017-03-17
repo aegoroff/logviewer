@@ -22,14 +22,11 @@ namespace logviewer.logic.storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void AddParameter<T>(this IDbCommand cmd, string name, T value)
         {
-            var parameter = SQLiteFactory.Instance.CreateParameter();
-            if (parameter == null)
+            cmd.Parameters.Add(new SQLiteParameter
             {
-                return;
-            }
-            parameter.ParameterName = name;
-            parameter.Value = value;
-            cmd.Parameters.Add(parameter);
+                ParameterName = name,
+                Value = value
+            });
         }
     }
 }
