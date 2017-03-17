@@ -117,34 +117,29 @@ namespace logviewer.engine
         }
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static bool TryParseLogLevel(string str, out LogLevel level)
+        private static LogLevel ParseLogLevel(string str)
         {
             if (string.Equals(str, @"TRACE", StringComparison.OrdinalIgnoreCase))
             {
-                level = LogLevel.Trace;
-                return true;
+                return LogLevel.Trace;
             }
             else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
             {
-                level = LogLevel.Debug;
-                return true;
+                return LogLevel.Debug;
             }
             else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
             {
-                level = LogLevel.Info;
-                return true;
+                return LogLevel.Info;
             }
             else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
             {
-                level = LogLevel.Warn;
-                return true;
+                return LogLevel.Warn;
             }
             else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase) || string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
             {
-                level = LogLevel.Error;
-                return true;
+                return LogLevel.Error;
             }
             else if (string.Equals(str, @"FATAL", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(str, @"SEVERE", StringComparison.OrdinalIgnoreCase) ||
@@ -153,25 +148,28 @@ namespace logviewer.engine
                      string.Equals(str, @"PANIC", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(str, @"ALERT", StringComparison.OrdinalIgnoreCase))
             {
-                level = LogLevel.Fatal;
-                return true;
+                return LogLevel.Fatal;
             }
             else
             {
-                level = LogLevel.None;
-                return false;
+                return LogLevel.None;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseLogLevel(string dataToParse, ICollection<GrokRule> rules, string property)
         {
-            var result = rules.Count > 1
-                ? TryRunSemanticAction(dataToParse, rules, out LogLevel level) 
-                : TryParseLogLevel(dataToParse, out level);
-            if (result)
+            if (rules.Count > 1)
             {
-                this.integerProperties[property] = (int)level;
+                this.integerProperties[property] = (int)ReadLogLevelFromSemanticRules(dataToParse, rules);
+            }
+            else
+            {
+                var level = ParseLogLevel(dataToParse);
+                if (level != LogLevel.None)
+                {
+                    this.integerProperties[property] = (int)level;
+                }
             }
         }
 
@@ -257,7 +255,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool TryRunSemanticAction(string dataToParse, IEnumerable<GrokRule> rules, out LogLevel level) //-V3009
+        private static LogLevel ReadLogLevelFromSemanticRules(string dataToParse, IEnumerable<GrokRule> rules) //-V3009
         {
             var enumerator = rules.GetEnumerator();
             using (enumerator)
@@ -269,21 +267,21 @@ namespace logviewer.engine
                     {
                         continue;
                     }
-                    level = rule.Level;
-                    return true;
+                    return rule.Level;
                 }
+
+                // Not found concrete math. Use default rule
                 enumerator.Reset();
-                level = LogLevel.None;
                 while (enumerator.MoveNext())
                 {
                     var rule = enumerator.Current;
                     if (rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase))
                     {
-                        level = rule.Level;
+                        return rule.Level;
                     }
                 }
             }
-            return true;
+            return LogLevel.None;
         }
 
         /// <summary>
