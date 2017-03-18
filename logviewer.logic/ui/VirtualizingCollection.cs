@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -309,14 +310,17 @@ namespace logviewer.logic.ui
         public void CleanUpPages()
         {
             // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating
-            var keys = new List<int>(this.pageTouchTimes.Keys);
+            var keys = this.pageTouchTimes.Keys.ToArray();
 
             // Performance reason. Thanks dotTrace from JetBrains :)
             var now = DateTime.Now;
-            foreach (var key in keys)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < keys.Length; i++)
             {
+                var key = keys[i];
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed) && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
+                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed) &&
+                    (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);
