@@ -38,14 +38,14 @@ namespace logviewer.tests
         }
 
         [Fact]
-        public void Cache_HeadAndBody_ShouldBePresent()
+        public void Build_HeadAndBody_ShouldBePresent()
         {
             // Arrange
             this.m.AddLine(H);
             this.m.AddLine(B);
 
             // Act
-            this.m.Cache(null);
+            this.m.Build(null);
 
             // Assert
             this.m.IsEmpty.Should().BeFalse();
@@ -91,13 +91,13 @@ namespace logviewer.tests
         }
 
         [Fact]
-        public void Cache_OnlyHead_MessageShouldNotBeEmpty()
+        public void Build_OnlyHead_MessageShouldNotBeEmpty()
         {
             // Arrange
             this.m.AddLine(H);
 
             // Act
-            this.m.Cache(null);
+            this.m.Build(null);
 
             // Assert
             this.m.IsEmpty.Should().BeFalse();
@@ -243,7 +243,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, string>(prop, input)
             };
             this.m.AddProperties(props);
-            this.m.Cache(schema);
+            this.m.Build(schema);
         }
     }
 }

@@ -175,7 +175,7 @@ namespace logviewer.logic.storage
         [PublicAPI]
         public void AddMessage(LogMessage message)
         {
-            message.Cache(this.rules);
+            message.Build(this.rules);
 
             void Action(IDbCommand command)
             {

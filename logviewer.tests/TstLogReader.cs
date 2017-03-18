@@ -104,7 +104,7 @@ namespace logviewer.tests
             result.Count.Should().Be(2);
 
             result[0].IsEmpty.Should().BeFalse();
-            result[0].Cache(this.builder.Rules);
+            result[0].Build(this.builder.Rules);
             var level = (LogLevel)result[0].IntegerProperty("Level");
             var date = DateTime.FromFileTime(result[0].IntegerProperty("Occured"));
             Assert.InRange(level, LogLevel.Info, LogLevel.Error);
@@ -113,7 +113,7 @@ namespace logviewer.tests
             date.Day.Should().Be(27);
 
             result[1].IsEmpty.Should().BeFalse();
-            result[1].Cache(this.builder.Rules);
+            result[1].Build(this.builder.Rules);
             level = (LogLevel)result[1].IntegerProperty("Level");
             date = DateTime.FromFileTime(result[1].IntegerProperty("Occured"));
             Assert.InRange(level, LogLevel.Info, LogLevel.Error);

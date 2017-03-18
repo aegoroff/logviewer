@@ -339,7 +339,7 @@ namespace logviewer.engine
         /// Builds message from lines array. All metadata will be extracted using schema specified
         /// </summary>
         /// <param name="schema">Message schema to extract metadata by</param>
-        public void Cache(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
+        public void Build(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.head != null && this.body != null)
             {
