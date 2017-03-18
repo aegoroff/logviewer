@@ -262,10 +262,10 @@ namespace logviewer.logic.storage
 
             var result = new List<string>();
 
-            Action<IDataReader> onRead = rdr => result.Add(rdr[0] as string);
-            Action<DatabaseConnection> action = connection => connection.ExecuteReader(cmd, onRead);
+            void OnRead(IDataReader rdr) => result.Add(rdr[0] as string);
+            void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
-            this.optionsProvider.ExecuteQuery(action);
+            this.optionsProvider.ExecuteQuery(Action);
 
             return result;
         }
@@ -393,7 +393,7 @@ namespace logviewer.logic.storage
                 indexesToUpdate.Add((long) rdr[0]);
             }
 
-            this.optionsProvider.ExecuteQuery(connection =>
+            void Action(DatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -416,7 +416,9 @@ namespace logviewer.logic.storage
                     throw;
                 }
                 connection.CommitTran();
-            });
+            }
+
+            this.optionsProvider.ExecuteQuery(Action);
         }
 
         public RtfCharFormat FormatHead(LogLevel level)
