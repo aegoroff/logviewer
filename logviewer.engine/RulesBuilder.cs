@@ -24,10 +24,10 @@ namespace logviewer.engine
         {
             if (schema == null)
             {
-                this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
+                this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>(new SemanticProperty());
                 return;
             }
-            this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
+            this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>(new SemanticProperty());
             foreach (var semantic in schema)
             {
                 var property = semantic.Property;

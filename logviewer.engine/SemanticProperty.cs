@@ -5,13 +5,14 @@
 // © 2012-2017 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 
 namespace logviewer.engine
 {
     /// <summary>
     /// Represents metadata property info
     /// </summary>
-    public struct SemanticProperty
+    public struct SemanticProperty : IEqualityComparer<SemanticProperty>
     {
         private readonly string name;
 
@@ -104,6 +105,18 @@ namespace logviewer.engine
         public static bool operator !=(SemanticProperty s1, SemanticProperty s2)
         {
             return !(s1 == s2);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(SemanticProperty x, SemanticProperty y)
+        {
+            return x == y;
+        }
+
+        /// <inheritdoc />
+        public int GetHashCode(SemanticProperty obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }
