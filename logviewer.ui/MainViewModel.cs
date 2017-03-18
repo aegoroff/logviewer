@@ -319,7 +319,7 @@ namespace logviewer.ui
 
         public void ShowNoUpdateAvaliable()
         {
-           System.Windows.MessageBox.Show(Resources.NoUpdateAvailable, Resources.NoUpdateAvailableCaption, MessageBoxButton.OK);
+            Xceed.Wpf.Toolkit.MessageBox.Show(Resources.NoUpdateAvailable, Resources.NoUpdateAvailableCaption, MessageBoxButton.OK);
         }
 
         public void UpdateCount()
