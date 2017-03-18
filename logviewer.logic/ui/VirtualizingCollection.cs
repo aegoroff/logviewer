@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
@@ -17,6 +16,9 @@ using System.Reactive.Linq;
 using System.Threading;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 namespace logviewer.logic.ui
 {
@@ -324,7 +326,10 @@ namespace logviewer.logic.ui
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);
+#if DEBUG
                     Trace.WriteLine("Removed Page: " + key);
+#endif
+
                 }
             }
         }
@@ -336,7 +341,9 @@ namespace logviewer.logic.ui
         /// <param name="page">The page.</param>
         private void PopulatePage(int pageIndex, T[] page)
         {
+#if DEBUG
             Trace.WriteLine("Page populated: " + pageIndex);
+#endif
             if (this.pages.ContainsKey(pageIndex))
             {
                 this.pages[pageIndex] = page;
@@ -357,8 +364,9 @@ namespace logviewer.logic.ui
                 {
                     this.pageTouchTimes.Add(pageIndex, DateTime.Now);
                 }
-
+#if DEBUG
                 Trace.WriteLine("Added page: " + pageIndex);
+#endif
                 this.LoadPage(pageIndex);
             }
             else
@@ -367,7 +375,7 @@ namespace logviewer.logic.ui
             }
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         ///     Loads the count of items.
