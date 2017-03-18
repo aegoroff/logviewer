@@ -28,7 +28,7 @@ namespace logviewer.ui
             new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
 
         private const int PageTimeoutMilliseconds = 10 * 1000;
-        private const int PageSize = 100;
+        private const int PageSize = 128;
 
         private string logPath;
         private DateTime to;
