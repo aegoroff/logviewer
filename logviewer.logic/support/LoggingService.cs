@@ -15,15 +15,13 @@ namespace logviewer.logic.support
 {
     public class Log : LoggingService
     {
-        private static readonly Log instance = new Log();
-
         [PublicAPI]
         internal Log()
             : base(@"logviewer")
         {
         }
 
-        public static Log Instance => instance;
+        public static Log Instance { get; } = new Log();
     }
 
     /// <summary>
