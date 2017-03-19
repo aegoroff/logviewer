@@ -52,7 +52,7 @@ namespace logviewer.logic.storage
         {
             var result = new string[limit];
             var ix = 0;
-            this.store?.ReadMessages(limit, message => result[ix++] = this.CreateXml(message), () => true, this.FilterViewModel.Start,
+            this.store?.ReadMessages(limit, message => result[ix++] = this.CreateXaml(message), () => true, this.FilterViewModel.Start,
                 this.FilterViewModel.Finish, offset,
                 this.FilterViewModel.Reverse,
                 this.FilterViewModel.Min, this.FilterViewModel.Max, this.FilterViewModel.Filter, this.FilterViewModel.UseRegexp);
@@ -88,7 +88,7 @@ namespace logviewer.logic.storage
         private const string ForegroundAttr = "Foreground";
         private const string FontSizeAttr = "FontSize";
 
-        private string CreateXml(LogMessage message)
+        private string CreateXaml(LogMessage message)
         {
             var sb = new StringBuilder();
 
