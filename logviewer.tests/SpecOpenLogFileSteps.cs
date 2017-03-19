@@ -135,6 +135,16 @@ namespace logviewer.tests
         [AfterScenario("mainmodel")]
         public void AfterScenario()
         {
+            try
+            {
+                this.workflow.Close();
+                this.workflow.Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
             Thread.Sleep(50);
             for (var i = 0; i < 5; i++)
             {
@@ -150,16 +160,6 @@ namespace logviewer.tests
                 {
                     Console.WriteLine(e);
                 }
-            }
-
-            try
-            {
-                this.workflow.Close();
-                this.workflow.Dispose();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
 
