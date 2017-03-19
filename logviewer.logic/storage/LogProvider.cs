@@ -100,22 +100,28 @@ namespace logviewer.logic.storage
 
             var format = this.settings.GetFormat(logLvel);
 
-            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment }))
+            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment, CheckCharacters = false }))
             {
                 WriteRunElement(message.Header.Trim(), writer, format.Font, format.ColorAsString, format.SizeHead, true);
 
-                writer.WriteElementString(LineBreakElement, string.Empty);
+                WriteLineBreak(writer);
 
                 var txt = message.Body;
 
                 if (!string.IsNullOrWhiteSpace(txt))
                 {
                     WriteRunElement(txt.Trim(), writer, format.Font, format.ColorAsString, format.SizeBody, false);
-                    writer.WriteElementString(LineBreakElement, string.Empty);
+                    WriteLineBreak(writer);
                 }
             }
 
             return sb.ToString();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void WriteLineBreak(XmlWriter writer)
+        {
+            writer.WriteElementString(LineBreakElement, string.Empty);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
