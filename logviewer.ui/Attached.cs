@@ -13,7 +13,7 @@ using System.Xml;
 
 namespace logviewer.ui
 {
-    public class Attached
+    public sealed class Attached
     {
         public static readonly DependencyProperty FormattedTextProperty = DependencyProperty.RegisterAttached(
             "FormattedText",
