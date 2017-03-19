@@ -5,6 +5,9 @@
 // © 2012-2017 Alexander Egorov
 
 using System;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Xml;
 using logviewer.engine;
 using logviewer.logic.Annotations;
 using logviewer.logic.models;
@@ -49,7 +52,7 @@ namespace logviewer.logic.storage
         {
             var result = new string[limit];
             var ix = 0;
-            this.store?.ReadMessages(limit, message => result[ix++] = this.CreateRtf(message), () => true, this.FilterViewModel.Start,
+            this.store?.ReadMessages(limit, message => result[ix++] = this.CreateXaml(message), () => true, this.FilterViewModel.Start,
                 this.FilterViewModel.Finish, offset,
                 this.FilterViewModel.Reverse,
                 this.FilterViewModel.Min, this.FilterViewModel.Max, this.FilterViewModel.Filter, this.FilterViewModel.UseRegexp);
@@ -76,6 +79,64 @@ namespace logviewer.logic.storage
             doc.AddText(txt.Trim(), this.settings.FormatBody(logLvel));
             doc.AddNewLine();
             return doc.Rtf;
+        }
+
+        private const string RunElement = "Run";
+        private const string LineBreakElement = "LineBreak";
+        private const string FontFamilyAttr = "FontFamily";
+        private const string FontWeightAttr = "FontWeight";
+        private const string ForegroundAttr = "Foreground";
+        private const string FontSizeAttr = "FontSize";
+
+        private string CreateXaml(LogMessage message)
+        {
+            var sb = new StringBuilder();
+
+            var logLvel = LogLevel.None;
+            if (this.store.HasLogLevelProperty)
+            {
+                logLvel = (LogLevel)message.IntegerProperty(this.store.LogLevelProperty);
+            }
+
+            var format = this.settings.GetFormat(logLvel);
+
+            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment, CheckCharacters = false }))
+            {
+                WriteRunElement(message.Header.Trim(), writer, format.Font, format.ColorAsString, format.SizeHead, true);
+
+                WriteLineBreak(writer);
+
+                var txt = message.Body;
+
+                if (!string.IsNullOrWhiteSpace(txt))
+                {
+                    WriteRunElement(txt.Trim(), writer, format.Font, format.ColorAsString, format.SizeBody, false);
+                    WriteLineBreak(writer);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void WriteLineBreak(XmlWriter writer)
+        {
+            writer.WriteElementString(LineBreakElement, string.Empty);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void WriteRunElement(string text, XmlWriter writer, string font, string color, string size, bool bold)
+        {
+            writer.WriteStartElement(RunElement);
+            writer.WriteAttributeString(FontFamilyAttr, font);
+            if (bold)
+            {
+                writer.WriteAttributeString(FontWeightAttr, "Bold");
+            }
+            writer.WriteAttributeString(ForegroundAttr, color);
+            writer.WriteAttributeString(FontSizeAttr, size);
+            writer.WriteCData(text);
+            writer.WriteEndElement();
         }
     }
 }
