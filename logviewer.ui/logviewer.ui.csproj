@@ -130,6 +130,7 @@
     <Compile Include="AboutDlg.Designer.cs">
       <DependentUpon>AboutDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Attached.cs" />
     <Compile Include="LogParseTemplateControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

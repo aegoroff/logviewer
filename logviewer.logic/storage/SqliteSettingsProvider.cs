@@ -15,6 +15,7 @@ using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.Properties;
 using logviewer.logic.support;
+using logviewer.logic.ui.main;
 using logviewer.logic.ui.settings;
 using Microsoft.Win32;
 using Net.Sgoliver.NRtfTree.Util;
@@ -50,10 +51,12 @@ namespace logviewer.logic.storage
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
         private readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
+        private readonly FixedSizeDictionary<TextFormat> formatsMap = new FixedSizeDictionary<TextFormat>((int)LogLevel.Fatal + 1);
         private readonly OptionsProvider optionsProvider;
+        private readonly TextFormat noneLevelFormat = new TextFormat();
 
-        private const int HeaderFontSize = 10;
-        private const int BodyFontSize = 9;
+        private const int HeaderFontSize = 12;
+        private const int BodyFontSize = 11;
         private const int KeepLastFilters = 20;
         private const string RecentFiles = @"RecentFiles";
         private const string RecentFilters = @"RecentFilters";
@@ -91,6 +94,7 @@ namespace logviewer.logic.storage
             this.MigrateFromRegistry();
             this.RunUpgrade();
             this.CacheFormats();
+            this.noneLevelFormat.ColorAsString = this.noneLevelFormat.ColorToString();
             var template = this.ReadParsingTemplate();
             if (!template.IsEmpty)
             {
@@ -111,6 +115,10 @@ namespace logviewer.logic.storage
                 var color = this.ReadColor(logLevel);
                 this.headerFormatsMap.Add(logLevel, FormatChar(color, true));
                 this.bodyFormatsMap.Add(logLevel, FormatChar(color, false, BodyFontSize));
+                if (logLevel != LogLevel.None)
+                {
+                    this.formatsMap.Add((int)logLevel, CreateFormat(color));
+                }
             }
         }
 
@@ -136,6 +144,7 @@ namespace logviewer.logic.storage
             }
             this.headerFormatsMap[level] = FormatChar(color, true);
             this.bodyFormatsMap[level] = FormatChar(color, false, BodyFontSize);
+            this.formatsMap[(int)level] = CreateFormat(color);
             this.optionsProvider.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
@@ -431,6 +440,11 @@ namespace logviewer.logic.storage
             return this.bodyFormatsMap[level];
         }
 
+        public TextFormat GetFormat(LogLevel level)
+        {
+            return level == LogLevel.None ? this.noneLevelFormat : this.formatsMap[(int)level];
+        }
+
         public void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action)
         {
             this.RunUsingRecentItemsStore(action, RecentFiles);
@@ -462,6 +476,16 @@ namespace logviewer.logic.storage
                 Size = size,
                 Bold = bold
             };
+        }
+
+        private static TextFormat CreateFormat(Color color)
+        {
+            var result = new TextFormat
+            {
+                Color = color
+            };
+            result.ColorAsString = result.ColorToString();
+            return result;
         }
 
         private void CreateTables()

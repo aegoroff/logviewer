@@ -10,6 +10,7 @@ using System.Drawing;
 using logviewer.engine;
 using logviewer.logic.models;
 using logviewer.logic.storage;
+using logviewer.logic.ui.main;
 using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer.logic
@@ -39,6 +40,7 @@ namespace logviewer.logic
         void DeleteParsingTemplate(int ix);
         RtfCharFormat FormatHead(LogLevel level);
         RtfCharFormat FormatBody(LogLevel level);
+        TextFormat GetFormat(LogLevel level);
         void UpdateColor(LogLevel level, Color color);
         Color ReadColor(LogLevel level);
         void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action);

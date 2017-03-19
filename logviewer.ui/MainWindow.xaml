@@ -315,8 +315,7 @@
                 HorizontalAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <xctk:RichTextBox BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Stretch"
-                                          Text="{Binding Mode=OneTime, IsAsync=True}" />
+                        <TextBlock HorizontalAlignment="Stretch" TextWrapping="Wrap" Padding="5,0,5,0" logviewer:Attached.FormattedText="{Binding Mode=OneTime, IsAsync=True}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
