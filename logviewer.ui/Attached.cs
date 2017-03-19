@@ -41,7 +41,7 @@ namespace logviewer.ui
 
             var formattedText = (string) e.NewValue ?? string.Empty;
             formattedText =
-                $"<Span xml:space=\"preserve\" xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">{formattedText}</Span>";
+                "<Span xml:space=\"preserve\" xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">" + formattedText + "</Span>";
 
             textBlock.Inlines.Clear();
             using (var xmlReader = XmlReader.Create(new StringReader(formattedText)))
