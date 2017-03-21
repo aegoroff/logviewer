@@ -16,7 +16,7 @@ namespace logviewer.logic.support
     ///     dictionary but with some limitations.
     /// </summary>
     /// <typeparam name="T">Value type</typeparam>
-    public unsafe class FixedSizeDictionary<T> : IDictionary<int, T>
+    public class FixedSizeDictionary<T> : IDictionary<int, T>
     {
         private readonly int count;
         private int[] indexes;
@@ -129,13 +129,10 @@ namespace logviewer.logic.support
         /// </remarks>
         public bool TryGetValue(int key, out T value)
         {
-            fixed (int* p = this.indexes)
+            if (this.indexes[key] == 0)
             {
-                if (p[key] == 0)
-                {
-                    value = default(T);
-                    return false;
-                }
+                value = default(T);
+                return false;
             }
             value = this.store[key];
             return true;
@@ -159,10 +156,7 @@ namespace logviewer.logic.support
 
         private bool ContainsKeyInternal(int key)
         {
-            fixed (int* p = this.indexes)
-            {
-                return p[key] > 0;
-            }
+            return this.indexes[key] > 0;
         }
     }
 }

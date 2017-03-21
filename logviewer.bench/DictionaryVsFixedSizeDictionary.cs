@@ -40,13 +40,15 @@ namespace logviewer.bench
         [Benchmark]
         public string FixedSize()
         {
-            return this.fixedSize[this.index];
+            this.fixedSize.TryGetValue(this.index, out string r);
+            return r;
         }
 
         [Benchmark(Baseline = true)]
         public string Standart()
         {
-            return this.randomSize[this.index];
+            this.randomSize.TryGetValue(this.index, out string r);
+            return r;
         }
 
         private class Config : ManualConfig
@@ -88,6 +90,42 @@ namespace logviewer.bench
                     .WithTargetCount(10)
                     .WithInvocationCount(100000000)
                     .WithId("RyuJitMonitoring")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
+
+                this.Add(
+                    Job.Clr
+                    .With(Platform.X64)
+                    .With(Jit.LegacyJit)
+                    .With(Runtime.Clr)
+                    .With(RunStrategy.Throughput)
+                    .WithLaunchCount(1)
+                    .WithWarmupCount(3)
+                    .WithTargetCount(10)
+                    .WithInvocationCount(100000000)
+                    .WithId("LegacyJitThroughput")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
+
+                this.Add(
+                    Job.Clr
+                    .With(Platform.X64)
+                    .With(Jit.LegacyJit)
+                    .With(Runtime.Clr)
+                    .With(RunStrategy.ColdStart)
+                    .WithLaunchCount(1)
+                    .WithWarmupCount(3)
+                    .WithTargetCount(10)
+                    .WithInvocationCount(100000000)
+                    .WithId("LegacyJitColdStart")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
+
+                this.Add(
+                    Job.Clr
+                    .With(Platform.X64)
+                    .With(Jit.LegacyJit)
+                    .With(Runtime.Clr)
+                    .With(RunStrategy.Monitoring)
+                    .WithLaunchCount(1)
+                    .WithWarmupCount(3)
+                    .WithTargetCount(10)
+                    .WithInvocationCount(100000000)
+                    .WithId("LegacyJitMonitoring")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
             }
         }
     }
