@@ -137,8 +137,8 @@ namespace logviewer.tests
         {
             try
             {
-                this.workflow.Close();
-                this.workflow.Dispose();
+                this.workflow?.Close();
+                this.workflow?.Dispose();
             }
             catch (Exception e)
             {
