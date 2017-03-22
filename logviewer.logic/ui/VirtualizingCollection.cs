@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -147,6 +146,7 @@ namespace logviewer.logic.ui
             {
                 this.count = value;
                 this.pages = new FixedSizeDictionary<T[]>(this.count / this.PageSize + 1);
+                this.pageTouchTimes = new FixedSizeDictionary<DateTime>(this.count / this.PageSize + 1);
                 this.FireCollectionReset();
             }
         }
@@ -300,7 +300,7 @@ namespace logviewer.logic.ui
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private IDictionary<int, T[]> pages = new FixedSizeDictionary<T[]>(1);
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private Dictionary<int, DateTime> pageTouchTimes = new Dictionary<int, DateTime>();
+        private IDictionary<int, DateTime> pageTouchTimes = new FixedSizeDictionary<DateTime>(1);
         private readonly int pageSize = 100;
         private int firstVisible;
         private int lastVisible;
@@ -312,7 +312,7 @@ namespace logviewer.logic.ui
         public void CleanUpPages()
         {
             // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating
-            var keys = this.pageTouchTimes.Keys.ToArray();
+            var keys = (int[])this.pageTouchTimes.Keys;
 
             // Performance reason. Thanks dotTrace from JetBrains :)
             var now = DateTime.Now;
