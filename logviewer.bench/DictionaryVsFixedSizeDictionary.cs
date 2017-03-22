@@ -38,94 +38,58 @@ namespace logviewer.bench
         }
 
         [Benchmark]
-        public string FixedSize()
+        public string TryGetValue_FixedSize()
         {
             this.fixedSize.TryGetValue(this.index, out string r);
             return r;
         }
 
-        [Benchmark(Baseline = true)]
-        public string Standart()
+        [Benchmark]
+        public string TryGetValue_Standart()
         {
             this.randomSize.TryGetValue(this.index, out string r);
             return r;
         }
 
+        [Benchmark]
+        public bool ContainsKey_FixedSize()
+        {
+            return this.fixedSize.ContainsKey(this.index);
+        }
+
+        [Benchmark]
+        public bool ContainsKey_Standart()
+        {
+            return this.randomSize.ContainsKey(this.index);
+        }
+
         private class Config : ManualConfig
         {
+            private const int InvocationCount = 100000000;
+            private const int LaunchCount = 1;
+            private const int WarmupCount = 2;
+            private const int TargetCount = 10;
+
             public Config()
+            {
+                this.Add(Jit.RyuJit, RunStrategy.Throughput);
+                this.Add(Jit.RyuJit, RunStrategy.ColdStart);
+                this.Add(Jit.RyuJit, RunStrategy.Monitoring);
+            }
+
+            private void Add(Jit jit, RunStrategy runStrategy)
             {
                 this.Add(
                     Job.Clr
-                    .With(Platform.X64)
-                    .With(Jit.RyuJit)
-                    .With(Runtime.Clr)
-                    .With(RunStrategy.Throughput)
-                    .WithLaunchCount(1)
-                    .WithWarmupCount(3)
-                    .WithTargetCount(10)
-                    .WithInvocationCount(100000000)
-                    .WithId("RyuJitThroughput")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
-
-                this.Add(
-                    Job.Clr
-                    .With(Platform.X64)
-                    .With(Jit.RyuJit)
-                    .With(Runtime.Clr)
-                    .With(RunStrategy.ColdStart)
-                    .WithLaunchCount(1)
-                    .WithWarmupCount(3)
-                    .WithTargetCount(10)
-                    .WithInvocationCount(100000000)
-                    .WithId("RyuJitColdStart")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
-
-                this.Add(
-                    Job.Clr
-                    .With(Platform.X64)
-                    .With(Jit.RyuJit)
-                    .With(Runtime.Clr)
-                    .With(RunStrategy.Monitoring)
-                    .WithLaunchCount(1)
-                    .WithWarmupCount(3)
-                    .WithTargetCount(10)
-                    .WithInvocationCount(100000000)
-                    .WithId("RyuJitMonitoring")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
-
-                this.Add(
-                    Job.Clr
-                    .With(Platform.X64)
-                    .With(Jit.LegacyJit)
-                    .With(Runtime.Clr)
-                    .With(RunStrategy.Throughput)
-                    .WithLaunchCount(1)
-                    .WithWarmupCount(3)
-                    .WithTargetCount(10)
-                    .WithInvocationCount(100000000)
-                    .WithId("LegacyJitThroughput")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
-
-                this.Add(
-                    Job.Clr
-                    .With(Platform.X64)
-                    .With(Jit.LegacyJit)
-                    .With(Runtime.Clr)
-                    .With(RunStrategy.ColdStart)
-                    .WithLaunchCount(1)
-                    .WithWarmupCount(3)
-                    .WithTargetCount(10)
-                    .WithInvocationCount(100000000)
-                    .WithId("LegacyJitColdStart")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
-
-                this.Add(
-                    Job.Clr
-                    .With(Platform.X64)
-                    .With(Jit.LegacyJit)
-                    .With(Runtime.Clr)
-                    .With(RunStrategy.Monitoring)
-                    .WithLaunchCount(1)
-                    .WithWarmupCount(3)
-                    .WithTargetCount(10)
-                    .WithInvocationCount(100000000)
-                    .WithId("LegacyJitMonitoring")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
+                        .With(Platform.X64)
+                        .With(jit)
+                        .With(Runtime.Clr)
+                        .With(runStrategy)
+                        .WithLaunchCount(LaunchCount)
+                        .WithWarmupCount(WarmupCount)
+                        .WithTargetCount(TargetCount)
+                        .WithInvocationCount(InvocationCount)
+                        .WithId($"{jit:G}{runStrategy:G}")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
             }
         }
     }

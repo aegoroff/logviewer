@@ -4,18 +4,21 @@
 // Created at: 24.11.2015
 // © 2012-2017 Alexander Egorov
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using logviewer.logic.Annotations;
 
 namespace logviewer.logic.support
 {
     /// <summary>
-    ///     This class contains fixed size integer key based dictionary. This implementation is much faster then generic
+    ///     This class contains fixed size positive integer key based dictionary. This implementation is much faster then generic
     ///     dictionary but with some limitations.
     /// </summary>
     /// <typeparam name="T">Value type</typeparam>
+    /// <exception cref="ArgumentOutOfRangeException">Occurs if count is negative o zero</exception>
     public class FixedSizeDictionary<T> : IDictionary<int, T>
     {
         private readonly int count;
@@ -24,6 +27,10 @@ namespace logviewer.logic.support
 
         public FixedSizeDictionary(int count)
         {
+            if (count <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
             this.count = count;
             this.store = new T[count];
             this.indexes = new int[count];
@@ -59,7 +66,7 @@ namespace logviewer.logic.support
         [Pure]
         public bool Contains(KeyValuePair<int, T> item)
         {
-            return this.indexes[item.Key] > 0 && Equals(this.store[item.Key], item.Value);
+            return this.ContainsKey(item.Key) && Equals(this.store[item.Key], item.Value);
         }
 
         public void CopyTo(KeyValuePair<int, T>[] array, int arrayIndex)
@@ -97,14 +104,16 @@ namespace logviewer.logic.support
         public bool IsReadOnly => false;
 
         [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsKey(int key)
         {
-            return key < this.count && this.ContainsKeyInternal(key);
+            return key < this.count && key > 0 &&  this.ContainsKeyInternal(key);
         }
 
+        /// <inheritdoc />
         public void Add(int key, T value)
         {
-            if (key >= this.count)
+            if (key >= this.count || key < 0)
             {
                 return;
             }
@@ -112,9 +121,10 @@ namespace logviewer.logic.support
             this.indexes[key] = 1;
         }
 
+        /// <inheritdoc />
         public bool Remove(int key)
         {
-            if (key >= this.count || !this.ContainsKeyInternal(key))
+            if (key >= this.count || key < 0 || !this.ContainsKeyInternal(key))
             {
                 return false;
             }
@@ -123,13 +133,10 @@ namespace logviewer.logic.support
             return true;
         }
 
-        /// <remarks>
-        ///     IMPORTANT: key out of range intentionally missed here due to performance reasons.
-        ///     You shouldn't pass key that out of size range to avoid undefined behaviour
-        /// </remarks>
+        /// <inheritdoc />
         public bool TryGetValue(int key, out T value)
         {
-            if (this.indexes[key] == 0)
+            if (key >= this.count ||  key < 0 || this.indexes[key] == 0)
             {
                 value = default(T);
                 return false;
@@ -138,6 +145,11 @@ namespace logviewer.logic.support
             return true;
         }
 
+        /// <summary>
+        /// Returns value by key specified.
+        /// </summary>
+        /// <param name="key">Key to get value of</param>
+        /// <exception cref="IndexOutOfRangeException">Occurs in case of key is less then zero or greater then the collection max size</exception>
         public T this[int key]
         {
             get { return this.store[key]; }
@@ -154,6 +166,7 @@ namespace logviewer.logic.support
             get { return this.Select(pair => pair.Value).ToArray(); }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ContainsKeyInternal(int key)
         {
             return this.indexes[key] > 0;

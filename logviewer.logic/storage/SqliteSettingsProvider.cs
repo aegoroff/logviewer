@@ -442,7 +442,8 @@ namespace logviewer.logic.storage
 
         public TextFormat GetFormat(LogLevel level)
         {
-            return level == LogLevel.None ? this.noneLevelFormat : this.formatsMap[(int)level];
+            this.formatsMap.TryGetValue((int) level, out TextFormat r);
+            return r ?? this.noneLevelFormat;
         }
 
         public void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action)
