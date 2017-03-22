@@ -298,9 +298,9 @@ namespace logviewer.logic.ui
         #region Paging
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private IDictionary<int, T[]> pages = new FixedSizeDictionary<T[]>(1);
+        private FixedSizeDictionary<T[]> pages = new FixedSizeDictionary<T[]>(1);
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private IDictionary<int, DateTime> pageTouchTimes = new FixedSizeDictionary<DateTime>(1);
+        private FixedSizeDictionary<DateTime> pageTouchTimes = new FixedSizeDictionary<DateTime>(1);
         private readonly int pageSize = 100;
         private int firstVisible;
         private int lastVisible;
