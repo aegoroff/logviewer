@@ -150,6 +150,20 @@ namespace logviewer.tests
             result.Should().BeFalse();
         }
 
+        [Theory, MemberData(nameof(ReferencePairs))]
+        public void ContainsKey_KeyInValidRange_True(int key, string value)
+        {
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(DictionarySize);
+            instance.Add(key, value);
+
+            // Act
+            var result = instance.ContainsKey(key);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
         [Fact]
         public void ContainsKey_AfterRemove_ShouldBeFalse()
         {

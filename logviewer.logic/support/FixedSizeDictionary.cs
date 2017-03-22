@@ -107,7 +107,7 @@ namespace logviewer.logic.support
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsKey(int key)
         {
-            return key < this.count && key > 0 &&  this.ContainsKeyInternal(key);
+            return key < this.count && key >= 0 &&  this.ContainsKeyInternal(key);
         }
 
         /// <inheritdoc />
@@ -136,7 +136,7 @@ namespace logviewer.logic.support
         /// <inheritdoc />
         public bool TryGetValue(int key, out T value)
         {
-            if (key >= this.count ||  key < 0 || this.indexes[key] == 0)
+            if (key >= this.count || key < 0 || this.indexes[key] == 0)
             {
                 value = default(T);
                 return false;
