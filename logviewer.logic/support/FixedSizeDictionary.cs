@@ -133,6 +133,7 @@ namespace logviewer.logic.support
         }
 
         /// <inheritdoc />
+        [Pure]
         public bool TryGetValue(int key, out T value)
         {
             if (key >= this.count || key < 0 || this.indexes[key] == 0)

@@ -217,10 +217,9 @@ namespace logviewer.tests
             // Arrange
             var instance = new FixedSizeDictionary<string>(DictionarySize);
             instance.Add(3, ExpectedString);
-            string result;
 
             // Act
-            var success = instance.TryGetValue(4, out result);
+            var success = instance.TryGetValue(4, out string result);
 
             // Assert
             success.Should().BeFalse();
