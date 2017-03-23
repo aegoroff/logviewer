@@ -54,7 +54,7 @@ namespace logviewer.logic.models
                 yield return new ParsingTemplate { Index = 5, StartMessage = @"%{COMBINEDAPACHELOG_LEVELED}", Name = Resources.ParsingTemplateApacheCombined };
                 yield return new ParsingTemplate { Index = 6, StartMessage = @"%{SYSLOGTIMESTAMP:Timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGPROG}:%{DATA:message}", Name = Resources.ParsingTemplateSyslog };
                 yield return new ParsingTemplate { Index = 7, StartMessage = "^\\[%{DATA}\\]\\[%{TIMESTAMP_ISO8601}\\]%{DATA:Level:'i'->LogLevel.Info,'w'->LogLevel.Warn,'e'->LogLevel.Error}\"\\d{3}:\"%{SPACE}%{DATA}", Name = Resources.ParsingTemplateWixBurn }; // Not L10N
-                yield return new ParsingTemplate { Index = 8, StartMessage = "^\\[%{TIME}\\](%{WORD:Level:'W'->LogLevel.Warn,'E'->LogLevel.Error,'*'->LogLevel.Info}|%{SPACE})[:]%{DATA}", Name = Resources.ParsingTemplateTeamcityBuildLog, Filter = @"^[^\\[\\s].*" }; // Not L10N
+                yield return new ParsingTemplate { Index = 8, StartMessage = "^\\[%{TIME}\\](%{WORD:Level:\'W\'->LogLevel.Warn,\'E\'->LogLevel.Error,\'i\'->LogLevel.Info,\'*\'->LogLevel.Debug}|%{SPACE})[:]%{DATA}", Name = Resources.ParsingTemplateTeamcityBuildLog, Filter = @"^[^\\[\\s].*" }; // Not L10N
             }
         }
     }
