@@ -104,7 +104,6 @@ namespace logviewer.logic.support
         public bool IsReadOnly => false;
 
         [Pure]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsKey(int key)
         {
             return key < this.count && key >= 0 &&  this.ContainsKeyInternal(key);
