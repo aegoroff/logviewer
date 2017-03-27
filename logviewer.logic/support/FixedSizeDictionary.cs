@@ -156,14 +156,33 @@ namespace logviewer.logic.support
             set { this.store[key] = value; }
         }
 
-        public ICollection<int> Keys
+        public ICollection<int> Keys => this.GetKeysInternal().ToArray();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private IEnumerable<int> GetKeysInternal()
         {
-            get { return this.Select(pair => pair.Key).ToArray(); }
+            for (var i = 0; i < this.indexes.Length; i++)
+            {
+                if (this.ContainsKeyInternal(i))
+                {
+                    yield return i;
+                }
+            }
         }
 
-        public ICollection<T> Values
+        public ICollection<T> Values => this.GetValuesInternal().ToArray();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private IEnumerable<T> GetValuesInternal()
         {
-            get { return this.Select(pair => pair.Value).ToArray(); }
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            for (var i = 0; i < this.store.Length; i++)
+            {
+                if (this.ContainsKeyInternal(i))
+                {
+                    yield return this.store[i];
+                }
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
