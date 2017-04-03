@@ -49,8 +49,8 @@ namespace logviewer.engine
         /// </summary>
         public long Ix
         {
-            get { return this.ix; }
-            set { this.ix = value; }
+            get => this.ix;
+            set => this.ix = value;
         }
 
         /// <summary>

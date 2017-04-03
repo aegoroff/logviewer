@@ -132,8 +132,8 @@ namespace logviewer.logic.storage
 
         public int SelectedParsingTemplate
         {
-            get { return this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName); }
-            set { this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName);
+            set => this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value);
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -166,67 +166,64 @@ namespace logviewer.logic.storage
 
         public string MessageFilter
         {
-            get { return this.optionsProvider.ReadStringOption(FilterParameterName); }
-            set { this.optionsProvider.UpdateStringOption(FilterParameterName, value); }
+            get => this.optionsProvider.ReadStringOption(FilterParameterName);
+            set => this.optionsProvider.UpdateStringOption(FilterParameterName, value);
         }
 
         public DateTime LastUpdateCheckTime
         {
-            get
-            {
-                return DateTime
-                    .Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
-                    .ToUniversalTime();
-            }
-            set { this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O")); }
+            get => DateTime
+                .Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
+                .ToUniversalTime();
+            set => this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O"));
         }
 
         public bool OpenLastFile
         {
-            get { return this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName); }
-            set { this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value); }
+            get => this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName);
+            set => this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value);
         }
 
         public bool AutoRefreshOnFileChange
         {
-            get { return this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName); }
-            set { this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value); }
+            get => this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName);
+            set => this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value);
         }
 
         public int MinLevel
         {
-            get { return this.optionsProvider.ReadIntegerOption(MinLevelParameterName); }
-            set { this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(MinLevelParameterName);
+            set => this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value);
         }
 
         public int MaxLevel
         {
-            get { return this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int) LogLevel.Fatal); }
-            set { this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int) LogLevel.Fatal);
+            set => this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value);
         }
 
         public int PageSize
         {
-            get { return this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize); }
-            set { this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize);
+            set => this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value);
         }
 
         public bool Sorting
         {
-            get { return this.optionsProvider.ReadBooleanOption(SortingParameterName); }
-            set { this.optionsProvider.UpdateBooleanOption(SortingParameterName, value); }
+            get => this.optionsProvider.ReadBooleanOption(SortingParameterName);
+            set => this.optionsProvider.UpdateBooleanOption(SortingParameterName, value);
         }
 
         public bool UseRegexp
         {
-            get { return this.optionsProvider.ReadBooleanOption(UseRegexpParameterName); }
-            set { this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value); }
+            get => this.optionsProvider.ReadBooleanOption(UseRegexpParameterName);
+            set => this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value);
         }
 
         public int KeepLastNFiles
         {
-            get { return this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles); }
-            set { this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value); }
+            get => this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles);
+            set => this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value);
         }
 
         public string FullPathToDatabase => this.settingsDatabaseFilePath;

@@ -57,7 +57,7 @@ namespace logviewer.logic.ui.network
 
         public bool EnableCustomCredentials
         {
-            get { return this.enableCustomCredentials; }
+            get => this.enableCustomCredentials;
             set
             {
                 this.enableCustomCredentials = value;
@@ -74,7 +74,7 @@ namespace logviewer.logic.ui.network
 
         public ProxyMode ProxyMode
         {
-            get { return this.proxyMode; }
+            get => this.proxyMode;
             set
             {
                 this.proxyMode = value;
@@ -89,19 +89,19 @@ namespace logviewer.logic.ui.network
 
         public bool IsNoUseProxy
         {
-            get { return this.isNoUseProxy; }
-            set { this.OnModeChange(value, ref this.isNoUseProxy, ProxyModeTransition.ToNone); }
+            get => this.isNoUseProxy;
+            set => this.OnModeChange(value, ref this.isNoUseProxy, ProxyModeTransition.ToNone);
         }
 
         public bool IsUseAutoProxy
         {
-            get { return this.isUseAutoProxy; }
-            set { this.OnModeChange(value, ref this.isUseAutoProxy, ProxyModeTransition.ToAutoProxyDetection); }
+            get => this.isUseAutoProxy;
+            set => this.OnModeChange(value, ref this.isUseAutoProxy, ProxyModeTransition.ToAutoProxyDetection);
         }
 
         public bool IsUseManualProxy
         {
-            get { return this.isUseManualProxy; }
+            get => this.isUseManualProxy;
             set
             {
                 this.OnModeChange(value, ref this.isUseManualProxy, ProxyModeTransition.ToCustom);
@@ -114,7 +114,7 @@ namespace logviewer.logic.ui.network
 
         public bool IsUseDefaultCredentials
         {
-            get { return this.isUseDefaultCredentials; }
+            get => this.isUseDefaultCredentials;
             set
             {
                 this.isUseDefaultCredentials = value;
@@ -125,7 +125,7 @@ namespace logviewer.logic.ui.network
 
         public bool IsSettingsChanged
         {
-            get { return this.isSettingsChanged; }
+            get => this.isSettingsChanged;
             set
             {
                 this.isSettingsChanged = value;
@@ -135,7 +135,7 @@ namespace logviewer.logic.ui.network
 
         public string Host
         {
-            get { return this.host; }
+            get => this.host;
             set
             {
                 this.host = value;
@@ -145,7 +145,7 @@ namespace logviewer.logic.ui.network
 
         public int Port
         {
-            get { return this.port; }
+            get => this.port;
             set
             {
                 this.port = value;
@@ -155,7 +155,7 @@ namespace logviewer.logic.ui.network
 
         public string UserName
         {
-            get { return this.userName; }
+            get => this.userName;
             set
             {
                 this.userName = value;
@@ -165,7 +165,7 @@ namespace logviewer.logic.ui.network
 
         public string Password
         {
-            get { return this.password; }
+            get => this.password;
             set
             {
                 this.password = value;
@@ -175,7 +175,7 @@ namespace logviewer.logic.ui.network
 
         public string Domain
         {
-            get { return this.domain; }
+            get => this.domain;
             set
             {
                 this.domain = value;

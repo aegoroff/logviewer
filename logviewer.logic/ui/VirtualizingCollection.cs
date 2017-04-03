@@ -98,7 +98,7 @@ namespace logviewer.logic.ui
         [PublicAPI]
         public bool IsLoading
         {
-            get { return this.isLoading; }
+            get => this.isLoading;
             set
             {
                 this.isLoading = value;
@@ -166,8 +166,8 @@ namespace logviewer.logic.ui
         /// </remarks>
         public T this[int index]
         {
-            get { return (T) ((IList) this)[index]; }
-            set { throw new NotSupportedException(); }
+            get => (T) ((IList) this)[index];
+            set => throw new NotSupportedException();
         }
 
         object IList.this[int index]
@@ -194,7 +194,7 @@ namespace logviewer.logic.ui
                 }
                 return default(T);
             }
-            set { throw new NotSupportedException(); }
+            set => throw new NotSupportedException();
         }
 
         #endregion

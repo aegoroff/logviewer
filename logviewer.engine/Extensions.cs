@@ -21,9 +21,9 @@ namespace logviewer.engine
         {
             get
             {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 var uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
+                var path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
             }
         }
@@ -48,8 +48,8 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string Convert(this string line, Encoding srcEncoding, Encoding dstEncoding)
         {
-            byte[] srcBytes = srcEncoding.GetBytes(line);
-            byte[] dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
+            var srcBytes = srcEncoding.GetBytes(line);
+            var dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
             return dstEncoding.GetString(dstBytes);
         }
 

@@ -152,8 +152,8 @@ namespace logviewer.logic.support
         /// <exception cref="IndexOutOfRangeException">Occurs in case of key is less then zero or greater then the collection max size</exception>
         public T this[int key]
         {
-            get { return this.store[key]; }
-            set { this.store[key] = value; }
+            get => this.store[key];
+            set => this.store[key] = value;
         }
 
         public ICollection<int> Keys => this.GetKeysInternal().ToArray();
