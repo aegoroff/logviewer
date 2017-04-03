@@ -97,7 +97,7 @@ namespace logviewer.ui
 
         public DateTime From
         {
-            get { return this.from; }
+            get => this.from;
             set
             {
                 this.from = value;
@@ -107,7 +107,7 @@ namespace logviewer.ui
 
         public DateTime To
         {
-            get { return this.to; }
+            get => this.to;
             set
             {
                 this.to = value;
@@ -117,7 +117,7 @@ namespace logviewer.ui
 
         public bool UiControlsEnabled
         {
-            get { return this.uiControlsEnabled; }
+            get => this.uiControlsEnabled;
             set
             {
                 this.uiControlsEnabled = value;
@@ -127,7 +127,7 @@ namespace logviewer.ui
 
         public bool IsTextFilterFocused
         {
-            get { return this.isTextFilterFocused; }
+            get => this.isTextFilterFocused;
             set
             {
                 this.isTextFilterFocused = value;
@@ -137,7 +137,7 @@ namespace logviewer.ui
 
         public string TotalMessages
         {
-            get { return this.totalMessages; }
+            get => this.totalMessages;
             set
             {
                 this.totalMessages = value;
@@ -147,7 +147,7 @@ namespace logviewer.ui
 
         public string ToDisplayMessages
         {
-            get { return this.toDisplayMessages; }
+            get => this.toDisplayMessages;
             set
             {
                 this.toDisplayMessages = value;
@@ -157,7 +157,7 @@ namespace logviewer.ui
 
         public string LogStatistic
         {
-            get { return this.logStatistic; }
+            get => this.logStatistic;
             set
             {
                 this.logStatistic = value;
@@ -167,7 +167,7 @@ namespace logviewer.ui
 
         public string LogSize
         {
-            get { return this.logSize; }
+            get => this.logSize;
             set
             {
                 this.logSize = value;
@@ -177,7 +177,7 @@ namespace logviewer.ui
 
         public string LogEncoding
         {
-            get { return this.logEncoding; }
+            get => this.logEncoding;
             set
             {
                 this.logEncoding = value;
@@ -191,7 +191,7 @@ namespace logviewer.ui
 
         public Range Visible
         {
-            get { return this.visible; }
+            get => this.visible;
             set
             {
                 this.visible = value;
@@ -209,7 +209,7 @@ namespace logviewer.ui
 
         public int LogProgress
         {
-            get { return this.logProgress; }
+            get => this.logProgress;
             set
             {
                 this.logProgress = value;
@@ -219,7 +219,7 @@ namespace logviewer.ui
 
         public string LogProgressText
         {
-            get { return this.logProgressText; }
+            get => this.logProgressText;
             set
             {
                 this.logProgressText = value;
@@ -229,7 +229,7 @@ namespace logviewer.ui
 
         public string LogPath
         {
-            get { return this.logPath; }
+            get => this.logPath;
             set
             {
                 this.logPath = value;
@@ -243,7 +243,7 @@ namespace logviewer.ui
 
         public string MessageFilter
         {
-            get { return this.settingsProvider.MessageFilter; }
+            get => this.settingsProvider.MessageFilter;
             set
             {
                 this.settingsProvider.MessageFilter = value;
@@ -253,7 +253,7 @@ namespace logviewer.ui
 
         public bool UseRegularExpressions
         {
-            get { return this.settingsProvider.UseRegexp; }
+            get => this.settingsProvider.UseRegexp;
             set
             {
                 this.settingsProvider.UseRegexp = value;
@@ -263,7 +263,7 @@ namespace logviewer.ui
 
         public int MinLevel
         {
-            get { return this.settingsProvider.MinLevel; }
+            get => this.settingsProvider.MinLevel;
             set
             {
                 this.settingsProvider.MinLevel = value;
@@ -273,7 +273,7 @@ namespace logviewer.ui
 
         public int MaxLevel
         {
-            get { return this.settingsProvider.MaxLevel; }
+            get => this.settingsProvider.MaxLevel;
             set
             {
                 this.settingsProvider.MaxLevel = value;
@@ -283,7 +283,7 @@ namespace logviewer.ui
 
         public int SelectedParsingTemplate
         {
-            get { return this.settingsProvider.SelectedParsingTemplate; }
+            get => this.settingsProvider.SelectedParsingTemplate;
             set
             {
                 this.settingsProvider.SelectedParsingTemplate = value;
@@ -293,7 +293,7 @@ namespace logviewer.ui
 
         public int SortingOrder
         {
-            get { return this.settingsProvider.Sorting ? 0 : 1; }
+            get => this.settingsProvider.Sorting ? 0 : 1;
             set
             {
                 this.settingsProvider.Sorting = value == 0;
