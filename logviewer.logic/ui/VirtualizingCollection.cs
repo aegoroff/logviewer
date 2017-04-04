@@ -141,7 +141,7 @@ namespace logviewer.logic.ui
 
         public int Count
         {
-            get { return this.count; }
+            get => this.count;
             private set
             {
                 this.count = value;
