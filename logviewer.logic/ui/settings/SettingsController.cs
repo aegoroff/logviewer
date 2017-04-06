@@ -80,8 +80,8 @@ namespace logviewer.logic.ui.settings
         public void Load()
         {
             this.view.ShowNewParsingTemplateForm(false);
-            
-            var task = Task.Factory.StartNew(delegate
+
+            void LoacTemplatesAction()
             {
                 this.formData.OpenLastFile = this.settings.OpenLastFile;
                 this.formData.AutoRefreshOnFileChange = this.settings.AutoRefreshOnFileChange;
@@ -98,9 +98,9 @@ namespace logviewer.logic.ui.settings
                 {
                     this.formData.Colors.Add(logLevel, this.settings.ReadColor(logLevel));
                 }
-            });
+            }
 
-            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            void CompleteLoadingTemplateAction(Task obj)
             {
                 this.view.LoadFormData(this.formData);
                 this.view.LoadParsingTemplate(this.template);
@@ -116,7 +116,11 @@ namespace logviewer.logic.ui.settings
                 this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
                 this.view.EnableResetColors(this.IsColorsChanged);
                 this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
-            });
+            }
+
+            var task = Task.Factory.StartNew(LoacTemplatesAction);
+
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, CompleteLoadingTemplateAction);
         }
 
         public void Save()
@@ -289,7 +293,8 @@ namespace logviewer.logic.ui.settings
                 return;
             }
             this.view.EnableChangeOrClose(false);
-            var task = Task.Factory.StartNew(delegate
+
+            void RestoreTemplatesAction()
             {
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
                 var lastIx = this.settings.ReadAllParsingTemplates().Count - 1;
@@ -298,7 +303,7 @@ namespace logviewer.logic.ui.settings
                 {
                     this.settings.DeleteParsingTemplate(i);
                 }
-                
+
                 foreach (var t in ParsingTemplate.Defaults)
                 {
                     this.settings.InsertParsingTemplate(t);
@@ -307,9 +312,9 @@ namespace logviewer.logic.ui.settings
                 this.templateList = this.settings.ReadParsingTemplateList();
                 this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
-            });
+            }
 
-            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, delegate
+            void CompleteRestoringTemplatesAction(Task obj)
             {
                 this.view.RemoveAllParsingTemplateNames();
                 foreach (var name in this.templateList)
@@ -321,7 +326,11 @@ namespace logviewer.logic.ui.settings
                 this.view.EnableChangeOrClose(true);
                 this.view.EnableRemoveTemplateControl(false);
                 this.view.EnableSave(false);
-            });
+            }
+
+            var task = Task.Factory.StartNew(RestoreTemplatesAction);
+
+            this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, CompleteRestoringTemplatesAction);
         }
 
         public void StartAddNewParsingTemplate()
