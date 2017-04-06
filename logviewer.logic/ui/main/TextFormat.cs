@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using logviewer.logic.Annotations;
 
 namespace logviewer.logic.ui.main
 {
+    [PublicAPI]
     public class TextFormat
     {
         public string Font { get; set; } = @"Courier New";
