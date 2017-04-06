@@ -12,6 +12,7 @@ using logviewer.logic.Annotations;
 
 namespace logviewer.logic.ui.network
 {
+    [PublicAPI]
     public sealed class NetworkSettingsViewModel : INetworkSettingsViewModel, INotifyPropertyChanged
     {
         private string domain;
