@@ -127,7 +127,8 @@ namespace logviewer.logic.ui.settings
         {
             this.view.EnableSave(false);
             this.view.EnableChangeOrClose(false);
-            var task = Task.Factory.StartNew(delegate
+
+            void SaveSettingsAction()
             {
                 if (int.TryParse(this.formData.PageSize, out int pageSize))
                 {
@@ -149,13 +150,17 @@ namespace logviewer.logic.ui.settings
                 {
                     this.settings.UpdateColor(pair.Key, pair.Value);
                 }
-            });
+            }
 
-            this.CompleteTask(task, TaskContinuationOptions.None, delegate
+            void CompleteSaveSettingsAction(Task obj)
             {
                 this.view.EnableChangeOrClose(true);
                 this.view.EnableResetColors(this.IsColorsChanged);
-            });
+            }
+
+            var task = Task.Factory.StartNew(SaveSettingsAction);
+
+            this.CompleteTask(task, TaskContinuationOptions.None, CompleteSaveSettingsAction);
         }
 
         public bool RefreshOnClose { get; private set; }
@@ -242,6 +247,15 @@ namespace logviewer.logic.ui.settings
             var t = this.view.NewParsingTemplateData;
             t.Index = this.templateList.Count;
 
+            void OnComplete(IList<string> list)
+            {
+                for (var i = t.Index; i < list.Count; i++)
+                {
+                    this.view.AddTemplateName(list[i]);
+                    this.templateList.Add(list[i]);
+                }
+            }
+
             var source = Observable.Create<IList<string>>(observer =>
             {
                 this.settings.InsertParsingTemplate(t);
@@ -252,14 +266,7 @@ namespace logviewer.logic.ui.settings
 
             source.SubscribeOn(Scheduler.Default)
                 .ObserveOn(this.UiContextScheduler)
-                .Subscribe(list =>
-                {
-                    for (var i = t.Index; i < list.Count; i++)
-                    {
-                        this.view.AddTemplateName(list[i]);
-                        this.templateList.Add(list[i]);
-                    }
-                });
+                .Subscribe(OnComplete);
         }
 
         public void RemoveSelectedParsingTemplate()
@@ -277,13 +284,15 @@ namespace logviewer.logic.ui.settings
                 return Disposable.Empty;
             });
 
+            void OnComplete(int i)
+            {
+                this.view.RemoveParsingTemplateName(i);
+                this.view.SelectParsingTemplate(i - 1);
+            }
+
             source.SubscribeOn(Scheduler.Default)
                 .ObserveOn(this.UiContextScheduler)
-                .Subscribe(i =>
-                {
-                    this.view.RemoveParsingTemplateName(i);
-                    this.view.SelectParsingTemplate(i - 1);
-                });
+                .Subscribe(OnComplete);
         }
 
         public void RestoreDefaultTemplates()
@@ -360,16 +369,18 @@ namespace logviewer.logic.ui.settings
                 return Disposable.Empty;
             });
 
+            void OnComplete(ParsingTemplate parsingTemplate)
+            {
+                this.template = parsingTemplate;
+                this.view.LoadParsingTemplate(this.template);
+                this.view.EnableChangeOrClose(true);
+                this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
+                this.view.EnableSave(false);
+            }
+
             source.SubscribeOn(Scheduler.Default)
                 .ObserveOn(this.UiContextScheduler)
-                .Subscribe(parsingTemplate =>
-                {
-                    this.template = parsingTemplate;
-                    this.view.LoadParsingTemplate(this.template);
-                    this.view.EnableChangeOrClose(true);
-                    this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
-                    this.view.EnableSave(false);
-                });
+                .Subscribe(OnComplete);
         }
     }
 }
