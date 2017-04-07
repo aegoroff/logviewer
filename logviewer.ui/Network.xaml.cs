@@ -17,7 +17,7 @@ namespace logviewer.ui
         public Network()
         {
             this.InitializeComponent();
-            var viewModel = new NetworkSettingsViewModel();
+            INetworkSettingsViewModel viewModel = new NetworkSettingsViewModel();
             viewModel.PasswordUpdated += this.ModelOnPasswordUpdated;
             this.DataContext = viewModel;
             this.model = new NetworkSettingsModel(viewModel, MainViewModel.Current.SettingsProvider.OptionsProvider);
