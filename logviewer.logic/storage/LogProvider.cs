@@ -21,6 +21,13 @@ namespace logviewer.logic.storage
         private readonly ISettingsProvider settings;
         private LogStore store;
 
+        private static readonly XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true,
+            ConformanceLevel = ConformanceLevel.Fragment,
+            CheckCharacters = false
+        };
+
         public LogProvider(LogStore store, ISettingsProvider settings)
         {
             this.Store = store;
@@ -100,7 +107,7 @@ namespace logviewer.logic.storage
 
             var format = this.settings.GetFormat(logLvel);
 
-            using (var writer = XmlWriter.Create(sb, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment, CheckCharacters = false }))
+            using (var writer = XmlWriter.Create(sb, xmlWriterSettings))
             {
                 WriteRunElement(message.Header.Trim(), writer, format.Font, format.ColorAsString, format.SizeHead, true);
 
