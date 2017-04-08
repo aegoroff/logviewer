@@ -348,10 +348,10 @@ namespace logviewer.engine
             var length = this.bodyBuilder.Length;
             if (length > 0)
             {
-                this.bodyBuilder.Remove(length - 1, 1);
+                length = --length;
             }
             this.ApplySemanticRules(schema);
-            this.body = this.bodyBuilder.ToString();
+            this.body = this.bodyBuilder.ToString(0, length);
             this.Clear();
         }
 
