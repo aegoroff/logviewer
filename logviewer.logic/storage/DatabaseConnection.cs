@@ -82,7 +82,7 @@ namespace logviewer.logic.storage
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
-            this.ExecuteInCreationContext(state =>
+            void Method(object state)
             {
                 try
                 {
@@ -100,14 +100,16 @@ namespace logviewer.logic.storage
                 {
                     Log.Instance.Debug(e);
                 }
-            });
+            }
+
+            this.ExecuteInCreationContext(Method);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal void RunSqlQuery(Action<IDbCommand> action, string command)
         {
-            this.ExecuteInCreationContext(state =>
+            void Method(object state)
             {
                 try
                 {
@@ -121,7 +123,9 @@ namespace logviewer.logic.storage
                 {
                     Log.Instance.Debug(e);
                 }
-            });
+            }
+
+            this.ExecuteInCreationContext(Method);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -132,7 +136,7 @@ namespace logviewer.logic.storage
                 return;
             }
 
-            using (var sqLiteCommand = this.connection.CreateCommand())
+            using (var sqLiteCommand = new SQLiteCommand(this.connection))
             {
                 sqLiteCommand.CommandText = command;
                 action(sqLiteCommand);
