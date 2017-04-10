@@ -11,13 +11,19 @@ namespace logviewer.logic.ui.network
         internal const string ProxyModeProperty = @"ProxyMode";
 
         internal const string HostProperty = @"Host";
+
         internal const string PortProperty = @"Port";
+
         internal const string IsUseDefaultCredentialsProperty = @"IsUseDefaultCredentials";
 
         internal const string LoginProperty = @"Login";
+
         internal const string PasswordProperty = @"Password";
+
         internal const string DomainProperty = @"Domain";
+
         internal const string PrivateKey = @"PrivateKey";
+
         internal const string PublicKey = @"PublicKey";
     }
 }

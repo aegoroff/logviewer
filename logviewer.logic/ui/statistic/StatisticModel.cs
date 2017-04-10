@@ -21,10 +21,13 @@ namespace logviewer.logic.ui.statistic
     public class StatisticModel : UiSynchronizeModel
     {
         private readonly ILogStore store;
+
         private readonly string size;
+
         private readonly string encoding;
 
         private readonly StatFilterViewModel filterViewModel;
+
         private readonly ObservableCollection<StatItemViewModel> items;
 
         private readonly string[] levelDescriptions =
@@ -63,8 +66,8 @@ namespace logviewer.logic.ui.statistic
             void OnCompleted() => Log.Instance.TraceFormatted("Statistic loading completed");
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(this.UiContextScheduler)
-                .Subscribe(OnNext, OnError, OnCompleted);
+                  .ObserveOn(this.UiContextScheduler)
+                  .Subscribe(OnNext, OnError, OnCompleted);
         }
 
         private IDisposable LoadFunction(IObserver<StatItemViewModel> observer)
@@ -91,7 +94,7 @@ namespace logviewer.logic.ui.statistic
         {
             foreach (var item in this.store.CountByLevel(this.filterViewModel.Filter, this.filterViewModel.UserRegexp, true))
             {
-                observer.OnNext(CreateItem(this.levelDescriptions[(int) item.Key], item.Value));
+                observer.OnNext(CreateItem(this.levelDescriptions[(int)item.Key], item.Value));
             }
         }
 
@@ -116,7 +119,8 @@ namespace logviewer.logic.ui.statistic
 
         private void CreateTotalRow(IObserver<StatItemViewModel> observer)
         {
-            var total = this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
+            var total = this.store.CountMessages(LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter,
+                                                 this.filterViewModel.UserRegexp);
             observer.OnNext(CreateItem(Resources.TotalMessages, total));
         }
 
@@ -144,7 +148,8 @@ namespace logviewer.logic.ui.statistic
 
         private DateTime SelectDateUsingFunc(string func)
         {
-            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter, this.filterViewModel.UserRegexp);
+            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.filterViewModel.Filter,
+                                                  this.filterViewModel.UserRegexp);
         }
 
         private static StatItemViewModel CreateItem(string key, string value)

@@ -13,9 +13,13 @@ namespace logviewer.logic.storage
     public sealed class RecentItemsStore : IDisposable
     {
         private const string ItemParameter = @"@Item";
+
         private const string UsedAtParameter = @"@UsedAt";
+
         private readonly string tableName;
+
         private readonly int maxItems;
+
         private readonly DatabaseConnection connection;
 
         public RecentItemsStore(ISettingsProvider settings, string tableName, int maxItems = 0)
@@ -38,7 +42,8 @@ namespace logviewer.logic.storage
 
         public void Add(string item)
         {
-            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = {ItemParameter}", cmd => cmd.AddParameter(ItemParameter, item));
+            var result = this.connection.ExecuteScalar<long>($@"SELECT count(1) FROM {this.tableName} WHERE Item = {ItemParameter}",
+                                                             cmd => cmd.AddParameter(ItemParameter, item));
 
             if (result > 0)
             {
@@ -54,8 +59,9 @@ namespace logviewer.logic.storage
             {
                 return;
             }
+
             const string deleteTemplate =
-                @"DELETE FROM {1} 
+                    @"DELETE FROM {1} 
                     WHERE UsedAt IN (
                         SELECT UsedAt FROM {1} ORDER BY UsedAt ASC LIMIT {0}
                 )";
@@ -83,6 +89,7 @@ namespace logviewer.logic.storage
             {
                 this.connection.ExecuteNonQuery(cmd, Remove(file));
             }
+
             this.connection.CommitTran();
         }
 
@@ -94,14 +101,16 @@ namespace logviewer.logic.storage
         public IEnumerable<string> ReadItems()
         {
             var result = new List<string>(this.maxItems);
-            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC", reader => result.Add(reader[0] as string));
+            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC",
+                                          reader => result.Add(reader[0] as string));
             return result;
         }
-        
+
         public string ReadLastUsedItem()
         {
             var result = string.Empty;
-            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1", reader => result = reader[0] as string);
+            this.connection.ExecuteReader($"SELECT Item FROM {this.tableName} ORDER BY UsedAt DESC LIMIT 1",
+                                          reader => result = reader[0] as string);
             return result;
         }
 

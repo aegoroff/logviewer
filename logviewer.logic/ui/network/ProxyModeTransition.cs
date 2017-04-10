@@ -30,7 +30,7 @@ namespace logviewer.logic.ui.network
         ///     Custom proxy with default user
         /// </summary>
         ToCustomDefaultUser,
-        
+
         /// <summary>
         ///     Custom proxy with custom user
         /// </summary>

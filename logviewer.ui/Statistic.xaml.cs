@@ -4,7 +4,6 @@
 // Created at: 12.08.2016
 // © 2012-2017 Alexander Egorov
 
-using System.Windows;
 using System.Windows.Input;
 using logviewer.logic.storage;
 using logviewer.logic.ui.statistic;
@@ -16,7 +15,7 @@ namespace logviewer.ui
     /// Interaction logic for Statistic.xaml
     /// </summary>
     [PublicAPI]
-    public partial class Statistic : Window
+    public partial class Statistic
     {
         private StatisticModel model;
 

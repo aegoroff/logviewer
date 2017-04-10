@@ -13,10 +13,13 @@ namespace logviewer.logic.support
     internal abstract class ProducerConsumerQueue<T>
     {
         private readonly object locker = new object();
+
         private readonly Thread[] workers;
+
         private readonly Queue<T> itemQ = new Queue<T>();
 
         private const int MaxQueueCountBeforeEnqueueDelay = 20000;
+
         private const int EnqueueTimeoutMilliseconds = 30;
 
         protected ProducerConsumerQueue(int workerCount)
@@ -43,6 +46,7 @@ namespace logviewer.logic.support
             {
                 return;
             }
+
             foreach (var worker in this.workers)
             {
                 worker.Join(TimeSpan.FromSeconds(EnqueueTimeoutMilliseconds * 1000));
@@ -85,12 +89,15 @@ namespace logviewer.logic.support
                     {
                         Monitor.Wait(this.locker);
                     }
+
                     item = this.itemQ.Dequeue();
                 }
+
                 if (item == null || item.Equals(default(T)))
                 {
                     return; // This signals our exit.
                 }
+
                 this.Handler(item); // Execute item.
             }
         }

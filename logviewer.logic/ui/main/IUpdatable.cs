@@ -10,7 +10,8 @@ namespace logviewer.logic.ui.main
 {
     public interface IUpdatable
     {
-        void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress); 
-        void ShowNoUpdateAvaliable(); 
+        void ShowDialogAboutNewVersionAvaliable(Version current, Version latest, string targetAddress);
+
+        void ShowNoUpdateAvaliable();
     }
 }

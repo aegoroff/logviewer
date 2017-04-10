@@ -16,16 +16,27 @@ namespace logviewer.logic.ui.network
     public sealed class NetworkSettingsViewModel : INetworkSettingsViewModel, INotifyPropertyChanged
     {
         private string domain;
+
         private string host;
+
         private bool isNoUseProxy;
+
         private bool isSettingsChanged;
+
         private bool isUseAutoProxy;
+
         private bool isUseDefaultCredentials;
+
         private bool isUseManualProxy;
+
         private string password;
+
         private int port;
+
         private ProxyMode proxyMode;
+
         private string userName;
+
         private bool enableCustomCredentials;
 
         public IWebProxy Proxy
@@ -42,12 +53,12 @@ namespace logviewer.logic.ui.network
                         return proxy;
                     case ProxyMode.Custom:
                         return new WebProxy(this.Host, this.Port)
-                        {
-                            Credentials =
-                                this.IsUseDefaultCredentials
-                                    ? CredentialCache.DefaultNetworkCredentials
-                                    : this.Credentials
-                        };
+                               {
+                                   Credentials =
+                                           this.IsUseDefaultCredentials
+                                               ? CredentialCache.DefaultNetworkCredentials
+                                               : this.Credentials
+                               };
                     default:
                         return null;
                 }
@@ -185,6 +196,7 @@ namespace logviewer.logic.ui.network
         }
 
         public event EventHandler<ProxyModeTransition> ModeChanged;
+
         public event EventHandler<string> PasswordUpdated;
 
         public event PropertyChangedEventHandler PropertyChanged;

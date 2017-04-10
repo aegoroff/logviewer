@@ -14,7 +14,9 @@ namespace logviewer.logic.ui.main
     public interface IMainViewModel : INotifyPropertyChanged, IUpdatable, IDisposable
     {
         int MinLevel { get; }
+
         int MaxLevel { get; }
+
         int SortingOrder { get; }
 
         [PublicAPI]
@@ -24,12 +26,19 @@ namespace logviewer.logic.ui.main
         string LogProgressText { get; set; }
 
         string LogPath { get; set; }
+
         string MessageFilter { get; }
+
         bool UseRegularExpressions { get; set; }
+
         ISettingsProvider SettingsProvider { get; }
+
         DateTime From { get; set; }
+
         DateTime To { get; set; }
+
         bool UiControlsEnabled { get; set; }
+
         bool IsTextFilterFocused { get; set; }
 
         [PublicAPI]
@@ -48,10 +57,15 @@ namespace logviewer.logic.ui.main
         string LogEncoding { get; set; }
 
         LogProvider Provider { get; }
+
         IVirtualizingCollection<string> Datasource { get; }
+
         Range Visible { get; set; }
+
         string GithubAccount { get; }
+
         string GithubProject { get; }
+
         long MessageCount { get; set; }
 
         void UpdateCount();

@@ -18,9 +18,13 @@ namespace logviewer.logic.ui.settings
         }
 
         public string KeepLastNFiles { get; set; }
+
         public bool OpenLastFile { get; set; }
+
         public bool AutoRefreshOnFileChange { get; set; }
+
         public string PageSize { get; set; }
+
         public IDictionary<LogLevel, Color> Colors { get; }
     }
 }

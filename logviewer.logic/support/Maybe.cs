@@ -6,7 +6,6 @@
 
 using System;
 using System.Runtime.CompilerServices;
-
 using logviewer.logic.Annotations;
 
 namespace logviewer.logic.support
@@ -27,8 +26,8 @@ namespace logviewer.logic.support
         /// <returns>if input null returns null evaluator result otherwise</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [PublicAPI]
-        public static TResult Return<TInput, TResult>(this TInput input, Func<TInput, TResult> evaluator, TResult failure) 
-            where TInput: class
+        public static TResult Return<TInput, TResult>(this TInput input, Func<TInput, TResult> evaluator, TResult failure)
+            where TInput : class
         {
             return input == null ? failure : evaluator(input);
         }
@@ -42,13 +41,14 @@ namespace logviewer.logic.support
         /// <returns>if input null or predicate fails returns null otherwise input instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [PublicAPI]
-        public static TInput If<TInput>(this TInput input, Predicate<TInput> evaluator) 
-            where TInput: class
+        public static TInput If<TInput>(this TInput input, Predicate<TInput> evaluator)
+            where TInput : class
         {
             if (input == null)
             {
                 return null;
             }
+
             return evaluator(input) ? input : null;
         }
 
@@ -61,13 +61,14 @@ namespace logviewer.logic.support
         /// <returns>if input null returns null otherwise runs action and returns input</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [PublicAPI]
-        public static TInput Do<TInput>(this TInput input, Action<TInput> action) 
-            where TInput: class
+        public static TInput Do<TInput>(this TInput input, Action<TInput> action)
+            where TInput : class
         {
             if (input == null)
             {
                 return null;
             }
+
             action(input);
             return input;
         }

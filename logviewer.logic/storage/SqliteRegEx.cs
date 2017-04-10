@@ -28,6 +28,7 @@ namespace logviewer.logic.storage
                 {
                     return false;
                 }
+
                 return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             }
             catch (Exception e)
@@ -35,6 +36,7 @@ namespace logviewer.logic.storage
                 Log.Instance.Error(e.Message, e);
                 invalid = pattern;
             }
+
             return false;
         }
     }

@@ -25,23 +25,36 @@ namespace logviewer.ui
     public sealed class MainViewModel : IMainViewModel
     {
         private readonly ISettingsProvider settingsProvider =
-            new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
+                new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
 
         private const int PageTimeoutMilliseconds = 10 * 1000;
+
         private const int PageSize = 128;
 
         private string logPath;
+
         private DateTime to;
+
         private DateTime from;
+
         private bool uiControlsEnabled;
+
         private bool isTextFilterFocused;
+
         private string logStatistic;
+
         private string logSize;
+
         private string logEncoding;
+
         private int logProgress;
+
         private string logProgressText;
+
         private string totalMessages;
+
         private string toDisplayMessages;
+
         private Range visible;
 
         private MainViewModel()
@@ -49,7 +62,7 @@ namespace logviewer.ui
             this.Templates = new ObservableCollection<TemplateCommandViewModel>(this.ReadParsingTemplateCommands());
             this.Provider = new LogProvider(null, this.settingsProvider);
             this.Datasource = new VirtualizingCollection<string>(this.Provider, PageSize, PageTimeoutMilliseconds);
-            
+
             this.From = DateTime.MinValue;
             this.To = DateTime.MaxValue;
             if (this.settingsProvider.OpenLastFile)
@@ -68,30 +81,30 @@ namespace logviewer.ui
         public static MainViewModel Current { get; } = new MainViewModel();
 
         public IEnumerable<string> MinLevelLabeles { get; } = new List<string>
-        {
-            Resources.TraceLabel,
-            Resources.DebugLabel,
-            Resources.InfoLabel,
-            Resources.WarnLabel,
-            Resources.ErrorLabel,
-            Resources.FatalLabel
-        };
+                                                              {
+                                                                  Resources.TraceLabel,
+                                                                  Resources.DebugLabel,
+                                                                  Resources.InfoLabel,
+                                                                  Resources.WarnLabel,
+                                                                  Resources.ErrorLabel,
+                                                                  Resources.FatalLabel
+                                                              };
 
         public IEnumerable<string> MaxLevelLabeles { get; } = new List<string>
-        {
-            Resources.TraceLabel,
-            Resources.DebugLabel,
-            Resources.InfoLabel,
-            Resources.WarnLabel,
-            Resources.ErrorLabel,
-            Resources.FatalLabel
-        };
+                                                              {
+                                                                  Resources.TraceLabel,
+                                                                  Resources.DebugLabel,
+                                                                  Resources.InfoLabel,
+                                                                  Resources.WarnLabel,
+                                                                  Resources.ErrorLabel,
+                                                                  Resources.FatalLabel
+                                                              };
 
         public IEnumerable<string> Sorting { get; } = new List<string>
-        {
-            Resources.SortDesc,
-            Resources.SortAsc
-        };
+                                                      {
+                                                          Resources.SortDesc,
+                                                          Resources.SortAsc
+                                                      };
 
         public ObservableCollection<TemplateCommandViewModel> Templates { get; }
 
@@ -238,8 +251,8 @@ namespace logviewer.ui
             }
         }
 
-        public string Caption => Resources.MainWindowCaptionPrefix +
-                          (!string.IsNullOrWhiteSpace(this.logPath) ? ": " + this.logPath : string.Empty);
+        public string Caption => Resources.MainWindowCaptionPrefix
+                                 + (!string.IsNullOrWhiteSpace(this.logPath) ? ": " + this.logPath : string.Empty);
 
         public string MessageFilter
         {

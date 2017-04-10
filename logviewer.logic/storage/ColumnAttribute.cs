@@ -17,7 +17,7 @@ namespace logviewer.logic.storage
         }
 
         public string Name { get; }
-        
+
         public bool Nullable { get; set; }
     }
 }

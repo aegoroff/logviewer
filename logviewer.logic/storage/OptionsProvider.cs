@@ -12,10 +12,15 @@ namespace logviewer.logic.storage
     internal sealed class OptionsProvider : IOptionsProvider
     {
         private const string StringOptionsTable = @"StringOptions";
+
         private const string BooleanOptionsTable = @"BooleanOptions";
+
         private const string IntegerOptionsTable = @"IntegerOptions";
+
         private const string OptionParameter = @"@Option";
+
         private const string ValueParameter = @"@Value";
+
         private readonly string settingsDatabaseFilePath;
 
         public OptionsProvider(string settingsDatabaseFilePath)
@@ -35,7 +40,7 @@ namespace logviewer.logic.storage
 
         public int ReadIntegerOption(string option, int defaultValue = 0)
         {
-            return (int) this.ReadOption<long>(IntegerOptionsTable, option, defaultValue);
+            return (int)this.ReadOption<long>(IntegerOptionsTable, option, defaultValue);
         }
 
         public void UpdateStringOption(string option, string value)
@@ -92,7 +97,8 @@ namespace logviewer.logic.storage
                 {
                     return;
                 }
-                result = (T) rdr[0];
+
+                result = (T)rdr[0];
                 read = true;
             }
 
@@ -102,11 +108,11 @@ namespace logviewer.logic.storage
 
             this.ExecuteQuery(Action);
 
-
             if (read)
             {
                 return result;
             }
+
             this.UpdateOption(table, option, defaultValue);
             result = defaultValue;
             return result;
@@ -115,8 +121,9 @@ namespace logviewer.logic.storage
         private void UpdateOption<T>(string table, string option, T value)
         {
             var exist = this.ExecuteScalar<long>(
-                $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}",
-                command => command.AddParameter(OptionParameter, option)) > 0;
+                                                 $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}",
+                                                 command => command.AddParameter(OptionParameter, option))
+                        > 0;
 
             void Action(IDbCommand command)
             {
@@ -125,8 +132,8 @@ namespace logviewer.logic.storage
             }
 
             var format = exist
-                ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
-                : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
+                             ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
+                             : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
             var updateQuery = string.Format(format, table);
             this.ExecuteNonQuery(updateQuery, Action);
         }

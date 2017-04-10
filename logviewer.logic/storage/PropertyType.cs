@@ -9,6 +9,7 @@ namespace logviewer.logic.storage
     public enum PropertyType
     {
         String,
+
         Integer
     }
 }

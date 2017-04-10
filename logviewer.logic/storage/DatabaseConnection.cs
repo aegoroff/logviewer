@@ -17,8 +17,11 @@ namespace logviewer.logic.storage
     internal sealed class DatabaseConnection : IDisposable
     {
         private SQLiteConnection connection;
+
         private SQLiteTransaction transaction;
+
         private readonly SynchronizationContext creationContext;
+
         private bool disposed;
 
         internal DatabaseConnection(string databaseFilePath)
@@ -55,6 +58,7 @@ namespace logviewer.logic.storage
             {
                 return;
             }
+
             SafeRunner.Run(() => this.transaction?.Dispose());
             SafeRunner.Run(() => this.connection?.Close());
             SafeRunner.Run(() => this.connection?.Dispose());
@@ -72,7 +76,7 @@ namespace logviewer.logic.storage
         {
             this.ExecuteInCreationContext(o => this.transaction.Commit());
         }
-        
+
         internal void RollbackTran()
         {
             this.ExecuteInCreationContext(o => this.transaction.Rollback());
@@ -157,7 +161,8 @@ namespace logviewer.logic.storage
             }
         }
 
-        internal void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null, Func<bool> notCancelled = null)
+        internal void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null,
+                                    Func<bool> notCancelled = null)
         {
             void Action(IDbCommand command)
             {
@@ -191,7 +196,7 @@ namespace logviewer.logic.storage
                 var r = cmd.ExecuteScalar();
                 if (r != DBNull.Value)
                 {
-                    result = (T) r;
+                    result = (T)r;
                 }
             }
 

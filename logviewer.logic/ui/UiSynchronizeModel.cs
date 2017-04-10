@@ -15,6 +15,7 @@ namespace logviewer.logic.ui
     public abstract class UiSynchronizeModel
     {
         private readonly TaskScheduler uiSyncContext;
+
         private readonly SynchronizationContext winformsOrDefaultContext;
 
         protected UiSynchronizeModel()

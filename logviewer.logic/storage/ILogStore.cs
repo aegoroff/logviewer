@@ -31,9 +31,9 @@ namespace logviewer.logic.storage
             bool excludeNoLevel = false);
 
         DateTime SelectDateUsingFunc(string func, LogLevel min = LogLevel.Trace,
-            LogLevel max = LogLevel.Fatal,
-            string filter = null,
-            bool useRegexp = true);
+                                     LogLevel max = LogLevel.Fatal,
+                                     string filter = null,
+                                     bool useRegexp = true);
 
         IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(
             string filter = null,

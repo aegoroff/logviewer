@@ -15,7 +15,7 @@ namespace logviewer.ui
     /// Interaction logic for Update.xaml
     /// </summary>
     [PublicAPI]
-    public partial class Update : Window
+    public partial class Update
     {
         private UpdateViewModel viewModel;
 

@@ -13,17 +13,27 @@ namespace logviewer.logic.ui.network
     internal class NetworkWorflow
     {
         private string host;
+
         private int port;
+
         private string login;
+
         private string password;
+
         private string domain;
+
         private readonly StateMachine<ProxyMode, ProxyModeTransition> machine;
+
         private readonly IOptionsProvider provider;
+
         private readonly INetworkSettingsViewModel viewModel;
+
         private readonly IAsymCrypt crypt;
+
         private ProxyMode mode;
 
-        public NetworkWorflow(INetworkSettingsViewModel viewModel, IOptionsProvider provider, IAsymCrypt crypt, StateMachineMode machineMode)
+        public NetworkWorflow(INetworkSettingsViewModel viewModel, IOptionsProvider provider, IAsymCrypt crypt,
+                              StateMachineMode machineMode)
         {
             this.viewModel = viewModel;
             this.provider = provider;
@@ -32,13 +42,13 @@ namespace logviewer.logic.ui.network
             this.machine = new StateMachine<ProxyMode, ProxyModeTransition>(() => this.mode, s => this.mode = s);
 
             this.machine.Configure(ProxyMode.None)
-                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => { }))
+                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => {}))
                 .Permit(ProxyModeTransition.ToAutoProxyDetection, ProxyMode.AutoProxyDetection)
                 .Permit(ProxyModeTransition.ToCustom, ProxyMode.Custom)
                 .PermitReentry(ProxyModeTransition.ToNone);
 
             this.machine.Configure(ProxyMode.AutoProxyDetection)
-                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => { }))
+                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => {}))
                 .Permit(ProxyModeTransition.ToNone, ProxyMode.None)
                 .Permit(ProxyModeTransition.ToCustom, ProxyMode.Custom)
                 .PermitReentry(ProxyModeTransition.ToAutoProxyDetection);
@@ -50,7 +60,7 @@ namespace logviewer.logic.ui.network
                 .Permit(ProxyModeTransition.ToAutoProxyDetection, ProxyMode.AutoProxyDetection)
                 .PermitReentry(ProxyModeTransition.ToCustom)
                 .InternalTransition(ProxyModeTransition.ToCustomDefaultUser, this.ReadOnEnterToCustomDefaultUser)
-                .InternalTransition(ProxyModeTransition.ToCustomWithManualUser,this.ReadOnEnterToCustomManualUser);
+                .InternalTransition(ProxyModeTransition.ToCustomWithManualUser, this.ReadOnEnterToCustomManualUser);
         }
 
         public void Trigger(ProxyModeTransition transition)
@@ -67,7 +77,7 @@ namespace logviewer.logic.ui.network
             }
             else
             {
-                this.provider.UpdateIntegerOption(Constants.ProxyModeProperty, (int) this.mode);
+                this.provider.UpdateIntegerOption(Constants.ProxyModeProperty, (int)this.mode);
                 writeAction();
             }
         }

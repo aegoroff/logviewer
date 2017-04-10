@@ -13,7 +13,7 @@ namespace logviewer.logic
     public class UpdatesChecker
     {
         private readonly IVersionsReader reader;
-        
+
         public UpdatesChecker(IVersionsReader reader)
         {
             this.reader = reader;
@@ -23,7 +23,7 @@ namespace logviewer.logic
         public Version LatestVersion { get; private set; }
 
         public string LatestVersionUrl { get; private set; }
-        
+
         public Version CurrentVersion { get; }
 
         [PublicAPI]
@@ -43,6 +43,7 @@ namespace logviewer.logic
                 {
                     return;
                 }
+
                 result = true;
                 this.LatestVersion = args.Version;
                 this.LatestVersionUrl = args.Url;

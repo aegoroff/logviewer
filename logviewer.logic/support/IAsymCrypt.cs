@@ -12,6 +12,7 @@ namespace logviewer.logic.support
     public interface IAsymCrypt
     {
         string Encrypt(string plain);
+
         string Decrypt(string crypted);
 
         /// <summary>

@@ -26,12 +26,17 @@ namespace logviewer.logic.ui.update
     public sealed class UpdateViewModel : INotifyPropertyChanged
     {
         private bool updateEnabled;
+
         private bool yesEnabled;
+
         private string readBytes;
+
         private int percent;
+
         private string updateAvailableText;
 
         private string target;
+
         private string targetAddress;
 
         public UpdateViewModel(Version current, Version latest, string targetAddress)

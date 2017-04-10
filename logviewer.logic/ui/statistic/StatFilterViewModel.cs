@@ -14,6 +14,7 @@ namespace logviewer.logic.ui.statistic
     public class StatFilterViewModel : INotifyPropertyChanged
     {
         private string filter;
+
         private bool userRegexp;
 
         public string Filter

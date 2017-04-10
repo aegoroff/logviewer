@@ -42,7 +42,7 @@ namespace logviewer.logic.support
         {
             var settings = new XmlWriterSettings { Indent = false };
             var stringWriter = new StringWriter();
-            var serializer = new XmlSerializer(typeof (T));
+            var serializer = new XmlSerializer(typeof(T));
 
             using (var xmlWriter = XmlWriter.Create(stringWriter, settings))
             {
@@ -62,8 +62,10 @@ namespace logviewer.logic.support
             var maxStringLength = (provider.KeySize / countBitsInByte) / sizeof(char) - (rsaPaddingSize + 1) / sizeof(char);
             if (plain.Length > maxStringLength)
             {
-                throw new NotSupportedException($"Max acceptable string length is {maxStringLength} for the key size {provider.KeySize} but this string length is {plain.Length}");
+                throw new
+                        NotSupportedException($"Max acceptable string length is {maxStringLength} for the key size {provider.KeySize} but this string length is {plain.Length}");
             }
+
             var decryptedBytes = Encoding.Unicode.GetBytes(plain);
             var cryptedBytes = provider.Encrypt(decryptedBytes, false);
 
@@ -83,9 +85,9 @@ namespace logviewer.logic.support
         private static RSACryptoServiceProvider CreateProvider(string key)
         {
             var reader = new StringReader(FromBase64String(key));
-            var serializer = new XmlSerializer(typeof (RSAParameters));
+            var serializer = new XmlSerializer(typeof(RSAParameters));
 
-            var parameters = (RSAParameters) serializer.Deserialize(reader);
+            var parameters = (RSAParameters)serializer.Deserialize(reader);
 
             var provider = new RSACryptoServiceProvider();
             provider.ImportParameters(parameters);

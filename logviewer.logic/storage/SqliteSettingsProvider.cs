@@ -27,54 +27,85 @@ namespace logviewer.logic.storage
         private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
         private const string OptionsSectionName = @"Options";
+
         private const string FilterParameterName = @"MessageFilter";
+
         private const string LastUpdateCheckTimearameterName = @"LastUpdateCheckTime";
+
         private const string OpenLastFileParameterName = @"OpenLastFile";
+
         private const string AutoRefreshOnFileChangeName = @"AutoRefreshOnFileChange";
+
         private const string MinLevelParameterName = @"MinLevel";
+
         private const string MaxLevelParameterName = @"MaxLevel";
+
         private const string SortingParameterName = @"Sorting";
+
         private const string PageSizeParameterName = @"PageSize";
+
         private const string SelectedTemplateParameterName = @"SelectedTemplate";
+
         private const string UseRegexpParameterName = @"UseRegexp";
+
         private const string KeepLastNFilesParameterName = @"KeepLastNFiles";
+
         private const int DefaultParsingProfileIndex = 0;
+
         private const string ApplicationOptionsFolder = @"logviewer";
+
         private static readonly string baseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
         private static readonly string applicationFolder = Path.Combine(baseFolder, ApplicationOptionsFolder);
+
         private readonly int defaultKeepLastNFiles;
+
         private readonly int defaultPageSize;
+
         private readonly string settingsDatabaseFilePath;
+
         private readonly IEnumerable<string> parsingTemplatePropertiesNames;
+
         private readonly IEnumerable<ColumnAttribute> parsingTemplatePropertiesColumns;
+
         private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
+
         private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
+
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
+
         private readonly Dictionary<LogLevel, RtfCharFormat> headerFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
+
         private readonly FixedSizeDictionary<TextFormat> formatsMap = new FixedSizeDictionary<TextFormat>((int)LogLevel.Fatal + 1);
+
         private readonly OptionsProvider optionsProvider;
+
         private readonly TextFormat noneLevelFormat = new TextFormat();
 
         private const int HeaderFontSize = 12;
+
         private const int BodyFontSize = 11;
+
         private const int KeepLastFilters = 20;
+
         private const string RecentFiles = @"RecentFiles";
+
         private const string RecentFilters = @"RecentFilters";
 
         private static readonly Dictionary<LogLevel, Color> defaultColors = new Dictionary<LogLevel, Color>
-        {
-            { LogLevel.None, Color.Black },
-            { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
-            { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
-            { LogLevel.Info, Color.Green },
-            { LogLevel.Warn, Color.Orange },
-            { LogLevel.Error, Color.Red },
-            { LogLevel.Fatal, Color.DarkViolet }
-        };
+                                                                            {
+                                                                                { LogLevel.None, Color.Black },
+                                                                                { LogLevel.Trace, Color.FromArgb(200, 200, 200) },
+                                                                                { LogLevel.Debug, Color.FromArgb(100, 100, 100) },
+                                                                                { LogLevel.Info, Color.Green },
+                                                                                { LogLevel.Warn, Color.Orange },
+                                                                                { LogLevel.Error, Color.Red },
+                                                                                { LogLevel.Fatal, Color.DarkViolet }
+                                                                            };
 
         public SqliteSettingsProvider(string settingsDatabaseFileName,
-            int defaultPageSize,
-            int defaultKeepLastNFiles)
+                                      int defaultPageSize,
+                                      int defaultKeepLastNFiles)
         {
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
@@ -142,6 +173,7 @@ namespace logviewer.logic.storage
             {
                 return;
             }
+
             this.headerFormatsMap[level] = FormatChar(color, true);
             this.bodyFormatsMap[level] = FormatChar(color, false, BodyFontSize);
             this.formatsMap[(int)level] = CreateFormat(color);
@@ -173,8 +205,8 @@ namespace logviewer.logic.storage
         public DateTime LastUpdateCheckTime
         {
             get => DateTime
-                .Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
-                .ToUniversalTime();
+                    .Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
+                    .ToUniversalTime();
             set => this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O"));
         }
 
@@ -198,7 +230,7 @@ namespace logviewer.logic.storage
 
         public int MaxLevel
         {
-            get => this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int) LogLevel.Fatal);
+            get => this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal);
             set => this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value);
         }
 
@@ -233,7 +265,7 @@ namespace logviewer.logic.storage
             var propertiesSet = string.Join(@",", from string member in this.parsingTemplatePropertiesNames select $"{member} = @{member}");
 
             this.optionsProvider.ExecuteNonQuery(
-                $@"
+                                                 $@"
                     UPDATE
                         ParsingTemplates
                     SET
@@ -245,10 +277,10 @@ namespace logviewer.logic.storage
 
         private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
         {
-            return 
-                from info in typeof(ParsingTemplate).GetProperties()
-                where info.IsDefined(typeof(ColumnAttribute), false)
-                select info;
+            return
+                    from info in typeof(ParsingTemplate).GetProperties()
+                    where info.IsDefined(typeof(ColumnAttribute), false)
+                    select info;
         }
 
         public ParsingTemplate ReadParsingTemplate()
@@ -269,6 +301,7 @@ namespace logviewer.logic.storage
             var result = new List<string>();
 
             void OnRead(IDataReader rdr) => result.Add(rdr[0] as string);
+
             void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
             this.optionsProvider.ExecuteQuery(Action);
@@ -290,7 +323,12 @@ namespace logviewer.logic.storage
 
             var result = new List<ParsingTemplate>();
 
-            void OnRead(IDataReader rdr) => result.Add(new ParsingTemplate {Index = (int) (long) rdr[0], Name = rdr[1] as string, StartMessage = rdr[2] as string});
+            void OnRead(IDataReader rdr) => result.Add(new ParsingTemplate
+                                                       {
+                                                           Index = (int)(long)rdr[0],
+                                                           Name = rdr[1] as string,
+                                                           StartMessage = rdr[2] as string
+                                                       });
 
             void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
@@ -315,7 +353,7 @@ namespace logviewer.logic.storage
                     if (column.PropertyType == typeof(bool))
                     {
                         var v = rdr[attr.Name];
-                        column.SetValue(result, (bool) v, null);
+                        column.SetValue(result, (bool)v, null);
                     }
                     else
                     {
@@ -343,7 +381,7 @@ namespace logviewer.logic.storage
 
         private static ColumnAttribute GetColumnAttribute(PropertyInfo column)
         {
-            return (ColumnAttribute) column.GetCustomAttributes(typeof (ColumnAttribute), false)[0];
+            return (ColumnAttribute)column.GetCustomAttributes(typeof(ColumnAttribute), false)[0];
         }
 
         public void InsertParsingTemplate(ParsingTemplate template)
@@ -363,7 +401,7 @@ namespace logviewer.logic.storage
                     )";
             this.optionsProvider.ExecuteNonQuery(query, command => this.AddParsingTemplateIntoCommand(command, template));
         }
-        
+
         public void DeleteParsingTemplate(int ix)
         {
             var query = $@"DELETE FROM ParsingTemplates WHERE Ix = {ix}";
@@ -376,7 +414,7 @@ namespace logviewer.logic.storage
                     WHERE Ix > @Ix
                     ORDER BY Ix
                     ";
-            
+
             const string updateIndexesCmd = @"
                     UPDATE
                         ParsingTemplates
@@ -396,7 +434,8 @@ namespace logviewer.logic.storage
                 {
                     return;
                 }
-                indexesToUpdate.Add((long) rdr[0]);
+
+                indexesToUpdate.Add((long)rdr[0]);
             }
 
             void Action(DatabaseConnection connection)
@@ -407,7 +446,7 @@ namespace logviewer.logic.storage
                     connection.ExecuteNonQuery(query);
                     connection.ExecuteReader(selectIndexesCmd, OnRead, BeforeRead);
 
-                    foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>) (command =>
+                    foreach (var beforeUpdate in indexesToUpdate.Select(index => (Action<IDbCommand>)(command =>
                     {
                         command.AddParameter(@"@Ix", index);
                         command.AddParameter(@"@NewIx", index - 1);
@@ -421,6 +460,7 @@ namespace logviewer.logic.storage
                     connection.RollbackTran();
                     throw;
                 }
+
                 connection.CommitTran();
             }
 
@@ -439,7 +479,7 @@ namespace logviewer.logic.storage
 
         public TextFormat GetFormat(LogLevel level)
         {
-            this.formatsMap.TryGetValue((int) level, out TextFormat r);
+            this.formatsMap.TryGetValue((int)level, out TextFormat r);
             return r ?? this.noneLevelFormat;
         }
 
@@ -468,20 +508,20 @@ namespace logviewer.logic.storage
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {
             return new RtfCharFormat
-            {
-                Color = color,
-                Font = @"Courier New",
-                Size = size,
-                Bold = bold
-            };
+                   {
+                       Color = color,
+                       Font = @"Courier New",
+                       Size = size,
+                       Bold = bold
+                   };
         }
 
         private static TextFormat CreateFormat(Color color)
         {
             var result = new TextFormat
-            {
-                Color = color
-            };
+                         {
+                             Color = color
+                         };
             result.ColorAsString = result.ColorToString();
             return result;
         }
@@ -494,7 +534,7 @@ namespace logviewer.logic.storage
                                  Value {1}
                         );
                     ";
-            
+
             var stringOptions = string.Format(optionsTableTemplate, @"StringOptions", @"TEXT");
             var integerOptions = string.Format(optionsTableTemplate, @"IntegerOptions", @"INTEGER");
             var booleanOptions = string.Format(optionsTableTemplate, @"BooleanOptions", @"BOOLEAN");
@@ -556,6 +596,7 @@ namespace logviewer.logic.storage
                     connection.RollbackTran();
                     throw;
                 }
+
                 connection.CommitTran();
             });
         }
@@ -572,6 +613,7 @@ namespace logviewer.logic.storage
                 {
                     Log.Instance.Debug(e.Message, e);
                 }
+
                 return 0;
             }
         }
@@ -594,6 +636,7 @@ namespace logviewer.logic.storage
             {
                 return;
             }
+
             connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates ADD COLUMN Name TEXT");
             const string cmd = @"
                     UPDATE
@@ -621,7 +664,7 @@ namespace logviewer.logic.storage
         private void Upgrade3(DatabaseConnection connection)
         {
             var properties = string.Join(@",",
-                from string member in this.parsingTemplatePropertiesNames select member);
+                                         from string member in this.parsingTemplatePropertiesNames select member);
 
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
@@ -647,8 +690,8 @@ namespace logviewer.logic.storage
         private IEnumerable<string> SelectMembersByNameFromParsingTemplateProperties(string excludeName)
         {
             return from string member in this.parsingTemplatePropertiesNames
-                where !member.Equals(excludeName, StringComparison.Ordinal)
-                select member;
+                   where !member.Equals(excludeName, StringComparison.Ordinal)
+                   select member;
         }
 
         private void UpgradeParsingTemplatesTable(DatabaseConnection connection, string properties)
@@ -657,8 +700,11 @@ namespace logviewer.logic.storage
 
             connection.ExecuteNonQuery(@"ALTER TABLE ParsingTemplates RENAME TO ParsingTemplatesOld");
             connection.ExecuteNonQuery(this.ParsingTeplateCreateCmd());
-            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates(" + properties + @") SELECT " + properties +
-                                       @" FROM ParsingTemplatesOld");
+            connection.ExecuteNonQuery(@"INSERT INTO ParsingTemplates("
+                                       + properties
+                                       + @") SELECT "
+                                       + properties
+                                       + @" FROM ParsingTemplatesOld");
             connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
         }
 
@@ -673,31 +719,37 @@ namespace logviewer.logic.storage
             {
                 return;
             }
+
             this.MigrateString(FilterParameterName);
 
             var boolOptions = new[]
-            {
-                UseRegexpParameterName, OpenLastFileParameterName, SortingParameterName
-            };
+                              {
+                                  UseRegexpParameterName,
+                                  OpenLastFileParameterName,
+                                  SortingParameterName
+                              };
             foreach (var opt in boolOptions)
             {
                 this.MigrateBoolean(opt);
             }
 
             var intOptions = new[]
-            {
-                MinLevelParameterName, MaxLevelParameterName, PageSizeParameterName, KeepLastNFilesParameterName
-            };
+                             {
+                                 MinLevelParameterName,
+                                 MaxLevelParameterName,
+                                 PageSizeParameterName,
+                                 KeepLastNFilesParameterName
+                             };
             foreach (var opt in intOptions)
             {
                 this.MigrateInteger(opt);
             }
 
             var template = new ParsingTemplate
-            {
-                Index = DefaultParsingProfileIndex,
-                StartMessage = GetStringValue(@"StartMessageTemplate")
-            };
+                           {
+                               Index = DefaultParsingProfileIndex,
+                               StartMessage = GetStringValue(@"StartMessageTemplate")
+                           };
 
             this.InsertParsingTemplate(template);
 
@@ -800,6 +852,7 @@ namespace logviewer.logic.storage
             {
                 Log.Instance.Debug(e);
             }
+
             return default(T);
         }
     }

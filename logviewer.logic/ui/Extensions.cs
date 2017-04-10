@@ -20,11 +20,11 @@ namespace logviewer.logic.ui
             TemplateCommandViewModel CreateTemplateCommand(ParsingTemplate template)
             {
                 return new TemplateCommandViewModel
-                {
-                    Text = template.DisplayName,
-                    Checked = ix == selected,
-                    Index = ix++
-                };
+                       {
+                           Text = template.DisplayName,
+                           Checked = ix == selected,
+                           Index = ix++
+                       };
             }
 
             return from t in templates select CreateTemplateCommand(t);

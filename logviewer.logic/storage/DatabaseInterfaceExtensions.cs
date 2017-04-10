@@ -23,10 +23,10 @@ namespace logviewer.logic.storage
         internal static void AddParameter<T>(this IDbCommand cmd, string name, T value)
         {
             cmd.Parameters.Add(new SQLiteParameter
-            {
-                ParameterName = name,
-                Value = value
-            });
+                               {
+                                   ParameterName = name,
+                                   Value = value
+                               });
         }
     }
 }

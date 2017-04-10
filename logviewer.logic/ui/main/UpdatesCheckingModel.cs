@@ -13,9 +13,13 @@ namespace logviewer.logic.ui.main
     public sealed class UpdatesCheckingModel : UiSynchronizeModel, IDisposable
     {
         private const int CheckUpdatesEveryDays = 7;
+
         private readonly IScheduler backgroundScheduler;
+
         private readonly IVersionsReader reader;
+
         private readonly ISettingsProvider settings;
+
         private readonly IMainViewModel viewModel;
 
         public UpdatesCheckingModel(IMainViewModel viewModel, IScheduler backgroundScheduler = null)
@@ -44,6 +48,7 @@ namespace logviewer.logic.ui.main
                     return;
                 }
             }
+
             var checker = new UpdatesChecker(this.reader);
 
             var observable = Observable.Return(checker, this.backgroundScheduler);
@@ -52,7 +57,8 @@ namespace logviewer.logic.ui.main
 
             void OnNext(UpdatesChecker chk)
             {
-                void ShowNewVersionAvailable() => this.viewModel.ShowDialogAboutNewVersionAvaliable(chk.CurrentVersion, chk.LatestVersion, chk.LatestVersionUrl);
+                void ShowNewVersionAvailable() => this.viewModel.ShowDialogAboutNewVersionAvaliable(chk.CurrentVersion, chk.LatestVersion,
+                                                                                                    chk.LatestVersionUrl);
 
                 void ShowNoUpdateAvaliable() => this.viewModel.ShowNoUpdateAvaliable();
 

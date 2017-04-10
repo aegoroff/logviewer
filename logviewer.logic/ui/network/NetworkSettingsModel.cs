@@ -14,8 +14,11 @@ namespace logviewer.logic.ui.network
     public class NetworkSettingsModel
     {
         private readonly INetworkSettingsViewModel viewModel;
+
         private readonly IOptionsProvider provider;
+
         private readonly NetworkWorflow stateMachine;
+
         private AsymCrypt crypt;
 
         /// <summary>
@@ -45,7 +48,9 @@ namespace logviewer.logic.ui.network
             this.stateMachine.Trigger(transition);
             if (transition == ProxyModeTransition.ToCustom)
             {
-                this.stateMachine.Trigger(useDefalutCredentials ? ProxyModeTransition.ToCustomDefaultUser : ProxyModeTransition.ToCustomWithManualUser);
+                this.stateMachine.Trigger(useDefalutCredentials
+                                              ? ProxyModeTransition.ToCustomDefaultUser
+                                              : ProxyModeTransition.ToCustomWithManualUser);
             }
         }
 
@@ -112,10 +117,10 @@ namespace logviewer.logic.ui.network
             else
             {
                 this.crypt = new AsymCrypt
-                {
-                    PublicKey = publicKey,
-                    PrivateKey = privateKey
-                };
+                             {
+                                 PublicKey = publicKey,
+                                 PrivateKey = privateKey
+                             };
             }
         }
     }

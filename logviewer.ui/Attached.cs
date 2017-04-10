@@ -28,7 +28,7 @@ namespace logviewer.ui
 
         public static string GetFormattedText(DependencyObject textBlock)
         {
-            return (string) textBlock.GetValue(FormattedTextProperty);
+            return (string)textBlock.GetValue(FormattedTextProperty);
         }
 
         private static void FormattedTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -39,13 +39,14 @@ namespace logviewer.ui
                 return;
             }
 
-            var formattedText = "<Span xml:space=\"preserve\" xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">" +
-                                ((string) e.NewValue ?? string.Empty) + "</Span>";
+            var formattedText = "<Span xml:space=\"preserve\" xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">"
+                                + ((string)e.NewValue ?? string.Empty)
+                                + "</Span>";
 
             textBlock.Inlines.Clear();
             using (var xmlReader = XmlReader.Create(new StringReader(formattedText)))
             {
-                var result = (Span) XamlReader.Load(xmlReader);
+                var result = (Span)XamlReader.Load(xmlReader);
                 textBlock.Inlines.Add(result);
             }
         }

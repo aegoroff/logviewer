@@ -25,12 +25,14 @@ namespace logviewer.logic.models
             {
                 return;
             }
+
             this.IncludeMatcher = new GrokMatcher(template.StartMessage,
-                template.Compiled ? options | RegexOptions.Compiled : options);
+                                                  template.Compiled ? options | RegexOptions.Compiled : options);
             this.ExcludeMatcher = string.IsNullOrWhiteSpace(template.Filter) ? null : new GrokMatcher(template.Filter);
         }
 
         public GrokMatcher IncludeMatcher { get; }
+
         public GrokMatcher ExcludeMatcher { get; }
     }
 }

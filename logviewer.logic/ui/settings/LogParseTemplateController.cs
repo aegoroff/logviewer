@@ -26,6 +26,7 @@ namespace logviewer.logic.ui.settings
         public ParsingTemplate Template { get; set; }
 
         public event EventHandler TemplateChangeSuccess;
+
         public event EventHandler TemplateChangeFailure;
 
         public void UpdateStartPattern(string value)
@@ -44,6 +45,7 @@ namespace logviewer.logic.ui.settings
             {
                 return;
             }
+
             this.Template.Compiled = value;
             this.OnTemplateChangeSuccess();
         }
@@ -59,6 +61,7 @@ namespace logviewer.logic.ui.settings
             {
                 return;
             }
+
             const int millisecondsToShowTooltip = 1500;
 
             if (new GrokMatcher(value).CompilationFailed)
@@ -71,11 +74,11 @@ namespace logviewer.logic.ui.settings
                 o.ObserveOn(this.UiContextScheduler).Subscribe(unit => this.view.HideInvalidTemplateError(control));
                 return;
             }
+
             assignAction(value);
             this.view.OnFixTemplate(control);
             this.view.HideInvalidTemplateError(control);
             this.OnTemplateChangeSuccess();
-
         }
     }
 }

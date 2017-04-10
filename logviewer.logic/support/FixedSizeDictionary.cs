@@ -22,7 +22,9 @@ namespace logviewer.logic.support
     public class FixedSizeDictionary<T> : IDictionary<int, T>
     {
         private readonly int count;
+
         private int[] indexes;
+
         private T[] store;
 
         public FixedSizeDictionary(int count)
@@ -31,6 +33,7 @@ namespace logviewer.logic.support
             {
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
+
             this.count = count;
             this.store = new T[count];
             this.indexes = new int[count];
@@ -97,6 +100,7 @@ namespace logviewer.logic.support
                         result++;
                     }
                 }
+
                 return result;
             }
         }
@@ -106,7 +110,7 @@ namespace logviewer.logic.support
         [Pure]
         public bool ContainsKey(int key)
         {
-            return key < this.count && key >= 0 &&  this.ContainsKeyInternal(key);
+            return key < this.count && key >= 0 && this.ContainsKeyInternal(key);
         }
 
         /// <inheritdoc />
@@ -116,6 +120,7 @@ namespace logviewer.logic.support
             {
                 return;
             }
+
             this.store[key] = value;
             this.indexes[key] = 1;
         }
@@ -127,6 +132,7 @@ namespace logviewer.logic.support
             {
                 return false;
             }
+
             this.store[key] = default(T);
             this.indexes[key] = 0;
             return true;
@@ -141,6 +147,7 @@ namespace logviewer.logic.support
                 value = default(T);
                 return false;
             }
+
             value = this.store[key];
             return true;
         }

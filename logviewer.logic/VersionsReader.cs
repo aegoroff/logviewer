@@ -19,16 +19,17 @@ namespace logviewer.logic
     internal class VersionsReader : IVersionsReader
     {
         private readonly string account;
+
         private readonly string project;
+
         private readonly GitHubClient github;
 
         private readonly Regex versionRegexp = new Regex(@"^.*(\d+\.\d+\.\d+\.\d+)\.(exe|msi)$",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                                                         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private const string DownloadUrlTemplate = @"http://github.com/{0}/{1}/releases/download/{2}/{3}";
 
         private readonly Subject<VersionModel> subject;
-
 
         public VersionsReader(string account, string project)
         {
@@ -60,22 +61,23 @@ namespace logviewer.logic
                 this.subject.OnCompleted();
                 return;
             }
+
             var assets = this.github.Repository.Release.GetAllAssets(this.account, this.project, lastRelease.Id);
             assets
-                .ContinueWith(this.OnAssetComplete, lastRelease, TaskContinuationOptions.NotOnFaulted)
-                .ContinueWith(t => this.subject.OnCompleted());
+                    .ContinueWith(this.OnAssetComplete, lastRelease, TaskContinuationOptions.NotOnFaulted)
+                    .ContinueWith(t => this.subject.OnCompleted());
 
             assets.ContinueWith(this.OnError, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private void OnAssetComplete(Task<IReadOnlyList<ReleaseAsset>> task, object state)
         {
-            var release = (Release) state;
+            var release = (Release)state;
             foreach (var m in from releaseAsset in task.Result
-                select this.versionRegexp.Match(releaseAsset.Name)
-                into match
-                where match.Success
-                select match)
+                              select this.versionRegexp.Match(releaseAsset.Name)
+                              into match
+                              where match.Success
+                              select match)
             {
                 var url = string.Format(DownloadUrlTemplate, this.account, this.project, release.Name, m.Value);
                 var version = new Version(m.Groups[1].Captures[0].Value);

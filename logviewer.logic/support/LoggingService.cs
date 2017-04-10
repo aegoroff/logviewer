@@ -6,9 +6,7 @@
 
 using System;
 using System.Threading;
-
 using logviewer.logic.Annotations;
-
 using NLog;
 
 namespace logviewer.logic.support

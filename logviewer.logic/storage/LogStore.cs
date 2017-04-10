@@ -21,28 +21,40 @@ namespace logviewer.logic.storage
     public sealed class LogStore : IDisposable, ILogStore
     {
         #region Constants and Fields
-
         private const string CreateColumnTemplate = @"{0} INTEGER NOT NULL";
-        private const string CreateIndexTemplate = @"CREATE INDEX IF NOT EXISTS IX_{0} ON Log ({0})";
-        private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
-        private const int PageSize = 1024;
-        private const int DelaySeconds = 10;
-        private readonly DatabaseConnection connection;
-        private string[] additionalColumns;
-        private readonly bool hasLogLevelProperty;
-        private readonly string logLevelProperty;
-        private readonly bool hasDateTimeProperty;
-        private readonly string dateTimeProperty;
-        private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
-        private Dictionary<string, PropertyType> propertyTypesCache;
-        private readonly RulesBuilder builder;
-        private string insertPrefix;
-        private string insertSuffix;
 
+        private const string CreateIndexTemplate = @"CREATE INDEX IF NOT EXISTS IX_{0} ON Log ({0})";
+
+        private const string DropIndexTemplate = @"DROP INDEX IF EXISTS IX_{0}";
+
+        private const int PageSize = 1024;
+
+        private const int DelaySeconds = 10;
+
+        private readonly DatabaseConnection connection;
+
+        private string[] additionalColumns;
+
+        private readonly bool hasLogLevelProperty;
+
+        private readonly string logLevelProperty;
+
+        private readonly bool hasDateTimeProperty;
+
+        private readonly string dateTimeProperty;
+
+        private readonly IDictionary<SemanticProperty, ISet<GrokRule>> rules;
+
+        private Dictionary<string, PropertyType> propertyTypesCache;
+
+        private readonly RulesBuilder builder;
+
+        private string insertPrefix;
+
+        private string insertSuffix;
         #endregion
 
         #region Constructors and Destructors
-
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
             this.builder = new RulesBuilder(schema);
@@ -66,12 +78,12 @@ namespace logviewer.logic.storage
         {
             return this.DdlHelper(CreateIndexTemplate);
         }
-        
+
         private IEnumerable<string> DropAdditionalIndexes()
         {
             return this.DdlHelper(DropIndexTemplate);
         }
-        
+
         private IEnumerable<string> DdlHelper(string template)
         {
             return this.ReadAdditionalColumns(column => string.Format(template, column));
@@ -81,8 +93,7 @@ namespace logviewer.logic.storage
         {
             return this.rules.Keys.Select(r => selector(r.Name));
         }
-        
-        
+
         private string CreateAdditionalColumnsList(string prefix = null)
         {
             var colums = string.Join(",", this.ReadAdditionalColumns(s => prefix + s)); // Not L10N
@@ -117,7 +128,7 @@ namespace logviewer.logic.storage
 
             var mmap = $@"PRAGMA mmap_size={dbSize};";
             var cache = $@"PRAGMA cache_size = {pages};";
-            var createTable =$@"
+            var createTable = $@"
                         CREATE TABLE IF NOT EXISTS Log (
                                  Ix INTEGER PRIMARY KEY,
                                  Header TEXT  NOT NULL,
@@ -133,14 +144,13 @@ namespace logviewer.logic.storage
             {
                 this.propertyTypesCache.Add(column, this.DefinePropertyType(column));
             }
+
             this.insertPrefix = $"INSERT INTO Log(Ix, Header, Body{this.CreateAdditionalColumnsList()}) VALUES (";
             this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})"; // Not L10N
         }
-
         #endregion
 
         #region Public Methods and Operators
-
         public void Dispose()
         {
             this.Dispose(true);
@@ -183,6 +193,7 @@ namespace logviewer.logic.storage
                 {
                     command.AddParameter("@Header", message.Header); // Not L10N
                     command.AddParameter("@Body", message.Body); // Not L10N
+
                     // ReSharper disable once ForCanBeConvertedToForeach
                     for (var i = 0; i < this.additionalColumns.Length; i++)
                     {
@@ -196,6 +207,7 @@ namespace logviewer.logic.storage
                             command.AddParameter("@" + column, message.StringProperty(column)); // Not L10N
                         }
                     }
+
                     command.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -239,13 +251,14 @@ namespace logviewer.logic.storage
             void OnRead(IDataReader rdr)
             {
                 var msg = new LogMessage(rdr[0] as string, rdr[1] as string);
+
                 // ReSharper disable once ForCanBeConvertedToForeach
                 for (var ix = 0; ix < this.additionalColumns.Length; ix++)
                 {
                     var column = this.additionalColumns[ix];
                     if (this.propertyTypesCache[column] == PropertyType.Integer)
                     {
-                        msg.UpdateIntegerProperty(column, (long) rdr[column]);
+                        msg.UpdateIntegerProperty(column, (long)rdr[column]);
                     }
                     else
                     {
@@ -278,7 +291,7 @@ namespace logviewer.logic.storage
 
         [PublicAPI]
         public long CountMessages(
-            DateTime start, 
+            DateTime start,
             DateTime finish,
             LogLevel min = LogLevel.Trace,
             LogLevel max = LogLevel.Fatal,
@@ -301,54 +314,60 @@ namespace logviewer.logic.storage
 
         [PublicAPI]
         public DateTime SelectDateUsingFunc(string func, LogLevel min = LogLevel.Trace,
-            LogLevel max = LogLevel.Fatal,
-            string filter = null,
-            bool useRegexp = true)
+                                            LogLevel max = LogLevel.Fatal,
+                                            string filter = null,
+                                            bool useRegexp = true)
         {
             if (!this.hasDateTimeProperty)
             {
                 return DateTime.MinValue;
             }
-            
+
             var where = this.Where(min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
             var query = $@"SELECT {func}({this.dateTimeProperty}) FROM Log {where}";
 
-            void AddParameters(IDbCommand cmd) => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue, DateTime.MaxValue);
+            void AddParameters(IDbCommand cmd) => this.AddParameters(cmd, min, max, filter, useRegexp, DateTime.MinValue,
+                                                                     DateTime.MaxValue);
 
             var result = this.connection.ExecuteScalar<long>(query, AddParameters);
 
             return DateTime.FromFileTime(result);
         }
 
-        public IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(string filter = null, bool useRegexp = true, bool excludeNoLevel = false)
+        public IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(string filter = null, bool useRegexp = true,
+                                                                      bool excludeNoLevel = false)
         {
             return this.CountByLevel(DateTime.MinValue, DateTime.MaxValue, filter, useRegexp, excludeNoLevel);
         }
 
-        public IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(DateTime start, DateTime finish, string filter = null, bool useRegexp = true, bool excludeNoLevel = false)
+        public IEnumerable<KeyValuePair<LogLevel, long>> CountByLevel(DateTime start, DateTime finish, string filter = null,
+                                                                      bool useRegexp = true, bool excludeNoLevel = false)
         {
             var levels = Enum.GetValues(typeof(LogLevel));
 
             return levels.Cast<LogLevel>()
-                .Where(level => level != LogLevel.None)
-                .ToDictionary(level => level, level => this.CountMessages(start, finish, level, level, filter, useRegexp, excludeNoLevel))
-                .OrderBy(x => x.Key);
+                         .Where(level => level != LogLevel.None)
+                         .ToDictionary(level => level,
+                                       level => this.CountMessages(start, finish, level, level, filter, useRegexp, excludeNoLevel))
+                         .OrderBy(x => x.Key);
         }
 
-        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish, bool excludeNoLevel = false)
+        private string Where(LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish,
+                             bool excludeNoLevel = false)
         {
             var clauses = new[]
-            {
-                this.LevelClause(min, max), 
-                this.DateClause(start, finish), 
-                FilterClause(filter, useRegexp), 
-                this.ExcludeNoLevelClause(excludeNoLevel)
-            };
+                          {
+                              this.LevelClause(min, max),
+                              this.DateClause(start, finish),
+                              FilterClause(filter, useRegexp),
+                              this.ExcludeNoLevelClause(excludeNoLevel)
+                          };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
             if (!notEmpty.Any())
             {
                 return string.Empty;
             }
+
             return "WHERE " + string.Join(" AND ", notEmpty); // Not L10N
         }
 
@@ -358,6 +377,7 @@ namespace logviewer.logic.storage
             {
                 return string.Empty;
             }
+
             var clause = new List<string>();
             if (min != LogLevel.Trace)
             {
@@ -376,6 +396,7 @@ namespace logviewer.logic.storage
             {
                 return string.Empty;
             }
+
             var clause = new List<string>();
             if (start != DateTime.MinValue)
             {
@@ -395,20 +416,23 @@ namespace logviewer.logic.storage
 
         private string ExcludeNoLevelClause(bool excludeNoLevel)
         {
-            return excludeNoLevel && this.hasLogLevelProperty ? this.logLevelProperty + " > " + (int)LogLevel.None : string.Empty; // Not L10N
+            return excludeNoLevel && this.hasLogLevelProperty
+                       ? this.logLevelProperty + " > " + (int)LogLevel.None
+                       : string.Empty; // Not L10N
         }
 
-        private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start, DateTime finish)
+        private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start,
+                                   DateTime finish)
         {
             if (this.hasLogLevelProperty)
             {
                 if (min != LogLevel.Trace)
                 {
-                    command.AddParameter("@Min", (int) min); // Not L10N
+                    command.AddParameter("@Min", (int)min); // Not L10N
                 }
                 if (max != LogLevel.Fatal)
                 {
-                    command.AddParameter("@Max", (int) max); // Not L10N
+                    command.AddParameter("@Max", (int)max); // Not L10N
                 }
             }
 
@@ -428,10 +452,10 @@ namespace logviewer.logic.storage
             {
                 return;
             }
+
             var f = useRegexp ? filter : "%" + filter.Trim('%') + "%"; // Not L10N
             command.AddParameter("@Filter", f); // Not L10N
         }
-
         #endregion
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",

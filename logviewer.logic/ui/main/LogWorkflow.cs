@@ -14,10 +14,15 @@ namespace logviewer.logic.ui.main
     public sealed class LogWorkflow : IDisposable
     {
         private readonly LogWatcher logWatch;
+
         private readonly StateMachine<State, Trigger> machine;
+
         private readonly MainModel model;
+
         private readonly StateMachine<State, Trigger>.TriggerWithParameters<string> openTrigger;
+
         private readonly IMainViewModel viewModel;
+
         private State state = State.Closed;
 
         public LogWorkflow(MainModel model, IMainViewModel viewModel)
@@ -55,7 +60,7 @@ namespace logviewer.logic.ui.main
                 this.viewModel.PropertyChanged -= this.ViewModelOnPropertyChanged;
                 this.viewModel.Dispose();
             }
-            
+
             this.logWatch?.Dispose();
         }
 
@@ -137,15 +142,20 @@ namespace logviewer.logic.ui.main
         private enum State
         {
             Opened,
+
             Closed
         }
 
         private enum Trigger
         {
             Open,
+
             Start,
+
             Reload,
+
             Close,
+
             Filter
         }
     }

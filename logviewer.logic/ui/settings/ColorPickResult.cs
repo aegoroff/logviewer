@@ -11,6 +11,7 @@ namespace logviewer.logic.ui.settings
     public struct ColorPickResult
     {
         public bool Result { get; set; }
+
         public Color SelectedColor { get; set; }
     }
 }

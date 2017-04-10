@@ -60,6 +60,7 @@ namespace logviewer.logic
             {
                 return true;
             }
+
             try
             {
                 var r = new Regex(messageTextFilter, RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -79,6 +80,7 @@ namespace logviewer.logic
             {
                 return max;
             }
+
             return value < min ? min : value;
         }
 
@@ -92,9 +94,9 @@ namespace logviewer.logic
         public static string Format(this LoadProgress progress)
         {
             return progress.Speed.Bytes == 0
-                ? string.Format(Resources.SpeedPercent, progress.Percent)
-                : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(), progress.Remainig.Humanize());
-        
+                       ? string.Format(Resources.SpeedPercent, progress.Percent)
+                       : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(),
+                                       progress.Remainig.Humanize());
         }
 
         /// <summary>
@@ -120,6 +122,7 @@ namespace logviewer.logic
         }
 
         private const string BigFileFormatNoBytes = @"{0:F2} {1}";
+
         private const string SmallFileFormat = @"{0} {1}";
 
         private static readonly string[] sizes =
@@ -139,71 +142,77 @@ namespace logviewer.logic
             if (fileSize.Unit == SizeUnit.Bytes)
             {
                 return string.Format(CultureInfo.CurrentCulture, SmallFileFormat, fileSize.Bytes,
-                    fileSize.Bytes.BytesToString());
+                                     fileSize.Bytes.BytesToString());
             }
+
             var noBytes = string.Format(CultureInfo.CurrentCulture,
-                    BigFileFormatNoBytes,
-                    fileSize.Value,
-                    sizes[(int)fileSize.Unit]);
+                                        BigFileFormatNoBytes,
+                                        fileSize.Value,
+                                        sizes[(int)fileSize.Unit]);
             if (fileSize.BigWithoutBytes)
             {
                 return noBytes;
             }
+
             return noBytes + $" ({fileSize.Bytes.ToString(@"N0", CultureInfo.CurrentCulture)} {fileSize.Bytes.BytesToString()})";
         }
 
-        private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary
-            <int, Func<long, string, string, string, string>>
-        {
-            { 1049, DeclensionRu }
-        };
+        private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary<int, Func<long, string, string, string, string>>
+                                                                                                                   {
+                                                                                                                       {
+                                                                                                                           1049,
+                                                                                                                           DeclensionRu
+                                                                                                                       }
+                                                                                                                   };
 
         private static string Declension(this long number, string nominative, string genitiveSingular,
-            string genitivePlural)
+                                         string genitivePlural)
         {
             return declensions.ContainsKey(Thread.CurrentThread.CurrentUICulture.LCID)
-                ? declensions[Thread.CurrentThread.CurrentUICulture.LCID](number, nominative, genitiveSingular, genitivePlural)
-                : DeclensionEn(number, nominative, genitiveSingular, genitivePlural);
+                       ? declensions[Thread.CurrentThread.CurrentUICulture.LCID](number, nominative, genitiveSingular, genitivePlural)
+                       : DeclensionEn(number, nominative, genitiveSingular, genitivePlural);
         }
 
         /// <summary>
-         /// Does a word declension after a number.
-         /// </summary>
-         /// <param name="number"></param>
-         /// <param name="nominative"></param>
-         /// <param name="genitiveSingular"></param>
-         /// <param name="genitivePlural"></param>
-         /// <returns></returns>
-         private static string DeclensionRu(long number, string nominative, string genitiveSingular, string genitivePlural)
-         {
-             var lastDigit = number % 10;
-             var lastTwoDigits = number % 100;
-             if (lastDigit == 1 && lastTwoDigits != 11)
-             {
-                 return nominative;
-             }
-             if (lastDigit == 2 && lastTwoDigits != 12 || lastDigit == 3 && lastTwoDigits != 13 || lastDigit == 4 && lastTwoDigits != 14)
-             {
-                 return genitiveSingular;
-             }
-             return genitivePlural;
-         }
-        
-         /// <summary>
-         /// Does a word declension after a number.
-         /// </summary>
-         /// <param name="number"></param>
-         /// <param name="nominative"></param>
-         /// <param name="genitiveSingular"></param>
-         /// <param name="genitivePlural"></param>
-         /// <returns></returns>
-         private static string DeclensionEn(long number, string nominative, string genitiveSingular, string genitivePlural)
-         {
-             if (number == 1 || number == -1)
-             {
-                 return nominative;
-             }
-             return genitiveSingular ?? genitivePlural;
-         }
+        /// Does a word declension after a number.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="nominative"></param>
+        /// <param name="genitiveSingular"></param>
+        /// <param name="genitivePlural"></param>
+        /// <returns></returns>
+        private static string DeclensionRu(long number, string nominative, string genitiveSingular, string genitivePlural)
+        {
+            var lastDigit = number % 10;
+            var lastTwoDigits = number % 100;
+            if (lastDigit == 1 && lastTwoDigits != 11)
+            {
+                return nominative;
+            }
+            if (lastDigit == 2 && lastTwoDigits != 12 || lastDigit == 3 && lastTwoDigits != 13 || lastDigit == 4 && lastTwoDigits != 14)
+            {
+                return genitiveSingular;
+            }
+
+            return genitivePlural;
+        }
+
+        /// <summary>
+        /// Does a word declension after a number.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="nominative"></param>
+        /// <param name="genitiveSingular"></param>
+        /// <param name="genitivePlural"></param>
+        /// <returns></returns>
+        private static string DeclensionEn(long number, string nominative, string genitiveSingular, string genitivePlural)
+        {
+            if (number == 1 || number == -1)
+            {
+                return nominative;
+            }
+
+            return genitiveSingular ?? genitivePlural;
+        }
     }
 }

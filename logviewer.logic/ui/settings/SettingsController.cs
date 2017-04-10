@@ -4,7 +4,6 @@
 // Created at: 25.09.2013
 // © 2012-2017 Alexander Egorov
 
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -24,13 +23,18 @@ namespace logviewer.logic.ui.settings
     public class SettingsController : UiSynchronizeModel
     {
         private readonly FormData formData = new FormData();
-        private readonly ISettingsProvider settings;
-        private readonly ISettingsView view;
-        private ParsingTemplate template;
-        private IList<string> templateList;
-        private int parsingTemplateIndex;
-        private readonly Dictionary<LogLevel, Action<Color>> updateColorActions;
 
+        private readonly ISettingsProvider settings;
+
+        private readonly ISettingsView view;
+
+        private ParsingTemplate template;
+
+        private IList<string> templateList;
+
+        private int parsingTemplateIndex;
+
+        private readonly Dictionary<LogLevel, Action<Color>> updateColorActions;
 
         public SettingsController(ISettingsView view, ISettingsProvider settings)
         {
@@ -48,7 +52,7 @@ namespace logviewer.logic.ui.settings
         {
             this.view.EnableAddNewTemplate(true);
         }
-        
+
         private void NewTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
         {
             this.view.EnableAddNewTemplate(false);
@@ -67,14 +71,14 @@ namespace logviewer.logic.ui.settings
         private Dictionary<LogLevel, Action<Color>> InitializeUpdateActions()
         {
             return new Dictionary<LogLevel, Action<Color>>
-            {
-                { LogLevel.Trace, this.view.UpdateTraceColor },
-                { LogLevel.Debug, this.view.UpdateDebugColor },
-                { LogLevel.Info, this.view.UpdateInfoColor },
-                { LogLevel.Warn, this.view.UpdateWarnColor },
-                { LogLevel.Error, this.view.UpdateErrorColor },
-                { LogLevel.Fatal, this.view.UpdateFatalColor }
-            };
+                   {
+                       { LogLevel.Trace, this.view.UpdateTraceColor },
+                       { LogLevel.Debug, this.view.UpdateDebugColor },
+                       { LogLevel.Info, this.view.UpdateInfoColor },
+                       { LogLevel.Warn, this.view.UpdateWarnColor },
+                       { LogLevel.Error, this.view.UpdateErrorColor },
+                       { LogLevel.Fatal, this.view.UpdateFatalColor }
+                   };
         }
 
         public void Load()
@@ -113,6 +117,7 @@ namespace logviewer.logic.ui.settings
                 {
                     this.updateColorActions[color.Key](color.Value);
                 }
+
                 this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
                 this.view.EnableResetColors(this.IsColorsChanged);
                 this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
@@ -167,7 +172,8 @@ namespace logviewer.logic.ui.settings
 
         public static IEnumerable<LogLevel> SelectLevels(Func<LogLevel, bool> filter = null)
         {
-            var levels = (LogLevel[])Enum.GetValues(typeof (LogLevel));
+            var levels = (LogLevel[])Enum.GetValues(typeof(LogLevel));
+
             // All levels by default
             return levels.Where(filter ?? (l => true));
         }
@@ -179,6 +185,7 @@ namespace logviewer.logic.ui.settings
             {
                 return;
             }
+
             this.UpdateColor(level, result.SelectedColor);
             this.view.EnableSave(true);
         }
@@ -199,6 +206,7 @@ namespace logviewer.logic.ui.settings
             {
                 this.UpdateColor(color.Key, color.Value);
             }
+
             this.view.EnableSave(true);
         }
 
@@ -207,7 +215,7 @@ namespace logviewer.logic.ui.settings
             get
             {
                 return this.settings.DefaultColors.Where(c => c.Key != LogLevel.None)
-                    .Aggregate(false, (current, c) => current | this.formData.Colors[c.Key].ToArgb() != c.Value.ToArgb()); //-V3093
+                           .Aggregate(false, (current, c) => current | this.formData.Colors[c.Key].ToArgb() != c.Value.ToArgb()); //-V3093
             }
         }
 
@@ -228,7 +236,7 @@ namespace logviewer.logic.ui.settings
             this.formData.PageSize = value;
             this.view.EnableSave(true);
         }
-        
+
         public void UpdateParsingTemplateName(string value)
         {
             this.template.Name = value;
@@ -265,8 +273,8 @@ namespace logviewer.logic.ui.settings
             });
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(this.UiContextScheduler)
-                .Subscribe(OnComplete);
+                  .ObserveOn(this.UiContextScheduler)
+                  .Subscribe(OnComplete);
         }
 
         public void RemoveSelectedParsingTemplate()
@@ -291,8 +299,8 @@ namespace logviewer.logic.ui.settings
             }
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(this.UiContextScheduler)
-                .Subscribe(OnComplete);
+                  .ObserveOn(this.UiContextScheduler)
+                  .Subscribe(OnComplete);
         }
 
         public void RestoreDefaultTemplates()
@@ -301,6 +309,7 @@ namespace logviewer.logic.ui.settings
             {
                 return;
             }
+
             this.view.EnableChangeOrClose(false);
 
             void RestoreTemplatesAction()
@@ -317,6 +326,7 @@ namespace logviewer.logic.ui.settings
                 {
                     this.settings.InsertParsingTemplate(t);
                 }
+
                 this.parsingTemplateIndex = 0;
                 this.templateList = this.settings.ReadParsingTemplateList();
                 this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
@@ -330,6 +340,7 @@ namespace logviewer.logic.ui.settings
                 {
                     this.view.AddTemplateName(name);
                 }
+
                 this.view.SelectParsingTemplate(0);
                 this.view.LoadParsingTemplate(this.template);
                 this.view.EnableChangeOrClose(true);
@@ -346,7 +357,7 @@ namespace logviewer.logic.ui.settings
         {
             this.view.ShowNewParsingTemplateForm(true);
         }
-        
+
         public void CancelNewParsingTemplate()
         {
             this.view.ShowNewParsingTemplateForm(false);
@@ -358,13 +369,14 @@ namespace logviewer.logic.ui.settings
             {
                 return;
             }
+
             this.parsingTemplateIndex = index;
 
             this.view.EnableChangeOrClose(false);
 
             var source = Observable.Create<ParsingTemplate>(observer =>
             {
-                var t =  this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
+                var t = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
                 observer.OnNext(t);
                 return Disposable.Empty;
             });
@@ -379,8 +391,8 @@ namespace logviewer.logic.ui.settings
             }
 
             source.SubscribeOn(Scheduler.Default)
-                .ObserveOn(this.UiContextScheduler)
-                .Subscribe(OnComplete);
+                  .ObserveOn(this.UiContextScheduler)
+                  .Subscribe(OnComplete);
         }
     }
 }

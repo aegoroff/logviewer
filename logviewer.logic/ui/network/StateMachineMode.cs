@@ -9,6 +9,7 @@ namespace logviewer.logic.ui.network
     internal enum StateMachineMode
     {
         Read,
+
         Write
     }
 }

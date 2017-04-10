@@ -28,37 +28,51 @@ using logviewer.logic.storage;
 using logviewer.logic.support;
 using LogLevel = logviewer.engine.LogLevel;
 
-
 namespace logviewer.logic.ui.main
 {
     public sealed class MainModel : UiSynchronizeModel, IDisposable
     {
         private readonly ISettingsProvider settings;
+
         private string[] byLevel = new string[(int)LogLevel.Fatal + 1];
+
         private readonly IDictionary<string, Encoding> filesEncodingCache = new ConcurrentDictionary<string, Encoding>();
 
         private CancellationTokenSource cancellation = new CancellationTokenSource();
+
         private readonly LogCharsetDetector charsetDetector = new LogCharsetDetector();
+
         private LogReader reader;
 
         private string currentPath;
 
         private MessageMatcher matcher;
+
         private LogStore store;
+
         private long totalMessages;
+
         private readonly IMainViewModel viewModel;
+
         private readonly IScheduler backgroundScheduler;
 
         private readonly ProducerConsumerMessageQueue queue =
-            new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
+                new ProducerConsumerMessageQueue(Math.Max(2, Environment.ProcessorCount / 2));
 
         private readonly Stopwatch totalReadTimeWatch = new Stopwatch();
+
         private readonly TimeSpan filterUpdateDelay = TimeSpan.FromMilliseconds(200);
+
         public event EventHandler<EventArgs> ReadCompleted;
+
         private bool readCompleted = true;
+
         private const int WaitCancelSeconds = 5;
+
         private const int LogChangedThrottleIntervalMilliseconds = 500;
+
         private IObserver<string> logChangedObserver;
+
         private IObserver<string> filterChangedObserver;
 
         public MainModel(IMainViewModel viewModel, IScheduler backgroundScheduler = null)
@@ -80,12 +94,12 @@ namespace logviewer.logic.ui.main
             });
 
             logChangedObservable.SubscribeOn(this.backgroundScheduler)
-                .Throttle(TimeSpan.FromMilliseconds(LogChangedThrottleIntervalMilliseconds))
-                .Subscribe(this.OnChangeLog);
+                                .Throttle(TimeSpan.FromMilliseconds(LogChangedThrottleIntervalMilliseconds))
+                                .Subscribe(this.OnChangeLog);
 
             filterChangedObservable.SubscribeOn(this.backgroundScheduler)
-                .Throttle(this.filterUpdateDelay)
-                .Subscribe(this.StartReadingLogOnFilterChange);
+                                   .Throttle(this.filterUpdateDelay)
+                                   .Subscribe(this.StartReadingLogOnFilterChange);
         }
 
         private void OnChangeLog(string s)
@@ -104,6 +118,7 @@ namespace logviewer.logic.ui.main
                 {
                     return;
                 }
+
                 this.StartLogReadingTask();
             }
             catch (Exception e)
@@ -182,8 +197,8 @@ namespace logviewer.logic.ui.main
             void OnCompleted() => this.viewModel.Datasource.LoadCount((int)this.viewModel.MessageCount);
 
             o.ObserveOn(this.UiContextScheduler)
-                .Finally(this.FinalizeLogReadingTask)
-                .Subscribe(OnNext, OnError, OnCompleted, this.cancellation.Token);
+             .Finally(this.FinalizeLogReadingTask)
+             .Subscribe(OnNext, OnError, OnCompleted, this.cancellation.Token);
         }
 
         private void FinalizeLogReadingTask()
@@ -194,11 +209,13 @@ namespace logviewer.logic.ui.main
 
         public void UpdateLog(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) ||
-                !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase) || !this.settings.AutoRefreshOnFileChange)
+            if (string.IsNullOrWhiteSpace(path)
+                || !path.Equals(this.currentPath, StringComparison.CurrentCultureIgnoreCase)
+                || !this.settings.AutoRefreshOnFileChange)
             {
                 return;
             }
+
             this.logChangedObserver.OnNext(path);
         }
 
@@ -213,7 +230,8 @@ namespace logviewer.logic.ui.main
             });
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.GC.Collect")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId =
+                "System.GC.Collect")]
         private void DoLogReadingTask()
         {
             this.viewModel.UiControlsEnabled = false;
@@ -226,7 +244,7 @@ namespace logviewer.logic.ui.main
 
             this.reader = new LogReader(this.charsetDetector, this.matcher);
             var logPath = this.viewModel.LogPath;
-            
+
             var length = new FileInfo(logPath).Length;
 
             var append = length > this.logSize && this.CurrentPathCached;
@@ -251,6 +269,7 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
+
             this.viewModel.LogSize = new FileSize(this.logSize, true).Format();
             this.UpdateLogStatistic(0);
 
@@ -293,7 +312,7 @@ namespace logviewer.logic.ui.main
                 this.FinishLoading(probeWatch.Elapsed);
 
                 SpinWait.SpinUntil(
-                    () => this.queue.ReadCompleted || this.reader.Cancelled);
+                                   () => this.queue.ReadCompleted || this.reader.Cancelled);
             }
             finally
             {
@@ -328,6 +347,7 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
+
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
             this.store = new LogStore(dbSize, null, this.matcher.IncludeMatcher.MessageSchema);
             this.queue.SetStore(this.store);
@@ -352,8 +372,8 @@ namespace logviewer.logic.ui.main
             var inserted = this.totalMessages - pending;
             var insertRatio = inserted / elapsed.TotalSeconds;
             var remain = Math.Abs(insertRatio) < 0.00001
-                ? TimeSpan.FromSeconds(0)
-                : TimeSpan.FromSeconds(pending / insertRatio);
+                             ? TimeSpan.FromSeconds(0)
+                             : TimeSpan.FromSeconds(pending / insertRatio);
 
             var remainSeconds = remain.Seconds;
             if (remainSeconds > 0)
@@ -382,6 +402,7 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
+
             message.Ix = Interlocked.Increment(ref this.totalMessages);
             this.queue.EnqueueItem(message);
         }
@@ -409,6 +430,7 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
+
             if (!cached)
             {
                 this.viewModel.From = this.SelectDateUsingFunc("min"); // Not L10N
@@ -416,16 +438,16 @@ namespace logviewer.logic.ui.main
             }
 
             this.viewModel.Provider.FilterViewModel = new MessageFilterViewModel
-            {
-                Filter = this.viewModel.MessageFilter,
-                Finish = this.viewModel.To,
-                Start = this.viewModel.From,
-                Min = (LogLevel) this.viewModel.MinLevel,
-                Max = (LogLevel) this.viewModel.MaxLevel,
-                UseRegexp = this.viewModel.UseRegularExpressions,
-                Reverse = this.viewModel.SortingOrder == 0
-            };
-            
+                                                      {
+                                                          Filter = this.viewModel.MessageFilter,
+                                                          Finish = this.viewModel.To,
+                                                          Start = this.viewModel.From,
+                                                          Min = (LogLevel)this.viewModel.MinLevel,
+                                                          Max = (LogLevel)this.viewModel.MaxLevel,
+                                                          UseRegexp = this.viewModel.UseRegularExpressions,
+                                                          Reverse = this.viewModel.SortingOrder == 0
+                                                      };
+
             this.totalReadTimeWatch.Stop();
             var text = string.Format(Resources.ReadCompletedTemplate, this.totalReadTimeWatch.Elapsed.Humanize());
             this.viewModel.LogProgressText = text;
@@ -442,7 +464,8 @@ namespace logviewer.logic.ui.main
 
         private DateTime SelectDateUsingFunc(string func)
         {
-            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter, this.viewModel.UseRegularExpressions);
+            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter,
+                                                  this.viewModel.UseRegularExpressions);
         }
 
         private static string ToHumanReadableString(long value)
@@ -457,7 +480,7 @@ namespace logviewer.logic.ui.main
 
         private void OnLogReadProgress(object progress)
         {
-            var logProgress = (LoadProgress) progress;
+            var logProgress = (LoadProgress)progress;
             this.viewModel.LogProgress = logProgress.Percent;
             this.viewModel.LogProgressText = logProgress.Format();
             this.UpdateLogStatistic(this.totalMessages);
@@ -468,7 +491,7 @@ namespace logviewer.logic.ui.main
             this.viewModel.TotalMessages = ToHumanReadableString(total);
             this.viewModel.ToDisplayMessages = ToHumanReadableString(toDisplay);
 
-            var statByLevel = (levels ?? new long[(int) LogLevel.Fatal + 1].Select(ToHumanReadableString)).ToArray();
+            var statByLevel = (levels ?? new long[(int)LogLevel.Fatal + 1].Select(ToHumanReadableString)).ToArray();
 
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, statByLevel);
         }
@@ -479,8 +502,8 @@ namespace logviewer.logic.ui.main
         }
 
         public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
-            ? this.filesEncodingCache[this.currentPath].EncodingName
-            : string.Empty;
+                                             ? this.filesEncodingCache[this.currentPath].EncodingName
+                                             : string.Empty;
 
         public void ClearCache()
         {
@@ -500,6 +523,7 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
+
             this.ReadNewLog();
         }
 
@@ -517,15 +541,15 @@ namespace logviewer.logic.ui.main
 
         private long logSize;
 
-        private bool CurrentPathCached => !string.IsNullOrWhiteSpace(this.currentPath) &&
-                                          this.currentPath.Equals(this.viewModel.LogPath, StringComparison.CurrentCultureIgnoreCase);
+        private bool CurrentPathCached => !string.IsNullOrWhiteSpace(this.currentPath)
+                                          && this.currentPath.Equals(this.viewModel.LogPath, StringComparison.CurrentCultureIgnoreCase);
 
         private long TotalMessages => this.store?.CountMessages() ?? 0;
 
         public LogStore Store => this.store;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
-            MessageId = "cancellation"),
+             MessageId = "cancellation"),
          System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
              MessageId = "store")]
         public void Dispose()

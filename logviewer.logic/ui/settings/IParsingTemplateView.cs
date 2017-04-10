@@ -21,7 +21,7 @@ namespace logviewer.logic.ui.settings
         void LoadTemplate(ParsingTemplate template);
 
         object MessageStartControl { get; }
-        
+
         object FilterControl { get; }
     }
 }

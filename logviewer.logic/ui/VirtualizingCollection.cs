@@ -15,6 +15,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
+
 #if DEBUG
 using System.Diagnostics;
 #endif
@@ -36,8 +37,8 @@ namespace logviewer.logic.ui
     public sealed class VirtualizingCollection<T> : IVirtualizingCollection<T>, IList
     {
         #region Constructors
-
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize, int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize)
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize,
+                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize)
         {
             this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
         }
@@ -53,19 +54,18 @@ namespace logviewer.logic.ui
         {
             this.ItemsProvider = itemsProvider;
         }
-
         #endregion
 
         [PublicAPI]
         public IItemsProvider<T> ItemsProvider { get; }
 
         [PublicAPI]
+
         // ReSharper disable once ConvertToAutoPropertyWhenPossible
         public int PageSize => this.pageSize;
 
         [PublicAPI]
         public long PageCacheTimeoutMilliseconds { get; } = 10000;
-
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -117,14 +117,14 @@ namespace logviewer.logic.ui
             });
 
             source
-                .SubscribeOn(Scheduler.Default)
-                .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(result =>
-                {
-                    this.PopulatePage(pageIndex, result);
-                    this.FireCollectionReset();
-                    this.IsLoading = false;
-                }, exception => { this.IsLoading = false; });
+                    .SubscribeOn(Scheduler.Default)
+                    .ObserveOn(SynchronizationContext.Current)
+                    .Subscribe(result =>
+                    {
+                        this.PopulatePage(pageIndex, result);
+                        this.FireCollectionReset();
+                        this.IsLoading = false;
+                    }, exception => { this.IsLoading = false; });
         }
 
         public void ChangeVisible(Range range)
@@ -134,9 +134,7 @@ namespace logviewer.logic.ui
         }
 
         #region IList<T>, IList
-
         #region Count
-
         private int count;
 
         public int Count
@@ -150,11 +148,9 @@ namespace logviewer.logic.ui
                 this.FireCollectionReset();
             }
         }
-
         #endregion
 
         #region Indexer
-
         /// <summary>
         ///     Gets the item at the specified index. This property will fetch
         ///     the corresponding page from the IItemsProvider if required.
@@ -166,7 +162,7 @@ namespace logviewer.logic.ui
         /// </remarks>
         public T this[int index]
         {
-            get => (T) ((IList) this)[index];
+            get => (T)((IList)this)[index];
             set => throw new NotSupportedException();
         }
 
@@ -192,11 +188,11 @@ namespace logviewer.logic.ui
                 {
                     return result[pageOffset];
                 }
+
                 return default(T);
             }
             set => throw new NotSupportedException();
         }
-
         #endregion
 
         public IEnumerator<T> GetEnumerator()
@@ -224,7 +220,7 @@ namespace logviewer.logic.ui
 
         bool IList.Contains(object value)
         {
-            return this.Contains((T) value);
+            return this.Contains((T)value);
         }
 
         public bool Contains(T item)
@@ -241,7 +237,7 @@ namespace logviewer.logic.ui
 
         int IList.IndexOf(object value)
         {
-            return this.IndexOf((T) value);
+            return this.IndexOf((T)value);
         }
 
         [Pure]
@@ -257,7 +253,7 @@ namespace logviewer.logic.ui
 
         void IList.Insert(int index, object value)
         {
-            this.Insert(index, (T) value);
+            this.Insert(index, (T)value);
         }
 
         public void RemoveAt(int index)
@@ -292,17 +288,19 @@ namespace logviewer.logic.ui
         public bool IsReadOnly => true;
 
         public bool IsFixedSize => false;
-
         #endregion
 
         #region Paging
-
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private FixedSizeDictionary<T[]> pages = new FixedSizeDictionary<T[]>(1);
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private FixedSizeDictionary<DateTime> pageTouchTimes = new FixedSizeDictionary<DateTime>(1);
+
         private readonly int pageSize = 100;
+
         private int firstVisible;
+
         private int lastVisible;
 
         /// <summary>
@@ -316,20 +314,22 @@ namespace logviewer.logic.ui
 
             // Performance reason. Thanks dotTrace from JetBrains :)
             var now = DateTime.Now;
+
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < keys.Length; i++)
             {
                 var key = keys[i];
+
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                if (key != 0 && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed) &&
-                    (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
+                if (key != 0
+                    && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)
+                    && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);
 #if DEBUG
                     Trace.WriteLine("Removed Page: " + key);
 #endif
-
                 }
             }
         }
@@ -374,8 +374,7 @@ namespace logviewer.logic.ui
                 this.pageTouchTimes[pageIndex] = DateTime.Now;
             }
         }
-
-#endregion
+        #endregion
 
         /// <summary>
         ///     Loads the count of items.

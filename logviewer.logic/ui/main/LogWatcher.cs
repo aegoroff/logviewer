@@ -13,6 +13,7 @@ namespace logviewer.logic.ui.main
     public class LogWatcher : IDisposable
     {
         private readonly Action<string> action;
+
         private FileSystemWatcher logWatch;
 
         public LogWatcher(Action<string> action)
@@ -29,6 +30,7 @@ namespace logviewer.logic.ui.main
             {
                 return;
             }
+
             var directory = Path.GetDirectoryName(path);
             this.logWatch.Path = string.IsNullOrWhiteSpace(directory) ? "." : directory;
             this.logWatch.Filter = Path.GetFileName(path);
