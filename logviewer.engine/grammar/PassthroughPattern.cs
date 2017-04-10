@@ -12,6 +12,7 @@ namespace logviewer.engine.grammar
     internal class PassthroughPattern : Pattern
     {
         private const string Start = "%{";
+
         private const string Stop = "}";
 
         internal PassthroughPattern(string content)

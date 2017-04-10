@@ -18,10 +18,14 @@ namespace logviewer.engine
     {
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Action<string> customErrorOutputMethod;
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private List<Semantic> messageSchema = new List<Semantic>();
+
         private const string MainPattern = "MAIN"; // Not L10N
+
         private string[] patternFiles;
+
         private const int StreamBufferSize = 0xFFFF;
 
         /// <summary>
@@ -53,7 +57,7 @@ namespace logviewer.engine
         {
             this.messageSchema.Clear();
             var parser = new grammar.GrokParser(this.customErrorOutputMethod);
-            
+
             foreach (var stream in this.patternFiles.Select(File.OpenRead))
             {
                 var bufferedStream = new BufferedStream(stream, StreamBufferSize);

@@ -70,6 +70,7 @@ namespace logviewer.engine
             {
                 return false;
             }
+
             return obj is SemanticProperty && this.Equals((SemanticProperty)obj);
         }
 

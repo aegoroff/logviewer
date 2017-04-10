@@ -21,10 +21,13 @@ namespace logviewer.engine
     public sealed class LogReader
     {
         private readonly ICharsetDetector detector;
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private GrokMatcher excludeMatcher;
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private GrokMatcher includeMatcher;
+
         private bool cancelled;
 
         /// <summary>
@@ -32,10 +35,11 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="detector">Charset detector</param>
         /// <param name="matcher">Message matcher</param>
-        public LogReader(ICharsetDetector detector, IMessageMatcher matcher) : this(detector, matcher.IncludeMatcher, matcher.ExcludeMatcher)
+        public LogReader(ICharsetDetector detector, IMessageMatcher matcher) : this(detector, matcher.IncludeMatcher,
+                                                                                    matcher.ExcludeMatcher)
         {
         }
-        
+
         /// <summary>
         ///     Initializes reader
         /// </summary>
@@ -105,7 +109,7 @@ namespace logviewer.engine
             var mapName = Guid.NewGuid().ToString();
             using (
                 var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
-                    MemoryMappedFileAccess.Read))
+                                                          MemoryMappedFileAccess.Read))
             {
                 encoding = this.DetectEncoding(encoding, mmf, length);
 
@@ -197,6 +201,7 @@ namespace logviewer.engine
                         if (message.HasHeader)
                         {
                             yield return message;
+
                             message = LogMessage.Create();
                         }
                         else
@@ -204,8 +209,10 @@ namespace logviewer.engine
                             // Remove trash from prev bad match
                             message.Clear();
                         }
+
                         message.AddProperties(properties);
                     }
+
                     message.AddLine(line);
                     line = sr.ReadLine();
 
@@ -213,11 +220,13 @@ namespace logviewer.engine
                     {
                         continue;
                     }
+
                     var elapsed = stopWatch.Elapsed;
                     stopWatch.Restart();
 
                     measureStart = this.ReportProgress(stream, measureStart, elapsed, ref signalCounter);
                 }
+
                 if (!this.cancelled)
                 {
                     // Add last message
@@ -236,19 +245,18 @@ namespace logviewer.engine
             ++signalCounter;
             var remain = Math.Abs(speed) < 0.001 ? 0 : (stream.Length - stream.Position) / speed;
             var progress = new LoadProgress
-            {
-                Speed = new FileSize((ulong) speed, true),
-                Remainig = TimeSpan.FromSeconds(remain),
-                Percent = stream.Position.PercentOf(stream.Length)
-            };
+                           {
+                               Speed = new FileSize((ulong)speed, true),
+                               Remainig = TimeSpan.FromSeconds(remain),
+                               Percent = stream.Position.PercentOf(stream.Length)
+                           };
             this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(progress.Percent, progress));
             return measureStart;
         }
 
         private static bool DecodeNeeded(Encoding srcEncoding)
         {
-            return srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) &&
-                   !srcEncoding.Equals(Encoding.ASCII);
+            return srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) && !srcEncoding.Equals(Encoding.ASCII);
         }
     }
 }

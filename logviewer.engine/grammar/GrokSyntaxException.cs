@@ -36,6 +36,7 @@ namespace logviewer.engine.grammar
             {
                 throw new ArgumentNullException(nameof(info));
             }
+
             this.Message = info.GetString("message");
         }
 
@@ -61,6 +62,7 @@ namespace logviewer.engine.grammar
             {
                 throw new ArgumentNullException(nameof(info));
             }
+
             info.AddValue("message", this.Message);
             base.GetObjectData(info, context);
         }

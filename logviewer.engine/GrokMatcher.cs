@@ -17,8 +17,10 @@ namespace logviewer.engine
     public class GrokMatcher
     {
         private Regex regex;
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private List<Semantic> messageSchema = new List<Semantic>();
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Action<string> customErrorOutputMethod;
 
@@ -122,6 +124,7 @@ namespace logviewer.engine
                 var property = this.messageSchema[i].Property;
                 result[i] = new KeyValuePair<string, string>(property, match.Groups[property].Value);
             }
+
             return result;
         }
     }

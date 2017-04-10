@@ -18,6 +18,7 @@ namespace logviewer.engine
     public struct LogMessage
     {
         private const char NewLine = '\n';
+
         private const int DefaultPropertyDicitionaryCapacity = 5;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
@@ -41,8 +42,7 @@ namespace logviewer.engine
         /// <summary>
         /// Gets whether the message empty or not.
         /// </summary>
-        public bool IsEmpty => string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
-                               this.bodyBuilder.Length == 0;
+        public bool IsEmpty => string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && this.bodyBuilder.Length == 0;
 
         /// <summary>
         /// Gets or sets message unique index to store it into database for example
@@ -61,10 +61,10 @@ namespace logviewer.engine
         /// <summary>
         /// Gets message's body (without header)
         /// </summary>
-        public string Body => this.body ??
-                              (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
-                                  ? string.Empty
-                                  : this.bodyBuilder.ToString());
+        public string Body => this.body
+                              ?? (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
+                                      ? string.Empty
+                                      : this.bodyBuilder.ToString());
 
         /// <summary>
         /// Gets whether the message has header
@@ -74,20 +74,21 @@ namespace logviewer.engine
         /// <summary>
         /// All supportable dates formats to parse
         /// </summary>
-        public static string[] Formats { get; } = {
-            @"yyyy-MM-dd HH:mm:ss,FFF",
-            @"yyyy-MM-dd HH:mm:ss.FFF",
-            @"yyyy-MM-dd HH:mm:ss,FFFK",
-            @"yyyy-MM-dd HH:mm:ss.FFFK",
-            @"yyyy-MM-dd HH:mm",
-            @"yyyy-MM-dd HH:mm:ss",
-            @"yyyy-MM-ddTHH:mm:ss,FFFK",
-            @"yyyy-MM-ddTHH:mm:ss.FFFK",
-            @"dd/MMM/yyyy:HH:mm:ssK",
-            @"dd/MMM/yyyy:HH:mm:ss K",
-            @"dd/MMM/yyyy:HH:mm:sszzz",
-            @"dd/MMM/yyyy:HH:mm:ss zzz"
-        };
+        public static string[] Formats { get; } =
+            {
+                @"yyyy-MM-dd HH:mm:ss,FFF",
+                @"yyyy-MM-dd HH:mm:ss.FFF",
+                @"yyyy-MM-dd HH:mm:ss,FFFK",
+                @"yyyy-MM-dd HH:mm:ss.FFFK",
+                @"yyyy-MM-dd HH:mm",
+                @"yyyy-MM-dd HH:mm:ss",
+                @"yyyy-MM-ddTHH:mm:ss,FFFK",
+                @"yyyy-MM-ddTHH:mm:ss.FFFK",
+                @"dd/MMM/yyyy:HH:mm:ssK",
+                @"dd/MMM/yyyy:HH:mm:ss K",
+                @"dd/MMM/yyyy:HH:mm:sszzz",
+                @"dd/MMM/yyyy:HH:mm:ss zzz"
+            };
 
         /// <summary>
         /// Add line to the message (the first line will be header the others will be considered as body)
@@ -115,7 +116,7 @@ namespace logviewer.engine
         {
             this.rawProperties = extractedProperties as KeyValuePair<string, string>[];
         }
-            
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static LogLevel ParseLogLevel(string str)
         {
@@ -123,34 +124,34 @@ namespace logviewer.engine
             {
                 return LogLevel.Trace;
             }
-            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Debug;
             }
-            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Info;
             }
-            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Warn;
             }
-            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Error;
             }
-            else if (string.Equals(str, @"FATAL", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"SEVERE", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"EMERG", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"EMERGENCY", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"PANIC", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(str, @"ALERT", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(str, @"FATAL", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"SEVERE", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"EMERG", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"EMERGENCY", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"PANIC", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"ALERT", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Fatal;
             }
@@ -180,10 +181,12 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseDateTime(string dataToParse, string property)
         {
-            var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out DateTime r);
+            var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture,
+                                                 DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out DateTime r);
             if (!success)
             {
-                success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+                success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal,
+                                            out r);
             }
             if (success)
             {
@@ -200,7 +203,7 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseString(string dataToParse, string property)
         {
             this.stringProperties[property] = dataToParse;
@@ -233,6 +236,7 @@ namespace logviewer.engine
                     {
                         continue;
                     }
+
                     semanticProperty = prop.Key;
                     break;
                 }
@@ -271,6 +275,7 @@ namespace logviewer.engine
                     {
                         continue;
                     }
+
                     return rule.Level;
                 }
 
@@ -285,6 +290,7 @@ namespace logviewer.engine
                     }
                 }
             }
+
             return LogLevel.None;
         }
 
@@ -314,7 +320,7 @@ namespace logviewer.engine
             dict.TryGetValue(property, out T result);
             return result;
         }
-        
+
         /// <summary>
         /// Updates or add integer property
         /// </summary>
@@ -345,6 +351,7 @@ namespace logviewer.engine
             {
                 return;
             }
+
             var length = this.bodyBuilder.Length;
             if (length > 0)
             {
@@ -371,21 +378,25 @@ namespace logviewer.engine
         public static LogMessage Create()
         {
             return new LogMessage(null, null)
-            {
-                bodyBuilder = new StringBuilder()
-            };
+                   {
+                       bodyBuilder = new StringBuilder()
+                   };
         }
 
         #region Constants and Fields
+        private Dictionary<string, long> integerProperties;
 
-        private Dictionary<string, long> integerProperties; 
-        private Dictionary<string, string> stringProperties; 
+        private Dictionary<string, string> stringProperties;
+
         private string body;
-        private StringBuilder bodyBuilder;
-        private string head;
-        private KeyValuePair<string, string>[] rawProperties;
-        private long ix;
 
+        private StringBuilder bodyBuilder;
+
+        private string head;
+
+        private KeyValuePair<string, string>[] rawProperties;
+
+        private long ix;
         #endregion
     }
 }

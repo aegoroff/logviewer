@@ -18,6 +18,7 @@ namespace logviewer.engine.grammar
             {
                 stringBuilder.Append(this[i].Compose(messageSchema));
             }
+
             return stringBuilder.ToString();
         }
     }

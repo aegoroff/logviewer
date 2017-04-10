@@ -14,11 +14,15 @@ namespace logviewer.engine
     public struct FileSize
     {
         private const int Int64BitsCount = 64;
+
         private const int BinaryThousand = 1024;
 
         private readonly bool bigWithoutBytes;
+
         private readonly ulong bytes;
+
         private readonly SizeUnit sizeUnit;
+
         private readonly double value;
 
         /// <summary>
@@ -29,7 +33,7 @@ namespace logviewer.engine
         public FileSize(long bytes, bool bigWithoutBytes = false) : this((ulong)bytes, bigWithoutBytes)
         {
         }
-        
+
         /// <summary>
         ///     Initializes new instance of <see cref="FileSize" /> structure using raw file size
         /// </summary>
@@ -41,8 +45,8 @@ namespace logviewer.engine
             this.bigWithoutBytes = bigWithoutBytes;
             this.sizeUnit = SizeUnit.Bytes;
             this.sizeUnit = bytes == 0
-                ? SizeUnit.Bytes
-                : (SizeUnit)(IntegerLogarithm(bytes) / IntegerLogarithm(BinaryThousand));
+                                ? SizeUnit.Bytes
+                                : (SizeUnit)(IntegerLogarithm(bytes) / IntegerLogarithm(BinaryThousand));
             this.value = this.sizeUnit == SizeUnit.Bytes ? 0 : bytes / Math.Pow(BinaryThousand, (int)this.sizeUnit);
         }
 
@@ -81,6 +85,7 @@ namespace logviewer.engine
                 }
                 c >>= 1;
             } while (c != 0);
+
             n -= x >> (Int64BitsCount - 1);
             return (Int64BitsCount - 1) - (n - x);
         }

@@ -17,17 +17,17 @@ namespace logviewer.engine
         /// <see cref="LogLevel"/> type
         /// </summary>
         LogLevel,
-        
+
         /// <summary>
         /// <see cref="DateTime"/> type
         /// </summary>
         Datetime,
-        
+
         /// <summary>
         /// Integer (<see cref="long"/>) type
         /// </summary>
         Interger,
-        
+
         /// <summary>
         /// String type
         /// </summary>

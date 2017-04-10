@@ -17,6 +17,7 @@ namespace logviewer.engine
     public struct Semantic
     {
         private readonly string property;
+
         private readonly HashSet<GrokRule> castingRules;
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace logviewer.engine
             this.property = property;
             this.castingRules = new HashSet<GrokRule>();
         }
-        
+
         /// <summary>
         /// Initializes new <see cref="Semantic"/> instance using name and rule specified.
         /// </summary>
@@ -82,6 +83,7 @@ namespace logviewer.engine
             {
                 return false;
             }
+
             return obj is Semantic && this.Equals((Semantic)obj);
         }
 

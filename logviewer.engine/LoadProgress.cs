@@ -17,12 +17,12 @@ namespace logviewer.engine
         /// Log reading speed
         /// </summary>
         public FileSize Speed { get; set; }
-        
+
         /// <summary>
         /// Remaining time
         /// </summary>
         public TimeSpan Remainig { get; set; }
-        
+
         /// <summary>
         /// Log read percent
         /// </summary>

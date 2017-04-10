@@ -27,6 +27,7 @@ namespace logviewer.engine
                 this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>(new SemanticProperty());
                 return;
             }
+
             this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>(new SemanticProperty());
             foreach (var semantic in schema)
             {
@@ -58,6 +59,7 @@ namespace logviewer.engine
             {
                 return new SemanticProperty(name, rule.Type);
             }
+
             return new SemanticProperty(name, ParserType.String);
         }
     }

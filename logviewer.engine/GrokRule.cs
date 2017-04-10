@@ -9,7 +9,6 @@ using System.Diagnostics;
 
 namespace logviewer.engine
 {
-    
     /// <summary>
     /// Represents metadata rule
     /// </summary>
@@ -19,10 +18,10 @@ namespace logviewer.engine
         internal const string DefaultPattern = @"*";
 
         private readonly string pattern;
-        
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private ParserType type;
-        
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private LogLevel level;
 
@@ -77,6 +76,7 @@ namespace logviewer.engine
             {
                 return false;
             }
+
             return obj is GrokRule && this.Equals((GrokRule)obj);
         }
 
