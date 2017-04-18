@@ -107,9 +107,9 @@ namespace logviewer.logic.storage
                                       int defaultPageSize,
                                       int defaultKeepLastNFiles)
         {
+            this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
-            this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.optionsProvider = new OptionsProvider(this.settingsDatabaseFilePath);
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
             this.parsingTemplatePropertiesColumns = this.parsingTemplateProperties.Select(GetColumnAttribute).ToArray();

@@ -28,7 +28,10 @@ namespace logviewer.logic.storage
         {
             if (!File.Exists(databaseFilePath) || new FileInfo(databaseFilePath).Length == 0)
             {
-                SQLiteConnection.CreateFile(databaseFilePath);
+                if (!databaseFilePath.Equals(":memory:", StringComparison.OrdinalIgnoreCase))
+                {
+                    SQLiteConnection.CreateFile(databaseFilePath);
+                }
                 this.IsEmpty = true;
             }
             this.ConnectionString = databaseFilePath;

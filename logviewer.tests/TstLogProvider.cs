@@ -10,32 +10,35 @@ using System.IO;
 using System.Text;
 using FluentAssertions;
 using logviewer.engine;
+using logviewer.logic;
 using logviewer.logic.Annotations;
 using logviewer.logic.models;
 using logviewer.logic.storage;
+using logviewer.logic.ui.main;
 using Moq;
 using Xunit;
 
 namespace logviewer.tests
 {
-    public class TstLogProvider //-V3072 //-V3074
+    public class TstLogProvider : IDisposable //-V3072 //-V3074
     {
         private readonly MemoryStream stream;
         private readonly LogStore store;
-        private static readonly string dbPath = Path.GetTempFileName();
         private readonly LogProvider provider;
         private readonly LogReader reader;
 
         public TstLogProvider()
         {
-            var settings = new LocalDbSettingsProvider(dbPath, 100, 2);
+            var settings = new Mock<ISettingsProvider>();
+            var format = new TextFormat();
+            settings.Setup(x => x.GetFormat(It.IsAny<LogLevel>())).Returns(format);
             var detector = new Mock<ICharsetDetector>();
             this.stream = new MemoryStream();
             var grokMatcher = new GrokMatcher(TstLogReader.NlogGrok);
             this.reader = new LogReader(detector.Object, grokMatcher);
-            this.store = new LogStore(grokMatcher.MessageSchema);
+            this.store = new LogStore(grokMatcher.MessageSchema, ":memory:");
 
-            this.provider = new LogProvider(this.store, settings);
+            this.provider = new LogProvider(this.store, settings.Object);
         }
 
         private void FillStore()
@@ -73,10 +76,6 @@ namespace logviewer.tests
         {
             this.stream.Dispose();
             this.provider.Dispose();
-            if (File.Exists(dbPath))
-            {
-                File.Delete(dbPath);
-            }
         }
 
         [PublicAPI]
