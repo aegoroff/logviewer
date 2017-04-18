@@ -50,15 +50,9 @@ namespace logviewer.logic.support
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public void Add(KeyValuePair<int, T> item)
-        {
-            this.Add(item.Key, item.Value);
-        }
+        public void Add(KeyValuePair<int, T> item) => this.Add(item.Key, item.Value);
 
         public void Clear()
         {
@@ -67,10 +61,7 @@ namespace logviewer.logic.support
         }
 
         [Pure]
-        public bool Contains(KeyValuePair<int, T> item)
-        {
-            return this.ContainsKey(item.Key) && Equals(this.store[item.Key], item.Value);
-        }
+        public bool Contains(KeyValuePair<int, T> item) => this.ContainsKey(item.Key) && Equals(this.store[item.Key], item.Value);
 
         public void CopyTo(KeyValuePair<int, T>[] array, int arrayIndex)
         {
@@ -83,10 +74,7 @@ namespace logviewer.logic.support
             }
         }
 
-        public bool Remove(KeyValuePair<int, T> item)
-        {
-            return this.Remove(item.Key);
-        }
+        public bool Remove(KeyValuePair<int, T> item) => this.Remove(item.Key);
 
         public int Count
         {
@@ -108,10 +96,7 @@ namespace logviewer.logic.support
         public bool IsReadOnly => false;
 
         [Pure]
-        public bool ContainsKey(int key)
-        {
-            return key < this.count && key >= 0 && this.ContainsKeyInternal(key);
-        }
+        public bool ContainsKey(int key) => key < this.count && key >= 0 && this.ContainsKeyInternal(key);
 
         /// <inheritdoc />
         public void Add(int key, T value)
@@ -193,9 +178,6 @@ namespace logviewer.logic.support
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ContainsKeyInternal(int key)
-        {
-            return this.indexes[key] > 0;
-        }
+        private bool ContainsKeyInternal(int key) => this.indexes[key] > 0;
     }
 }

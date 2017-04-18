@@ -85,10 +85,7 @@ namespace logviewer.logic
             }
         }
 
-        private void OnError(Task task)
-        {
-            this.OnError(task.Exception?.InnerException);
-        }
+        private void OnError(Task task) => this.OnError(task.Exception?.InnerException);
 
         private void OnError(Exception ex)
         {
@@ -96,15 +93,9 @@ namespace logviewer.logic
             Log.Instance.Error(ex?.Message, ex);
         }
 
-        public IDisposable Subscribe(Action<VersionModel> onNext, Action onCompleted)
-        {
-            return this.subject.Subscribe(onNext, onCompleted);
-        }
+        public IDisposable Subscribe(Action<VersionModel> onNext, Action onCompleted) => this.subject.Subscribe(onNext, onCompleted);
 
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
+        public void Dispose() => this.Dispose(true);
 
         private void Dispose(bool disposing)
         {

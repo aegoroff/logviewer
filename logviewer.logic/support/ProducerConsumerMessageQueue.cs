@@ -39,17 +39,11 @@ namespace logviewer.logic.support
             base.EnqueueItem(item);
         }
 
-        internal void ResetQueuedCount()
-        {
-            this.queuedMessages = 0;
-        }
+        internal void ResetQueuedCount() => this.queuedMessages = 0;
 
         internal bool ReadCompleted => Interlocked.Read(ref this.queuedMessages) == 0;
 
-        internal void SetStore(LogStore value)
-        {
-            this.store = value;
-        }
+        internal void SetStore(LogStore value) => this.store = value;
 
         internal long QueuedMessages => Interlocked.Read(ref this.queuedMessages);
     }

@@ -27,10 +27,7 @@ namespace logviewer.logic
         public Version CurrentVersion { get; }
 
         [PublicAPI]
-        public void CheckUpdatesAvaliable(Action<bool> onComplete)
-        {
-            this.CheckUpdatesAvaliable(onComplete, this.CurrentVersion);
-        }
+        public void CheckUpdatesAvaliable(Action<bool> onComplete) => this.CheckUpdatesAvaliable(onComplete, this.CurrentVersion);
 
         [PublicAPI]
         public void CheckUpdatesAvaliable(Action<bool> onComplete, Version current)

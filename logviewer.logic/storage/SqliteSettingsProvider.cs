@@ -283,10 +283,7 @@ namespace logviewer.logic.storage
                     select info;
         }
 
-        public ParsingTemplate ReadParsingTemplate()
-        {
-            return this.ReadParsingTemplate(this.SelectedParsingTemplate);
-        }
+        public ParsingTemplate ReadParsingTemplate() => this.ReadParsingTemplate(this.SelectedParsingTemplate);
 
         public IList<string> ReadParsingTemplateList()
         {
@@ -379,10 +376,8 @@ namespace logviewer.logic.storage
             return result;
         }
 
-        private static ColumnAttribute GetColumnAttribute(PropertyInfo column)
-        {
-            return (ColumnAttribute)column.GetCustomAttributes(typeof(ColumnAttribute), false)[0];
-        }
+        private static ColumnAttribute GetColumnAttribute(PropertyInfo column) =>
+                (ColumnAttribute)column.GetCustomAttributes(typeof(ColumnAttribute), false)[0];
 
         public void InsertParsingTemplate(ParsingTemplate template)
         {
@@ -467,15 +462,9 @@ namespace logviewer.logic.storage
             this.optionsProvider.ExecuteQuery(Action);
         }
 
-        public RtfCharFormat FormatHead(LogLevel level)
-        {
-            return this.headerFormatsMap[level];
-        }
+        public RtfCharFormat FormatHead(LogLevel level) => this.headerFormatsMap[level];
 
-        public RtfCharFormat FormatBody(LogLevel level)
-        {
-            return this.bodyFormatsMap[level];
-        }
+        public RtfCharFormat FormatBody(LogLevel level) => this.bodyFormatsMap[level];
 
         public TextFormat GetFormat(LogLevel level)
         {
@@ -483,25 +472,15 @@ namespace logviewer.logic.storage
             return r ?? this.noneLevelFormat;
         }
 
-        public void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action)
-        {
-            this.RunUsingRecentItemsStore(action, RecentFiles);
-        }
+        public void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action) => this.RunUsingRecentItemsStore(action, RecentFiles);
 
-        public void ExecuteUsingRecentFiltersStore(Action<RecentItemsStore> action)
-        {
-            this.RunUsingRecentItemsStore(action, RecentFilters, KeepLastFilters);
-        }
+        public void ExecuteUsingRecentFiltersStore(Action<RecentItemsStore> action) => this.RunUsingRecentItemsStore(action, RecentFilters,
+                                                                                                                     KeepLastFilters);
 
-        public T GetUsingRecentFilesStore<T>(Func<RecentItemsStore, T> function)
-        {
-            return this.GetUsingRecentItemsStore(function, RecentFiles);
-        }
+        public T GetUsingRecentFilesStore<T>(Func<RecentItemsStore, T> function) => this.GetUsingRecentItemsStore(function, RecentFiles);
 
-        public T GetUsingRecentFiltersStore<T>(Func<RecentItemsStore, T> function)
-        {
-            return this.GetUsingRecentItemsStore(function, RecentFilters, KeepLastFilters);
-        }
+        public T GetUsingRecentFiltersStore<T>(Func<RecentItemsStore, T> function) => this.GetUsingRecentItemsStore(function, RecentFilters,
+                                                                                                                    KeepLastFilters);
 
         public IOptionsProvider OptionsProvider => this.optionsProvider;
 
@@ -656,10 +635,7 @@ namespace logviewer.logic.storage
             connection.ExecuteNonQuery(cmd, Action);
         }
 
-        private static void Upgrade2(DatabaseConnection connection)
-        {
-            connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
-        }
+        private static void Upgrade2(DatabaseConnection connection) => connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
 
         private void Upgrade3(DatabaseConnection connection)
         {
@@ -708,10 +684,8 @@ namespace logviewer.logic.storage
             connection.ExecuteNonQuery(@"DROP TABLE ParsingTemplatesOld");
         }
 
-        private void ExecuteNonQuery(params string[] queries)
-        {
-            this.optionsProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
-        }
+        private void ExecuteNonQuery(params string[] queries) =>
+                this.optionsProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
 
         private void MigrateFromRegistry()
         {
@@ -756,20 +730,11 @@ namespace logviewer.logic.storage
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
         }
 
-        private void MigrateString(string option)
-        {
-            this.optionsProvider.UpdateStringOption(option, GetStringValue(option));
-        }
+        private void MigrateString(string option) => this.optionsProvider.UpdateStringOption(option, GetStringValue(option));
 
-        private void MigrateBoolean(string option)
-        {
-            this.optionsProvider.UpdateBooleanOption(option, GetBoolValue(option));
-        }
+        private void MigrateBoolean(string option) => this.optionsProvider.UpdateBooleanOption(option, GetBoolValue(option));
 
-        private void MigrateInteger(string option)
-        {
-            this.optionsProvider.UpdateIntegerOption(option, GetIntValue(option));
-        }
+        private void MigrateInteger(string option) => this.optionsProvider.UpdateIntegerOption(option, GetIntValue(option));
 
         private void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
         {
@@ -788,10 +753,8 @@ namespace logviewer.logic.storage
         /// </summary>
         /// <param name="key">key name</param>
         /// <returns>Exist or new RegistryKey object</returns>
-        private static RegistryKey GetRegKey(string key)
-        {
-            return Registry.CurrentUser.OpenSubKey(key, true) ?? Registry.CurrentUser.CreateSubKey(key);
-        }
+        private static RegistryKey GetRegKey(string key) => Registry.CurrentUser.OpenSubKey(key, true)
+                                                            ?? Registry.CurrentUser.CreateSubKey(key);
 
         private static T GetValue<T>(RegistryKey rk, string key, T defaultValue = default(T))
         {
@@ -799,30 +762,15 @@ namespace logviewer.logic.storage
             return obj is T ? (T)obj : defaultValue;
         }
 
-        private static string GetStringValue(RegistryKey rk, string key)
-        {
-            return GetValue(rk, key, string.Empty);
-        }
+        private static string GetStringValue(RegistryKey rk, string key) => GetValue(rk, key, string.Empty);
 
-        private static int GetIntValue(RegistryKey rk, string key)
-        {
-            return GetValue(rk, key, 0);
-        }
+        private static int GetIntValue(RegistryKey rk, string key) => GetValue(rk, key, 0);
 
-        private static string GetStringValue(string key)
-        {
-            return GetStringValue(RegistryKey, key);
-        }
+        private static string GetStringValue(string key) => GetStringValue(RegistryKey, key);
 
-        private static int GetIntValue(string key)
-        {
-            return GetIntValue(RegistryKey, key);
-        }
+        private static int GetIntValue(string key) => GetIntValue(RegistryKey, key);
 
-        private static bool GetBoolValue(string key)
-        {
-            return GetIntValue(key) == 1;
-        }
+        private static bool GetBoolValue(string key) => GetIntValue(key) == 1;
 
         private void RunUsingRecentItemsStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
         {

@@ -23,40 +23,22 @@ namespace logviewer.logic.storage
 
         private readonly string settingsDatabaseFilePath;
 
-        public OptionsProvider(string settingsDatabaseFilePath)
-        {
-            this.settingsDatabaseFilePath = settingsDatabaseFilePath;
-        }
+        public OptionsProvider(string settingsDatabaseFilePath) => this.settingsDatabaseFilePath = settingsDatabaseFilePath;
 
-        public string ReadStringOption(string option, string defaultValue = null)
-        {
-            return this.ReadOption(StringOptionsTable, option, defaultValue);
-        }
+        public string ReadStringOption(string option, string defaultValue = null) => this.ReadOption(StringOptionsTable, option,
+                                                                                                     defaultValue);
 
-        public bool ReadBooleanOption(string option, bool defaultValue = false)
-        {
-            return this.ReadOption(BooleanOptionsTable, option, defaultValue);
-        }
+        public bool ReadBooleanOption(string option, bool defaultValue = false) => this.ReadOption(BooleanOptionsTable, option,
+                                                                                                   defaultValue);
 
-        public int ReadIntegerOption(string option, int defaultValue = 0)
-        {
-            return (int)this.ReadOption<long>(IntegerOptionsTable, option, defaultValue);
-        }
+        public int ReadIntegerOption(string option, int defaultValue = 0) => (int)this.ReadOption<long>(IntegerOptionsTable, option,
+                                                                                                        defaultValue);
 
-        public void UpdateStringOption(string option, string value)
-        {
-            this.UpdateOption(StringOptionsTable, option, value);
-        }
+        public void UpdateStringOption(string option, string value) => this.UpdateOption(StringOptionsTable, option, value);
 
-        public void UpdateBooleanOption(string option, bool value)
-        {
-            this.UpdateOption(BooleanOptionsTable, option, value);
-        }
+        public void UpdateBooleanOption(string option, bool value) => this.UpdateOption(BooleanOptionsTable, option, value);
 
-        public void UpdateIntegerOption(string option, int value)
-        {
-            this.UpdateOption(IntegerOptionsTable, option, value);
-        }
+        public void UpdateIntegerOption(string option, int value) => this.UpdateOption(IntegerOptionsTable, option, value);
 
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
@@ -71,10 +53,8 @@ namespace logviewer.logic.storage
             return result;
         }
 
-        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null)
-        {
-            this.ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
-        }
+        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null) =>
+                this.ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
 
         internal void ExecuteQuery(Action<DatabaseConnection> action)
         {

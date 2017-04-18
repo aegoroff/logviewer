@@ -45,10 +45,7 @@ namespace logviewer.logic.storage
             set => this.store = value;
         }
 
-        public void Dispose()
-        {
-            this.store?.Dispose();
-        }
+        public void Dispose() => this.store?.Dispose();
 
         public long FetchCount()
         {

@@ -114,10 +114,7 @@ namespace logviewer.logic.storage
             return result;
         }
 
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
+        public void Dispose() => this.Dispose(true);
 
         private void Dispose(bool disposing)
         {

@@ -25,27 +25,19 @@ namespace logviewer.logic
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        internal static string ToParameterName(this LogLevel level)
-        {
-            return level.GetName() + @"Color";
-        }
+        internal static string ToParameterName(this LogLevel level) => level.GetName() + @"Color";
 
         [Pure]
-        internal static bool HasProperty(this ICollection<Semantic> schema, ParserType type)
-        {
-            return schema.FilterSchema(type).Any();
-        }
+        internal static bool HasProperty(this ICollection<Semantic> schema, ParserType type) => schema.FilterSchema(type).Any();
 
         [Pure]
-        internal static string PropertyNameOf(this ICollection<Semantic> schema, ParserType type)
-        {
-            return schema.FilterSchema(type).Select(s => s.Property).FirstOrDefault();
-        }
+        internal static string PropertyNameOf(this ICollection<Semantic> schema, ParserType type) => schema
+                .FilterSchema(type).Select(s => s.Property).FirstOrDefault();
 
-        private static IEnumerable<Semantic> FilterSchema(this IEnumerable<Semantic> schema, ParserType type)
-        {
-            return from s in schema from rule in s.CastingRules where rule.Type == type select s;
-        }
+        private static IEnumerable<Semantic> FilterSchema(this IEnumerable<Semantic> schema, ParserType type) => from s in schema
+                                                                                                                 from rule in s.CastingRules
+                                                                                                                 where rule.Type == type
+                                                                                                                 select s;
 
         /// <summary>
         /// Whether the string is valid to use as text filter
@@ -85,10 +77,9 @@ namespace logviewer.logic
         }
 
         [Pure]
-        private static string BytesToString(this ulong bytes)
-        {
-            return ((long)bytes).Declension(Resources.BytesNominative, Resources.BytesGenitiveSingular, Resources.BytesGenitivePlural);
-        }
+        private static string BytesToString(this ulong bytes) => ((long)bytes).Declension(Resources.BytesNominative,
+                                                                                          Resources.BytesGenitiveSingular,
+                                                                                          Resources.BytesGenitivePlural);
 
         [Pure]
         public static string Format(this LoadProgress progress)
@@ -157,13 +148,14 @@ namespace logviewer.logic
             return noBytes + $" ({fileSize.Bytes.ToString(@"N0", CultureInfo.CurrentCulture)} {fileSize.Bytes.BytesToString()})";
         }
 
-        private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions = new Dictionary<int, Func<long, string, string, string, string>>
-                                                                                                                   {
-                                                                                                                       {
-                                                                                                                           1049,
-                                                                                                                           DeclensionRu
-                                                                                                                       }
-                                                                                                                   };
+        private static readonly IDictionary<int, Func<long, string, string, string, string>> declensions =
+                new Dictionary<int, Func<long, string, string, string, string>>
+                {
+                    {
+                        1049,
+                        DeclensionRu
+                    }
+                };
 
         private static string Declension(this long number, string nominative, string genitiveSingular,
                                          string genitivePlural)

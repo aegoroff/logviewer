@@ -27,10 +27,7 @@ namespace logviewer.logic.support
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [PublicAPI]
         public static TResult Return<TInput, TResult>(this TInput input, Func<TInput, TResult> evaluator, TResult failure)
-            where TInput : class
-        {
-            return input == null ? failure : evaluator(input);
-        }
+            where TInput : class => input == null ? failure : evaluator(input);
 
         /// <summary>
         /// If Monad that returns input if input is not null or evaluator returns true

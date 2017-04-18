@@ -37,10 +37,7 @@ namespace logviewer.logic.storage
             this.connection.Open();
         }
 
-        ~DatabaseConnection()
-        {
-            this.DisposeInternal();
-        }
+        ~DatabaseConnection() => this.DisposeInternal();
 
         internal bool IsEmpty { get; }
 
@@ -67,20 +64,11 @@ namespace logviewer.logic.storage
             this.disposed = true;
         }
 
-        internal void BeginTran()
-        {
-            this.ExecuteInCreationContext(o => this.transaction = this.connection.BeginTransaction());
-        }
+        internal void BeginTran() => this.ExecuteInCreationContext(o => this.transaction = this.connection.BeginTransaction());
 
-        internal void CommitTran()
-        {
-            this.ExecuteInCreationContext(o => this.transaction.Commit());
-        }
+        internal void CommitTran() => this.ExecuteInCreationContext(o => this.transaction.Commit());
 
-        internal void RollbackTran()
-        {
-            this.ExecuteInCreationContext(o => this.transaction.Rollback());
-        }
+        internal void RollbackTran() => this.ExecuteInCreationContext(o => this.transaction.Rollback());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
@@ -181,10 +169,7 @@ namespace logviewer.logic.storage
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ExecuteInCreationContext(SendOrPostCallback method)
-        {
-            this.creationContext.Send(method, null);
-        }
+        private void ExecuteInCreationContext(SendOrPostCallback method) => this.creationContext.Send(method, null);
 
         internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
@@ -222,14 +207,8 @@ namespace logviewer.logic.storage
             this.RunSqlQuery(Action, query);
         }
 
-        internal void ExecuteNonQuery(params string[] queries)
-        {
-            this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
-        }
+        internal void ExecuteNonQuery(params string[] queries) => this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
 
-        internal void ExecuteNonQuery(string query)
-        {
-            this.RunSqlQuery(command => command.ExecuteNonQuery(), query);
-        }
+        internal void ExecuteNonQuery(string query) => this.RunSqlQuery(command => command.ExecuteNonQuery(), query);
     }
 }

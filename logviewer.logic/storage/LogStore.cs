@@ -20,7 +20,6 @@ namespace logviewer.logic.storage
 {
     public sealed class LogStore : IDisposable, ILogStore
     {
-        #region Constants and Fields
         private const string CreateColumnTemplate = @"{0} INTEGER NOT NULL";
 
         private const string CreateIndexTemplate = @"CREATE INDEX IF NOT EXISTS IX_{0} ON Log ({0})";
@@ -52,9 +51,7 @@ namespace logviewer.logic.storage
         private string insertPrefix;
 
         private string insertSuffix;
-        #endregion
 
-        #region Constructors and Destructors
         public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
         {
             this.builder = new RulesBuilder(schema);
@@ -69,30 +66,15 @@ namespace logviewer.logic.storage
             this.CreateTables(dbSize);
         }
 
-        private IEnumerable<string> CreateAdditionalColumns()
-        {
-            return this.DdlHelper(CreateColumnTemplate);
-        }
+        private IEnumerable<string> CreateAdditionalColumns() => this.DdlHelper(CreateColumnTemplate);
 
-        private IEnumerable<string> CreateAdditionalIndexes()
-        {
-            return this.DdlHelper(CreateIndexTemplate);
-        }
+        private IEnumerable<string> CreateAdditionalIndexes() => this.DdlHelper(CreateIndexTemplate);
 
-        private IEnumerable<string> DropAdditionalIndexes()
-        {
-            return this.DdlHelper(DropIndexTemplate);
-        }
+        private IEnumerable<string> DropAdditionalIndexes() => this.DdlHelper(DropIndexTemplate);
 
-        private IEnumerable<string> DdlHelper(string template)
-        {
-            return this.ReadAdditionalColumns(column => string.Format(template, column));
-        }
+        private IEnumerable<string> DdlHelper(string template) => this.ReadAdditionalColumns(column => string.Format(template, column));
 
-        private IEnumerable<string> ReadAdditionalColumns(Func<string, string> selector)
-        {
-            return this.rules.Keys.Select(r => selector(r.Name));
-        }
+        private IEnumerable<string> ReadAdditionalColumns(Func<string, string> selector) => this.rules.Keys.Select(r => selector(r.Name));
 
         private string CreateAdditionalColumnsList(string prefix = null)
         {
@@ -148,13 +130,8 @@ namespace logviewer.logic.storage
             this.insertPrefix = $"INSERT INTO Log(Ix, Header, Body{this.CreateAdditionalColumnsList()}) VALUES (";
             this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})"; // Not L10N
         }
-        #endregion
 
-        #region Public Methods and Operators
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
+        public void Dispose() => this.Dispose(true);
 
         [PublicAPI]
         public void StartAddMessages()
@@ -171,16 +148,10 @@ namespace logviewer.logic.storage
         }
 
         [PublicAPI]
-        public void Index()
-        {
-            this.connection.ExecuteNonQuery(this.CreateAdditionalIndexes().ToArray());
-        }
+        public void Index() => this.connection.ExecuteNonQuery(this.CreateAdditionalIndexes().ToArray());
 
         [PublicAPI]
-        public void NoIndex()
-        {
-            this.connection.ExecuteNonQuery(this.DropAdditionalIndexes().ToArray());
-        }
+        public void NoIndex() => this.connection.ExecuteNonQuery(this.DropAdditionalIndexes().ToArray());
 
         [PublicAPI]
         public void AddMessage(LogMessage message)
@@ -456,7 +427,6 @@ namespace logviewer.logic.storage
             var f = useRegexp ? filter : "%" + filter.Trim('%') + "%"; // Not L10N
             command.AddParameter("@Filter", f); // Not L10N
         }
-        #endregion
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
