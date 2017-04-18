@@ -9,7 +9,7 @@ using System.Data;
 
 namespace logviewer.logic.storage
 {
-    internal sealed class OptionsProvider : IOptionsProvider
+    internal sealed class SimpleOptionsStore : ISimpleOptionsStore
     {
         private const string StringOptionsTable = @"StringOptions";
 
@@ -21,9 +21,27 @@ namespace logviewer.logic.storage
 
         private const string ValueParameter = @"@Value";
 
-        private readonly string settingsDatabaseFilePath;
+        private readonly IQueryProvider queryProvider;
 
-        public OptionsProvider(string settingsDatabaseFilePath) => this.settingsDatabaseFilePath = settingsDatabaseFilePath;
+        internal SimpleOptionsStore(IQueryProvider queryProvider)
+        {
+            this.queryProvider = queryProvider;
+
+            const string optionsTableTemplate = @"
+                        CREATE TABLE IF NOT EXISTS {0} (
+                                 Option TEXT PRIMARY KEY,
+                                 Value {1}
+                        );
+                    ";
+
+            var stringOptions = string.Format(optionsTableTemplate, StringOptionsTable, @"TEXT");
+            var integerOptions = string.Format(optionsTableTemplate, IntegerOptionsTable, @"INTEGER");
+            var booleanOptions = string.Format(optionsTableTemplate, BooleanOptionsTable, @"BOOLEAN");
+
+
+            this.queryProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), stringOptions,
+                                                                                 integerOptions, booleanOptions));
+        }
 
         public string ReadStringOption(string option, string defaultValue = null) => this.ReadOption(StringOptionsTable, option,
                                                                                                      defaultValue);
@@ -40,34 +58,9 @@ namespace logviewer.logic.storage
 
         public void UpdateIntegerOption(string option, int value) => this.UpdateOption(IntegerOptionsTable, option, value);
 
-        internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
-        {
-            var result = default(T);
-
-            void Action(IDatabaseConnection connection)
-            {
-                result = connection.ExecuteScalar<T>(query, actionBeforeExecute);
-            }
-
-            this.ExecuteQuery(Action);
-            return result;
-        }
-
-        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null) =>
-                this.ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
-
-        internal void ExecuteQuery(Action<IDatabaseConnection> action)
-        {
-            var connection = new LocalDbConnection(this.settingsDatabaseFilePath);
-            using (connection)
-            {
-                action(connection);
-            }
-        }
-
         private T ReadOption<T>(string table, string option, T defaultValue = default(T))
         {
-            string cmd = $"SELECT Value FROM {{0}} WHERE Option = {OptionParameter}";
+            var cmd = $"SELECT Value FROM {{0}} WHERE Option = {OptionParameter}";
             var result = default(T);
             var read = false;
 
@@ -86,7 +79,7 @@ namespace logviewer.logic.storage
 
             void Action(IDatabaseConnection connection) => connection.ExecuteReader(string.Format(cmd, table), OnRead, BeforeRead);
 
-            this.ExecuteQuery(Action);
+            this.queryProvider.ExecuteQuery(Action);
 
             if (read)
             {
@@ -100,9 +93,9 @@ namespace logviewer.logic.storage
 
         private void UpdateOption<T>(string table, string option, T value)
         {
-            var exist = this.ExecuteScalar<long>(
-                                                 $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}",
-                                                 command => command.AddParameter(OptionParameter, option))
+            var exist = this.queryProvider.ExecuteScalar<long>(
+                                                               $@"SELECT count(1) FROM {table} WHERE Option = {OptionParameter}",
+                                                               command => command.AddParameter(OptionParameter, option))
                         > 0;
 
             void Action(IDbCommand command)
@@ -115,7 +108,7 @@ namespace logviewer.logic.storage
                              ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
                              : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
             var updateQuery = string.Format(format, table);
-            this.ExecuteNonQuery(updateQuery, Action);
+            this.queryProvider.ExecuteNonQuery(updateQuery, Action);
         }
     }
 }

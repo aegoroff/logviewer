@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using logviewer.engine;
 using logviewer.logic.models;
-using logviewer.logic.storage;
 using logviewer.logic.ui.main;
 using Net.Sgoliver.NRtfTree.Util;
 
@@ -43,7 +42,7 @@ namespace logviewer.logic
 
         int SelectedParsingTemplate { get; set; }
 
-        IOptionsProvider OptionsProvider { get; }
+        ISimpleOptionsStore SimpleOptionsStore { get; }
 
         ParsingTemplate ReadParsingTemplate();
 
@@ -69,12 +68,12 @@ namespace logviewer.logic
 
         Color ReadColor(LogLevel level);
 
-        void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action);
+        void ExecuteUsingRecentFilesStore(Action<IStringCollectionStore> action);
 
-        T GetUsingRecentFilesStore<T>(Func<RecentItemsStore, T> function);
+        T GetUsingRecentFilesStore<T>(Func<IStringCollectionStore, T> function);
 
-        void ExecuteUsingRecentFiltersStore(Action<RecentItemsStore> action);
+        void ExecuteUsingRecentFiltersStore(Action<IStringCollectionStore> action);
 
-        T GetUsingRecentFiltersStore<T>(Func<RecentItemsStore, T> function);
+        T GetUsingRecentFiltersStore<T>(Func<IStringCollectionStore, T> function);
     }
 }

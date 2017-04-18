@@ -24,7 +24,7 @@ namespace logviewer.logic.ui.network
 
         private readonly StateMachine<ProxyMode, ProxyModeTransition> machine;
 
-        private readonly IOptionsProvider provider;
+        private readonly ISimpleOptionsStore store;
 
         private readonly INetworkSettingsViewModel viewModel;
 
@@ -32,11 +32,11 @@ namespace logviewer.logic.ui.network
 
         private ProxyMode mode;
 
-        public NetworkWorflow(INetworkSettingsViewModel viewModel, IOptionsProvider provider, IAsymCrypt crypt,
+        public NetworkWorflow(INetworkSettingsViewModel viewModel, ISimpleOptionsStore store, IAsymCrypt crypt,
                               StateMachineMode machineMode)
         {
             this.viewModel = viewModel;
-            this.provider = provider;
+            this.store = store;
             this.crypt = crypt;
 
             this.machine = new StateMachine<ProxyMode, ProxyModeTransition>(() => this.mode, s => this.mode = s);
@@ -77,7 +77,7 @@ namespace logviewer.logic.ui.network
             }
             else
             {
-                this.provider.UpdateIntegerOption(Constants.ProxyModeProperty, (int)this.mode);
+                this.store.UpdateIntegerOption(Constants.ProxyModeProperty, (int)this.mode);
                 writeAction();
             }
         }
@@ -108,15 +108,15 @@ namespace logviewer.logic.ui.network
 
         private void ReadOnEnterIntoCustom()
         {
-            this.viewModel.Host = this.host ?? this.provider.ReadStringOption(Constants.HostProperty);
-            this.viewModel.Port = this.port > 0 ? this.port : this.provider.ReadIntegerOption(Constants.PortProperty);
+            this.viewModel.Host = this.host ?? this.store.ReadStringOption(Constants.HostProperty);
+            this.viewModel.Port = this.port > 0 ? this.port : this.store.ReadIntegerOption(Constants.PortProperty);
         }
 
         private void ReadOnEnterToCustomManualUser(StateMachine<ProxyMode, ProxyModeTransition>.Transition transition)
         {
-            this.viewModel.UserName = this.login ?? this.provider.ReadStringOption(Constants.LoginProperty);
-            this.viewModel.Password = this.crypt.Decrypt(this.password ?? this.provider.ReadStringOption(Constants.PasswordProperty));
-            this.viewModel.Domain = this.domain ?? this.provider.ReadStringOption(Constants.DomainProperty);
+            this.viewModel.UserName = this.login ?? this.store.ReadStringOption(Constants.LoginProperty);
+            this.viewModel.Password = this.crypt.Decrypt(this.password ?? this.store.ReadStringOption(Constants.PasswordProperty));
+            this.viewModel.Domain = this.domain ?? this.store.ReadStringOption(Constants.DomainProperty);
         }
 
         private void ReadOnEnterToCustomDefaultUser()
@@ -146,9 +146,9 @@ namespace logviewer.logic.ui.network
                 return false;
             }
 
-            this.provider.UpdateStringOption(Constants.HostProperty, this.viewModel.Host);
-            this.provider.UpdateIntegerOption(Constants.PortProperty, this.viewModel.Port);
-            this.provider.UpdateBooleanOption(Constants.IsUseDefaultCredentialsProperty, this.viewModel.IsUseDefaultCredentials);
+            this.store.UpdateStringOption(Constants.HostProperty, this.viewModel.Host);
+            this.store.UpdateIntegerOption(Constants.PortProperty, this.viewModel.Port);
+            this.store.UpdateBooleanOption(Constants.IsUseDefaultCredentialsProperty, this.viewModel.IsUseDefaultCredentials);
 
             return true;
         }
@@ -160,12 +160,12 @@ namespace logviewer.logic.ui.network
                 return;
             }
 
-            this.provider.UpdateStringOption(Constants.LoginProperty, this.viewModel.UserName);
+            this.store.UpdateStringOption(Constants.LoginProperty, this.viewModel.UserName);
 
             var encrypted = this.crypt.Encrypt(this.viewModel.Password);
-            this.provider.UpdateStringOption(Constants.PasswordProperty, encrypted);
+            this.store.UpdateStringOption(Constants.PasswordProperty, encrypted);
 
-            this.provider.UpdateStringOption(Constants.DomainProperty, this.viewModel.Domain);
+            this.store.UpdateStringOption(Constants.DomainProperty, this.viewModel.Domain);
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Data;
 
 namespace logviewer.logic.storage
 {
-    public sealed class RecentItemsStore : IDisposable
+    internal sealed class StringCollectionStore : IDisposable, IStringCollectionStore
     {
         private const string ItemParameter = @"@Item";
 
@@ -22,7 +22,7 @@ namespace logviewer.logic.storage
 
         private readonly IDatabaseConnection connection;
 
-        public RecentItemsStore(ISettingsProvider settings, string tableName, int maxItems = 0)
+        internal StringCollectionStore(ISettingsProvider settings, string tableName, int maxItems = 0)
         {
             this.tableName = tableName;
             this.maxItems = maxItems == 0 ? settings.KeepLastNFiles : maxItems;
@@ -32,11 +32,11 @@ namespace logviewer.logic.storage
 
         private void CreateTables()
         {
-            string createTable = $@"CREATE TABLE IF NOT EXISTS {this.tableName} (
+            var createTable = $@"CREATE TABLE IF NOT EXISTS {this.tableName} (
                                  Item TEXT PRIMARY KEY,
                                  UsedAt INTEGER  NOT NULL
                         );";
-            string createItemIndex = $"CREATE INDEX IF NOT EXISTS IX_Item ON {this.tableName} (Item)";
+            var createItemIndex = $"CREATE INDEX IF NOT EXISTS IX_Item ON {this.tableName} (Item)";
             this.connection.ExecuteNonQuery(createTable, createItemIndex);
         }
 
@@ -82,7 +82,7 @@ namespace logviewer.logic.storage
 
         public void Remove(params string[] items)
         {
-            string cmd = $@"DELETE FROM {this.tableName} WHERE Item = {ItemParameter}";
+            var cmd = $@"DELETE FROM {this.tableName} WHERE Item = {ItemParameter}";
 
             this.connection.BeginTran();
             foreach (var file in items)

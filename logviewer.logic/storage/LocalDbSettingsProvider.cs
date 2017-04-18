@@ -78,9 +78,11 @@ namespace logviewer.logic.storage
 
         private readonly FixedSizeDictionary<TextFormat> formatsMap = new FixedSizeDictionary<TextFormat>((int)LogLevel.Fatal + 1);
 
-        private readonly OptionsProvider optionsProvider;
+        private readonly ISimpleOptionsStore simpleOptionsStore;
 
         private readonly TextFormat noneLevelFormat = new TextFormat();
+
+        private readonly IQueryProvider queryProvider;
 
         private const int HeaderFontSize = 12;
 
@@ -110,7 +112,7 @@ namespace logviewer.logic.storage
             this.settingsDatabaseFilePath = Path.Combine(ApplicationFolder, settingsDatabaseFileName);
             this.defaultPageSize = defaultPageSize;
             this.defaultKeepLastNFiles = defaultKeepLastNFiles;
-            this.optionsProvider = new OptionsProvider(this.settingsDatabaseFilePath);
+
             this.parsingTemplateProperties = ReadParsingTemplateProperties().ToArray();
             this.parsingTemplatePropertiesColumns = this.parsingTemplateProperties.Select(GetColumnAttribute).ToArray();
             this.parsingTemplatePropertiesNames = this.parsingTemplatePropertiesColumns.Select(c => c.Name).ToArray();
@@ -121,6 +123,8 @@ namespace logviewer.logic.storage
             this.upgrades.Add(this.Upgrade4);
             this.upgrades.Add(this.Upgrade5);
 
+            this.queryProvider = new LocalDbQueryProvider(this.settingsDatabaseFilePath);
+            this.simpleOptionsStore = new SimpleOptionsStore(this.queryProvider);
             this.CreateTables();
             this.MigrateFromRegistry();
             this.RunUpgrade();
@@ -155,7 +159,7 @@ namespace logviewer.logic.storage
 
         public Color ReadColor(LogLevel level)
         {
-            var argb = this.optionsProvider.ReadIntegerOption(level.ToParameterName(), -1);
+            var argb = this.simpleOptionsStore.ReadIntegerOption(level.ToParameterName(), -1);
             return argb == -1 ? defaultColors[level] : Color.FromArgb(argb);
         }
 
@@ -163,8 +167,8 @@ namespace logviewer.logic.storage
 
         public int SelectedParsingTemplate
         {
-            get => this.optionsProvider.ReadIntegerOption(SelectedTemplateParameterName);
-            set => this.optionsProvider.UpdateIntegerOption(SelectedTemplateParameterName, value);
+            get => this.simpleOptionsStore.ReadIntegerOption(SelectedTemplateParameterName);
+            set => this.simpleOptionsStore.UpdateIntegerOption(SelectedTemplateParameterName, value);
         }
 
         public void UpdateColor(LogLevel level, Color color)
@@ -177,7 +181,7 @@ namespace logviewer.logic.storage
             this.headerFormatsMap[level] = FormatChar(color, true);
             this.bodyFormatsMap[level] = FormatChar(color, false, BodyFontSize);
             this.formatsMap[(int)level] = CreateFormat(color);
-            this.optionsProvider.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
+            this.simpleOptionsStore.UpdateIntegerOption(level.ToParameterName(), color.ToArgb());
         }
 
         private static RegistryKey RegistryKey => GetRegKey(RegistryKeyBase + OptionsSectionName);
@@ -198,64 +202,64 @@ namespace logviewer.logic.storage
 
         public string MessageFilter
         {
-            get => this.optionsProvider.ReadStringOption(FilterParameterName);
-            set => this.optionsProvider.UpdateStringOption(FilterParameterName, value);
+            get => this.simpleOptionsStore.ReadStringOption(FilterParameterName);
+            set => this.simpleOptionsStore.UpdateStringOption(FilterParameterName, value);
         }
 
         public DateTime LastUpdateCheckTime
         {
             get => DateTime
-                    .Parse(this.optionsProvider.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
+                    .Parse(this.simpleOptionsStore.ReadStringOption(LastUpdateCheckTimearameterName, DateTime.UtcNow.ToString(@"O")))
                     .ToUniversalTime();
-            set => this.optionsProvider.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O"));
+            set => this.simpleOptionsStore.UpdateStringOption(LastUpdateCheckTimearameterName, value.ToString(@"O"));
         }
 
         public bool OpenLastFile
         {
-            get => this.optionsProvider.ReadBooleanOption(OpenLastFileParameterName);
-            set => this.optionsProvider.UpdateBooleanOption(OpenLastFileParameterName, value);
+            get => this.simpleOptionsStore.ReadBooleanOption(OpenLastFileParameterName);
+            set => this.simpleOptionsStore.UpdateBooleanOption(OpenLastFileParameterName, value);
         }
 
         public bool AutoRefreshOnFileChange
         {
-            get => this.optionsProvider.ReadBooleanOption(AutoRefreshOnFileChangeName);
-            set => this.optionsProvider.UpdateBooleanOption(AutoRefreshOnFileChangeName, value);
+            get => this.simpleOptionsStore.ReadBooleanOption(AutoRefreshOnFileChangeName);
+            set => this.simpleOptionsStore.UpdateBooleanOption(AutoRefreshOnFileChangeName, value);
         }
 
         public int MinLevel
         {
-            get => this.optionsProvider.ReadIntegerOption(MinLevelParameterName);
-            set => this.optionsProvider.UpdateIntegerOption(MinLevelParameterName, value);
+            get => this.simpleOptionsStore.ReadIntegerOption(MinLevelParameterName);
+            set => this.simpleOptionsStore.UpdateIntegerOption(MinLevelParameterName, value);
         }
 
         public int MaxLevel
         {
-            get => this.optionsProvider.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal);
-            set => this.optionsProvider.UpdateIntegerOption(MaxLevelParameterName, value);
+            get => this.simpleOptionsStore.ReadIntegerOption(MaxLevelParameterName, (int)LogLevel.Fatal);
+            set => this.simpleOptionsStore.UpdateIntegerOption(MaxLevelParameterName, value);
         }
 
         public int PageSize
         {
-            get => this.optionsProvider.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize);
-            set => this.optionsProvider.UpdateIntegerOption(PageSizeParameterName, value);
+            get => this.simpleOptionsStore.ReadIntegerOption(PageSizeParameterName, this.defaultPageSize);
+            set => this.simpleOptionsStore.UpdateIntegerOption(PageSizeParameterName, value);
         }
 
         public bool Sorting
         {
-            get => this.optionsProvider.ReadBooleanOption(SortingParameterName);
-            set => this.optionsProvider.UpdateBooleanOption(SortingParameterName, value);
+            get => this.simpleOptionsStore.ReadBooleanOption(SortingParameterName);
+            set => this.simpleOptionsStore.UpdateBooleanOption(SortingParameterName, value);
         }
 
         public bool UseRegexp
         {
-            get => this.optionsProvider.ReadBooleanOption(UseRegexpParameterName);
-            set => this.optionsProvider.UpdateBooleanOption(UseRegexpParameterName, value);
+            get => this.simpleOptionsStore.ReadBooleanOption(UseRegexpParameterName);
+            set => this.simpleOptionsStore.UpdateBooleanOption(UseRegexpParameterName, value);
         }
 
         public int KeepLastNFiles
         {
-            get => this.optionsProvider.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles);
-            set => this.optionsProvider.UpdateIntegerOption(KeepLastNFilesParameterName, value);
+            get => this.simpleOptionsStore.ReadIntegerOption(KeepLastNFilesParameterName, this.defaultKeepLastNFiles);
+            set => this.simpleOptionsStore.UpdateIntegerOption(KeepLastNFilesParameterName, value);
         }
 
         public string FullPathToDatabase => this.settingsDatabaseFilePath;
@@ -264,7 +268,7 @@ namespace logviewer.logic.storage
         {
             var propertiesSet = string.Join(@",", from string member in this.parsingTemplatePropertiesNames select $"{member} = @{member}");
 
-            this.optionsProvider.ExecuteNonQuery(
+            this.queryProvider.ExecuteNonQuery(
                                                  $@"
                     UPDATE
                         ParsingTemplates
@@ -297,7 +301,7 @@ namespace logviewer.logic.storage
 
             void Action(IDatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
-            this.optionsProvider.ExecuteQuery(Action);
+            this.queryProvider.ExecuteQuery(Action);
 
             return result;
         }
@@ -325,7 +329,7 @@ namespace logviewer.logic.storage
 
             void Action(IDatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
-            this.optionsProvider.ExecuteQuery(Action);
+            this.queryProvider.ExecuteQuery(Action);
 
             return result;
         }
@@ -367,7 +371,7 @@ namespace logviewer.logic.storage
 
             void Action(IDatabaseConnection connection) => connection.ExecuteReader(query, OnRead, BeforeRead);
 
-            this.optionsProvider.ExecuteQuery(Action);
+            this.queryProvider.ExecuteQuery(Action);
 
             return result;
         }
@@ -390,7 +394,7 @@ namespace logviewer.logic.storage
                         @Ix,
                         {propertiesParams}
                     )";
-            this.optionsProvider.ExecuteNonQuery(query, command => this.AddParsingTemplateIntoCommand(command, template));
+            this.queryProvider.ExecuteNonQuery(query, command => this.AddParsingTemplateIntoCommand(command, template));
         }
 
         public void DeleteParsingTemplate(int ix)
@@ -455,7 +459,7 @@ namespace logviewer.logic.storage
                 connection.CommitTran();
             }
 
-            this.optionsProvider.ExecuteQuery(Action);
+            this.queryProvider.ExecuteQuery(Action);
         }
 
         public RtfCharFormat FormatHead(LogLevel level) => this.headerFormatsMap[level];
@@ -468,17 +472,17 @@ namespace logviewer.logic.storage
             return r ?? this.noneLevelFormat;
         }
 
-        public void ExecuteUsingRecentFilesStore(Action<RecentItemsStore> action) => this.RunUsingRecentItemsStore(action, RecentFiles);
+        public void ExecuteUsingRecentFilesStore(Action<IStringCollectionStore> action) => this.RunUsingRecentItemsStore(action, RecentFiles);
 
-        public void ExecuteUsingRecentFiltersStore(Action<RecentItemsStore> action) => this.RunUsingRecentItemsStore(action, RecentFilters,
+        public void ExecuteUsingRecentFiltersStore(Action<IStringCollectionStore> action) => this.RunUsingRecentItemsStore(action, RecentFilters,
                                                                                                                      KeepLastFilters);
 
-        public T GetUsingRecentFilesStore<T>(Func<RecentItemsStore, T> function) => this.GetUsingRecentItemsStore(function, RecentFiles);
+        public T GetUsingRecentFilesStore<T>(Func<IStringCollectionStore, T> function) => this.GetUsingRecentItemsStore(function, RecentFiles);
 
-        public T GetUsingRecentFiltersStore<T>(Func<RecentItemsStore, T> function) => this.GetUsingRecentItemsStore(function, RecentFilters,
+        public T GetUsingRecentFiltersStore<T>(Func<IStringCollectionStore, T> function) => this.GetUsingRecentItemsStore(function, RecentFilters,
                                                                                                                     KeepLastFilters);
 
-        public IOptionsProvider OptionsProvider => this.optionsProvider;
+        public ISimpleOptionsStore SimpleOptionsStore => this.simpleOptionsStore;
 
         private static RtfCharFormat FormatChar(Color color, bool bold, int size = HeaderFontSize)
         {
@@ -503,17 +507,6 @@ namespace logviewer.logic.storage
 
         private void CreateTables()
         {
-            const string optionsTableTemplate = @"
-                        CREATE TABLE IF NOT EXISTS {0} (
-                                 Option TEXT PRIMARY KEY,
-                                 Value {1}
-                        );
-                    ";
-
-            var stringOptions = string.Format(optionsTableTemplate, @"StringOptions", @"TEXT");
-            var integerOptions = string.Format(optionsTableTemplate, @"IntegerOptions", @"INTEGER");
-            var booleanOptions = string.Format(optionsTableTemplate, @"BooleanOptions", @"BOOLEAN");
-
             const string databaseConfigurationTable = @"
                         CREATE TABLE IF NOT EXISTS DatabaseConfiguration (
                                  Version INTEGER PRIMARY KEY,
@@ -521,7 +514,7 @@ namespace logviewer.logic.storage
                         );
                     ";
 
-            this.ExecuteNonQuery(stringOptions, integerOptions, booleanOptions, this.ParsingTeplateCreateCmd(), databaseConfigurationTable);
+            this.ExecuteNonQuery(this.ParsingTeplateCreateCmd(), databaseConfigurationTable);
         }
 
         private string ParsingTeplateCreateCmd()
@@ -555,7 +548,7 @@ namespace logviewer.logic.storage
         {
             var since = (int)this.SchemaVersion;
 
-            this.optionsProvider.ExecuteQuery(delegate(IDatabaseConnection connection)
+            this.queryProvider.ExecuteQuery(delegate(IDatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -582,7 +575,7 @@ namespace logviewer.logic.storage
             {
                 try
                 {
-                    return this.optionsProvider.ExecuteScalar<long>(@"SELECT max(Version) FROM DatabaseConfiguration");
+                    return this.queryProvider.ExecuteScalar<long>(@"SELECT max(Version) FROM DatabaseConfiguration");
                 }
                 catch (Exception e)
                 {
@@ -681,7 +674,7 @@ namespace logviewer.logic.storage
         }
 
         private void ExecuteNonQuery(params string[] queries) =>
-                this.optionsProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
+                this.queryProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), queries));
 
         private void MigrateFromRegistry()
         {
@@ -726,11 +719,11 @@ namespace logviewer.logic.storage
             Registry.CurrentUser.DeleteSubKeyTree(RegistryKeyBase);
         }
 
-        private void MigrateString(string option) => this.optionsProvider.UpdateStringOption(option, GetStringValue(option));
+        private void MigrateString(string option) => this.simpleOptionsStore.UpdateStringOption(option, GetStringValue(option));
 
-        private void MigrateBoolean(string option) => this.optionsProvider.UpdateBooleanOption(option, GetBoolValue(option));
+        private void MigrateBoolean(string option) => this.simpleOptionsStore.UpdateBooleanOption(option, GetBoolValue(option));
 
-        private void MigrateInteger(string option) => this.optionsProvider.UpdateIntegerOption(option, GetIntValue(option));
+        private void MigrateInteger(string option) => this.simpleOptionsStore.UpdateIntegerOption(option, GetIntValue(option));
 
         private void AddParsingTemplateIntoCommand(IDbCommand command, ParsingTemplate template)
         {
@@ -768,11 +761,11 @@ namespace logviewer.logic.storage
 
         private static bool GetBoolValue(string key) => GetIntValue(key) == 1;
 
-        private void RunUsingRecentItemsStore(Action<RecentItemsStore> action, string table, int maxItems = 0)
+        private void RunUsingRecentItemsStore(Action<StringCollectionStore> action, string table, int maxItems = 0)
         {
             try
             {
-                using (var itemsStore = new RecentItemsStore(this, table, maxItems))
+                using (var itemsStore = new StringCollectionStore(this, table, maxItems))
                 {
                     action(itemsStore);
                 }
@@ -783,11 +776,11 @@ namespace logviewer.logic.storage
             }
         }
 
-        private T GetUsingRecentItemsStore<T>(Func<RecentItemsStore, T> function, string table, int maxItems = 0)
+        private T GetUsingRecentItemsStore<T>(Func<IStringCollectionStore, T> function, string table, int maxItems = 0)
         {
             try
             {
-                using (var itemsStore = new RecentItemsStore(this, table, maxItems))
+                using (var itemsStore = new StringCollectionStore(this, table, maxItems))
                 {
                     return function(itemsStore);
                 }

@@ -13,14 +13,14 @@ namespace logviewer.tests
     [PublicAPI]
     public class SpecNetworkSettingsSteps
     {
-        private readonly Mock<IOptionsProvider> settingsProvider;
+        private readonly Mock<ISimpleOptionsStore> settingsProvider;
         private readonly NetworkSettingsViewModel viewModel;
         private NetworkSettingsModel model;
         private readonly AsymCrypt crypt;
 
         public SpecNetworkSettingsSteps()
         {
-            this.settingsProvider = new Mock<IOptionsProvider>();
+            this.settingsProvider = new Mock<ISimpleOptionsStore>();
             this.viewModel = new NetworkSettingsViewModel();
             this.crypt = new AsymCrypt();
             this.crypt.GenerateKeys();

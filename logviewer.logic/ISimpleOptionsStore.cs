@@ -6,7 +6,7 @@
 
 namespace logviewer.logic
 {
-    public interface IOptionsProvider
+    public interface ISimpleOptionsStore
     {
         string ReadStringOption(string option, string defaultValue = null);
 

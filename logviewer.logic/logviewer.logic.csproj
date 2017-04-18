@@ -104,9 +104,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="storage\IQueryProvider.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="storage\IDatabaseConnection.cs" />
     <Compile Include="storage\ILogStore.cs" />
+    <Compile Include="IStringCollectionStore.cs" />
+    <Compile Include="storage\LocalDbQueryProvider.cs" />
     <Compile Include="support\IAsymCrypt.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
     <Compile Include="ui\Extensions.cs" />
@@ -124,7 +127,7 @@
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />
     <Compile Include="DefectSender.cs" />
     <Compile Include="ui\IItemsProvider.cs" />
-    <Compile Include="IOptionsProvider.cs" />
+    <Compile Include="ISimpleOptionsStore.cs" />
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ui\settings\ColorPickResult.cs" />
     <Compile Include="storage\ColumnAttribute.cs" />
@@ -148,7 +151,7 @@
     <Compile Include="ui\network\Constants.cs" />
     <Compile Include="ui\network\INetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\NetworkSettingsModel.cs" />
-    <Compile Include="storage\OptionsProvider.cs" />
+    <Compile Include="storage\SimpleOptionsStore.cs" />
     <Compile Include="ui\network\NetworkSettingsViewModel.cs" />
     <Compile Include="ui\network\ProxyMode.cs" />
     <Compile Include="ui\network\StateMachineMode.cs" />
@@ -162,7 +165,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="storage\PropertyType.cs" />
-    <Compile Include="storage\RecentItemsStore.cs" />
+    <Compile Include="storage\StringCollectionStore.cs" />
     <Compile Include="support\SafeRunner.cs" />
     <Compile Include="ui\settings\SettingsController.cs" />
     <Compile Include="storage\LocalDbSettingsProvider.cs" />

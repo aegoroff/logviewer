@@ -115,7 +115,7 @@ namespace logviewer.tests
         {
             this.settings.SetupGet(x => x.OpenLastFile).Returns(true);
 
-            this.settings.Setup(x => x.GetUsingRecentFilesStore(It.IsAny<Func<RecentItemsStore, string>>())).Returns(this.path);
+            this.settings.Setup(x => x.GetUsingRecentFilesStore(It.IsAny<Func<IStringCollectionStore, string>>())).Returns(this.path);
 
             this.viewModel.SetupGet(_ => _.MinLevel).Returns((int) LogLevel.Trace);
             this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int) LogLevel.Fatal);

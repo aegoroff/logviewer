@@ -15,7 +15,7 @@ namespace logviewer.logic.ui.network
     {
         private readonly INetworkSettingsViewModel viewModel;
 
-        private readonly IOptionsProvider provider;
+        private readonly ISimpleOptionsStore store;
 
         private readonly NetworkWorflow stateMachine;
 
@@ -25,13 +25,13 @@ namespace logviewer.logic.ui.network
         ///     Creates new controller class
         /// </summary>
         /// <param name="viewModel">Domain model instance</param>
-        /// <param name="provider">Options provider instance</param>
-        public NetworkSettingsModel(INetworkSettingsViewModel viewModel, IOptionsProvider provider)
+        /// <param name="store">Options store instance</param>
+        public NetworkSettingsModel(INetworkSettingsViewModel viewModel, ISimpleOptionsStore store)
         {
             this.viewModel = viewModel;
-            this.provider = provider;
+            this.store = store;
             this.InitCrypter();
-            this.stateMachine = new NetworkWorflow(viewModel, provider, this.crypt, StateMachineMode.Read);
+            this.stateMachine = new NetworkWorflow(viewModel, store, this.crypt, StateMachineMode.Read);
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace logviewer.logic.ui.network
         public void Initialize()
         {
             // TODO: think over about async read
-            var mode = (ProxyMode)this.provider.ReadIntegerOption(Constants.ProxyModeProperty, (int)ProxyMode.AutoProxyDetection);
-            var useDefalutCredentials = this.provider.ReadBooleanOption(Constants.IsUseDefaultCredentialsProperty, true);
+            var mode = (ProxyMode)this.store.ReadIntegerOption(Constants.ProxyModeProperty, (int)ProxyMode.AutoProxyDetection);
+            var useDefalutCredentials = this.store.ReadBooleanOption(Constants.IsUseDefaultCredentialsProperty, true);
             this.viewModel.Initialize(mode, useDefalutCredentials);
             this.viewModel.ModeChanged += this.OnModeChanged;
             var transition = this.GetTransition();
@@ -79,7 +79,7 @@ namespace logviewer.logic.ui.network
 
         private void WriteUnsafe()
         {
-            var sm = new NetworkWorflow(this.viewModel, this.provider, this.crypt, StateMachineMode.Write);
+            var sm = new NetworkWorflow(this.viewModel, this.store, this.crypt, StateMachineMode.Write);
             sm.Trigger(this.GetTransition());
         }
 
@@ -102,14 +102,14 @@ namespace logviewer.logic.ui.network
 
         private void InitCrypter()
         {
-            var privateKey = this.provider.ReadStringOption(Constants.PrivateKey);
-            var publicKey = this.provider.ReadStringOption(Constants.PublicKey);
+            var privateKey = this.store.ReadStringOption(Constants.PrivateKey);
+            var publicKey = this.store.ReadStringOption(Constants.PublicKey);
             if (string.IsNullOrEmpty(privateKey) || string.IsNullOrEmpty(publicKey))
             {
                 this.crypt = new AsymCrypt();
                 this.crypt.GenerateKeys();
-                this.provider.UpdateStringOption(Constants.PrivateKey, this.crypt.PrivateKey);
-                this.provider.UpdateStringOption(Constants.PublicKey, this.crypt.PublicKey);
+                this.store.UpdateStringOption(Constants.PrivateKey, this.crypt.PrivateKey);
+                this.store.UpdateStringOption(Constants.PublicKey, this.crypt.PublicKey);
             }
             else
             {

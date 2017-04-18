@@ -20,7 +20,7 @@ namespace logviewer.ui
             INetworkSettingsViewModel viewModel = new NetworkSettingsViewModel();
             viewModel.PasswordUpdated += this.ModelOnPasswordUpdated;
             this.DataContext = viewModel;
-            this.model = new NetworkSettingsModel(viewModel, MainViewModel.Current.SettingsProvider.OptionsProvider);
+            this.model = new NetworkSettingsModel(viewModel, MainViewModel.Current.SettingsProvider.SimpleOptionsStore);
             this.model.Initialize();
         }
 

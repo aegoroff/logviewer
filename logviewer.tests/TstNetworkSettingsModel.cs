@@ -1,8 +1,8 @@
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 05.09.2007
-// � 2007-2017 Alexander Egorov
+// © 2007-2017 Alexander Egorov
 
 using logviewer.logic;
 using logviewer.logic.support;
@@ -19,12 +19,12 @@ namespace logviewer.tests
         private const string PasswordValue = "p";
         private const string DomainValue = "d";
         private const int PortValue = 8080;
-        private readonly Mock<IOptionsProvider> provider;
+        private readonly Mock<ISimpleOptionsStore> provider;
         private readonly Mock<INetworkSettingsViewModel> viewModel;
 
         public TstNetworkSettingsModel()
         {
-            this.provider = new Mock<IOptionsProvider>();
+            this.provider = new Mock<ISimpleOptionsStore>();
             this.viewModel = new Mock<INetworkSettingsViewModel>();
         }
 
