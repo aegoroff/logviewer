@@ -44,10 +44,7 @@ namespace logviewer.engine.grammar
         /// <param name="message">Error message.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         public GrokSyntaxException(string message, Exception innerException) :
-            base(message, innerException)
-        {
-            this.Message = message;
-        }
+            base(message, innerException) => this.Message = message;
 
         public override string Message { get; }
 

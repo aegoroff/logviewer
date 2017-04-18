@@ -48,10 +48,7 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="property">Property to define parser type for</param>
         /// <returns>Parser type info</returns>
-        public ParserType DefineParserType(SemanticProperty property)
-        {
-            return this.rules.ContainsKey(property) ? this.rules[property].First().Type : ParserType.String;
-        }
+        public ParserType DefineParserType(SemanticProperty property) => this.rules.ContainsKey(property) ? this.rules[property].First().Type : ParserType.String;
 
         private static SemanticProperty Create(string name, IEnumerable<GrokRule> castingRules)
         {

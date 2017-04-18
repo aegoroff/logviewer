@@ -14,14 +14,8 @@ namespace logviewer.engine.grammar
     {
         private readonly string content;
 
-        internal Pattern(string content)
-        {
-            this.content = content;
-        }
+        internal Pattern(string content) => this.content = content;
 
-        public string Compose(IList<Semantic> messageSchema)
-        {
-            return this.content;
-        }
+        public string Compose(IList<Semantic> messageSchema) => this.content;
     }
 }

@@ -58,10 +58,7 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="other">Intance to compare with</param>
         /// <returns>True if other's intance pattern equals to this pattern</returns>
-        public bool Equals(GrokRule other)
-        {
-            return string.Equals(this.pattern, other.pattern, StringComparison.OrdinalIgnoreCase);
-        }
+        public bool Equals(GrokRule other) => string.Equals(this.pattern, other.pattern, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
@@ -87,10 +84,7 @@ namespace logviewer.engine
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return this.pattern?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => this.pattern?.GetHashCode() ?? 0;
 
         /// <summary>
         /// Compare two instance for equality
@@ -98,10 +92,7 @@ namespace logviewer.engine
         /// <param name="r1">First instance</param>
         /// <param name="r2">Second instance</param>
         /// <returns>True if instances are equivalent false otherwise</returns>
-        public static bool operator ==(GrokRule r1, GrokRule r2)
-        {
-            return r1.Equals(r2);
-        }
+        public static bool operator ==(GrokRule r1, GrokRule r2) => r1.Equals(r2);
 
         /// <summary>
         /// Compare two instance for difference
@@ -109,9 +100,6 @@ namespace logviewer.engine
         /// <param name="r1">First instance</param>
         /// <param name="r2">Second instance</param>
         /// <returns>True if instances are not equivalent false otherwise</returns>
-        public static bool operator !=(GrokRule r1, GrokRule r2)
-        {
-            return !(r1 == r2);
-        }
+        public static bool operator !=(GrokRule r1, GrokRule r2) => !(r1 == r2);
     }
 }

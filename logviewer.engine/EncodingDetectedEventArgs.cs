@@ -23,10 +23,7 @@ namespace logviewer.engine
         /// Initializes new args instance
         /// </summary>
         /// <param name="encoding">Encoding detected</param>
-        public EncodingDetectedEventArgs(Encoding encoding)
-        {
-            this.Encoding = encoding;
-        }
+        public EncodingDetectedEventArgs(Encoding encoding) => this.Encoding = encoding;
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -35,9 +32,6 @@ namespace logviewer.engine
         /// A string that represents the current object.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return this.Encoding?.EncodingName ?? string.Empty;
-        }
+        public override string ToString() => this.Encoding?.EncodingName ?? string.Empty;
     }
 }

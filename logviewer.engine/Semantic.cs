@@ -35,10 +35,7 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="rule">Casting rule</param>
-        public Semantic(string property, GrokRule rule) : this(property)
-        {
-            this.castingRules.Add(rule);
-        }
+        public Semantic(string property, GrokRule rule) : this(property) => this.castingRules.Add(rule);
 
         /// <summary>
         /// Gets semantic property name
@@ -65,10 +62,7 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="other">Intance to compare with</param>
         /// <returns>True if other's intance property equals to this property</returns>
-        public bool Equals(Semantic other)
-        {
-            return string.Equals(this.property, other.property, StringComparison.OrdinalIgnoreCase);
-        }
+        public bool Equals(Semantic other) => string.Equals(this.property, other.property, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
@@ -94,10 +88,7 @@ namespace logviewer.engine
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return this.property?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => this.property?.GetHashCode() ?? 0;
 
         /// <summary>
         /// Compare two instance for equality
@@ -105,10 +96,7 @@ namespace logviewer.engine
         /// <param name="s1">First instance</param>
         /// <param name="s2">Second instance</param>
         /// <returns>True if instances are equivalent false otherwise</returns>
-        public static bool operator ==(Semantic s1, Semantic s2)
-        {
-            return s1.Equals(s2);
-        }
+        public static bool operator ==(Semantic s1, Semantic s2) => s1.Equals(s2);
 
         /// <summary>
         /// Compare two instance for difference
@@ -116,9 +104,6 @@ namespace logviewer.engine
         /// <param name="s1">First instance</param>
         /// <param name="s2">Second instance</param>
         /// <returns>True if instances are not equivalent false otherwise</returns>
-        public static bool operator !=(Semantic s1, Semantic s2)
-        {
-            return !(s1 == s2);
-        }
+        public static bool operator !=(Semantic s1, Semantic s2) => !(s1 == s2);
     }
 }

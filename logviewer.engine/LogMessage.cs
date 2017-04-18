@@ -204,10 +204,7 @@ namespace logviewer.engine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ParseString(string dataToParse, string property)
-        {
-            this.stringProperties[property] = dataToParse;
-        }
+        private void ParseString(string dataToParse, string property) => this.stringProperties[property] = dataToParse;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
@@ -299,20 +296,14 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="property">Property to get data of</param>
         /// <returns>Property value</returns>
-        public long IntegerProperty(string property)
-        {
-            return GetProperty(this.integerProperties, property);
-        }
+        public long IntegerProperty(string property) => GetProperty(this.integerProperties, property);
 
         /// <summary>
         /// Gets message's string metadata using property name specified
         /// </summary>
         /// <param name="property">Property to get data of</param>
         /// <returns>Property value</returns>
-        public string StringProperty(string property)
-        {
-            return GetProperty(this.stringProperties, property);
-        }
+        public string StringProperty(string property) => GetProperty(this.stringProperties, property);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetProperty<T>(IDictionary<string, T> dict, string property)
@@ -326,20 +317,14 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="value">Property value</param>
-        public void UpdateIntegerProperty(string property, long value)
-        {
-            this.integerProperties[property] = value;
-        }
+        public void UpdateIntegerProperty(string property, long value) => this.integerProperties[property] = value;
 
         /// <summary>
         /// Updates or add string property
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="value">Property value</param>
-        public void UpdateStringProperty(string property, string value)
-        {
-            this.stringProperties[property] = value;
-        }
+        public void UpdateStringProperty(string property, string value) => this.stringProperties[property] = value;
 
         /// <summary>
         /// Builds message from lines array. All metadata will be extracted using schema specified
@@ -365,23 +350,17 @@ namespace logviewer.engine
         /// <summary>
         /// Clears message's builder
         /// </summary>
-        public void Clear()
-        {
-            this.bodyBuilder.Clear();
-        }
+        public void Clear() => this.bodyBuilder.Clear();
 
         /// <summary>
         /// Creates new <see cref="LogMessage"/> instance
         /// </summary>
         /// <returns>new <see cref="LogMessage"/> instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LogMessage Create()
-        {
-            return new LogMessage(null, null)
-                   {
-                       bodyBuilder = new StringBuilder()
-                   };
-        }
+        public static LogMessage Create() => new LogMessage(null, null)
+                                             {
+                                                 bodyBuilder = new StringBuilder()
+                                             };
 
         #region Constants and Fields
         private Dictionary<string, long> integerProperties;
