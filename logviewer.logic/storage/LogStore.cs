@@ -18,7 +18,7 @@ using Microsoft.VisualBasic.Devices;
 
 namespace logviewer.logic.storage
 {
-    public sealed class LogStore : IDisposable, ILogStore
+    public sealed class LogStore : ILogStore
     {
         private const string CreateColumnTemplate = @"{0} INTEGER NOT NULL";
 
@@ -30,7 +30,7 @@ namespace logviewer.logic.storage
 
         private const int DelaySeconds = 10;
 
-        private readonly DatabaseConnection connection;
+        private readonly IDatabaseConnection connection;
 
         private string[] additionalColumns;
 
@@ -62,7 +62,7 @@ namespace logviewer.logic.storage
             this.dateTimeProperty = schema.PropertyNameOf(ParserType.Datetime);
 
             this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
-            this.connection = new DatabaseConnection(this.DatabasePath);
+            this.connection = new LocalDbConnection(this.DatabasePath);
             this.CreateTables(dbSize);
         }
 

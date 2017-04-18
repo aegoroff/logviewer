@@ -20,7 +20,7 @@ namespace logviewer.logic.storage
     {
         private readonly ISettingsProvider settings;
 
-        private LogStore store;
+        private ILogStore store;
 
         private static readonly XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
                                                                       {
@@ -29,7 +29,7 @@ namespace logviewer.logic.storage
                                                                           CheckCharacters = false
                                                                       };
 
-        public LogProvider(LogStore store, ISettingsProvider settings)
+        public LogProvider(ILogStore store, ISettingsProvider settings)
         {
             this.Store = store;
             this.settings = settings;
@@ -39,7 +39,7 @@ namespace logviewer.logic.storage
         public MessageFilterViewModel FilterViewModel { get; set; }
 
         [PublicAPI]
-        public LogStore Store
+        public ILogStore Store
         {
             get => this.store;
             set => this.store = value;

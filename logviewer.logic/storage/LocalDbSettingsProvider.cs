@@ -22,7 +22,7 @@ using Net.Sgoliver.NRtfTree.Util;
 
 namespace logviewer.logic.storage
 {
-    public sealed class SqliteSettingsProvider : ISettingsProvider
+    public sealed class LocalDbSettingsProvider : ISettingsProvider
     {
         private const string RegistryKeyBase = @"Software\Egoroff\logviewer\";
 
@@ -70,7 +70,7 @@ namespace logviewer.logic.storage
 
         private readonly IEnumerable<PropertyInfo> parsingTemplateProperties;
 
-        private readonly List<Action<DatabaseConnection>> upgrades = new List<Action<DatabaseConnection>>();
+        private readonly List<Action<IDatabaseConnection>> upgrades = new List<Action<IDatabaseConnection>>();
 
         private readonly Dictionary<LogLevel, RtfCharFormat> bodyFormatsMap = new Dictionary<LogLevel, RtfCharFormat>();
 
@@ -103,7 +103,7 @@ namespace logviewer.logic.storage
                                                                                 { LogLevel.Fatal, Color.DarkViolet }
                                                                             };
 
-        public SqliteSettingsProvider(string settingsDatabaseFileName,
+        public LocalDbSettingsProvider(string settingsDatabaseFileName,
                                       int defaultPageSize,
                                       int defaultKeepLastNFiles)
         {
@@ -275,13 +275,9 @@ namespace logviewer.logic.storage
                     ", command => this.AddParsingTemplateIntoCommand(command, template));
         }
 
-        private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties()
-        {
-            return
-                    from info in typeof(ParsingTemplate).GetProperties()
-                    where info.IsDefined(typeof(ColumnAttribute), false)
-                    select info;
-        }
+        private static IEnumerable<PropertyInfo> ReadParsingTemplateProperties() => from info in typeof(ParsingTemplate).GetProperties()
+                                                                                    where info.IsDefined(typeof(ColumnAttribute), false)
+                                                                                    select info;
 
         public ParsingTemplate ReadParsingTemplate() => this.ReadParsingTemplate(this.SelectedParsingTemplate);
 
@@ -299,7 +295,7 @@ namespace logviewer.logic.storage
 
             void OnRead(IDataReader rdr) => result.Add(rdr[0] as string);
 
-            void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
+            void Action(IDatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -327,7 +323,7 @@ namespace logviewer.logic.storage
                                                            StartMessage = rdr[2] as string
                                                        });
 
-            void Action(DatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
+            void Action(IDatabaseConnection connection) => connection.ExecuteReader(cmd, OnRead);
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -369,7 +365,7 @@ namespace logviewer.logic.storage
                         Ix = @Ix
                     ";
 
-            void Action(DatabaseConnection connection) => connection.ExecuteReader(query, OnRead, BeforeRead);
+            void Action(IDatabaseConnection connection) => connection.ExecuteReader(query, OnRead, BeforeRead);
 
             this.optionsProvider.ExecuteQuery(Action);
 
@@ -433,7 +429,7 @@ namespace logviewer.logic.storage
                 indexesToUpdate.Add((long)rdr[0]);
             }
 
-            void Action(DatabaseConnection connection)
+            void Action(IDatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -559,7 +555,7 @@ namespace logviewer.logic.storage
         {
             var since = (int)this.SchemaVersion;
 
-            this.optionsProvider.ExecuteQuery(delegate(DatabaseConnection connection)
+            this.optionsProvider.ExecuteQuery(delegate(IDatabaseConnection connection)
             {
                 connection.BeginTran();
                 try
@@ -597,7 +593,7 @@ namespace logviewer.logic.storage
             }
         }
 
-        private static void InsertSchemaVersion(long version, DatabaseConnection connection)
+        private static void InsertSchemaVersion(long version, IDatabaseConnection connection)
         {
             void Action(IDbCommand command)
             {
@@ -608,7 +604,7 @@ namespace logviewer.logic.storage
             connection.ExecuteNonQuery(@"INSERT INTO DatabaseConfiguration (Version, OccurredAt) VALUES (@Version, @OccurredAt)", Action);
         }
 
-        private static void Upgrade1(DatabaseConnection connection)
+        private static void Upgrade1(IDatabaseConnection connection)
         {
             var result = connection.ExecuteScalar<long>(@"SELECT count(1) FROM ParsingTemplates");
             if (result <= 0)
@@ -635,9 +631,9 @@ namespace logviewer.logic.storage
             connection.ExecuteNonQuery(cmd, Action);
         }
 
-        private static void Upgrade2(DatabaseConnection connection) => connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
+        private static void Upgrade2(IDatabaseConnection connection) => connection.ExecuteNonQuery(@"DROP TABLE IF EXISTS RecentFiles");
 
-        private void Upgrade3(DatabaseConnection connection)
+        private void Upgrade3(IDatabaseConnection connection)
         {
             var properties = string.Join(@",",
                                          from string member in this.parsingTemplatePropertiesNames select member);
@@ -645,7 +641,7 @@ namespace logviewer.logic.storage
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
 
-        private void Upgrade4(DatabaseConnection connection)
+        private void Upgrade4(IDatabaseConnection connection)
         {
             var values = this.SelectMembersByNameFromParsingTemplateProperties(@"Filter");
 
@@ -654,7 +650,7 @@ namespace logviewer.logic.storage
             this.UpgradeParsingTemplatesTable(connection, properties);
         }
 
-        private void Upgrade5(DatabaseConnection connection)
+        private void Upgrade5(IDatabaseConnection connection)
         {
             var values = this.SelectMembersByNameFromParsingTemplateProperties(@"Compiled");
 
@@ -670,7 +666,7 @@ namespace logviewer.logic.storage
                    select member;
         }
 
-        private void UpgradeParsingTemplatesTable(DatabaseConnection connection, string properties)
+        private void UpgradeParsingTemplatesTable(IDatabaseConnection connection, string properties)
         {
             properties = @"Ix," + properties;
 

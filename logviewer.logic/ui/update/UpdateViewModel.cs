@@ -113,7 +113,7 @@ namespace logviewer.logic.ui.update
             try
             {
                 var source = new Uri(this.targetAddress);
-                this.target = Path.Combine(SqliteSettingsProvider.ApplicationFolder, Path.GetFileName(source.LocalPath));
+                this.target = Path.Combine(LocalDbSettingsProvider.ApplicationFolder, Path.GetFileName(source.LocalPath));
                 client.DownloadFileAsync(source, this.target);
             }
             catch (Exception e)

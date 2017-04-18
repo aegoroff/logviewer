@@ -119,7 +119,7 @@
     <Compile Include="TstNetworkSettingsModel.cs" />
     <Compile Include="TstNetworkSettingsViewModel.cs" />
     <Compile Include="TstMainModel.cs" />
-    <Compile Include="TstSqliteSettingsProvider.cs" />
+    <Compile Include="TstLocalDbSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />
     <Compile Include="TstStatisticModel.cs" />
     <Compile Include="TstUpdatesChecker.cs" />

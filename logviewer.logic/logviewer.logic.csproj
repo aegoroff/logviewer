@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="storage\IDatabaseConnection.cs" />
     <Compile Include="storage\ILogStore.cs" />
     <Compile Include="support\IAsymCrypt.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
@@ -127,7 +128,7 @@
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ui\settings\ColorPickResult.cs" />
     <Compile Include="storage\ColumnAttribute.cs" />
-    <Compile Include="storage\DatabaseConnection.cs" />
+    <Compile Include="storage\LocalDbConnection.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ui\settings\FormData.cs" />
     <Compile Include="ui\settings\IParsingTemplateView.cs" />
@@ -164,7 +165,7 @@
     <Compile Include="storage\RecentItemsStore.cs" />
     <Compile Include="support\SafeRunner.cs" />
     <Compile Include="ui\settings\SettingsController.cs" />
-    <Compile Include="storage\SqliteSettingsProvider.cs" />
+    <Compile Include="storage\LocalDbSettingsProvider.cs" />
     <Compile Include="storage\SqliteRegEx.cs" />
     <Compile Include="ui\statistic\StatFilterViewModel.cs" />
     <Compile Include="ui\statistic\StatisticModel.cs" />

@@ -20,13 +20,13 @@ namespace logviewer.logic.storage
 
         private readonly int maxItems;
 
-        private readonly DatabaseConnection connection;
+        private readonly IDatabaseConnection connection;
 
         public RecentItemsStore(ISettingsProvider settings, string tableName, int maxItems = 0)
         {
             this.tableName = tableName;
             this.maxItems = maxItems == 0 ? settings.KeepLastNFiles : maxItems;
-            this.connection = new DatabaseConnection(settings.FullPathToDatabase);
+            this.connection = new LocalDbConnection(settings.FullPathToDatabase);
             this.CreateTables();
         }
 

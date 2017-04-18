@@ -28,7 +28,7 @@ namespace logviewer.tests
 
         public TstLogProvider()
         {
-            var settings = new SqliteSettingsProvider(dbPath, 100, 2);
+            var settings = new LocalDbSettingsProvider(dbPath, 100, 2);
             var detector = new Mock<ICharsetDetector>();
             this.stream = new MemoryStream();
             var grokMatcher = new GrokMatcher(TstLogReader.NlogGrok);

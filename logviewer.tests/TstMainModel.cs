@@ -74,7 +74,7 @@ namespace logviewer.tests
             this.model.Dispose();
         }
 
-        private static string FullPathToTestDb => Path.Combine(SqliteSettingsProvider.ApplicationFolder, SettingsDb);
+        private static string FullPathToTestDb => Path.Combine(LocalDbSettingsProvider.ApplicationFolder, SettingsDb);
 
         private static void CleanupTestFiles()
         {

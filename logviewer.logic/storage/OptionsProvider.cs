@@ -44,7 +44,7 @@ namespace logviewer.logic.storage
         {
             var result = default(T);
 
-            void Action(DatabaseConnection connection)
+            void Action(IDatabaseConnection connection)
             {
                 result = connection.ExecuteScalar<T>(query, actionBeforeExecute);
             }
@@ -56,9 +56,9 @@ namespace logviewer.logic.storage
         internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute = null) =>
                 this.ExecuteQuery(connection => connection.ExecuteNonQuery(query, actionBeforeExecute));
 
-        internal void ExecuteQuery(Action<DatabaseConnection> action)
+        internal void ExecuteQuery(Action<IDatabaseConnection> action)
         {
-            var connection = new DatabaseConnection(this.settingsDatabaseFilePath);
+            var connection = new LocalDbConnection(this.settingsDatabaseFilePath);
             using (connection)
             {
                 action(connection);
@@ -84,7 +84,7 @@ namespace logviewer.logic.storage
 
             void BeforeRead(IDbCommand command) => command.AddParameter(OptionParameter, option);
 
-            void Action(DatabaseConnection connection) => connection.ExecuteReader(string.Format(cmd, table), OnRead, BeforeRead);
+            void Action(IDatabaseConnection connection) => connection.ExecuteReader(string.Format(cmd, table), OnRead, BeforeRead);
 
             this.ExecuteQuery(Action);
 

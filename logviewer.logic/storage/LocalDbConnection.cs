@@ -14,7 +14,7 @@ using logviewer.logic.support;
 
 namespace logviewer.logic.storage
 {
-    internal sealed class DatabaseConnection : IDisposable
+    internal sealed class LocalDbConnection : IDatabaseConnection
     {
         private SQLiteConnection connection;
 
@@ -24,7 +24,7 @@ namespace logviewer.logic.storage
 
         private bool disposed;
 
-        internal DatabaseConnection(string databaseFilePath)
+        internal LocalDbConnection(string databaseFilePath)
         {
             if (!File.Exists(databaseFilePath) || new FileInfo(databaseFilePath).Length == 0)
             {
@@ -37,9 +37,9 @@ namespace logviewer.logic.storage
             this.connection.Open();
         }
 
-        ~DatabaseConnection() => this.DisposeInternal();
+        ~LocalDbConnection() => this.DisposeInternal();
 
-        internal bool IsEmpty { get; }
+        public bool IsEmpty { get; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
             MessageId = "connection")]
@@ -64,15 +64,15 @@ namespace logviewer.logic.storage
             this.disposed = true;
         }
 
-        internal void BeginTran() => this.ExecuteInCreationContext(o => this.transaction = this.connection.BeginTransaction());
+        public void BeginTran() => this.ExecuteInCreationContext(o => this.transaction = this.connection.BeginTransaction());
 
-        internal void CommitTran() => this.ExecuteInCreationContext(o => this.transaction.Commit());
+        public void CommitTran() => this.ExecuteInCreationContext(o => this.transaction.Commit());
 
-        internal void RollbackTran() => this.ExecuteInCreationContext(o => this.transaction.Rollback());
+        public void RollbackTran() => this.ExecuteInCreationContext(o => this.transaction.Rollback());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        internal void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
+        public void RunSqlQuery(Action<IDbCommand> action, params string[] commands)
         {
             void Method(object state)
             {
@@ -99,7 +99,7 @@ namespace logviewer.logic.storage
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        internal void RunSqlQuery(Action<IDbCommand> action, string command)
+        public void RunSqlQuery(Action<IDbCommand> action, string command)
         {
             void Method(object state)
             {
@@ -128,10 +128,10 @@ namespace logviewer.logic.storage
                 return;
             }
 
-            using (var sqLiteCommand = new SQLiteCommand(this.connection))
+            using (var cmd = new SQLiteCommand(this.connection))
             {
-                sqLiteCommand.CommandText = command;
-                action(sqLiteCommand);
+                cmd.CommandText = command;
+                action(cmd);
             }
         }
 
@@ -149,8 +149,8 @@ namespace logviewer.logic.storage
             }
         }
 
-        internal void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null,
-                                    Func<bool> notCancelled = null)
+        public void ExecuteReader(string query, Action<IDataReader> onRead, Action<IDbCommand> beforeRead = null,
+                                  Func<bool> notCancelled = null)
         {
             void Action(IDbCommand command)
             {
@@ -171,7 +171,7 @@ namespace logviewer.logic.storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ExecuteInCreationContext(SendOrPostCallback method) => this.creationContext.Send(method, null);
 
-        internal T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
+        public T ExecuteScalar<T>(string query, Action<IDbCommand> actionBeforeExecute = null)
         {
             var result = default(T);
 
@@ -189,7 +189,7 @@ namespace logviewer.logic.storage
             return result;
         }
 
-        internal void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute)
+        public void ExecuteNonQuery(string query, Action<IDbCommand> actionBeforeExecute)
         {
             void Action(IDbCommand command)
             {
@@ -207,8 +207,8 @@ namespace logviewer.logic.storage
             this.RunSqlQuery(Action, query);
         }
 
-        internal void ExecuteNonQuery(params string[] queries) => this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
+        public void ExecuteNonQuery(params string[] queries) => this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
 
-        internal void ExecuteNonQuery(string query) => this.RunSqlQuery(command => command.ExecuteNonQuery(), query);
+        public void ExecuteNonQuery(string query) => this.RunSqlQuery(command => command.ExecuteNonQuery(), query);
     }
 }

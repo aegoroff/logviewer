@@ -12,7 +12,7 @@ using logviewer.logic.Annotations;
 namespace logviewer.logic.storage
 {
     [PublicAPI]
-    public interface ILogStore
+    public interface ILogStore : IDisposable
     {
         long CountMessages(
             LogLevel min = LogLevel.Trace,
@@ -47,6 +47,23 @@ namespace logviewer.logic.storage
             bool useRegexp = true,
             bool excludeNoLevel = false);
 
+        void ReadMessages(
+            int limit,
+            Action<LogMessage> onReadMessage,
+            Func<bool> notCancelled,
+            DateTime start,
+            DateTime finish,
+            long offset = 0,
+            bool reverse = true,
+            LogLevel min = LogLevel.Trace,
+            LogLevel max = LogLevel.Fatal,
+            string filter = null,
+            bool useRegexp = true);
+
         string DatabasePath { get; }
+
+        bool HasLogLevelProperty { get; }
+
+        string LogLevelProperty { get; }
     }
 }

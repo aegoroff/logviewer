@@ -25,7 +25,7 @@ namespace logviewer.ui
     public sealed class MainViewModel : IMainViewModel
     {
         private readonly ISettingsProvider settingsProvider =
-                new SqliteSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
+                new LocalDbSettingsProvider(ConfigurationManager.AppSettings["SettingsDatabase"], 2000, 10);
 
         private const int PageTimeoutMilliseconds = 10 * 1000;
 
