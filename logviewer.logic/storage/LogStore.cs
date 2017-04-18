@@ -52,7 +52,12 @@ namespace logviewer.logic.storage
 
         private string insertSuffix;
 
-        public LogStore(long dbSize = 0L, string databaseFilePath = null, ICollection<Semantic> schema = null)
+        public LogStore(ICollection<Semantic> schema, string databaseFilePath = null, long dbSize = 0L) :
+            this(schema, new LocalDbConnection(databaseFilePath ?? Path.GetTempFileName()), dbSize)
+        {
+        }
+
+        public LogStore(ICollection<Semantic> schema, IDatabaseConnection connection, long dbSize = 0L)
         {
             this.builder = new RulesBuilder(schema);
             this.rules = this.builder.Rules;
@@ -61,8 +66,8 @@ namespace logviewer.logic.storage
             this.hasDateTimeProperty = schema.HasProperty(ParserType.Datetime);
             this.dateTimeProperty = schema.PropertyNameOf(ParserType.Datetime);
 
-            this.DatabasePath = databaseFilePath ?? Path.GetTempFileName();
-            this.connection = new LocalDbConnection(this.DatabasePath);
+            this.connection = connection;
+            this.DatabasePath = this.connection.ConnectionString;
             this.CreateTables(dbSize);
         }
 

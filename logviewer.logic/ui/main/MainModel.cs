@@ -349,7 +349,7 @@ namespace logviewer.logic.ui.main
             }
 
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
-            this.store = new LogStore(dbSize, null, this.matcher.IncludeMatcher.MessageSchema);
+            this.store = new LogStore(this.matcher.IncludeMatcher.MessageSchema, dbSize: dbSize);
             this.queue.SetStore(this.store);
         }
 

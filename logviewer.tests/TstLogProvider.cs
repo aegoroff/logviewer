@@ -33,7 +33,7 @@ namespace logviewer.tests
             this.stream = new MemoryStream();
             var grokMatcher = new GrokMatcher(TstLogReader.NlogGrok);
             this.reader = new LogReader(detector.Object, grokMatcher);
-            this.store = new LogStore(schema: grokMatcher.MessageSchema);
+            this.store = new LogStore(grokMatcher.MessageSchema);
 
             this.provider = new LogProvider(this.store, settings);
         }

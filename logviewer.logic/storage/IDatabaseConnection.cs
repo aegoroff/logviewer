@@ -33,5 +33,7 @@ namespace logviewer.logic.storage
         void ExecuteNonQuery(params string[] queries);
 
         void ExecuteNonQuery(string query);
+
+        string ConnectionString { get; }
     }
 }

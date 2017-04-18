@@ -31,6 +31,7 @@ namespace logviewer.logic.storage
                 SQLiteConnection.CreateFile(databaseFilePath);
                 this.IsEmpty = true;
             }
+            this.ConnectionString = databaseFilePath;
             var conString = new SQLiteConnectionStringBuilder { DataSource = databaseFilePath };
             this.creationContext = new SynchronizationContext();
             this.connection = new SQLiteConnection(conString.ToString());
@@ -210,5 +211,7 @@ namespace logviewer.logic.storage
         public void ExecuteNonQuery(params string[] queries) => this.RunSqlQuery(command => command.ExecuteNonQuery(), queries);
 
         public void ExecuteNonQuery(string query) => this.RunSqlQuery(command => command.ExecuteNonQuery(), query);
+
+        public string ConnectionString { get; }
     }
 }
