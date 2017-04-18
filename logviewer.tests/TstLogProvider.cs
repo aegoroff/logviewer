@@ -50,11 +50,14 @@ namespace logviewer.tests
 
             var enumerator = this.reader.Read(this.stream, 0).GetEnumerator();
 
-            while (enumerator.MoveNext())
+            using (enumerator)
             {
-                var message = enumerator.Current;
-                message.Ix = ix++;
-                this.store.AddMessage(message);
+                while (enumerator.MoveNext())
+                {
+                    var message = enumerator.Current;
+                    message.Ix = ix++;
+                    this.store.AddMessage(message);
+                }
             }
         }
 
