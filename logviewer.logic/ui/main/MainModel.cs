@@ -1,4 +1,4 @@
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 07.11.2015
@@ -361,10 +361,7 @@ namespace logviewer.logic.ui.main
             }
         }
 
-        private void UpdateStatisticByLevel()
-        {
-            this.byLevel = this.store.CountByLevel(string.Empty, false, true).Select(x => ToHumanReadableString(x.Value)).ToArray();
-        }
+        private void UpdateStatisticByLevel() => this.byLevel = this.store.CountByLevel(string.Empty, false, true).Select(x => ToHumanReadableString(x.Value)).ToArray();
 
         private void FinishLoading(TimeSpan elapsed)
         {
@@ -382,15 +379,9 @@ namespace logviewer.logic.ui.main
             }
         }
 
-        private void OnCompilationFinished(object sender, EventArgs eventArgs)
-        {
-            this.viewModel.LogProgressText = Resources.PatternCompilationFinished;
-        }
+        private void OnCompilationFinished(object sender, EventArgs eventArgs) => this.viewModel.LogProgressText = Resources.PatternCompilationFinished;
 
-        private void OnCompilationStarted(object sender, EventArgs eventArgs)
-        {
-            this.viewModel.LogProgressText = Resources.PatternCompilation;
-        }
+        private void OnCompilationStarted(object sender, EventArgs eventArgs) => this.viewModel.LogProgressText = Resources.PatternCompilation;
 
         /// <remarks>
         /// this method MUST be called only from one thread.
@@ -462,21 +453,13 @@ namespace logviewer.logic.ui.main
             this.ReadCompleted?.Invoke(this, new EventArgs());
         }
 
-        private DateTime SelectDateUsingFunc(string func)
-        {
-            return this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal, this.viewModel.MessageFilter,
-                                                  this.viewModel.UseRegularExpressions);
-        }
+        private DateTime SelectDateUsingFunc(string func) => this.store.SelectDateUsingFunc(func, LogLevel.Trace, LogLevel.Fatal,
+                                                                                            this.viewModel.MessageFilter,
+                                                                                            this.viewModel.UseRegularExpressions);
 
-        private static string ToHumanReadableString(long value)
-        {
-            return value.ToString("N0", CultureInfo.CurrentCulture); // Not L10N
-        }
+        private static string ToHumanReadableString(long value) => value.ToString("N0", CultureInfo.CurrentCulture);
 
-        private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            this.OnLogReadProgress(e.UserState);
-        }
+        private void OnReadLogProgressChanged(object sender, ProgressChangedEventArgs e) => this.OnLogReadProgress(e.UserState);
 
         private void OnLogReadProgress(object progress)
         {
@@ -496,19 +479,13 @@ namespace logviewer.logic.ui.main
             this.viewModel.LogStatistic = string.Format(Resources.LoStatisticFormatString, statByLevel);
         }
 
-        public string GetLogSize(bool showBytes)
-        {
-            return new FileSize(this.logSize, !showBytes).Format();
-        }
+        public string GetLogSize(bool showBytes) => new FileSize(this.logSize, !showBytes).Format();
 
         public string CurrentEncoding => this.filesEncodingCache.ContainsKey(this.currentPath)
                                              ? this.filesEncodingCache[this.currentPath].EncodingName
                                              : string.Empty;
 
-        public void ClearCache()
-        {
-            this.currentPath = null;
-        }
+        public void ClearCache() => this.currentPath = null;
 
         public void LoadLastOpenedFile()
         {
@@ -534,10 +511,7 @@ namespace logviewer.logic.ui.main
             this.UpdateMatcherAndRefreshLog(true);
         }
 
-        public void AddCurrentFileToRecentFilesList()
-        {
-            this.settings.ExecuteUsingRecentFilesStore(s => s.Add(this.viewModel.LogPath));
-        }
+        public void AddCurrentFileToRecentFilesList() => this.settings.ExecuteUsingRecentFilesStore(s => s.Add(this.viewModel.LogPath));
 
         private long logSize;
 

@@ -36,18 +36,17 @@ namespace logviewer.logic.ui
 
         protected SynchronizationContextScheduler UiContextScheduler { get; }
 
-        protected void RunOnGuiThread(Action action)
-        {
-            this.winformsOrDefaultContext.Post(o => action(), null);
-        }
+        protected void RunOnGuiThread(Action action) => this.winformsOrDefaultContext.Post(o => action(), null);
 
         protected void CompleteTask(Task task, TaskContinuationOptions options, Action<Task> action)
         {
-            task.ContinueWith(delegate
+            void ContinuationAction(Task obj)
             {
                 action(task);
                 task.Dispose();
-            }, CancellationToken.None, options, this.uiSyncContext);
+            }
+
+            task.ContinueWith(ContinuationAction, CancellationToken.None, options, this.uiSyncContext);
         }
     }
 }

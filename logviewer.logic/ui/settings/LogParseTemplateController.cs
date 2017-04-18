@@ -29,15 +29,9 @@ namespace logviewer.logic.ui.settings
 
         public event EventHandler TemplateChangeFailure;
 
-        public void UpdateStartPattern(string value)
-        {
-            this.UpdatePattern(value, this.view.MessageStartControl, s => this.Template.StartMessage = s);
-        }
+        public void UpdateStartPattern(string value) => this.UpdatePattern(value, this.view.MessageStartControl, s => this.Template.StartMessage = s);
 
-        public void UpdateFilter(string value)
-        {
-            this.UpdatePattern(value, this.view.FilterControl, s => this.Template.Filter = s);
-        }
+        public void UpdateFilter(string value) => this.UpdatePattern(value, this.view.FilterControl, s => this.Template.Filter = s);
 
         public void UpdateCompiled(bool value)
         {
@@ -50,10 +44,7 @@ namespace logviewer.logic.ui.settings
             this.OnTemplateChangeSuccess();
         }
 
-        private void OnTemplateChangeSuccess()
-        {
-            this.TemplateChangeSuccess?.Invoke(this, new EventArgs());
-        }
+        private void OnTemplateChangeSuccess() => this.TemplateChangeSuccess?.Invoke(this, new EventArgs());
 
         private void UpdatePattern(string value, object control, Action<string> assignAction)
         {

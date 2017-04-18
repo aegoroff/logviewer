@@ -83,10 +83,7 @@ namespace logviewer.logic.ui.network
             sm.Trigger(this.GetTransition());
         }
 
-        private ProxyModeTransition GetTransition()
-        {
-            return ToTransition(this.viewModel.ProxyMode);
-        }
+        private ProxyModeTransition GetTransition() => ToTransition(this.viewModel.ProxyMode);
 
         private static ProxyModeTransition ToTransition(ProxyMode mode)
         {

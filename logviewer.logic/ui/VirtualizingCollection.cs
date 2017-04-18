@@ -36,25 +36,14 @@ namespace logviewer.logic.ui
     /// <typeparam name="T"></typeparam>
     public sealed class VirtualizingCollection<T> : IVirtualizingCollection<T>, IList
     {
-        #region Constructors
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize,
-                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize)
-        {
-            this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
-        }
+                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize) => this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
 
         [PublicAPI]
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize) : this(itemsProvider)
-        {
-            this.pageSize = pageSize;
-        }
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize) : this(itemsProvider) => this.pageSize = pageSize;
 
         [PublicAPI]
-        public VirtualizingCollection(IItemsProvider<T> itemsProvider)
-        {
-            this.ItemsProvider = itemsProvider;
-        }
-        #endregion
+        public VirtualizingCollection(IItemsProvider<T> itemsProvider) => this.ItemsProvider = itemsProvider;
 
         [PublicAPI]
         public IItemsProvider<T> ItemsProvider { get; }
@@ -69,10 +58,7 @@ namespace logviewer.logic.ui
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            this.CollectionChanged?.Invoke(this, e);
-        }
+        private void OnCollectionChanged(NotifyCollectionChangedEventArgs e) => this.CollectionChanged?.Invoke(this, e);
 
         private void FireCollectionReset()
         {
@@ -82,10 +68,7 @@ namespace logviewer.logic.ui
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            this.PropertyChanged?.Invoke(this, e);
-        }
+        private void OnPropertyChanged(PropertyChangedEventArgs e) => this.PropertyChanged?.Invoke(this, e);
 
         private void FirePropertyChanged(string propertyName)
         {
@@ -116,15 +99,19 @@ namespace logviewer.logic.ui
                 return Disposable.Empty;
             });
 
+            void OnSuccess(T[] result)
+            {
+                this.PopulatePage(pageIndex, result);
+                this.FireCollectionReset();
+                this.IsLoading = false;
+            }
+
+            void OnError(Exception exception) => this.IsLoading = false;
+
             source
                     .SubscribeOn(Scheduler.Default)
                     .ObserveOn(SynchronizationContext.Current)
-                    .Subscribe(result =>
-                    {
-                        this.PopulatePage(pageIndex, result);
-                        this.FireCollectionReset();
-                        this.IsLoading = false;
-                    }, exception => { this.IsLoading = false; });
+                    .Subscribe(OnSuccess, OnError);
         }
 
         public void ChangeVisible(Range range)
@@ -133,8 +120,6 @@ namespace logviewer.logic.ui
             this.lastVisible = range.Last;
         }
 
-        #region IList<T>, IList
-        #region Count
         private int count;
 
         public int Count
@@ -148,9 +133,7 @@ namespace logviewer.logic.ui
                 this.FireCollectionReset();
             }
         }
-        #endregion
 
-        #region Indexer
         /// <summary>
         ///     Gets the item at the specified index. This property will fetch
         ///     the corresponding page from the IItemsProvider if required.
@@ -193,7 +176,6 @@ namespace logviewer.logic.ui
             }
             set => throw new NotSupportedException();
         }
-        #endregion
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -203,30 +185,15 @@ namespace logviewer.logic.ui
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public void Add(T item)
-        {
-            throw new NotSupportedException();
-        }
+        public void Add(T item) => throw new NotSupportedException();
 
-        int IList.Add(object value)
-        {
-            throw new NotSupportedException();
-        }
+        int IList.Add(object value) => throw new NotSupportedException();
 
-        bool IList.Contains(object value)
-        {
-            return this.Contains((T)value);
-        }
+        bool IList.Contains(object value) => this.Contains((T)value);
 
-        public bool Contains(T item)
-        {
-            return false;
-        }
+        public bool Contains(T item) => false;
 
         public void Clear()
         {
@@ -235,51 +202,24 @@ namespace logviewer.logic.ui
             this.pageTouchTimes.Clear();
         }
 
-        int IList.IndexOf(object value)
-        {
-            return this.IndexOf((T)value);
-        }
+        int IList.IndexOf(object value) => this.IndexOf((T)value);
 
         [Pure]
-        public int IndexOf(T item)
-        {
-            return -1;
-        }
+        public int IndexOf(T item) => -1;
 
-        public void Insert(int index, T item)
-        {
-            throw new NotSupportedException();
-        }
+        public void Insert(int index, T item) => throw new NotSupportedException();
 
-        void IList.Insert(int index, object value)
-        {
-            this.Insert(index, (T)value);
-        }
+        void IList.Insert(int index, object value) => this.Insert(index, (T)value);
 
-        public void RemoveAt(int index)
-        {
-            throw new NotSupportedException();
-        }
+        public void RemoveAt(int index) => throw new NotSupportedException();
 
-        void IList.Remove(object value)
-        {
-            throw new NotSupportedException();
-        }
+        void IList.Remove(object value) => throw new NotSupportedException();
 
-        public bool Remove(T item)
-        {
-            throw new NotSupportedException();
-        }
+        public bool Remove(T item) => throw new NotSupportedException();
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            throw new NotSupportedException();
-        }
+        public void CopyTo(T[] array, int arrayIndex) => throw new NotSupportedException();
 
-        void ICollection.CopyTo(Array array, int index)
-        {
-            throw new NotSupportedException();
-        }
+        void ICollection.CopyTo(Array array, int index) => throw new NotSupportedException();
 
         public object SyncRoot => this;
 
@@ -288,9 +228,7 @@ namespace logviewer.logic.ui
         public bool IsReadOnly => true;
 
         public bool IsFixedSize => false;
-        #endregion
 
-        #region Paging
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private FixedSizeDictionary<T[]> pages = new FixedSizeDictionary<T[]>(1);
 
@@ -374,19 +312,12 @@ namespace logviewer.logic.ui
                 this.pageTouchTimes[pageIndex] = DateTime.Now;
             }
         }
-        #endregion
 
         /// <summary>
         ///     Loads the count of items.
         /// </summary>
-        public void LoadCount(int itemsCount)
-        {
-            this.Count = itemsCount;
-        }
+        public void LoadCount(int itemsCount) => this.Count = itemsCount;
 
-        private T[] FetchPage(int pageIndex)
-        {
-            return this.ItemsProvider.FetchRange(pageIndex * this.PageSize, this.PageSize);
-        }
+        private T[] FetchPage(int pageIndex) => this.ItemsProvider.FetchRange(pageIndex * this.PageSize, this.PageSize);
     }
 }

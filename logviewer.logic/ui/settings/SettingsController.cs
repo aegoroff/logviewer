@@ -48,38 +48,23 @@ namespace logviewer.logic.ui.settings
             this.view.NewTemplateController.TemplateChangeFailure += this.NewTemplateControllerOnTemplateChangeFailure;
         }
 
-        private void NewTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
-        {
-            this.view.EnableAddNewTemplate(true);
-        }
+        private void NewTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs) => this.view.EnableAddNewTemplate(true);
 
-        private void NewTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
-        {
-            this.view.EnableAddNewTemplate(false);
-        }
+        private void NewTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs) => this.view.EnableAddNewTemplate(false);
 
-        private void SelectedTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs)
-        {
-            this.view.EnableSave(true);
-        }
+        private void SelectedTemplateControllerOnTemplateChangeSuccess(object sender, EventArgs eventArgs) => this.view.EnableSave(true);
 
-        private void SelectedTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs)
-        {
-            this.view.EnableSave(false);
-        }
+        private void SelectedTemplateControllerOnTemplateChangeFailure(object sender, EventArgs eventArgs) => this.view.EnableSave(false);
 
-        private Dictionary<LogLevel, Action<Color>> InitializeUpdateActions()
-        {
-            return new Dictionary<LogLevel, Action<Color>>
-                   {
-                       { LogLevel.Trace, this.view.UpdateTraceColor },
-                       { LogLevel.Debug, this.view.UpdateDebugColor },
-                       { LogLevel.Info, this.view.UpdateInfoColor },
-                       { LogLevel.Warn, this.view.UpdateWarnColor },
-                       { LogLevel.Error, this.view.UpdateErrorColor },
-                       { LogLevel.Fatal, this.view.UpdateFatalColor }
-                   };
-        }
+        private Dictionary<LogLevel, Action<Color>> InitializeUpdateActions() => new Dictionary<LogLevel, Action<Color>>
+                                                                                 {
+                                                                                     { LogLevel.Trace, this.view.UpdateTraceColor },
+                                                                                     { LogLevel.Debug, this.view.UpdateDebugColor },
+                                                                                     { LogLevel.Info, this.view.UpdateInfoColor },
+                                                                                     { LogLevel.Warn, this.view.UpdateWarnColor },
+                                                                                     { LogLevel.Error, this.view.UpdateErrorColor },
+                                                                                     { LogLevel.Fatal, this.view.UpdateFatalColor }
+                                                                                 };
 
         public void Load()
         {
@@ -353,15 +338,9 @@ namespace logviewer.logic.ui.settings
             this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, CompleteRestoringTemplatesAction);
         }
 
-        public void StartAddNewParsingTemplate()
-        {
-            this.view.ShowNewParsingTemplateForm(true);
-        }
+        public void StartAddNewParsingTemplate() => this.view.ShowNewParsingTemplateForm(true);
 
-        public void CancelNewParsingTemplate()
-        {
-            this.view.ShowNewParsingTemplateForm(false);
-        }
+        public void CancelNewParsingTemplate() => this.view.ShowNewParsingTemplateForm(false);
 
         public void LoadParsingTemplate(int index)
         {

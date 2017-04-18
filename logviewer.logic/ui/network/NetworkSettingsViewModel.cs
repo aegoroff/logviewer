@@ -212,19 +212,13 @@ namespace logviewer.logic.ui.network
         }
 
         [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private void OnModeChanged(ProxyModeTransition transition)
-        {
-            this.ModeChanged?.Invoke(this, transition);
-        }
+        private void OnModeChanged(ProxyModeTransition transition) => this.ModeChanged?.Invoke(this, transition);
 
-        private ProxyModeTransition GetCustomModeTransition()
-        {
-            return this.isUseDefaultCredentials ? ProxyModeTransition.ToCustomDefaultUser : ProxyModeTransition.ToCustomWithManualUser;
-        }
+        private ProxyModeTransition GetCustomModeTransition() => this.isUseDefaultCredentials
+                                                                     ? ProxyModeTransition.ToCustomDefaultUser
+                                                                     : ProxyModeTransition.ToCustomWithManualUser;
     }
 }

@@ -65,34 +65,19 @@ namespace logviewer.logic.ui.main
         }
 
         [PublicAPI]
-        public void Close()
-        {
-            this.machine.Fire(Trigger.Close);
-        }
+        public void Close() => this.machine.Fire(Trigger.Close);
 
         [PublicAPI]
-        public void Open(string path)
-        {
-            this.machine.Fire(this.openTrigger, path);
-        }
+        public void Open(string path) => this.machine.Fire(this.openTrigger, path);
 
         [PublicAPI]
-        public void Start()
-        {
-            this.machine.Fire(Trigger.Start);
-        }
+        public void Start() => this.machine.Fire(Trigger.Start);
 
         [PublicAPI]
-        public void Reload()
-        {
-            this.machine.Fire(Trigger.Reload);
-        }
+        public void Reload() => this.machine.Fire(Trigger.Reload);
 
         [PublicAPI]
-        public void Filter()
-        {
-            this.machine.Fire(Trigger.Filter);
-        }
+        public void Filter() => this.machine.Fire(Trigger.Filter);
 
         private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
@@ -129,15 +114,9 @@ namespace logviewer.logic.ui.main
             this.logWatch.WatchLogFile(this.viewModel.LogPath);
         }
 
-        private void OnReload()
-        {
-            this.model.ReadNewLog();
-        }
+        private void OnReload() => this.model.ReadNewLog();
 
-        private void OnFilter()
-        {
-            this.model.StartReadingLogOnFilterChange();
-        }
+        private void OnFilter() => this.model.StartReadingLogOnFilterChange();
 
         private enum State
         {
