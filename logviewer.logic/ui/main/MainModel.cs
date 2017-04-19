@@ -48,7 +48,7 @@ namespace logviewer.logic.ui.main
 
         private MessageMatcher matcher;
 
-        private LogStore store;
+        private ILogStore store;
 
         private long totalMessages;
 
@@ -520,7 +520,7 @@ namespace logviewer.logic.ui.main
 
         private long TotalMessages => this.store?.CountMessages() ?? 0;
 
-        public LogStore Store => this.store;
+        public ILogStore Store => this.store;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
              MessageId = "cancellation"),

@@ -5,7 +5,6 @@
 // © 2012-2017 Alexander Egorov
 
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -29,8 +28,6 @@ namespace logviewer.tests
         private const string f2 = "2";
         private const string f3 = "3";
         private const string SettingsDb = "test.db";
-
-        #region Setup/Teardown
 
         public TstMainModel()
         {
@@ -114,8 +111,6 @@ namespace logviewer.tests
             this.settings.Setup(_ => _.FormatHead(It.IsAny<LogLevel>())).Returns(new RtfCharFormat { Font = "Courier New" });
             this.settings.Setup(_ => _.FormatBody(It.IsAny<LogLevel>())).Returns(new RtfCharFormat { Font = "Courier New" });
         }
-
-        #endregion
 
         private const string TestPath = "f";
         private const string RecentPath = "r";

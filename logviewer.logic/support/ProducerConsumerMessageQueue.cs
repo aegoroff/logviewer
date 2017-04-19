@@ -12,7 +12,7 @@ namespace logviewer.logic.support
 {
     internal class ProducerConsumerMessageQueue : ProducerConsumerQueue<LogMessage>
     {
-        private LogStore store;
+        private ILogStore store;
 
         private long queuedMessages;
 
@@ -43,7 +43,7 @@ namespace logviewer.logic.support
 
         internal bool ReadCompleted => Interlocked.Read(ref this.queuedMessages) == 0;
 
-        internal void SetStore(LogStore value) => this.store = value;
+        internal void SetStore(ILogStore value) => this.store = value;
 
         internal long QueuedMessages => Interlocked.Read(ref this.queuedMessages);
     }

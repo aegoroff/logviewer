@@ -60,6 +60,12 @@ namespace logviewer.logic.storage
             string filter = null,
             bool useRegexp = true);
 
+        void AddMessage(LogMessage message);
+
+        void StartAddMessages();
+
+        void FinishAddMessages();
+
         string DatabasePath { get; }
 
         bool HasLogLevelProperty { get; }
