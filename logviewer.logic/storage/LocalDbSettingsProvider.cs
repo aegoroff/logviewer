@@ -761,7 +761,7 @@ namespace logviewer.logic.storage
 
         private static bool GetBoolValue(string key) => GetIntValue(key) == 1;
 
-        private void RunUsingRecentItemsStore(Action<StringCollectionStore> action, string table, int maxItems = 0)
+        private void RunUsingRecentItemsStore(Action<IStringCollectionStore> action, string table, int maxItems = 0)
         {
             try
             {
