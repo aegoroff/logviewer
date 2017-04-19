@@ -17,6 +17,7 @@ using logviewer.logic.models;
 using logviewer.logic.storage;
 using logviewer.logic.ui;
 using logviewer.logic.ui.main;
+using logviewer.tests.support;
 using Moq;
 using TechTalk.SpecFlow;
 
@@ -57,7 +58,7 @@ namespace logviewer.tests
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
 
-            this.model = new MainModel(this.viewModel.Object);
+            this.model = new MainModelForTest(this.viewModel.Object);
             this.model.ReadCompleted += this.OnReadCompleted;
             this.workflow = new LogWorkflow(this.model, this.viewModel.Object);
         }
