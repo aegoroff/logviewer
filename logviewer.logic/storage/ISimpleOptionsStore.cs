@@ -4,7 +4,7 @@
 // Created at: 03.12.2015
 // © 2012-2017 Alexander Egorov
 
-namespace logviewer.logic
+namespace logviewer.logic.storage
 {
     public interface ISimpleOptionsStore
     {

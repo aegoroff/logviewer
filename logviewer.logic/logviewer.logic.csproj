@@ -107,7 +107,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="storage\IDatabaseConnection.cs" />
     <Compile Include="storage\ILogStore.cs" />
-    <Compile Include="IStringCollectionStore.cs" />
+    <Compile Include="storage\IStringCollectionStore.cs" />
     <Compile Include="storage\LocalDbQueryProvider.cs" />
     <Compile Include="support\IAsymCrypt.cs" />
     <Compile Include="support\ProducerConsumerMessageQueue.cs" />
@@ -126,7 +126,7 @@
     <Compile Include="storage\DatabaseInterfaceExtensions.cs" />
     <Compile Include="DefectSender.cs" />
     <Compile Include="ui\IItemsProvider.cs" />
-    <Compile Include="ISimpleOptionsStore.cs" />
+    <Compile Include="storage\ISimpleOptionsStore.cs" />
     <Compile Include="LogCharsetDetector.cs" />
     <Compile Include="ui\settings\ColorPickResult.cs" />
     <Compile Include="storage\ColumnAttribute.cs" />

@@ -4,6 +4,7 @@
 // Created at: 05.09.2007
 // © 2007-2017 Alexander Egorov
 
+using logviewer.logic.storage;
 using logviewer.logic.support;
 
 namespace logviewer.logic.ui.network

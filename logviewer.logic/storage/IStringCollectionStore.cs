@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace logviewer.logic
+namespace logviewer.logic.storage
 {
     public interface IStringCollectionStore
     {

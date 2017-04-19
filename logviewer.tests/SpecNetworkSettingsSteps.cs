@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentAssertions;
-using logviewer.logic;
 using logviewer.logic.Annotations;
+using logviewer.logic.storage;
 using logviewer.logic.support;
 using logviewer.logic.ui.network;
 using Moq;

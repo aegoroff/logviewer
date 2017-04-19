@@ -4,7 +4,7 @@
 // Created at: 05.09.2007
 // © 2007-2017 Alexander Egorov
 
-using logviewer.logic;
+using logviewer.logic.storage;
 using logviewer.logic.support;
 using logviewer.logic.ui.network;
 using Moq;

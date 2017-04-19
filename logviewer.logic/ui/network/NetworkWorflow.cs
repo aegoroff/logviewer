@@ -5,6 +5,7 @@
 // © 2007-2017 Alexander Egorov
 
 using System;
+using logviewer.logic.storage;
 using logviewer.logic.support;
 using Stateless;
 
