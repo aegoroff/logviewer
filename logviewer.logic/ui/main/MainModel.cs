@@ -30,7 +30,7 @@ using LogLevel = logviewer.engine.LogLevel;
 
 namespace logviewer.logic.ui.main
 {
-    public sealed class MainModel : UiSynchronizeModel, IDisposable
+    public class MainModel : UiSynchronizeModel, IDisposable
     {
         private readonly ISettingsProvider settings;
 
@@ -353,9 +353,14 @@ namespace logviewer.logic.ui.main
                 this.store?.Dispose();
             }
 
-            var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
-            this.store = new LogStore(this.matcher.IncludeMatcher.MessageSchema, dbSize: dbSize);
+            this.store = this.CreateNewLogStore(this.matcher.IncludeMatcher.MessageSchema);
             this.queue.SetStore(this.store);
+        }
+
+        protected virtual ILogStore CreateNewLogStore(ICollection<Semantic> messageSchema)
+        {
+            var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
+            return new LogStore(messageSchema, dbSize: dbSize);
         }
 
         private void RunReading(string logPath, Encoding inputEncoding, long offset)

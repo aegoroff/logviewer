@@ -15,6 +15,7 @@ using logviewer.logic.models;
 using logviewer.logic.storage;
 using logviewer.logic.ui;
 using logviewer.logic.ui.main;
+using logviewer.tests.support;
 using Moq;
 using Net.Sgoliver.NRtfTree.Util;
 using Xunit;
@@ -44,7 +45,7 @@ namespace logviewer.tests
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(x => x.ReadParsingTemplate()).Returns(template);
 
-            this.model = new MainModel(this.viewModel.Object);
+            this.model = new MainModelForTest(this.viewModel.Object);
             this.model.ReadCompleted += this.OnReadCompleted;
         }
 
@@ -124,8 +125,9 @@ namespace logviewer.tests
         internal static string MessageStart = logic.models.ParsingTemplate.Defaults.First().StartMessage;
 
         [Fact]
-        public void AllFilters()
+        public void UpdateMatcherAndRefreshLog_AllFilters_CountMessagesShouldReturnTotalMessagesNumber()
         {
+            // Arrange
             this.ReadLogExpectations();
             
             File.WriteAllText(TestPath,
@@ -139,8 +141,11 @@ namespace logviewer.tests
             this.viewModel.SetupGet(v => v.UiControlsEnabled).Returns(true);
             this.viewModel.SetupSet(v => v.UiControlsEnabled = false);
 
+            // Act
             this.model.UpdateMatcherAndRefreshLog(true);
             this.WaitReadingComplete();
+
+            // Assert
             this.model.Store.CountMessages().Should().Be(4);
         }
 
