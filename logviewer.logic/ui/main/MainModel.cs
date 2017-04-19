@@ -339,13 +339,18 @@ namespace logviewer.logic.ui.main
 
         private void InitNewStoreIfNecessary(bool append)
         {
-            if (this.store != null && !append)
+            if (append)
             {
-                this.store.Dispose();
+                if (this.store != null)
+                {
+                    // We dont need to reinitialize store in append mode if it is initialized
+                    return;
+                }
             }
-            if (append && this.store != null)
+            else
             {
-                return;
+                // Destroy old store
+                this.store?.Dispose();
             }
 
             var dbSize = this.logSize + (this.logSize / 10) * 4; // +40% to log file
