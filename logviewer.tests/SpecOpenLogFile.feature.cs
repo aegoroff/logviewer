@@ -243,6 +243,83 @@ this.ScenarioSetup(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Some messages filtered by message text")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Some messages filtered by message text")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void SomeMessagesFilteredByMessageText()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Some messages filtered by message text", new string[] {
+                        "mainmodel"});
+#line 63
+this.ScenarioSetup(scenarioInfo);
+#line 64
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 65
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 66
+ testRunner.When("I press open with message text filter \"message body 1\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 67
+   testRunner.And("wait 2 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 68
+ testRunner.Then("the number of shown messages should be 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Some messages filtered by message text with regex support")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Some messages filtered by message text with regex support")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void SomeMessagesFilteredByMessageTextWithRegexSupport()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Some messages filtered by message text with regex support", new string[] {
+                        "mainmodel"});
+#line 71
+this.ScenarioSetup(scenarioInfo);
+#line 72
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 73
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 74
+ testRunner.When("I press open with message text filter \"message body \\d+\" and regular expression s" +
+                    "upport enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 75
+   testRunner.And("wait 2 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 76
+ testRunner.Then("the number of shown messages should be 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Some messages filtered by message text with regex support all messages filtered o" +
+            "ut")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Some messages filtered by message text with regex support all messages filtered o" +
+            "ut")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void SomeMessagesFilteredByMessageTextWithRegexSupportAllMessagesFilteredOut()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Some messages filtered by message text with regex support all messages filtered o" +
+                    "ut", new string[] {
+                        "mainmodel"});
+#line 79
+this.ScenarioSetup(scenarioInfo);
+#line 80
+ testRunner.Given("I have file \"test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 81
+   testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 82
+ testRunner.When("I press open with message text filter \"message body \\d{3,}\" and regular expressio" +
+                    "n support enabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 83
+   testRunner.And("wait 2 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 84
+ testRunner.Then("the number of shown messages should be 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.1.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable

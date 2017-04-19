@@ -58,3 +58,27 @@ Scenario: Read last opened log on start
 	When I start application with default filtering parameters
 	  And wait 2 seconds
 	Then the number of shown messages should be 2
+
+@mainmodel
+Scenario: Some messages filtered by message text
+	Given I have file "test.log" on disk
+	  And The file contains 2 messages with levels "INFO" and "ERROR"
+	When I press open with message text filter "message body 1"
+	  And wait 2 seconds
+	Then the number of shown messages should be 1
+    
+@mainmodel
+Scenario: Some messages filtered by message text with regex support
+	Given I have file "test.log" on disk
+	  And The file contains 2 messages with levels "INFO" and "ERROR"
+	When I press open with message text filter "message body \d+" and regular expression support enabled
+	  And wait 2 seconds
+	Then the number of shown messages should be 2
+    
+@mainmodel
+Scenario: Some messages filtered by message text with regex support all messages filtered out
+	Given I have file "test.log" on disk
+	  And The file contains 2 messages with levels "INFO" and "ERROR"
+	When I press open with message text filter "message body \d{3,}" and regular expression support enabled
+	  And wait 2 seconds
+	Then the number of shown messages should be 0

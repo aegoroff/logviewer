@@ -105,6 +105,18 @@ namespace logviewer.tests
             this.Open(minLevel, maxLevel);
         }
 
+        [When(@"I press open with message text filter ""(.*)""")]
+        public void WhenIPressOpenWithMessageTextFilter(string filter)
+        {
+            this.Open(LogLevel.Trace, LogLevel.Fatal, filter);
+        }
+
+        [When(@"I press open with message text filter ""(.*)"" and regular expression support enabled")]
+        public void WhenIPressOpenWithMessageTextFilterAndRegularExpressionSupportEnabled(string filter)
+        {
+            this.Open(LogLevel.Trace, LogLevel.Fatal, filter, true);
+        }
+
         [When(@"wait (.*) seconds")]
         public void WhenWaitSeconds(int seconds)
         {
@@ -164,12 +176,14 @@ namespace logviewer.tests
             }
         }
 
-        private void Open(LogLevel minLevel, LogLevel maxLevel)
+        private void Open(LogLevel minLevel, LogLevel maxLevel, string filter = null, bool useRegularExpressions = false)
         {
             this.viewModel.SetupGet(_ => _.MinLevel).Returns((int) minLevel);
             this.viewModel.SetupGet(_ => _.MaxLevel).Returns((int) maxLevel);
             this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
             this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
+            this.viewModel.SetupGet(_ => _.UseRegularExpressions).Returns(useRegularExpressions);
+            this.viewModel.SetupGet(_ => _.MessageFilter).Returns(filter);
             this.workflow.Open(this.path);
         }
 
