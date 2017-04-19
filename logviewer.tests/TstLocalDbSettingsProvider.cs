@@ -20,6 +20,8 @@ namespace logviewer.tests
     {
         private const int KeepLastNFilesCount = 2;
 
+        private static readonly string messageStart = ParsingTemplate.Defaults.First().StartMessage;
+
         public TstLocalDbSettingsProvider()
         {
             this.provider = new LocalDbSettingsProvider(dbPath, 100, KeepLastNFilesCount);
@@ -53,7 +55,7 @@ namespace logviewer.tests
         {
             var template = this.provider.ReadParsingTemplate();
             template.Index.Should().Be(0);
-            template.StartMessage.Should().Be(TstMainModel.MessageStart);
+            template.StartMessage.Should().Be(messageStart);
         }
 
         [Fact]
@@ -63,7 +65,7 @@ namespace logviewer.tests
             template.StartMessage += "1";
             this.provider.UpdateParsingTemplate(template);
             var template1 = this.provider.ReadParsingTemplate();
-            template1.StartMessage.Should().Be(TstMainModel.MessageStart + "1");
+            template1.StartMessage.Should().Be(messageStart + "1");
         }
         
         [Fact]
@@ -75,7 +77,7 @@ namespace logviewer.tests
             template.Filter = filter;
             this.provider.UpdateParsingTemplate(template);
             var template1 = this.provider.ReadParsingTemplate();
-            template1.StartMessage.Should().Be(TstMainModel.MessageStart + "1");
+            template1.StartMessage.Should().Be(messageStart + "1");
             template1.Filter.Should().Be(filter);
         }
 
