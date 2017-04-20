@@ -57,6 +57,7 @@ namespace logviewer.tests
 
             var template = ParsingTemplate(logic.models.ParsingTemplate.Defaults.First().StartMessage);
             this.settings.Setup(_ => _.ReadParsingTemplate()).Returns(template);
+            this.settings.SetupGet(x => x.AutoRefreshOnFileChange).Returns(true);
 
             this.model = new MainModelForTest(this.viewModel.Object);
             this.model.ReadCompleted += this.OnReadCompleted;
@@ -73,14 +74,8 @@ namespace logviewer.tests
         [Given(@"The file contains (.*) messages with levels ""(.*)"" and ""(.*)""")]
         public void GivenTheFileContainsMessagesWithLevelsAnd(int count, string level1, string level2)
         {
-            var sb = new StringBuilder();
-            var levels = new[] { level1, level2 };
-            for (var i = 0; i < count; i++)
-            {
-                sb.AppendFormat(MessageTemplate, levels[i % levels.Length], i + 1);
-                sb.AppendLine();
-            }
-            File.WriteAllText(this.path, sb.ToString());
+            var content = CreateContent(count, level1, level2);
+            File.WriteAllText(this.path, content);
         }
 
         [When(@"I press open with default filtering parameters")]
@@ -123,6 +118,12 @@ namespace logviewer.tests
             this.waitResult = SpinWait.SpinUntil(() => this.completed, TimeSpan.FromSeconds(seconds));
         }
 
+        [When(@"freeze (.*) seconds")]
+        public void WhenFreezeSeconds(int seconds)
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(seconds));
+        }
+
         [When(@"I start application with default filtering parameters")]
         public void WhenIStartApplicationWithDefaultFilteringParameters()
         {
@@ -143,6 +144,13 @@ namespace logviewer.tests
         {
             this.waitResult.Should().BeTrue("Read should be completed in 2 second");
             this.viewModel.VerifySet(x => x.MessageCount = messagesCount);
+        }
+
+        [When(@"Add (.*) more messages with levels ""(.*)"" and ""(.*)"" into log")]
+        public void WhenAddMoreMessagesWithLevelsAndIntoLog(int count, string level1, string level2)
+        {
+            var content = CreateContent(count, level1, level2);
+            File.AppendAllText(this.path, content);
         }
 
         [AfterScenario("mainmodel")]
@@ -174,6 +182,20 @@ namespace logviewer.tests
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        private static string CreateContent(int count, string level1, string level2)
+        {
+            var sb = new StringBuilder();
+            var levels = new[] { level1, level2 };
+            for (var i = 0; i < count; i++)
+            {
+                sb.AppendFormat(MessageTemplate, levels[i % levels.Length], i + 1);
+                sb.AppendLine();
+            }
+
+            var content = sb.ToString();
+            return content;
         }
 
         private void Open(LogLevel minLevel, LogLevel maxLevel, string filter = null, bool useRegularExpressions = false)

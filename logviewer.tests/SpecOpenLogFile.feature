@@ -82,3 +82,13 @@ Scenario: Some messages filtered by message text with regex support all messages
 	When I press open with message text filter "message body \d{3,}" and regular expression support enabled
 	  And wait 2 seconds
 	Then the number of shown messages should be 0
+
+@mainmodel
+Scenario: Append data into log after opening
+	Given I have file ".\test.log" on disk
+	 And The file contains 2 messages with levels "INFO" and "ERROR"
+	When I press open with default filtering parameters
+	  And wait 2 seconds
+      And Add 2 more messages with levels "DEBUG" and "TRACE" into log
+      And freeze 1 seconds
+	Then the number of shown messages should be 4

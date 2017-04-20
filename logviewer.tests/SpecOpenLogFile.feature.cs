@@ -320,6 +320,34 @@ this.ScenarioSetup(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Append data into log after opening")]
+        [Xunit.TraitAttribute("FeatureTitle", "SpecOpenLogFile")]
+        [Xunit.TraitAttribute("Description", "Append data into log after opening")]
+        [Xunit.TraitAttribute("Category", "mainmodel")]
+        public virtual void AppendDataIntoLogAfterOpening()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Append data into log after opening", new string[] {
+                        "mainmodel"});
+#line 87
+this.ScenarioSetup(scenarioInfo);
+#line 88
+ testRunner.Given("I have file \".\\test.log\" on disk", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 89
+  testRunner.And("The file contains 2 messages with levels \"INFO\" and \"ERROR\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 90
+ testRunner.When("I press open with default filtering parameters", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 91
+   testRunner.And("wait 2 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 92
+      testRunner.And("Add 2 more messages with levels \"DEBUG\" and \"TRACE\" into log", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 93
+      testRunner.And("freeze 1 seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 94
+ testRunner.Then("the number of shown messages should be 4", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.1.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable
