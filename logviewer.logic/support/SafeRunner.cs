@@ -1,4 +1,4 @@
-// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 21.09.2012
@@ -13,14 +13,14 @@ namespace logviewer.logic.support
     /// <summary>
     ///     Provides useful safe runner primitives.
     /// </summary>
-    public static class SafeRunner
+    [PublicAPI]
+    public struct SafeRunner
     {
         /// <summary>
         ///     Runs specified method and handles all errors. Error messaged are written into log.
         /// </summary>
         /// <param name="method"> Method to run </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [PublicAPI]
         public static void Run(Action method)
         {
             try
@@ -38,7 +38,6 @@ namespace logviewer.logic.support
         /// </summary>
         /// <param name="method"> Method to run </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [PublicAPI]
         public static T Run<T>(Func<T> method)
         {
             try
@@ -60,7 +59,6 @@ namespace logviewer.logic.support
         /// <param name="method"> Method to run </param>
         /// <param name="argument"> Argument value </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [PublicAPI]
         public static void Run<T>(Action<T> method, T argument)
         {
             try
@@ -82,7 +80,6 @@ namespace logviewer.logic.support
         /// <param name="argument1"> Argument 1 value </param>
         /// <param name="argument2"> Argument 2 value </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [PublicAPI]
         public static void Run<T1, T2>(Action<T1, T2> method, T1 argument1, T2 argument2)
         {
             try
@@ -106,7 +103,6 @@ namespace logviewer.logic.support
         /// <param name="argument2"> Argument 2 value </param>
         /// <param name="argument3"> Argument 3 value </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [PublicAPI]
         public static void Run<T1, T2, T3>(Action<T1, T2, T3> method, T1 argument1, T2 argument2, T3 argument3)
         {
             try
