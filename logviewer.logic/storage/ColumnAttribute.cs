@@ -9,7 +9,7 @@ using System;
 namespace logviewer.logic.storage
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class ColumnAttribute : Attribute
+    public sealed class ColumnAttribute : Attribute
     {
         public ColumnAttribute(string name)
         {

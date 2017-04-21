@@ -9,7 +9,7 @@ using System.Data;
 
 namespace logviewer.logic.storage
 {
-    internal class LocalDbQueryProvider : IQueryProvider
+    internal sealed class LocalDbQueryProvider : IQueryProvider
     {
         private readonly string settingsDatabaseFilePath;
 
