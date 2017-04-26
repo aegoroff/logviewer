@@ -23,11 +23,11 @@ namespace logviewer.logic.support
     {
         private readonly int count;
 
-        private int itemsCount;
-
         private int[] indexes;
 
         private T[] store;
+
+        private List<int> keys;
 
         public FixedSizeDictionary(int count)
         {
@@ -39,16 +39,16 @@ namespace logviewer.logic.support
             this.count = count;
             this.store = new T[count];
             this.indexes = new int[count];
+            this.keys = new List<int>(count);
         }
 
         public IEnumerator<KeyValuePair<int, T>> GetEnumerator()
         {
-            for (var i = 0; i < this.store.Length; i++)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < this.keys.Count; i++)
             {
-                if (this.ContainsKeyInternal(i))
-                {
-                    yield return new KeyValuePair<int, T>(i, this.store[i]);
-                }
+                var ix = this.keys[i];
+                yield return new KeyValuePair<int, T>(ix, this.store[ix]);
             }
         }
 
@@ -60,7 +60,7 @@ namespace logviewer.logic.support
         {
             this.store = new T[this.count];
             this.indexes = new int[this.count];
-            this.itemsCount = 0;
+            this.keys = new List<int>(this.count);
         }
 
         [Pure]
@@ -79,7 +79,7 @@ namespace logviewer.logic.support
 
         public bool Remove(KeyValuePair<int, T> item) => this.Remove(item.Key);
 
-        public int Count => this.itemsCount;
+        public int Count => this.keys.Count;
 
         public bool IsReadOnly => false;
 
@@ -89,14 +89,14 @@ namespace logviewer.logic.support
         /// <inheritdoc />
         public void Add(int key, T value)
         {
-            if (key >= this.count || key < 0)
+            if (key >= this.count || key < 0 || this.ContainsKeyInternal(key))
             {
                 return;
             }
 
             this.store[key] = value;
             this.indexes[key] = 1;
-            ++this.itemsCount;
+            this.keys.Add(key);
         }
 
         /// <inheritdoc />
@@ -109,7 +109,7 @@ namespace logviewer.logic.support
 
             this.store[key] = default(T);
             this.indexes[key] = 0;
-            --this.itemsCount;
+            this.keys.Remove(key);
             return true;
         }
 
@@ -138,46 +138,17 @@ namespace logviewer.logic.support
             set => this.store[key] = value;
         }
 
-        public unsafe ICollection<int> Keys
-        {
-            get
-            {
-                // Ugly but 2 times faster
-                var result = new List<int>(this.count);
-                fixed (int* p = this.indexes)
-                {
-                    var len = this.count * 2;
-                    var tempPtr = p;
-
-                    while (len > 0)
-                    {
-                        var key = *tempPtr;
-
-                        if (key > 0)
-                        {
-                            result.Add(this.count - len / 2);
-                        }
-
-                        ++tempPtr;
-                        len -= 2;
-                    }
-                }
-                return result;
-            }
-        }
+        public ICollection<int> Keys => this.keys;
 
         public ICollection<T> Values => this.GetValuesInternal().ToArray();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IEnumerable<T> GetValuesInternal()
         {
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            for (var i = 0; i < this.store.Length; i++)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < this.keys.Count; i++)
             {
-                if (this.ContainsKeyInternal(i))
-                {
-                    yield return this.store[i];
-                }
+                yield return this.store[this.keys[i]];
             }
         }
 

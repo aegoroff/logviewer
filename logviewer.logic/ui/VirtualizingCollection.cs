@@ -37,7 +37,7 @@ namespace logviewer.logic.ui
     public sealed class VirtualizingCollection<T> : IVirtualizingCollection<T>, IList
     {
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize,
-                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize) => this.PageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
+                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize) => this.pageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
 
         [PublicAPI]
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize) : this(itemsProvider) => this.pageSize = pageSize;
@@ -54,7 +54,7 @@ namespace logviewer.logic.ui
         public int PageSize => this.pageSize;
 
         [PublicAPI]
-        public long PageCacheTimeoutMilliseconds { get; } = 10000;
+        public long PageCacheTimeoutMilliseconds => this.pageCacheTimeoutMilliseconds;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -241,13 +241,14 @@ namespace logviewer.logic.ui
 
         private int lastVisible;
 
+        private readonly long pageCacheTimeoutMilliseconds = 10000;
+
         /// <summary>
         ///     Cleans up any stale pages that have not been accessed in the period dictated by PageCacheTimeoutMilliseconds.
         /// </summary>
         [PublicAPI]
         public void CleanUpPages()
         {
-            // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating
             var keys = (List<int>)this.pageTouchTimes.Keys;
 
             // Performance reason. Thanks dotTrace from JetBrains :)
@@ -257,11 +258,10 @@ namespace logviewer.logic.ui
             for (var i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];
-
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
                 if (key != 0
                     && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)
-                    && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
+                    && (now - lastUsed).TotalMilliseconds > this.pageCacheTimeoutMilliseconds)
                 {
                     this.pages.Remove(key);
                     this.pageTouchTimes.Remove(key);

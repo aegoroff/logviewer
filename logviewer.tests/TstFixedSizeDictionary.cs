@@ -117,6 +117,21 @@ namespace logviewer.tests
             instance.Count.Should().Be(0);
         }
 
+        [Fact]
+        public void Add_SameKeyTwice_SecondAddDoesntChangeFirstAdded()
+        {
+            // Arrange
+            var instance = new FixedSizeDictionary<string>(DictionarySize);
+
+            // Act
+            instance.Add(1, ExpectedString);
+            instance.Add(1, "2");
+
+            // Assert
+            instance.Count.Should().Be(1);
+            instance[1].Should().Be(ExpectedString);
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData(null)]
