@@ -142,8 +142,10 @@ namespace logviewer.engine
             while (nodes.Count != 0)
             {
                 var newNodes = new List<AhoCorasickTreeNode>();
-                foreach (var node in nodes)
+                // ReSharper disable once ForCanBeConvertedToForeach
+                for (var i = 0; i < nodes.Count; i++)
                 {
+                    var node = nodes[i];
                     var failure = node.ParentFailure;
                     var value = node.Value;
 
