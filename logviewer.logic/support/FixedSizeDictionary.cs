@@ -23,6 +23,8 @@ namespace logviewer.logic.support
     {
         private readonly int count;
 
+        private int itemsCount;
+
         private int[] indexes;
 
         private T[] store;
@@ -58,6 +60,7 @@ namespace logviewer.logic.support
         {
             this.store = new T[this.count];
             this.indexes = new int[this.count];
+            this.itemsCount = 0;
         }
 
         [Pure]
@@ -76,22 +79,7 @@ namespace logviewer.logic.support
 
         public bool Remove(KeyValuePair<int, T> item) => this.Remove(item.Key);
 
-        public int Count
-        {
-            get
-            {
-                var result = 0;
-                for (var i = 0; i < this.store.Length; i++)
-                {
-                    if (this.ContainsKeyInternal(i))
-                    {
-                        result++;
-                    }
-                }
-
-                return result;
-            }
-        }
+        public int Count => this.itemsCount;
 
         public bool IsReadOnly => false;
 
@@ -108,6 +96,7 @@ namespace logviewer.logic.support
 
             this.store[key] = value;
             this.indexes[key] = 1;
+            ++this.itemsCount;
         }
 
         /// <inheritdoc />
@@ -120,6 +109,7 @@ namespace logviewer.logic.support
 
             this.store[key] = default(T);
             this.indexes[key] = 0;
+            --this.itemsCount;
             return true;
         }
 
