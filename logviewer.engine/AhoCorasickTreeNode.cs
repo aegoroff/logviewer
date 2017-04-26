@@ -65,9 +65,6 @@ namespace logviewer.engine
             return r;
         }
 
-        public bool ContainsTransition(char c)
-        {
-            return this.transitionsDictionary.ContainsKey(c);
-        }
+        public bool ContainsTransition(char c) => this.transitionsDictionary.ContainsKey(c);
     }
 }
