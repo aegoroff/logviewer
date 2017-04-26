@@ -138,17 +138,31 @@ namespace logviewer.logic.support
             set => this.store[key] = value;
         }
 
-        public ICollection<int> Keys => this.GetKeysInternal().ToArray();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IEnumerable<int> GetKeysInternal()
+        public unsafe ICollection<int> Keys
         {
-            for (var i = 0; i < this.indexes.Length; i++)
+            get
             {
-                if (this.ContainsKeyInternal(i))
+                // Ugly but 2 times faster
+                var result = new List<int>(this.count);
+                fixed (int* p = this.indexes)
                 {
-                    yield return i;
+                    var len = this.count * 2;
+                    var tempPtr = p;
+
+                    while (len > 0)
+                    {
+                        var key = *tempPtr;
+
+                        if (key > 0)
+                        {
+                            result.Add(this.count - len / 2);
+                        }
+
+                        ++tempPtr;
+                        len -= 2;
+                    }
                 }
+                return result;
             }
         }
 

@@ -245,35 +245,29 @@ namespace logviewer.logic.ui
         ///     Cleans up any stale pages that have not been accessed in the period dictated by PageCacheTimeoutMilliseconds.
         /// </summary>
         [PublicAPI]
-        public unsafe void CleanUpPages()
+        public void CleanUpPages()
         {
             // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating
-            var keys = (int[])this.pageTouchTimes.Keys;
+            var keys = (List<int>)this.pageTouchTimes.Keys;
 
             // Performance reason. Thanks dotTrace from JetBrains :)
             var now = DateTime.Now;
 
-            fixed (int* p = keys)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < keys.Count; i++)
             {
-                var len = keys.Length * 2;
-                var tempPtr = p;
+                var key = keys[i];
 
-                while (len > 0)
+                // page 0 is a special case, since WPF ItemsControl access the first item frequently
+                if (key != 0
+                    && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)
+                    && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
                 {
-                    var key = *tempPtr;
-                    ++tempPtr;
-                    len -= 2;
-                    // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                    if (key != 0
-                        && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)
-                        && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
-                    {
-                        this.pages.Remove(key);
-                        this.pageTouchTimes.Remove(key);
+                    this.pages.Remove(key);
+                    this.pageTouchTimes.Remove(key);
 #if DEBUG
                     Trace.WriteLine("Removed Page: " + key);
 #endif
-                    }
                 }
             }
         }
