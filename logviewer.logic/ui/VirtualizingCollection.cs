@@ -245,7 +245,7 @@ namespace logviewer.logic.ui
         ///     Cleans up any stale pages that have not been accessed in the period dictated by PageCacheTimeoutMilliseconds.
         /// </summary>
         [PublicAPI]
-        public void CleanUpPages()
+        public unsafe void CleanUpPages()
         {
             // TODO: performance problem but in other hand you cannot modify collection (this.pageTouchTimes) while iterating
             var keys = (int[])this.pageTouchTimes.Keys;
@@ -253,21 +253,27 @@ namespace logviewer.logic.ui
             // Performance reason. Thanks dotTrace from JetBrains :)
             var now = DateTime.Now;
 
-            // ReSharper disable once ForCanBeConvertedToForeach
-            for (var i = 0; i < keys.Length; i++)
+            fixed (int* p = keys)
             {
-                var key = keys[i];
+                var len = keys.Length * 2;
+                var tempPtr = p;
 
-                // page 0 is a special case, since WPF ItemsControl access the first item frequently
-                if (key != 0
-                    && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)
-                    && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
+                while (len > 0)
                 {
-                    this.pages.Remove(key);
-                    this.pageTouchTimes.Remove(key);
+                    var key = *tempPtr;
+                    ++tempPtr;
+                    len -= 2;
+                    // page 0 is a special case, since WPF ItemsControl access the first item frequently
+                    if (key != 0
+                        && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)
+                        && (now - lastUsed).TotalMilliseconds > this.PageCacheTimeoutMilliseconds)
+                    {
+                        this.pages.Remove(key);
+                        this.pageTouchTimes.Remove(key);
 #if DEBUG
                     Trace.WriteLine("Removed Page: " + key);
 #endif
+                    }
                 }
             }
         }
