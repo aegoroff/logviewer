@@ -19,7 +19,7 @@ namespace logviewer.logic.support
     /// </summary>
     /// <typeparam name="T">Value type</typeparam>
     /// <exception cref="ArgumentOutOfRangeException">Occurs if count is negative o zero</exception>
-    public class FixedSizeDictionary<T> : IDictionary<int, T>
+    public sealed class FixedSizeDictionary<T> : IDictionary<int, T>
     {
         private readonly int count;
 
@@ -61,7 +61,7 @@ namespace logviewer.logic.support
         }
 
         [Pure]
-        public bool Contains(KeyValuePair<int, T> item) => this.ContainsKey(item.Key) && Equals(this.store[item.Key], item.Value);
+        public bool Contains(KeyValuePair<int, T> item) => this.TryGetValue(item.Key, out T value) && Equals(value, item.Value);
 
         public void CopyTo(KeyValuePair<int, T>[] array, int arrayIndex)
         {
