@@ -1,57 +1,61 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace logviewer.engine
 {
     public class AhoCorasickTree
     {
-        internal AhoCorasickTreeNode Root { get; set; }
+        internal AhoCorasickTreeNode Root { get; }
 
         public AhoCorasickTree(IEnumerable<string> keywords)
         {
             this.Root = new AhoCorasickTreeNode();
 
-            if (keywords != null)
+            if (keywords == null)
             {
-                foreach (var p in keywords)
-                {
-                    this.AddPatternToTree(p);
-                }
-
-                this.SetFailureNodes();
+                return;
             }
+
+            foreach (var p in keywords)
+            {
+                this.AddPatternToTree(p);
+            }
+
+            this.SetFailureNodes();
         }
 
-        public bool Contains(string text)
-        {
-            return this.Contains(text, false);
-        }
+        public bool Contains(string text) => this.Contains(text, false);
 
-        public bool ContainsThatStart(string text)
-        {
-            return this.Contains(text, true);
-        }
+        public bool ContainsThatStart(string text) => this.Contains(text, true);
 
-        private bool Contains(string text, bool onlyStarts)
+        private unsafe bool Contains(string text, bool onlyStarts)
         {
             var pointer = this.Root;
 
-            foreach (var c in text)
+            fixed (char* p = text)
             {
-                var transition = this.GetTransition(c, ref pointer);
+                var len = text.Length * 2;
+                var cptr = p;
+                while (len > 0)
+                {
+                    var c = *cptr;
+                    cptr++;
+                    len -= 2;
 
-                if (transition != null)
-                {
-                    pointer = transition;
-                }
-                else if (onlyStarts)
-                {
-                    return false;
-                }
+                    var transition = this.GetTransition(c, ref pointer);
 
-                if (pointer.Results.Count > 0)
-                {
-                    return true;
+                    if (transition != null)
+                    {
+                        pointer = transition;
+                    }
+                    else if (onlyStarts)
+                    {
+                        return false;
+                    }
+
+                    if (pointer.Results.Count > 0)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -71,9 +75,12 @@ namespace logviewer.engine
                     pointer = transition;
                 }
 
-                foreach (var result in pointer.Results)
+                var results = pointer.Results;
+
+                // ReSharper disable once ForCanBeConvertedToForeach
+                for (var ix = 0; ix < results.Count; ix++)
                 {
-                    yield return result;
+                    yield return results[ix];
                 }
             }
         }
