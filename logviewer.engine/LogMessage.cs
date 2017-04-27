@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
-using logviewer.engine.strings;
 
 namespace logviewer.engine
 {
