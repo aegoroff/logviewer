@@ -62,6 +62,7 @@
         <CommandBinding Command="logviewer:LogviewerCommands.Settings" Executed="OnSettings" />
         <CommandBinding Command="logviewer:LogviewerCommands.NetworkSettings" Executed="OnNetworkSettings" />
         <CommandBinding Command="logviewer:LogviewerCommands.Updates" Executed="OnCheckUpdates" />
+        <CommandBinding Command="logviewer:LogviewerCommands.CopySelected" Executed="OnCopy" />
     </Window.CommandBindings>
     <Grid>
         <DockPanel Grid.Row="0">
@@ -318,7 +319,7 @@
                         <logviewer:TextBlockExt HorizontalAlignment="Stretch" TextWrapping="Wrap" Padding="5,0,5,0" logviewer:Attached.FormattedText="{Binding Mode=OneTime, IsAsync=True}">
                             <logviewer:TextBlockExt.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Copy" Command="Copy"></MenuItem>
+                                    <MenuItem Header="Copy" Command="logviewer:LogviewerCommands.CopySelected"></MenuItem>
                                 </ContextMenu>
                             </logviewer:TextBlockExt.ContextMenu>
                         </logviewer:TextBlockExt>

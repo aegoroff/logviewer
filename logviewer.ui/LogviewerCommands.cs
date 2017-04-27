@@ -12,15 +12,21 @@ namespace logviewer.ui
     {
         static LogviewerCommands()
         {
-            var inputs = new InputGestureCollection
+            var updateKeyboardShortcuts = new InputGestureCollection
                          {
                              new KeyGesture(Key.F5, ModifierKeys.None, "F5")
                          };
-            Update = new RoutedUICommand("Update", "Update", typeof(LogviewerCommands), inputs);
+            Update = new RoutedUICommand("Update", "Update", typeof(LogviewerCommands), updateKeyboardShortcuts);
             Statistic = new RoutedUICommand("Statistic", "Statistic", typeof(LogviewerCommands));
             Settings = new RoutedUICommand("Settings", "Settings", typeof(LogviewerCommands));
             NetworkSettings = new RoutedUICommand("NetworkSettings", "NetworkSettings", typeof(LogviewerCommands));
             Updates = new RoutedUICommand("Updates", "Updates", typeof(LogviewerCommands));
+
+            var copyKeyboardShortcuts = new InputGestureCollection
+                                          {
+                                              new KeyGesture(Key.C, ModifierKeys.Control, "Ctrl+C")
+                                          };
+            CopySelected = new RoutedUICommand("Copy", "Copy", typeof(LogviewerCommands), copyKeyboardShortcuts);
         }
 
         public static RoutedUICommand Update { get; }
@@ -32,5 +38,7 @@ namespace logviewer.ui
         public static RoutedUICommand NetworkSettings { get; }
 
         public static RoutedUICommand Updates { get; }
+
+        public static RoutedUICommand CopySelected { get; }
     }
 }

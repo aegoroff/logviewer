@@ -144,6 +144,11 @@ namespace logviewer.ui
             this.updatesCheckingModel.CheckUpdates(true);
         }
 
+        private void OnCopy(object sender, ExecutedRoutedEventArgs e)
+        {
+            // TODO: Implement copy
+        }
+
         private void OnHelp(object sender, ExecutedRoutedEventArgs e)
         {
             var dlg = new AboutDlg();
