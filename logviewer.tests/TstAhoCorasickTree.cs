@@ -24,6 +24,34 @@ namespace logviewer.tests
         }
 
         [Fact]
+        public void ContainsThatStart_SeveralStringsSomeInTargetButStringDoesntStartsWithAny_ReturnFalse()
+        {
+            // Arrange
+            var keywords = new[] { "Windows", "Linux", "MacOSX" };
+            var tree = new AhoCorasickTree(keywords);
+
+            // Act
+            var result = tree.ContainsThatStart(TestString);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ContainsThatStart_SeveralStringsSomeInTarget_ReturnTrue()
+        {
+            // Arrange
+            var keywords = new[] { "Mozilla", "Chrome", "IE" };
+            var tree = new AhoCorasickTree(keywords);
+
+            // Act
+            var result = tree.ContainsThatStart(TestString);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
         public void FindAll_SeveralStringsSomeInTarget_ReturnAllFound()
         {
             // Arrange

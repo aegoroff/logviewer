@@ -2,10 +2,17 @@
 
 namespace logviewer.engine
 {
+    /// <summary>
+    /// Represents Aho-Corasick algorithm implementation
+    /// </summary>
     public class AhoCorasickTree
     {
         internal AhoCorasickTreeNode Root { get; }
 
+        /// <summary>
+        /// Initializes new algorithm instance using keywords (patterns) specified
+        /// </summary>
+        /// <param name="keywords">Patterns to search in a string</param>
         public AhoCorasickTree(IEnumerable<string> keywords)
         {
             this.Root = new AhoCorasickTreeNode();
@@ -23,8 +30,18 @@ namespace logviewer.engine
             this.SetFailureNodes();
         }
 
+        /// <summary>
+        /// Validates whether the string specified contains any pattern
+        /// </summary>
+        /// <param name="text">string to search within</param>
+        /// <returns>True if the string contains any pattern. False otherwise</returns>
         public bool Contains(string text) => this.Contains(text, false);
 
+        /// <summary>
+        /// Validates whether the string specified starts with any pattern
+        /// </summary>
+        /// <param name="text">string to search within</param>
+        /// <returns>True if the string starts with any pattern. False otherwise</returns>
         public bool ContainsThatStart(string text) => this.Contains(text, true);
 
         private unsafe bool Contains(string text, bool onlyStarts)
@@ -62,6 +79,11 @@ namespace logviewer.engine
             return false;
         }
 
+        /// <summary>
+        /// Finds all patterns occurrences in the string specified
+        /// </summary>
+        /// <param name="text">string to search within</param>
+        /// <returns>All found patterns</returns>
         public IEnumerable<string> FindAll(string text)
         {
             var pointer = this.Root;
