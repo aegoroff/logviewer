@@ -27,6 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\logviewer.engine.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\logviewer.engine.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Label="YltParsers">
     <Names>Grok</Names>
@@ -53,6 +55,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="strings\AhoCorasickTree.cs" />
+    <Compile Include="strings\AhoCorasickTreeNode.cs" />
+    <Compile Include="strings\CharKeyDictionary.cs" />
     <Compile Include="grammar\ReferencePattern.cs" />
     <Compile Include="grammar\Composer.cs" />
     <Compile Include="EncodingDetectedEventArgs.cs" />
