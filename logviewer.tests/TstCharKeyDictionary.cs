@@ -8,7 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
-using logviewer.engine;
+using logviewer.engine.strings;
 using logviewer.logic.Annotations;
 using Xunit;
 

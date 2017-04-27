@@ -1,5 +1,11 @@
-﻿using FluentAssertions;
-using logviewer.engine;
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
+// Created at: 26.04.2017
+// © 2012-2017 Alexander Egorov
+
+using FluentAssertions;
+using logviewer.engine.strings;
 using Xunit;
 
 namespace logviewer.tests
