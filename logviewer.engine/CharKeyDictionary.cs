@@ -28,16 +28,12 @@ namespace logviewer.engine
         /// <summary>
         /// Ininitalizes new dictionary instance
         /// </summary>
-        public CharKeyDictionary()
-        {
-            this.store = new T[char.MaxValue];
-            this.indexes = new int[char.MaxValue];
-            this.keys = new List<char>(char.MaxValue);
-        }
+        public CharKeyDictionary() => this.Clear();
 
         public IEnumerator<KeyValuePair<char, T>> GetEnumerator()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
+            // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < this.keys.Count; i++)
             {
                 var ix = this.keys[i];
@@ -136,6 +132,7 @@ namespace logviewer.engine
         private IEnumerable<T> GetValuesInternal()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
+            // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < this.keys.Count; i++)
             {
                 yield return this.store[this.keys[i]];
