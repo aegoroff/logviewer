@@ -124,34 +124,23 @@ namespace logviewer.engine
             {
                 return LogLevel.Trace;
             }
-            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
+            else if (debugTree.Contains(str))
             {
                 return LogLevel.Debug;
             }
-            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
+            else if (infoTree.Contains(str))
             {
                 return LogLevel.Info;
             }
-            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
+            else if (warnTree.Contains(str))
             {
                 return LogLevel.Warn;
             }
-            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
+            else if (errorTree.Contains(str))
             {
                 return LogLevel.Error;
             }
-            else if (string.Equals(str, @"FATAL", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"SEVERE", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"EMERG", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"EMERGENCY", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"PANIC", StringComparison.OrdinalIgnoreCase)
-                     || string.Equals(str, @"ALERT", StringComparison.OrdinalIgnoreCase))
+            else if (fatalTree.Contains(str))
             {
                 return LogLevel.Fatal;
             }
@@ -362,7 +351,6 @@ namespace logviewer.engine
                                                  bodyBuilder = new StringBuilder()
                                              };
 
-        #region Constants and Fields
         private Dictionary<string, long> integerProperties;
 
         private Dictionary<string, string> stringProperties;
@@ -375,7 +363,12 @@ namespace logviewer.engine
 
         private KeyValuePair<string, string>[] rawProperties;
 
+        private static AhoCorasickTree debugTree = new AhoCorasickTree(new[] { @"DEBUG", @"DEBUGGING" });
+        private static AhoCorasickTree infoTree = new AhoCorasickTree(new[] { @"INFO", @"NOTICE", @"INFORMATIONAL" });
+        private static AhoCorasickTree warnTree = new AhoCorasickTree(new[] { @"WARN", @"WARNING" });
+        private static AhoCorasickTree errorTree = new AhoCorasickTree(new[] { @"ERROR", @"ERR", @"CRITICAL" });
+        private static AhoCorasickTree fatalTree = new AhoCorasickTree(new[] { @"FATAL", @"SEVERE", @"EMERG", @"EMERGENCY", @"PANIC", @"ALERT" });
+
         private long ix;
-        #endregion
     }
 }
