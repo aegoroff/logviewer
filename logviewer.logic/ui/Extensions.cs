@@ -4,9 +4,14 @@
 // Created at: 28.08.2016
 // © 2012-2017 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml;
 using logviewer.logic.models;
+using logviewer.logic.support;
 using logviewer.logic.ui.main;
 
 namespace logviewer.logic.ui
@@ -28,6 +33,50 @@ namespace logviewer.logic.ui
             }
 
             return from t in templates select CreateTemplateCommand(t);
+        }
+
+        private static readonly XmlReaderSettings xmlWriterSettings = new XmlReaderSettings
+        {
+                                                                          ConformanceLevel = ConformanceLevel.Fragment,
+                                                                          CheckCharacters = false
+                                                                      };
+
+        public static string CleanupXaml(this string xaml)
+        {
+            if (string.IsNullOrWhiteSpace(xaml))
+            {
+                return xaml;
+            }
+
+            string Cleanup()
+            {
+                var stringReader = new StringReader(xaml);
+
+                var reader = XmlReader.Create(stringReader, xmlWriterSettings);
+                var stringBuilder = new StringBuilder();
+                using (reader)
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element && string.Equals(reader.Name, "Run", StringComparison.Ordinal))
+                        {
+                            stringBuilder.Append(reader.ReadElementContentAsString());
+                        }
+                    }
+                }
+                return stringBuilder.ToString();
+            }
+
+            try
+            {
+                return Cleanup();
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+            }
+
+            return xaml;
         }
     }
 }

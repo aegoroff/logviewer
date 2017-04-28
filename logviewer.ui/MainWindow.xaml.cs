@@ -146,7 +146,13 @@ namespace logviewer.ui
 
         private void OnCopy(object sender, ExecutedRoutedEventArgs e)
         {
-            // TODO: Implement copy
+            var item = e.OriginalSource as ListBoxItem;
+
+            var clean = (item?.Content as string)?.CleanupXaml();
+            if (!string.IsNullOrWhiteSpace(clean))
+            {
+                Clipboard.SetText(clean);
+            }
         }
 
         private void OnHelp(object sender, ExecutedRoutedEventArgs e)
