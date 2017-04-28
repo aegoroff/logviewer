@@ -35,7 +35,7 @@ namespace logviewer.logic.ui
             return from t in templates select CreateTemplateCommand(t);
         }
 
-        private static readonly XmlReaderSettings xmlWriterSettings = new XmlReaderSettings
+        private static readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings
         {
                                                                           ConformanceLevel = ConformanceLevel.Fragment,
                                                                           CheckCharacters = false
@@ -52,7 +52,7 @@ namespace logviewer.logic.ui
             {
                 var stringReader = new StringReader(xaml);
 
-                var reader = XmlReader.Create(stringReader, xmlWriterSettings);
+                var reader = XmlReader.Create(stringReader, xmlReaderSettings);
                 var stringBuilder = new StringBuilder();
                 using (reader)
                 {
@@ -60,7 +60,7 @@ namespace logviewer.logic.ui
                     {
                         if (reader.NodeType == XmlNodeType.Element && string.Equals(reader.Name, "Run", StringComparison.Ordinal))
                         {
-                            stringBuilder.Append(reader.ReadElementContentAsString());
+                            stringBuilder.AppendLine(reader.ReadElementContentAsString());
                         }
                     }
                 }

@@ -26,7 +26,8 @@ namespace logviewer.logic.storage
                                                                       {
                                                                           OmitXmlDeclaration = true,
                                                                           ConformanceLevel = ConformanceLevel.Fragment,
-                                                                          CheckCharacters = false
+                                                                          CheckCharacters = false,
+                                                                          NewLineHandling = NewLineHandling.None
                                                                       };
 
         public LogProvider(ILogStore store, ISettingsProvider settings)

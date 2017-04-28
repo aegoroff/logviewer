@@ -245,35 +245,18 @@ namespace logviewer.tests
         public void CleanupXaml_ReadBodyAndHeaderXaml_ReadAllInRightOrder()
         {
             // Arrange
-            const string xaml = @"<Run FontFamily=""Courier New"" FontWeight=""Bold"" Foreground=""#646464"" FontSize=""13""><![CDATA[2017-03-22 23:00:16,575 DEBUG logviewer library routine called out of sequence]]></Run><LineBreak /><Run FontFamily=""Courier New"" Foreground=""#646464"" FontSize=""12""><![CDATA[null connection or database handle
-System.Data.SQLite.SQLiteException (0x80004005): library routine called out of sequence
-null connection or database handle
-   at System.Data.SQLite.SQLite3.Prepare(SQLiteConnection cnn, String strSql, SQLiteStatement previous, UInt32 timeoutMS, String& strRemain)
-   at System.Data.SQLite.SQLiteCommand.BuildNextCommand()
-   at System.Data.SQLite.SQLiteDataReader.NextResult()
-   at System.Data.SQLite.SQLiteDataReader..ctor(SQLiteCommand cmd, CommandBehavior behave)
-   at System.Data.SQLite.SQLiteCommand.ExecuteReader(CommandBehavior behavior)
-   at logviewer.logic.storage.DatabaseConnection.<>c__DisplayClass18_0.<ExecuteReader>g__Action0(IDbCommand command) in C:\projects\logviewer\logviewer.logic\storage\DatabaseConnection.cs:line 161
-   at logviewer.logic.storage.DatabaseConnection.RunCommand(Action`1 action, String command) in C:\projects\logviewer\logviewer.logic\storage\DatabaseConnection.cs:line 138
-   at logviewer.logic.storage.DatabaseConnection.<>c__DisplayClass15_0.<RunSqlQuery>b__0(Object state) in C:\projects\logviewer\logviewer.logic\storage\DatabaseConnection.cs:line 114]]></Run><LineBreak />";
+            const string xaml = @"<Run FontFamily=""Courier New"" FontWeight=""Bold"" Foreground=""#646464"" FontSize=""13""><![CDATA[2017-03-22 23:00:16,575 DEBUG logviewer library routine called out of sequence]]></Run><LineBreak /><Run FontFamily=""Courier New"" Foreground=""#646464"" FontSize=""12""><![CDATA[null connection or database handle]]></Run><LineBreak />";
 
-            const string cleaned = @"2017-03-22 23:00:16,575 DEBUG logviewer library routine called out of sequencenull connection or database handle
-System.Data.SQLite.SQLiteException (0x80004005): library routine called out of sequence
+            const string cleaned = @"2017-03-22 23:00:16,575 DEBUG logviewer library routine called out of sequence
 null connection or database handle
-   at System.Data.SQLite.SQLite3.Prepare(SQLiteConnection cnn, String strSql, SQLiteStatement previous, UInt32 timeoutMS, String& strRemain)
-   at System.Data.SQLite.SQLiteCommand.BuildNextCommand()
-   at System.Data.SQLite.SQLiteDataReader.NextResult()
-   at System.Data.SQLite.SQLiteDataReader..ctor(SQLiteCommand cmd, CommandBehavior behave)
-   at System.Data.SQLite.SQLiteCommand.ExecuteReader(CommandBehavior behavior)
-   at logviewer.logic.storage.DatabaseConnection.<>c__DisplayClass18_0.<ExecuteReader>g__Action0(IDbCommand command) in C:\projects\logviewer\logviewer.logic\storage\DatabaseConnection.cs:line 161
-   at logviewer.logic.storage.DatabaseConnection.RunCommand(Action`1 action, String command) in C:\projects\logviewer\logviewer.logic\storage\DatabaseConnection.cs:line 138
-   at logviewer.logic.storage.DatabaseConnection.<>c__DisplayClass15_0.<RunSqlQuery>b__0(Object state) in C:\projects\logviewer\logviewer.logic\storage\DatabaseConnection.cs:line 114";
+";
 
             // Act
             var clean = xaml.CleanupXaml();
 
             // Assert
-            clean.Should().Be(cleaned.Replace("\r\n", "\n"));
+            //clean.Should().Be(cleaned.Replace("\r\n", "\n"));
+            clean.Should().Be(cleaned);
         }
 
         [Theory]
