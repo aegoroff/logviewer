@@ -64,7 +64,7 @@
     <RegexTransform Items="@(AssemblyInfoVersion)" />
   </Target>
   <!-- Main build step where solution file are built -->
-  <Target Name="Compile" DependsOnTargets="VersionUpdater">
+  <Target Name="Compile" DependsOnTargets="VersionUpdater;WixVersionUpdater">
     <!-- Start building solution file -->
     <MSBuild
       StopOnFirstFailure="true"
