@@ -1,107 +1,133 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- Importing MSBuild TeamCity Tasks -->
-	<Import Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.261.0\tools\MSBuild.TeamCity.Tasks.Targets"/>
-	<Import Project="WiX.msbuild"/>
+  <!-- Importing MSBuild TeamCity Tasks -->
+  <Import
+    Project="$(MSBuildThisFileDirectory)\packages\msbuildteamcitytasks.2.4.261.0\tools\MSBuild.TeamCity.Tasks.Targets" />
+  <Import Project="WiX.msbuild" />
 
-    <!-- Global properties definitions -->
-	<PropertyGroup>
+  <!-- Global properties definitions -->
+  <PropertyGroup>
 
-		<!-- Code configuration to build (Release or Debug) -->
-		<Configuration>Release</Configuration>
-		
-		<!-- Enables updating version mechanism -->
-		<IsUpdateVersion>false</IsUpdateVersion>
-        <IsRunTests>true</IsRunTests>
-		
-		<!-- Version components  -->
-		<Major>1</Major>
-		<Minor>0</Minor>
-		<Build Condition=" '$(BUILD_BUILDNUMBER)' == '' ">0</Build>
-		<Build Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</Build>
-		<Revision>0</Revision>
-	</PropertyGroup>
-	<!-- AssemblyInfo.cs file definitions where to set version -->
-	<ItemGroup>
-		<AssemblyInfoFile Include="$(MSBuildProjectDirectory)\**\AssemblyInfo.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install\Product.wxs" />
-		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\Bundle.wxs" />
-	</ItemGroup>
-	<!-- Updating version and product code task -->
-	<Target Name="VersionUpdater" Condition=" '$(IsUpdateVersion)'=='true' ">
-		<!-- Updating AssemblyInfo.cs files -->
-		<ItemGroup>
-		  <AssemblyInfoVersion Include="@(AssemblyInfoFile)">
-			<Find><![CDATA[\[assembly(\s*):(\s*)(AssemblyVersion|AssemblyFileVersion|AssemblyInformationalVersionAttribute)\((\s*)"(\d+)\.(\d+)\.(\d+)\.(\d+)"(\s*)\)\]]]></Find>
-			<ReplaceWith><![CDATA[[assembly : $3("$(Major).$(Minor).$(Build).$(Revision)")]]]></ReplaceWith>
-			<Options>Singleline</Options>
-		  </AssemblyInfoVersion>
-		</ItemGroup>
-		<!-- Updating WiX files -->
-		<ItemGroup>
-		  <WixSolutionDir Include="@(WixFile)">
-			<Find><![CDATA[\$\(var\.SolutionDir\)]]></Find>
-			<ReplaceWith><![CDATA[$(MSBuildProjectDirectory)\]]></ReplaceWith>
-			<Options>Singleline</Options>
-		  </WixSolutionDir>
-		</ItemGroup>
-		<ItemGroup>
-		  <WixVersion Include="@(WixFile)">
-			<Find><![CDATA[define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"]]></Find>
-			<ReplaceWith><![CDATA[define Version = "$(Major).$(Minor).$(Build).$(Revision)"]]></ReplaceWith>
-			<Options>Singleline</Options>
-		  </WixVersion>
-		</ItemGroup>
-		<RegexTransform Items="@(WixVersion)" />
-		<RegexTransform Items="@(WixSolutionDir)" />
-		<RegexTransform Items="@(AssemblyInfoVersion)" />
-	</Target>
-	<!-- Main build step where solution file are built -->
-	<Target Name="Compile" DependsOnTargets="VersionUpdater">
-		<!-- Start building solution file -->
-		<MSBuild
-			StopOnFirstFailure="true"
-			Projects="logviewer.sln"
-			Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword)" 
-		/>
-		<Copy
-			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi"
-			DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi"
-		/>
-		<Copy
-			SourceFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe"
-			DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe"
-		/>
-        <ItemGroup>
-            <EngineProject Include="$(MSBuildProjectDirectory)\logviewer.engine\logviewer.engine.csproj" />
-        </ItemGroup>
-        <MSBuild
-                Projects="@(EngineProject)"
-				Targets="Rebuild"
-                Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(LogviewerSnkPath)" />
-	</Target>
+    <!-- Code configuration to build (Release or Debug) -->
+    <Configuration>Release</Configuration>
 
-    <!-- Run unit tests task -->
-    <Target Name="UnitTesting" DependsOnTargets="Compile" Condition=" '$(IsRunTests)'=='true' ">
-        <!-- Managed tests -->
-        <xunit 
-             Assemblies="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll" ShadowCopy="false" />
-    </Target>
+    <!-- Enables updating version mechanism -->
+    <IsUpdateVersion>false</IsUpdateVersion>
+    <IsRunTests>true</IsRunTests>
+
+    <!-- Version components  -->
+    <Major>1</Major>
+    <Minor>0</Minor>
+    <Build Condition=" '$(BUILD_BUILDNUMBER)' == '' ">0</Build>
+    <Build Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</Build>
+    <Revision>0</Revision>
+    <PvsStudioPath>c:\Program Files (x86)\PVS-Studio\PVS-Studio_Cmd.exe</PvsStudioPath>
+    <PvsStudioReportFile>logviewer.plog</PvsStudioReportFile>
+    <PlogConverterPath>c:\Program Files (x86)\PVS-Studio\PlogConverter.exe</PlogConverterPath>
+  </PropertyGroup>
+  <!-- AssemblyInfo.cs file definitions where to set version -->
+  <ItemGroup>
+    <AssemblyInfoFile Include="$(MSBuildProjectDirectory)\**\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixFile Include="$(MSBuildProjectDirectory)\logviewer.install\Product.wxs" />
+    <WixFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\Bundle.wxs" />
+  </ItemGroup>
+  <!-- Updating version and product code task -->
+  <Target Name="VersionUpdater" Condition=" '$(IsUpdateVersion)'=='true' ">
+    <!-- Updating AssemblyInfo.cs files -->
     <ItemGroup>
-		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi => installer" />
-		<SetupFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe => installer" />
-	</ItemGroup>
-	<!-- Setting next build version and finish build process -->
-	<Target Name="Build" DependsOnTargets="UnitTesting">
-		<PublishArtifacts Artifacts="@(SetupFile)"/>
-		<Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete"/>
-	</Target>
-
-    <ItemGroup>
-        <XunitTools Include="$(MSBuildProjectDirectory)\packages\xunit.runner.msbuild.*\build\net452\xunit.runner.msbuild.dll" />
+      <AssemblyInfoVersion Include="@(AssemblyInfoFile)">
+        <Find><![CDATA[\[assembly(\s*):(\s*)(AssemblyVersion|AssemblyFileVersion|AssemblyInformationalVersionAttribute)\((\s*)"(\d+)\.(\d+)\.(\d+)\.(\d+)"(\s*)\)\]]]></Find>
+        <ReplaceWith><![CDATA[[assembly : $3("$(Major).$(Minor).$(Build).$(Revision)")]]]></ReplaceWith>
+        <Options>Singleline</Options>
+      </AssemblyInfoVersion>
     </ItemGroup>
+    <!-- Updating WiX files -->
+    <ItemGroup>
+      <WixSolutionDir Include="@(WixFile)">
+        <Find><![CDATA[\$\(var\.SolutionDir\)]]></Find>
+        <ReplaceWith><![CDATA[$(MSBuildProjectDirectory)\]]></ReplaceWith>
+        <Options>Singleline</Options>
+      </WixSolutionDir>
+    </ItemGroup>
+    <ItemGroup>
+      <WixVersion Include="@(WixFile)">
+        <Find><![CDATA[define Version = "(\d+)\.(\d+)\.(\d+).(\d+)"]]></Find>
+        <ReplaceWith><![CDATA[define Version = "$(Major).$(Minor).$(Build).$(Revision)"]]></ReplaceWith>
+        <Options>Singleline</Options>
+      </WixVersion>
+    </ItemGroup>
+    <RegexTransform Items="@(WixVersion)" />
+    <RegexTransform Items="@(WixSolutionDir)" />
+    <RegexTransform Items="@(AssemblyInfoVersion)" />
+  </Target>
+  <!-- Main build step where solution file are built -->
+  <Target Name="Compile" DependsOnTargets="VersionUpdater">
+    <!-- Start building solution file -->
+    <MSBuild
+      StopOnFirstFailure="true"
+      Projects="logviewer.sln"
+      Properties="Configuration=$(Configuration);KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword)" />
+    <Copy
+      SourceFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.msi"
+      DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi" />
+    <Copy
+      SourceFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.bootstrap.exe"
+      DestinationFiles="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe" />
+    <ItemGroup>
+      <EngineProject Include="$(MSBuildProjectDirectory)\logviewer.engine\logviewer.engine.csproj" />
+    </ItemGroup>
+    <MSBuild
+      Projects="@(EngineProject)"
+      Targets="Rebuild"
+      Properties="Configuration=$(Configuration);Platform=AnyCPU;KeyFile=$(KeyFile);SignTool=$(SignTool);CertPassword=$(CertPassword);SnkPath=$(LogviewerSnkPath)" />
+  </Target>
 
-    <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
+  <!-- Run unit tests task -->
+  <Target Name="UnitTesting" DependsOnTargets="Compile" Condition=" '$(IsRunTests)'=='true' ">
+    <!-- Managed tests -->
+    <xunit
+      Assemblies="$(MSBuildProjectDirectory)\logviewer.tests\bin\$(Configuration)\logviewer.tests.dll"
+      ShadowCopy="false" />
+  </Target>
+  <ItemGroup>
+    <SetupFile
+      Include="$(MSBuildProjectDirectory)\logviewer.install\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).msi => installer" />
+    <SetupFile
+      Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\bin\$(Configuration)\logviewer.install.$(Major).$(Minor).$(Build).$(Revision).exe => installer" />
+  </ItemGroup>
+  <!-- Validation using PVS Studio -->
+  <Target Name="PvsStudioValidation" DependsOnTargets="Compile">
+    <ItemGroup>
+      <ReportFormat Include="Html" />
+      <ReportFormat Include="Txt" />
+    </ItemGroup>
+    <Exec
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      Condition="$(TEAMCITY_VERSION) != ''"
+      IgnoreExitCode="True"
+      Command='"$(PvsStudioPath)" -t "$(MSBuildProjectDirectory)\logviewer.sln" -o $(PvsStudioReportFile)' />
+    <Exec
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      Condition="$(TEAMCITY_VERSION) != ''"
+      Command='"$(PlogConverterPath)" -t %(ReportFormat.Identity) $(PvsStudioReportFile) -a GA:1,2;64:1;OP:1,2' />
+    <Exec
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      Condition="$(TEAMCITY_VERSION) != ''"
+      Command='"$(PlogConverterPath)" -t Totals $(PvsStudioReportFile)' />
+  </Target>
+  <!-- Setting next build version and finish build process -->
+  <Target Name="Build" DependsOnTargets="UnitTesting;PvsStudioValidation">
+    <PublishArtifacts Artifacts="@(SetupFile)" />
+    <Message Text="Build $(Major).$(Minor).$(Build).$(Revision) Complete" />
+  </Target>
+
+  <ItemGroup>
+    <XunitTools
+      Include="$(MSBuildProjectDirectory)\packages\xunit.runner.msbuild.*\build\net452\xunit.runner.msbuild.dll" />
+  </ItemGroup>
+
+  <UsingTask AssemblyFile="@(XunitTools)" TaskName="Xunit.Runner.MSBuild.xunit" />
 </Project>
