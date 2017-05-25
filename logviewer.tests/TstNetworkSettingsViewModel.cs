@@ -158,7 +158,7 @@ namespace logviewer.tests
 
             // Act
             model.IsNoUseProxy = true;
-            model.IsNoUseProxy = true;
+            model.IsNoUseProxy = true; //-V3008
 
             // Assert
             count.Should().Be(1);
@@ -208,7 +208,7 @@ namespace logviewer.tests
 
             // Act
             model.IsUseAutoProxy = true;
-            model.IsUseAutoProxy = true;
+            model.IsUseAutoProxy = true; //-V3008
 
             // Assert
             count.Should().Be(1);

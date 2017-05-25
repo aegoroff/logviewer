@@ -94,7 +94,7 @@ namespace logviewer.tests
             var instance = new CharKeyDictionary<string>();
 
             // Act
-            instance.Add('1', ExpectedString);
+            instance.Add('1', ExpectedString); //-V3058
             instance.Add('1', "2");
 
             // Assert

@@ -20,7 +20,7 @@ using Xunit;
 
 namespace logviewer.tests
 {
-    public class TstLogProvider : IDisposable //-V3072 //-V3074
+    public class TstLogProvider : IDisposable //-V3072 //-V3074 //-V3073
     {
         private readonly MemoryStream stream;
         private readonly LogStore store;

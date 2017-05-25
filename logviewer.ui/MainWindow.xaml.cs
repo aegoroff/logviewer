@@ -19,7 +19,7 @@ namespace logviewer.ui
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow // -V3072
+    public partial class MainWindow //-V3072
     {
         private readonly MainModel model;
         private readonly UpdatesCheckingModel updatesCheckingModel;

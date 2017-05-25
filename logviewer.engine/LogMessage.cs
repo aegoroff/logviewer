@@ -343,7 +343,7 @@ namespace logviewer.engine
                 length = --length;
             }
             this.ApplySemanticRules(schema);
-            this.body = this.bodyBuilder.ToString(0, length); // -V3057
+            this.body = this.bodyBuilder.ToString(0, length); //-V3057
             this.Clear();
         }
 

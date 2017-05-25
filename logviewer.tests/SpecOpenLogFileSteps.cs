@@ -25,7 +25,7 @@ namespace logviewer.tests
 {
     [Binding]
     [PublicAPI]
-    public class SpecOpenLogFileSteps
+    public class SpecOpenLogFileSteps //-V3072
     {
         private const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
