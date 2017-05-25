@@ -94,9 +94,10 @@ namespace logviewer.engine.strings
         {
             var pointer = this.Root;
 
-            foreach (var c in text)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < text.Length; i++)
             {
-                var transition = this.GetTransition(c, ref pointer);
+                var transition = this.GetTransition(text[i], ref pointer);
 
                 if (transition != null)
                 {
@@ -144,8 +145,11 @@ namespace logviewer.engine.strings
         private void AddPatternToTree(string pattern)
         {
             var node = this.Root;
-            foreach (var c in pattern)
+            // ReSharper disable once ForCanBeConvertedToForeach
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            for (var i = 0; i < pattern.Length; i++)
             {
+                var c = pattern[i];
                 node = node.GetTransition(c)
                        ?? node.AddTransition(c);
             }
