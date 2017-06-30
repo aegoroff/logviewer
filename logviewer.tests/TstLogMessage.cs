@@ -108,6 +108,7 @@ namespace logviewer.tests
         [Theory]
         [InlineData("Trace", LogLevel.Trace)]
         [InlineData("TRACE", LogLevel.Trace)]
+        [InlineData("VERBOSE", LogLevel.Trace)]
         [InlineData("Debug", LogLevel.Debug)]
         [InlineData("DEBUG", LogLevel.Debug)]
         [InlineData("Info", LogLevel.Info)]

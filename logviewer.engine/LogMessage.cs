@@ -120,7 +120,8 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static LogLevel ParseLogLevel(string str)
         {
-            if (string.Equals(str, @"TRACE", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(str, @"TRACE", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(str, @"VERBOSE", StringComparison.OrdinalIgnoreCase))
             {
                 return LogLevel.Trace;
             }
