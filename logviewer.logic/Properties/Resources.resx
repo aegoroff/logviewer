@@ -327,4 +327,7 @@
   <data name="Debug" xml:space="preserve">
     <value>Debug</value>
   </data>
+  <data name="ParsingTemplatePlex" xml:space="preserve">
+    <value>Plex server log</value>
+  </data>
 </root>

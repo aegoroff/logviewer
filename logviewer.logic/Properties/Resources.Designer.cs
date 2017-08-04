@@ -412,6 +412,15 @@ namespace logviewer.logic.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plex server log.
+        /// </summary>
+        internal static string ParsingTemplatePlex {
+            get {
+                return ResourceManager.GetString("ParsingTemplatePlex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Syslog.
         /// </summary>
         internal static string ParsingTemplateSyslog {

@@ -219,6 +219,9 @@
   <data name="ParsingTemplatePlainText" xml:space="preserve">
     <value>Простой текст</value>
   </data>
+  <data name="ParsingTemplatePlex" xml:space="preserve">
+    <value>Журнал Plex сервера</value>
+  </data>
   <data name="ParsingTemplateTeamcityBuildLog" xml:space="preserve">
     <value>Журнал сборки на JetBrains TeamCity</value>
   </data>
