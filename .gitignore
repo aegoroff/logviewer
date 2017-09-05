@@ -26,3 +26,4 @@ packages/
 !lib/x64/Release/
 logviewer.core/x86/
 logviewer.core/x64/
+/.vs/logviewer/v15/sqlite3/storage.ide
