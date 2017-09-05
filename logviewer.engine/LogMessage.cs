@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 19.09.2012
@@ -183,7 +183,7 @@ namespace logviewer.engine
         private void ParseDateTime(string dataToParse, string property)
         {
             var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture,
-                                                 DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out DateTime r);
+                                                 DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out var r);
             if (!success)
             {
                 success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal,
@@ -198,7 +198,7 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ParseInteger(string dataToParse, string property)
         {
-            if (long.TryParse(dataToParse, out long r))
+            if (long.TryParse(dataToParse, out var r))
             {
                 this.integerProperties[property] = r;
             }
@@ -221,7 +221,7 @@ namespace logviewer.engine
                 var property = this.rawProperties[i];
                 var key = property.Key;
 
-                if (!schema.TryGetValue(key, out ISet<GrokRule> rules))
+                if (!schema.TryGetValue(key, out var rules))
                 {
                     continue;
                 }

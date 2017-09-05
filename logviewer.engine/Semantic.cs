@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 03.10.2014
@@ -30,8 +30,9 @@ namespace logviewer.engine
             this.castingRules = new HashSet<GrokRule>();
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes new <see cref="Semantic"/> instance using name and rule specified.
+        /// Initializes new <see cref="T:logviewer.engine.Semantic" /> instance using name and rule specified.
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="rule">Casting rule</param>

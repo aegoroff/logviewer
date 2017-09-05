@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 07.11.2015
@@ -299,7 +299,7 @@ namespace logviewer.logic.ui.main
             this.reader.EncodingDetectionStarted += this.OnEncodingDetectionStarted;
             this.reader.EncodingDetectionFinished += this.OnEncodingDetectionFinished;
 
-            this.filesEncodingCache.TryGetValue(this.currentPath, out Encoding inputEncoding);
+            this.filesEncodingCache.TryGetValue(this.currentPath, out var inputEncoding);
 
             try
             {
