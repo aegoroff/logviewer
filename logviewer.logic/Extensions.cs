@@ -185,9 +185,9 @@ namespace logviewer.logic
                 case 3 when lastTwoDigits != 13:
                 case 4 when lastTwoDigits != 14:
                     return genitiveSingular;
+                default:
+                    return genitivePlural;
             }
-
-            return genitivePlural;
         }
 
         /// <summary>
