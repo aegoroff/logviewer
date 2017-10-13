@@ -177,13 +177,14 @@ namespace logviewer.logic
         {
             var lastDigit = number % 10;
             var lastTwoDigits = number % 100;
-            if (lastDigit == 1 && lastTwoDigits != 11)
+            switch (lastDigit)
             {
-                return nominative;
-            }
-            if (lastDigit == 2 && lastTwoDigits != 12 || lastDigit == 3 && lastTwoDigits != 13 || lastDigit == 4 && lastTwoDigits != 14)
-            {
-                return genitiveSingular;
+                case 1 when lastTwoDigits != 11:
+                    return nominative;
+                case 2 when lastTwoDigits != 12:
+                case 3 when lastTwoDigits != 13:
+                case 4 when lastTwoDigits != 14:
+                    return genitiveSingular;
             }
 
             return genitivePlural;
