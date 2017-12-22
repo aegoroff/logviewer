@@ -148,7 +148,7 @@ keep_blank_lines_in_declarations = 1
 csharp_keep_user_linebreaks = true
 csharp_wrap_parameters_style = wrap_if_long
 csharp_new_line_before_while = false
-csharp_place_simple_blocks_on_single_line = true
+csharp_place_simple_blocks_on_single_line = false
 csharp_place_accessorholder_attribute_on_same_line = false
 csharp_place_complex_accessor_attribute_on_same_line = false
 csharp_place_constructor_initializer_on_same_line = true
@@ -287,6 +287,9 @@ csharp_wrap_multiple_declaration_style = chop_if_long
 csharp_wrap_multiple_type_parameer_constraints_style = chop_always
 csharp_wrap_object_and_collection_initializer_style = chop_if_long
 csharp_wrap_ternary_expr_style = chop_if_long
+csharp_keep_existing_embedded_arrangement = false
+csharp_keep_existing_embedded_block_arrangement = false
+csharp_keep_existing_initializer_arrangement = true
 
 # C/C++ settings
 [*.{c,cpp,h,cc,hpp}]
