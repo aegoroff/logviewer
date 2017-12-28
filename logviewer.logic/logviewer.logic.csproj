@@ -44,11 +44,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Enums.NET, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7ea1c1650d506225, processorArchitecture=MSIL">
-      <HintPath>..\packages\Enums.NET.2.2.0\lib\net45\Enums.NET.dll</HintPath>
+    <Reference Include="Enums.NET, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7ea1c1650d506225">
+      <HintPath>..\packages\Enums.NET.2.3.1\lib\net45\Enums.NET.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0">
-      <HintPath>..\packages\FluentValidation.7.2.0\lib\net45\FluentValidation.dll</HintPath>
+      <HintPath>..\packages\FluentValidation.7.3.3\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
@@ -64,8 +64,8 @@
     <Reference Include="nrtftree-library">
       <HintPath>..\lib\nrtftree-library.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit, Version=0.27.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Octokit.0.27.0\lib\net45\Octokit.dll</HintPath>
+    <Reference Include="Octokit, Version=0.28.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Octokit.0.28.0\lib\net45\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="Stateless, Version=4.0.0.0, Culture=neutral, PublicKeyToken=93038f0927583c9a">
       <HintPath>..\packages\Stateless.4.0.0\lib\net45\Stateless.dll</HintPath>
