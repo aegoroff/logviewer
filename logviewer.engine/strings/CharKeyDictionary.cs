@@ -30,6 +30,7 @@ namespace logviewer.engine.strings
         /// </summary>
         public CharKeyDictionary() => this.Clear();
 
+        /// <inheritdoc />
         public IEnumerator<KeyValuePair<char, T>> GetEnumerator()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
@@ -43,8 +44,10 @@ namespace logviewer.engine.strings
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+        /// <inheritdoc />
         public void Add(KeyValuePair<char, T> item) => this.Add(item.Key, item.Value);
 
+        /// <inheritdoc />
         public void Clear()
         {
             this.store = new T[char.MaxValue];
@@ -52,8 +55,10 @@ namespace logviewer.engine.strings
             this.keys = new List<char>(char.MaxValue);
         }
 
+        /// <inheritdoc />
         public bool Contains(KeyValuePair<char, T> item) => this.TryGetValue(item.Key, out T value) && Equals(value, item.Value);
 
+        /// <inheritdoc />
         public void CopyTo(KeyValuePair<char, T>[] array, int arrayIndex)
         {
             for (var i = arrayIndex; i < array.Length && i < this.store.Length; i++)
@@ -65,12 +70,16 @@ namespace logviewer.engine.strings
             }
         }
 
+        /// <inheritdoc />
         public bool Remove(KeyValuePair<char, T> item) => this.Remove(item.Key);
 
+        /// <inheritdoc />
         public int Count => this.keys.Count;
 
+        /// <inheritdoc />
         public bool IsReadOnly => false;
 
+        /// <inheritdoc />
         public bool ContainsKey(char key) => this.indexes[key] > 0;
 
         /// <inheritdoc />
@@ -124,8 +133,10 @@ namespace logviewer.engine.strings
             set => this.store[key] = value;
         }
 
+        /// <inheritdoc />
         public ICollection<char> Keys => this.keys;
 
+        /// <inheritdoc />
         public ICollection<T> Values => this.GetValuesInternal().ToArray();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
