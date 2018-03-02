@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 26.04.2017
@@ -50,35 +50,32 @@ namespace logviewer.engine.strings
         /// <returns>True if the string starts with any pattern. False otherwise</returns>
         public bool ContainsThatStart(string text) => this.Contains(text, true);
 
-        private unsafe bool Contains(string text, bool onlyStarts)
+        private bool Contains(string text, bool onlyStarts)
         {
             var pointer = this.Root;
 
-            fixed (char* p = text)
+            var len = text.Length * 2;
+            var ix = 0;
+            while (len > 0)
             {
-                var len = text.Length * 2;
-                var cptr = p;
-                while (len > 0)
+                var c = text[ix];
+                ++ix;
+                len -= 2;
+
+                var transition = this.GetTransition(c, ref pointer);
+
+                if (transition != null)
                 {
-                    var c = *cptr;
-                    cptr++;
-                    len -= 2;
+                    pointer = transition;
+                }
+                else if (onlyStarts)
+                {
+                    return false;
+                }
 
-                    var transition = this.GetTransition(c, ref pointer);
-
-                    if (transition != null)
-                    {
-                        pointer = transition;
-                    }
-                    else if (onlyStarts)
-                    {
-                        return false;
-                    }
-
-                    if (pointer.Results.Count > 0)
-                    {
-                        return true;
-                    }
+                if (pointer.Results.Count > 0)
+                {
+                    return true;
                 }
             }
 
