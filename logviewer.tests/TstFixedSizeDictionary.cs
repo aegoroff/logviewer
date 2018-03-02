@@ -60,7 +60,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Keys.Should().BeEquivalentTo(new[] { key });
+            instance.Keys.Should().BeEquivalentTo(key);
         }
 
         [Theory, MemberData(nameof(ReferencePairs))]
@@ -73,7 +73,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Keys.Should().BeEquivalentTo(new[] { key });
+            instance.Keys.Should().BeEquivalentTo(key);
         }
 
         [Theory, MemberData(nameof(ValuePairs))]
@@ -86,7 +86,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Values.Should().BeEquivalentTo(new[] { value });
+            instance.Values.Should().BeEquivalentTo(value);
         }
 
         [Theory, MemberData(nameof(ReferencePairs))]
@@ -99,7 +99,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Values.Should().BeEquivalentTo(new[] { value });
+            instance.Values.Should().BeEquivalentTo(value);
         }
 
         [Theory]
@@ -512,7 +512,7 @@ namespace logviewer.tests
             instance.CopyTo(array, 0);
 
             // Assert
-            array.Should().BeEquivalentTo(new[] { this.empty, value });
+            array.Should().BeEquivalentTo(this.empty, value);
         }
 
         [Fact]
@@ -528,7 +528,7 @@ namespace logviewer.tests
             instance.CopyTo(array, 1);
 
             // Assert
-            array.Should().BeEquivalentTo(new[] { this.empty, this.empty });
+            array.Should().BeEquivalentTo(this.empty, this.empty);
         }
 
         [Fact]
@@ -544,7 +544,7 @@ namespace logviewer.tests
             instance.CopyTo(array, 0);
 
             // Assert
-            array.Should().BeEquivalentTo(new[] { value, this.empty, this.empty });
+            array.Should().BeEquivalentTo(value, this.empty, this.empty);
         }
 
         [Fact]
@@ -560,7 +560,7 @@ namespace logviewer.tests
             instance.CopyTo(array, 0);
 
             // Assert
-            array.Should().BeEquivalentTo(new[] { value, this.empty });
+            array.Should().BeEquivalentTo(value, this.empty);
         }
 
         [Fact]
@@ -576,7 +576,7 @@ namespace logviewer.tests
             instance.CopyTo(array, 1);
 
             // Assert
-            array.Should().BeEquivalentTo(new[] { this.empty, this.empty });
+            array.Should().BeEquivalentTo(this.empty, this.empty);
         }
     }
 }

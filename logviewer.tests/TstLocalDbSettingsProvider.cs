@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 11.01.2014
@@ -61,9 +61,14 @@ namespace logviewer.tests
         [Fact]
         public void UpdateParsingTemplate()
         {
+            // Arrange
             var template = this.provider.ReadParsingTemplate();
             template.StartMessage += "1";
+
+            // Act
             this.provider.UpdateParsingTemplate(template);
+
+            // Assert
             var template1 = this.provider.ReadParsingTemplate();
             template1.StartMessage.Should().Be(messageStart + "1");
         }

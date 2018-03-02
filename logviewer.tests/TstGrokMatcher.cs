@@ -220,10 +220,7 @@ namespace logviewer.tests
 
             var keys = result.Select(x => x.Key).ToArray();
 
-            keys.Should().Contain("datetime");
-            keys.Should().Contain("meta");
-            keys.Should().Contain("level");
-            keys.Should().Contain("head");
+            keys.Should().BeEquivalentTo("datetime", "meta", "level", "head");
         }
 
         [Fact]
