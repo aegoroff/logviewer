@@ -68,7 +68,21 @@ namespace logviewer.tests
             var result = tree.FindAll(TestString);
 
             // Assert
-            result.Should().BeEquivalentTo(new[] { "Windows" });
+            result.Should().BeEquivalentTo("Windows");
+        }
+
+        [Fact]
+        public void FindAll_SeveralStringsSomeInTargetFoundMoreThenOne_ReturnAllFound()
+        {
+            // Arrange
+            var keywords = new[] { "Mozilla", "Chrome", "IE" };
+            var tree = new AhoCorasickTree(keywords);
+
+            // Act
+            var result = tree.FindAll(TestString);
+
+            // Assert
+            result.Should().BeEquivalentTo("Mozilla", "Chrome");
         }
     }
 }
