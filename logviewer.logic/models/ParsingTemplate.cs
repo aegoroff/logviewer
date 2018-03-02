@@ -1,8 +1,8 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 24.09.2013
-// © 2012-2017 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System.Collections.Generic;
 using logviewer.engine;

@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 05.09.2007
-// © 2007-2017 Alexander Egorov
+// © 2007-2018 Alexander Egorov
 
 namespace logviewer.logic.ui.network
 {
