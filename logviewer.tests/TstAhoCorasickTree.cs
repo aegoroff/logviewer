@@ -30,6 +30,20 @@ namespace logviewer.tests
         }
 
         [Fact]
+        public void Contains_SeveralStringsNotFoundSomeInTarget_ReturnFalse()
+        {
+            // Arrange
+            var keywords = new[] { "Google", "Linux", "MacOSX" };
+            var tree = new AhoCorasickTree(keywords);
+
+            // Act
+            var result = tree.Contains(TestString);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
         public void ContainsThatStart_SeveralStringsSomeInTargetButStringDoesntStartsWithAny_ReturnFalse()
         {
             // Arrange
