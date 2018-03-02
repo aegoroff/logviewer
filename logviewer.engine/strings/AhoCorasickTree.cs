@@ -58,8 +58,7 @@ namespace logviewer.engine.strings
             var ix = 0;
             while (len > 0)
             {
-                var c = text[ix];
-                ++ix;
+                var c = text[ix++];
                 len -= 2;
 
                 var transition = this.GetTransition(c, ref pointer);
