@@ -23,7 +23,7 @@ namespace logviewer.bench
             this.index = new Random().Next(0, DictionarySize - 1);
         }
 
-        [Setup]
+        [GlobalSetup]
         public void SetupData()
         {
             var fixture = new Fixture();
