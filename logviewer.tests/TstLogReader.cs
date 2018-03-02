@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 20.11.2014
@@ -166,14 +166,15 @@ namespace logviewer.tests
                 args.Encoding.EncodingName.Should().Be(encoding.EncodingName);
             };
 
-            this.reader.MonitorEvents();
+            var monitoredSubject = this.reader.Monitor();
 
             // Act
             var result = this.reader.Read(this.path).ToList();
 
             // Assert
             result.Count.Should().Be(2);
-            this.reader.ShouldRaise("EncodingDetectionFinished");
+            monitoredSubject.Should().Raise("EncodingDetectionFinished");
+            monitoredSubject.Dispose();
         }
 
         [Fact]

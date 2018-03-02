@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 24.10.2012
@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using AutoFixture;
 using FluentAssertions;
 using logviewer.engine;
 using logviewer.logic;
@@ -16,7 +17,6 @@ using logviewer.logic.support;
 using logviewer.logic.ui;
 using logviewer.logic.ui.main;
 using logviewer.tests.support;
-using Ploeh.AutoFixture;
 using Xunit;
 
 namespace logviewer.tests
@@ -171,7 +171,7 @@ namespace logviewer.tests
             Action action = () => crypt.Encrypt(plain);
 
             // Assert
-            action.ShouldThrow<NotSupportedException>()
+            action.Should().Throw<NotSupportedException>()
                 .And.Message.Should()
                 .Contain(
                     $"Max acceptable string length is {firstBadStringSize - 1} for the key size {keySize} but this string length is {plain.Length}");

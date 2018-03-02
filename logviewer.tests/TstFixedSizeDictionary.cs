@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 25.11.2015
@@ -47,7 +47,7 @@ namespace logviewer.tests
             Action action = () => new FixedSizeDictionary<string>(count);
 
             // Assert
-            action.ShouldThrow<ArgumentOutOfRangeException>();
+            action.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Theory, MemberData(nameof(ValuePairs))]
@@ -60,7 +60,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Keys.ShouldBeEquivalentTo(new[] { key });
+            instance.Keys.Should().BeEquivalentTo(new[] { key });
         }
 
         [Theory, MemberData(nameof(ReferencePairs))]
@@ -73,7 +73,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Keys.ShouldBeEquivalentTo(new[] { key });
+            instance.Keys.Should().BeEquivalentTo(new[] { key });
         }
 
         [Theory, MemberData(nameof(ValuePairs))]
@@ -86,7 +86,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Values.ShouldBeEquivalentTo(new[] { value });
+            instance.Values.Should().BeEquivalentTo(new[] { value });
         }
 
         [Theory, MemberData(nameof(ReferencePairs))]
@@ -99,7 +99,7 @@ namespace logviewer.tests
             instance.Add(key, value);
 
             // Assert
-            instance.Values.ShouldBeEquivalentTo(new[] { value });
+            instance.Values.Should().BeEquivalentTo(new[] { value });
         }
 
         [Theory]
@@ -295,7 +295,7 @@ namespace logviewer.tests
             Action action = () => instance[key] = ExpectedString;
 
             // Assert
-            action.ShouldThrow<IndexOutOfRangeException>();
+            action.Should().Throw<IndexOutOfRangeException>();
         }
 
         [Fact]
