@@ -12,9 +12,9 @@ namespace logviewer.bench
     public class AhoCorasickVsPlainStringMethods
     {
         private const string TestString =
-                "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+                "The message with Action 'http://tempuri.org/ISaasActivation/TutorialPassed' cannot be processed at the receiver, due to a ContractFilter mismatch at the EndpointDispatcher. This may be because of either a contract mismatch (mismatched Actions between sender and receiver) or a binding/security mismatch between the sender and the receiver.  Check that sender and receiver have the same contract and the same binding (including security requirements, e.g. Message, Transport, None).";
 
-        private readonly string[] keywords = { "Apple", "Chrome", "Safari" };
+        private readonly string[] keywords = { "ContractFilter", "EndpointDispatcher", "Message" };
 
         private readonly AhoCorasickTree tree;
 
