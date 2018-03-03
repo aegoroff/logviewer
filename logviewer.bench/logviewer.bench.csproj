@@ -145,6 +145,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AhoCorasickVsPlainStringMethods.cs" />
     <Compile Include="DictionaryVsFixedSizeDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BenchmarkTests.cs" />
