@@ -79,7 +79,7 @@ namespace logviewer.engine
                 return false;
             }
 
-            return obj is Semantic && this.Equals((Semantic)obj);
+            return obj is Semantic semantic && this.Equals(semantic);
         }
 
         /// <summary>
