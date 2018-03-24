@@ -56,6 +56,7 @@ namespace logviewer.logic.models
                 yield return new ParsingTemplate { Index = 7, StartMessage = "^\\[%{DATA}\\]\\[%{TIMESTAMP_ISO8601}\\]%{DATA:Level:'i'->LogLevel.Info,'w'->LogLevel.Warn,'e'->LogLevel.Error}\"\\d{3}:\"%{SPACE}%{DATA}", Name = Resources.ParsingTemplateWixBurn }; // Not L10N
                 yield return new ParsingTemplate { Index = 8, StartMessage = "^\\[%{TIME}\\](%{WORD:Level:\'W\'->LogLevel.Warn,\'E\'->LogLevel.Error,\'i\'->LogLevel.Info,\'*\'->LogLevel.Debug}|%{SPACE})[:]%{DATA}", Name = Resources.ParsingTemplateTeamcityBuildLog, Filter = @"^[^\\[\\s].*" }; // Not L10N
                 yield return new ParsingTemplate { Index = 9, StartMessage = "^%{MONTH} %{MONTHDAY}, %{YEAR} %{TIME} \\[%{DATA}\\] %{LOGLEVEL:Level:LogLevel}%{DATA}$", Name = Resources.ParsingTemplatePlex }; // Not L10N
+                yield return new ParsingTemplate { Index = 10, StartMessage = @"^%{TIMESTAMP_ISO8601:Occured:DateTime}%{DATA}\[%{WORD:Level:'VER'->LogLevel.Trace,'DBG'->LogLevel.Debug,'INF'->LogLevel.Info,'WRN'->LogLevel.Warn,'ERR'->LogLevel.Error,'FTL'->LogLevel.Fatal}\]%{DATA}", Name = Resources.ParsingTemplateSerilog }; // Not L10N
             }
         }
     }

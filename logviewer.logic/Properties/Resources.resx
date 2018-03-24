@@ -330,4 +330,7 @@
   <data name="ParsingTemplatePlex" xml:space="preserve">
     <value>Plex server log</value>
   </data>
+  <data name="ParsingTemplateSerilog" xml:space="preserve">
+    <value>Serilog (Default)</value>
+  </data>
 </root>
