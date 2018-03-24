@@ -99,14 +99,14 @@ namespace logviewer.tests
         public void ReadParsingTemplateList()
         {
             var list = this.provider.ReadParsingTemplateList();
-            list.Count.Should().Be(10);
+            list.Count.Should().Be(11);
         }
         
         [Fact]
         public void ReadAllParsingTemplates()
         {
             var list = this.provider.ReadAllParsingTemplates();
-            list.Count.Should().Be(10);
+            list.Count.Should().Be(11);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace logviewer.tests
         public void InsertParsingTemplate()
         {
             var templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(10);
+            templates.Count.Should().Be(11);
             var newTemplate = new ParsingTemplate
             {
                 Index = templates.Count, 
@@ -146,7 +146,7 @@ namespace logviewer.tests
             };
             this.provider.InsertParsingTemplate(newTemplate);
             templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(11);
+            templates.Count.Should().Be(12);
             var template = this.provider.ReadParsingTemplate(newTemplate.Index);
             template.Index.Should().Be(newTemplate.Index);
             template.Name.Should().Be("second");
@@ -157,17 +157,17 @@ namespace logviewer.tests
         public void RemoveParsingTemplate()
         {
             var templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(10);
-            this.provider.DeleteParsingTemplate(9);
+            templates.Count.Should().Be(11);
+            this.provider.DeleteParsingTemplate(10);
             templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(9);
+            templates.Count.Should().Be(10);
         }
         
         [Fact]
         public void RemoveParsingTemplateFromMiddle()
         {
             var templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(10);
+            templates.Count.Should().Be(11);
             var newTemplate = new ParsingTemplate
             {
                 Index = templates.Count, 
@@ -184,10 +184,10 @@ namespace logviewer.tests
             this.provider.InsertParsingTemplate(newTemplate);
             this.provider.InsertParsingTemplate(newTemplate1);
             templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(12);
+            templates.Count.Should().Be(13);
             this.provider.DeleteParsingTemplate(newTemplate.Index);
             templates = this.provider.ReadParsingTemplateList();
-            templates.Count.Should().Be(11);
+            templates.Count.Should().Be(12);
             var template = this.provider.ReadParsingTemplate(templates.Count - 1);
             template.Name.Should().Be(newTemplate1.Name);
         }
