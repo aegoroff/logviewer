@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 11.09.2015
@@ -58,7 +58,7 @@ namespace logviewer.logic
                 createIssue.Labels.Add(@"bug");
                 createIssue.Labels.Add(@"severity-high");
                 var issue = await github.Issue.Create(this.account, this.project, createIssue);
-                Log.Instance.InfoFormatted(@"Issue #{0} created", issue.Number);
+                Log.Instance.InfoFormatted(@"Issue #{IssueNumber} created", issue.Number);
                 Log.Instance.Fatal(exception.Message, exception);
                 return issue.Number;
             }
