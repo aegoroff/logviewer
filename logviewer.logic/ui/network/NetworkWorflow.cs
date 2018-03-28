@@ -143,7 +143,7 @@ namespace logviewer.logic.ui.network
         {
             if (string.IsNullOrWhiteSpace(this.viewModel.Host) || this.viewModel.Port <= 0)
             {
-                Log.Instance.ErrorFormatted("Bad proxy settings - host: {0} and port: {1}", this.viewModel.Host, this.viewModel.Port);
+                Log.Instance.ErrorFormatted("Bad proxy settings - host: {Host} and port: {Port}", this.viewModel.Host, this.viewModel.Port);
                 return false;
             }
 

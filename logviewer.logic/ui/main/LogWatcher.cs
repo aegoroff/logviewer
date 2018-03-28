@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 22.02.2017
@@ -41,7 +41,7 @@ namespace logviewer.logic.ui.main
         {
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                Log.Instance.TraceFormatted("Log {0} change event: {1}", e.FullPath, e.ChangeType);
+                Log.Instance.TraceFormatted("Log {LogFullPath} change event: {DirectoryEventType}", e.FullPath, e.ChangeType);
                 this.action(e.FullPath);
             }
         }
