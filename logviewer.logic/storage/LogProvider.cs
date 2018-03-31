@@ -24,10 +24,10 @@ namespace logviewer.logic.storage
 
         private static readonly XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
                                                                       {
-                                                                          OmitXmlDeclaration = true,
-                                                                          ConformanceLevel = ConformanceLevel.Fragment,
-                                                                          CheckCharacters = false,
-                                                                          NewLineHandling = NewLineHandling.None
+                                                                              OmitXmlDeclaration = true,
+                                                                              ConformanceLevel = ConformanceLevel.Fragment,
+                                                                              CheckCharacters = false,
+                                                                              NewLineHandling = NewLineHandling.None
                                                                       };
 
         public LogProvider(ILogStore store, ISettingsProvider settings)
@@ -148,6 +148,7 @@ namespace logviewer.logic.storage
             {
                 writer.WriteAttributeString(FontWeightAttr, "Bold");
             }
+
             writer.WriteAttributeString(ForegroundAttr, color);
             writer.WriteAttributeString(FontSizeAttr, size);
             writer.WriteCData(text);

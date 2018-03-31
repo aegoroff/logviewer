@@ -15,9 +15,9 @@ using System.Reactive.Linq;
 using System.Threading;
 using logviewer.logic.Annotations;
 using logviewer.logic.support;
-
 #if DEBUG
 using System.Diagnostics;
+
 #endif
 
 namespace logviewer.logic.ui
@@ -37,7 +37,8 @@ namespace logviewer.logic.ui
     public sealed class VirtualizingCollection<T> : IVirtualizingCollection<T>, IList
     {
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize,
-                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize) => this.pageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
+                                      int pageCacheTimeoutMilliseconds) : this(itemsProvider, pageSize) =>
+                this.pageCacheTimeoutMilliseconds = pageCacheTimeoutMilliseconds;
 
         [PublicAPI]
         public VirtualizingCollection(IItemsProvider<T> itemsProvider, int pageSize) : this(itemsProvider) => this.pageSize = pageSize;
@@ -258,6 +259,7 @@ namespace logviewer.logic.ui
             for (var i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];
+
                 // page 0 is a special case, since WPF ItemsControl access the first item frequently
                 if (key != 0
                     && this.pageTouchTimes.TryGetValue(key, out DateTime lastUsed)

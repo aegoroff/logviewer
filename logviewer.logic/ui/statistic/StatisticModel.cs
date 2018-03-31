@@ -32,12 +32,12 @@ namespace logviewer.logic.ui.statistic
 
         private readonly string[] levelDescriptions =
         {
-            Resources.Trace,
-            Resources.Debug,
-            Resources.Info,
-            Resources.Warn,
-            Resources.Error,
-            Resources.Fatal
+                Resources.Trace,
+                Resources.Debug,
+                Resources.Info,
+                Resources.Warn,
+                Resources.Error,
+                Resources.Fatal
         };
 
         public StatisticModel(ILogStore store, string size, string encoding)

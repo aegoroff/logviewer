@@ -53,7 +53,7 @@ namespace logviewer.logic.storage
         private string insertSuffix;
 
         public LogStore(ICollection<Semantic> schema, string databaseFilePath = null, long dbSize = 0L) :
-            this(schema, new LocalDbConnection(databaseFilePath ?? Path.GetTempFileName()), dbSize)
+                this(schema, new LocalDbConnection(databaseFilePath ?? Path.GetTempFileName()), dbSize)
         {
         }
 
@@ -198,17 +198,17 @@ namespace logviewer.logic.storage
 
         [PublicAPI]
         public void ReadMessages(
-            int limit,
-            Action<LogMessage> onReadMessage,
-            Func<bool> notCancelled,
-            DateTime start,
-            DateTime finish,
-            long offset = 0,
-            bool reverse = true,
-            LogLevel min = LogLevel.Trace,
-            LogLevel max = LogLevel.Fatal,
-            string filter = null,
-            bool useRegexp = true)
+                int limit,
+                Action<LogMessage> onReadMessage,
+                Func<bool> notCancelled,
+                DateTime start,
+                DateTime finish,
+                long offset = 0,
+                bool reverse = true,
+                LogLevel min = LogLevel.Trace,
+                LogLevel max = LogLevel.Fatal,
+                string filter = null,
+                bool useRegexp = true)
         {
             var query = new StringBuilder();
             query.Append("SELECT Header, Body ");
@@ -256,24 +256,24 @@ namespace logviewer.logic.storage
 
         [PublicAPI]
         public long CountMessages(
-            LogLevel min = LogLevel.Trace,
-            LogLevel max = LogLevel.Fatal,
-            string filter = null,
-            bool useRegexp = true,
-            bool excludeNoLevel = false)
+                LogLevel min = LogLevel.Trace,
+                LogLevel max = LogLevel.Fatal,
+                string filter = null,
+                bool useRegexp = true,
+                bool excludeNoLevel = false)
         {
             return this.CountMessages(DateTime.MinValue, DateTime.MaxValue, min, max, filter, useRegexp, excludeNoLevel);
         }
 
         [PublicAPI]
         public long CountMessages(
-            DateTime start,
-            DateTime finish,
-            LogLevel min = LogLevel.Trace,
-            LogLevel max = LogLevel.Fatal,
-            string filter = null,
-            bool useRegexp = true,
-            bool excludeNoLevel = false)
+                DateTime start,
+                DateTime finish,
+                LogLevel min = LogLevel.Trace,
+                LogLevel max = LogLevel.Fatal,
+                string filter = null,
+                bool useRegexp = true,
+                bool excludeNoLevel = false)
         {
             if (excludeNoLevel && !this.hasLogLevelProperty)
             {
@@ -333,10 +333,10 @@ namespace logviewer.logic.storage
         {
             var clauses = new[]
                           {
-                              this.LevelClause(min, max),
-                              this.DateClause(start, finish),
-                              FilterClause(filter, useRegexp),
-                              this.ExcludeNoLevelClause(excludeNoLevel)
+                                  this.LevelClause(min, max),
+                                  this.DateClause(start, finish),
+                                  FilterClause(filter, useRegexp),
+                                  this.ExcludeNoLevelClause(excludeNoLevel)
                           };
             var notEmpty = clauses.Where(clause => !string.IsNullOrWhiteSpace(clause)).ToArray();
             if (!notEmpty.Any())
@@ -359,10 +359,12 @@ namespace logviewer.logic.storage
             {
                 clause.Add(this.logLevelProperty + " >= @Min"); // Not L10N
             }
+
             if (max != LogLevel.Fatal)
             {
                 clause.Add(this.logLevelProperty + " <= @Max"); // Not L10N
             }
+
             return string.Join(" AND ", clause); // Not L10N
         }
 
@@ -378,10 +380,12 @@ namespace logviewer.logic.storage
             {
                 clause.Add(this.dateTimeProperty + " >= @Start"); // Not L10N
             }
+
             if (finish != DateTime.MaxValue)
             {
                 clause.Add(this.dateTimeProperty + " <= @Finish"); // Not L10N
             }
+
             return string.Join(" AND ", clause); // Not L10N
         }
 
@@ -393,8 +397,8 @@ namespace logviewer.logic.storage
         private string ExcludeNoLevelClause(bool excludeNoLevel)
         {
             return excludeNoLevel && this.hasLogLevelProperty
-                       ? this.logLevelProperty + " > " + (int)LogLevel.None
-                       : string.Empty; // Not L10N
+                           ? this.logLevelProperty + " > " + (int)LogLevel.None
+                           : string.Empty; // Not L10N
         }
 
         private void AddParameters(IDbCommand command, LogLevel min, LogLevel max, string filter, bool useRegexp, DateTime start,
@@ -406,6 +410,7 @@ namespace logviewer.logic.storage
                 {
                     command.AddParameter("@Min", (int)min); // Not L10N
                 }
+
                 if (max != LogLevel.Fatal)
                 {
                     command.AddParameter("@Max", (int)max); // Not L10N
@@ -418,6 +423,7 @@ namespace logviewer.logic.storage
                 {
                     command.AddParameter("@Start", start.ToFileTimeUtc()); // Not L10N
                 }
+
                 if (finish != DateTime.MaxValue)
                 {
                     command.AddParameter("@Finish", finish.ToFileTimeUtc()); // Not L10N
@@ -434,7 +440,7 @@ namespace logviewer.logic.storage
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
-            MessageId = "connection")]
+                MessageId = "connection")]
         private void Dispose(bool disposing)
         {
             if (disposing)
@@ -454,6 +460,7 @@ namespace logviewer.logic.storage
                     {
                         File.Delete(this.DatabasePath);
                     }
+
                     return;
                 }
                 catch (IOException e)

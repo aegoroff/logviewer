@@ -50,8 +50,8 @@ namespace logviewer.logic.ui.network
             if (transition == ProxyModeTransition.ToCustom)
             {
                 this.stateMachine.Trigger(useDefalutCredentials
-                                              ? ProxyModeTransition.ToCustomDefaultUser
-                                              : ProxyModeTransition.ToCustomWithManualUser);
+                                                  ? ProxyModeTransition.ToCustomDefaultUser
+                                                  : ProxyModeTransition.ToCustomWithManualUser);
             }
         }
 
@@ -116,8 +116,8 @@ namespace logviewer.logic.ui.network
             {
                 this.crypt = new AsymCrypt
                              {
-                                 PublicKey = publicKey,
-                                 PrivateKey = privateKey
+                                     PublicKey = publicKey,
+                                     PrivateKey = privateKey
                              };
             }
         }

@@ -23,7 +23,7 @@ namespace logviewer.logic.ui.main
         private readonly IMainViewModel viewModel;
 
         public UpdatesCheckingModel(IMainViewModel viewModel, IScheduler backgroundScheduler = null)
-            : this(viewModel, new VersionsReader(viewModel.GithubAccount, viewModel.GithubProject), backgroundScheduler)
+                : this(viewModel, new VersionsReader(viewModel.GithubAccount, viewModel.GithubProject), backgroundScheduler)
         {
         }
 
@@ -70,6 +70,7 @@ namespace logviewer.logic.ui.main
                         {
                             this.RunOnGuiThread(ShowNoUpdateAvaliable);
                         }
+
                         return;
                     }
 

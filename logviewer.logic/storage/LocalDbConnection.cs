@@ -32,8 +32,10 @@ namespace logviewer.logic.storage
                 {
                     SQLiteConnection.CreateFile(databaseFilePath);
                 }
+
                 this.IsEmpty = true;
             }
+
             this.ConnectionString = databaseFilePath;
             var conString = new SQLiteConnectionStringBuilder { DataSource = databaseFilePath };
             this.creationContext = new SynchronizationContext();
@@ -46,7 +48,7 @@ namespace logviewer.logic.storage
         public bool IsEmpty { get; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
-            MessageId = "connection")]
+                MessageId = "connection")]
         public void Dispose()
         {
             this.DisposeInternal();

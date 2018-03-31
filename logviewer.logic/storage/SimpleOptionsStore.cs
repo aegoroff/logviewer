@@ -38,7 +38,6 @@ namespace logviewer.logic.storage
             var integerOptions = string.Format(optionsTableTemplate, IntegerOptionsTable, @"INTEGER");
             var booleanOptions = string.Format(optionsTableTemplate, BooleanOptionsTable, @"BOOLEAN");
 
-
             this.queryProvider.ExecuteQuery(connection => connection.RunSqlQuery(command => command.ExecuteNonQuery(), stringOptions,
                                                                                  integerOptions, booleanOptions));
         }
@@ -105,8 +104,8 @@ namespace logviewer.logic.storage
             }
 
             var format = exist
-                             ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
-                             : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
+                                 ? $"UPDATE {{0}} SET Value = {ValueParameter} WHERE Option = {OptionParameter}"
+                                 : $"INSERT INTO {{0}} (Option, Value) VALUES ({OptionParameter}, {ValueParameter})";
             var updateQuery = string.Format(format, table);
             this.queryProvider.ExecuteNonQuery(updateQuery, Action);
         }

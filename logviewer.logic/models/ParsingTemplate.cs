@@ -38,6 +38,7 @@ namespace logviewer.logic.models
                 {
                     return this.Name;
                 }
+
                 return this.Name + " (" + new FileSize(gm.Template.Length, true).Format() + ")"; // Not L10N
             }
         }

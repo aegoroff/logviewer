@@ -43,13 +43,13 @@ namespace logviewer.logic.ui.network
             this.machine = new StateMachine<ProxyMode, ProxyModeTransition>(() => this.mode, s => this.mode = s);
 
             this.machine.Configure(ProxyMode.None)
-                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => {}))
+                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => { }))
                 .Permit(ProxyModeTransition.ToAutoProxyDetection, ProxyMode.AutoProxyDetection)
                 .Permit(ProxyModeTransition.ToCustom, ProxyMode.Custom)
                 .PermitReentry(ProxyModeTransition.ToNone);
 
             this.machine.Configure(ProxyMode.AutoProxyDetection)
-                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => {}))
+                .OnEntry(t => this.OnEnter(machineMode, this.Read, () => { }))
                 .Permit(ProxyModeTransition.ToNone, ProxyMode.None)
                 .Permit(ProxyModeTransition.ToCustom, ProxyMode.Custom)
                 .PermitReentry(ProxyModeTransition.ToAutoProxyDetection);

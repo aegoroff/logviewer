@@ -68,6 +68,7 @@ namespace logviewer.logic.support
             {
                 Thread.Sleep(EnqueueTimeoutMilliseconds);
             }
+
             lock (this.locker)
             {
                 this.itemQ.Enqueue(item); // We must pulse because we're

@@ -31,6 +31,7 @@ namespace logviewer.logic.ui
                 Log.Instance.Error(e.Message, e);
                 this.uiSyncContext = TaskScheduler.Current;
             }
+
             this.UiContextScheduler = new SynchronizationContextScheduler(this.winformsOrDefaultContext);
         }
 

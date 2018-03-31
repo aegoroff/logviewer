@@ -54,10 +54,10 @@ namespace logviewer.logic.ui.network
                     case ProxyMode.Custom:
                         return new WebProxy(this.Host, this.Port)
                                {
-                                   Credentials =
-                                           this.IsUseDefaultCredentials
-                                               ? CredentialCache.DefaultNetworkCredentials
-                                               : this.Credentials
+                                       Credentials =
+                                               this.IsUseDefaultCredentials
+                                                       ? CredentialCache.DefaultNetworkCredentials
+                                                       : this.Credentials
                                };
                     default:
                         return null;
@@ -218,7 +218,7 @@ namespace logviewer.logic.ui.network
         private void OnModeChanged(ProxyModeTransition transition) => this.ModeChanged?.Invoke(this, transition);
 
         private ProxyModeTransition GetCustomModeTransition() => this.isUseDefaultCredentials
-                                                                     ? ProxyModeTransition.ToCustomDefaultUser
-                                                                     : ProxyModeTransition.ToCustomWithManualUser;
+                                                                         ? ProxyModeTransition.ToCustomDefaultUser
+                                                                         : ProxyModeTransition.ToCustomWithManualUser;
     }
 }
