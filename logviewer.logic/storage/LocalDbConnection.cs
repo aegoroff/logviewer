@@ -16,6 +16,8 @@ namespace logviewer.logic.storage
 {
     internal sealed class LocalDbConnection : IDatabaseConnection
     {
+        private const string MemoryPath = ":memory:";
+
         private SQLiteConnection connection;
 
         private SQLiteTransaction transaction;
@@ -45,7 +47,7 @@ namespace logviewer.logic.storage
 
         internal static bool IsMemoryPath(string databaseFilePath)
         {
-            return databaseFilePath.Equals(":memory:", StringComparison.OrdinalIgnoreCase);
+            return databaseFilePath.Equals(MemoryPath, StringComparison.OrdinalIgnoreCase);
         }
 
         ~LocalDbConnection() => this.DisposeInternal();
