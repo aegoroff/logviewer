@@ -285,7 +285,7 @@ namespace logviewer.logic.storage
 
         public ParsingTemplate ReadParsingTemplate() => this.ReadParsingTemplate(this.SelectedParsingTemplate);
 
-        public IList<string> ReadParsingTemplateList()
+        public IList<string> ReadParsingTemplateNames()
         {
             const string cmd = @"
                     SELECT

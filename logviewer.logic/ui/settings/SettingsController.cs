@@ -30,7 +30,7 @@ namespace logviewer.logic.ui.settings
 
         private ParsingTemplate template;
 
-        private IList<string> templateList;
+        private IList<string> templateNames;
 
         private int parsingTemplateIndex;
 
@@ -77,8 +77,8 @@ namespace logviewer.logic.ui.settings
                 this.formData.PageSize = this.settings.PageSize.ToString(CultureInfo.CurrentUICulture);
                 this.formData.KeepLastNFiles = this.settings.KeepLastNFiles.ToString(CultureInfo.CurrentUICulture);
 
-                this.templateList = this.settings.ReadParsingTemplateList();
-                if (this.parsingTemplateIndex > this.templateList.Count - 1)
+                this.templateNames = this.settings.ReadParsingTemplateNames();
+                if (this.parsingTemplateIndex > this.templateNames.Count - 1)
                 {
                     this.parsingTemplateIndex = 0;
                 }
@@ -94,7 +94,7 @@ namespace logviewer.logic.ui.settings
                 this.view.LoadFormData(this.formData);
                 this.view.LoadParsingTemplate(this.template);
                 this.view.EnableSave(false);
-                foreach (var name in this.templateList)
+                foreach (var name in this.templateNames)
                 {
                     this.view.AddTemplateName(name);
                 }
@@ -103,7 +103,7 @@ namespace logviewer.logic.ui.settings
                     this.updateColorActions[color.Key](color.Value);
                 }
 
-                this.view.SelectParsingTemplateByName(this.templateList[this.parsingTemplateIndex]);
+                this.view.SelectParsingTemplateByName(this.templateNames[this.parsingTemplateIndex]);
                 this.view.EnableResetColors(this.IsColorsChanged);
                 this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
             }
@@ -238,21 +238,21 @@ namespace logviewer.logic.ui.settings
         {
             this.view.ShowNewParsingTemplateForm(false);
             var t = this.view.NewParsingTemplateData;
-            t.Index = this.templateList.Count;
+            t.Index = this.templateNames.Count;
 
             void OnComplete(IList<string> list)
             {
                 for (var i = t.Index; i < list.Count; i++)
                 {
                     this.view.AddTemplateName(list[i]);
-                    this.templateList.Add(list[i]);
+                    this.templateNames.Add(list[i]);
                 }
             }
 
             var source = Observable.Create<IList<string>>(observer =>
             {
                 this.settings.InsertParsingTemplate(t);
-                var list = this.settings.ReadParsingTemplateList();
+                var list = this.settings.ReadParsingTemplateNames();
                 observer.OnNext(list);
                 return Disposable.Empty;
             });
@@ -272,7 +272,7 @@ namespace logviewer.logic.ui.settings
             var source = Observable.Create<int>(observer =>
             {
                 this.settings.DeleteParsingTemplate(this.parsingTemplateIndex);
-                this.templateList.RemoveAt(this.parsingTemplateIndex);
+                this.templateNames.RemoveAt(this.parsingTemplateIndex);
                 observer.OnNext(this.parsingTemplateIndex);
                 return Disposable.Empty;
             });
@@ -313,7 +313,7 @@ namespace logviewer.logic.ui.settings
                 }
 
                 this.parsingTemplateIndex = 0;
-                this.templateList = this.settings.ReadParsingTemplateList();
+                this.templateNames = this.settings.ReadParsingTemplateNames();
                 this.settings.SelectedParsingTemplate = this.parsingTemplateIndex;
                 this.template = this.settings.ReadParsingTemplate(this.parsingTemplateIndex);
             }
@@ -321,7 +321,7 @@ namespace logviewer.logic.ui.settings
             void CompleteRestoringTemplatesAction(Task obj)
             {
                 this.view.RemoveAllParsingTemplateNames();
-                foreach (var name in this.templateList)
+                foreach (var name in this.templateNames)
                 {
                     this.view.AddTemplateName(name);
                 }

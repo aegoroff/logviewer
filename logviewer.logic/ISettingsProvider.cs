@@ -47,7 +47,7 @@ namespace logviewer.logic
 
         ParsingTemplate ReadParsingTemplate();
 
-        IList<string> ReadParsingTemplateList();
+        IList<string> ReadParsingTemplateNames();
 
         IList<ParsingTemplate> ReadAllParsingTemplates();
 

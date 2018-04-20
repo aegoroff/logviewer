@@ -28,7 +28,7 @@ namespace logviewer.logic.storage
         {
             if (!File.Exists(databaseFilePath) || new FileInfo(databaseFilePath).Length == 0)
             {
-                if (!databaseFilePath.Equals(":memory:", StringComparison.OrdinalIgnoreCase))
+                if (!IsMemoryPath(databaseFilePath))
                 {
                     SQLiteConnection.CreateFile(databaseFilePath);
                 }
@@ -41,6 +41,11 @@ namespace logviewer.logic.storage
             this.creationContext = new SynchronizationContext();
             this.connection = new SQLiteConnection(conString.ToString());
             this.connection.Open();
+        }
+
+        internal static bool IsMemoryPath(string databaseFilePath)
+        {
+            return databaseFilePath.Equals(":memory:", StringComparison.OrdinalIgnoreCase);
         }
 
         ~LocalDbConnection() => this.DisposeInternal();
