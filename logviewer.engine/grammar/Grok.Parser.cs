@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 06.07.2015
-// © 2012-2018 Alexander Egorov
+// Â© 2012-2018 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ namespace logviewer.engine.grammar
 
         private void OnRule(ParserType parser, string pattern, LogLevel level)
         {
-            var rule = new GrokRule(parser, pattern.UnescapeString(), level);
+            var rule = new GrokRule(parser, pattern.Unescape(), level);
             this.AddRule(rule);
         }
 

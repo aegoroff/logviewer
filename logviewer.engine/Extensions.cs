@@ -28,8 +28,13 @@ namespace logviewer.engine
             }
         }
 
+        /// <summary>
+        /// Removes all leading and trailing '," chars and replaces \\ and \" by \ and " respectively
+        /// </summary>
+        /// <param name="escaped">Escaped string</param>
+        /// <returns>Clean string</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static string UnescapeString(this string escaped)
+        internal static string Unescape(this string escaped)
         {
             if (escaped.Length > 1
                 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\""))) // Not L10N
