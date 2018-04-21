@@ -65,7 +65,7 @@ namespace logviewer.engine
                 return false;
             }
 
-            return obj is SemanticProperty && this.Equals((SemanticProperty)obj);
+            return obj is SemanticProperty property && this.Equals(property);
         }
 
         /// <summary>
