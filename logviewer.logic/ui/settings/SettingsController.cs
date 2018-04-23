@@ -70,7 +70,7 @@ namespace logviewer.logic.ui.settings
         {
             this.view.ShowNewParsingTemplateForm(false);
 
-            void LoacTemplatesAction()
+            void LoadTemplatesAction()
             {
                 this.formData.OpenLastFile = this.settings.OpenLastFile;
                 this.formData.AutoRefreshOnFileChange = this.settings.AutoRefreshOnFileChange;
@@ -108,7 +108,7 @@ namespace logviewer.logic.ui.settings
                 this.view.EnableRemoveTemplateControl(this.parsingTemplateIndex > 0);
             }
 
-            var task = Task.Factory.StartNew(LoacTemplatesAction);
+            var task = Task.Factory.StartNew(LoadTemplatesAction);
 
             this.CompleteTask(task, TaskContinuationOptions.OnlyOnRanToCompletion, CompleteLoadingTemplateAction);
         }
