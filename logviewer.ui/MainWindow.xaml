@@ -1,4 +1,4 @@
-﻿<fluent:RibbonWindow
+<fluent:RibbonWindow
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:properties="clr-namespace:logviewer.ui.Properties"
@@ -8,7 +8,7 @@
     xmlns:main="clr-namespace:logviewer.logic.ui.main;assembly=logviewer.logic"
     x:Class="logviewer.ui.MainWindow"
     Closing="OnClosing"
-    Loaded="OnLoaded"
+    Loaded="OnWindowLoaded"
     Title="{Binding Source={x:Static logviewer:MainViewModel.Current}, Path=Caption, IsAsync=True}"
     Height="714" Width="1000" MinHeight="500" MinWidth="500" Icon="Images/Large/category.png" TextOptions.TextFormattingMode="Display">
     <Window.Resources>

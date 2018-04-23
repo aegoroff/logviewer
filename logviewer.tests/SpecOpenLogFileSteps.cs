@@ -136,7 +136,7 @@ namespace logviewer.tests
             this.viewModel.SetupGet(_ => _.From).Returns(DateTime.MinValue);
             this.viewModel.SetupGet(_ => _.To).Returns(DateTime.MaxValue);
 
-            this.workflow.Start();
+            this.workflow.StartApplication();
         }
 
         [Then(@"the number of shown messages should be (.*)")]

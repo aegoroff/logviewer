@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 17.03.2017
@@ -38,11 +38,11 @@ namespace logviewer.logic.ui.main
             this.machine.Configure(State.Closed)
                 .OnEntryFrom(Trigger.Close, this.Dispose)
                 .Permit(Trigger.Open, State.Opened)
-                .Permit(Trigger.Start, State.Opened);
+                .Permit(Trigger.AppStart, State.Opened);
 
             this.machine.Configure(State.Opened)
                 .OnEntryFrom(this.openTrigger, this.OnOpen)
-                .OnEntryFrom(Trigger.Start, this.OnStart)
+                .OnEntryFrom(Trigger.AppStart, this.OnStartApplication)
                 .OnEntryFrom(Trigger.Reload, this.OnReload)
                 .OnEntryFrom(Trigger.Filter, this.OnFilter)
                 .PermitReentry(Trigger.Open)
@@ -71,7 +71,7 @@ namespace logviewer.logic.ui.main
         public void Open(string path) => this.machine.Fire(this.openTrigger, path);
 
         [PublicAPI]
-        public void Start() => this.machine.Fire(Trigger.Start);
+        public void StartApplication() => this.machine.Fire(Trigger.AppStart);
 
         [PublicAPI]
         public void Reload() => this.machine.Fire(Trigger.Reload);
@@ -108,7 +108,7 @@ namespace logviewer.logic.ui.main
             this.logWatch.WatchLogFile(path);
         }
 
-        private void OnStart()
+        private void OnStartApplication()
         {
             this.model.LoadLastOpenedFile();
             this.logWatch.WatchLogFile(this.viewModel.LogPath);
@@ -129,7 +129,7 @@ namespace logviewer.logic.ui.main
         {
             Open,
 
-            Start,
+            AppStart,
 
             Reload,
 

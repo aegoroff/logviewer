@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 04.08.2015
@@ -78,9 +78,9 @@ namespace logviewer.ui
             this.workflow.Close();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
-            this.workflow.Start();
+            this.workflow.StartApplication();
         }
 
         private void OnUpdate(object sender, ExecutedRoutedEventArgs e)

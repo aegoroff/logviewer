@@ -24,7 +24,7 @@ namespace logviewer.tests
 
             var model = new MainModel(this.viewModel.Object);
             var workflow = new LogWorkflow(model, this.viewModel.Object);
-            workflow.Start();
+            workflow.StartApplication();
         }
 
         [Theory]
