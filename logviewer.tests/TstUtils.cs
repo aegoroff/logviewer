@@ -196,10 +196,10 @@ namespace logviewer.tests
         [InlineData("", true, true)]
         [InlineData(" ", true, true)]
         [InlineData(".*((", true, false)]
-        public void IsValid_CorrectString_Success(string filter, bool useRegexp, bool result)
+        public void IsValidTextFilter_CorrectString_Success(string filter, bool useRegexp, bool result)
         {
             // Act
-            var valid = filter.IsValid(useRegexp);
+            var valid = filter.IsValidTextFilter(useRegexp);
 
             // Assert
             valid.Should().Be(result);

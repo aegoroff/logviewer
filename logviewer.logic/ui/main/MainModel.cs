@@ -129,7 +129,7 @@ namespace logviewer.logic.ui.main
 
         private void StartReadingLogOnFilterChange(string filter)
         {
-            if (!filter.IsValid(this.viewModel.UseRegularExpressions))
+            if (!filter.IsValidTextFilter(this.viewModel.UseRegularExpressions))
             {
                 return;
             }

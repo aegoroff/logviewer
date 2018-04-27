@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 20.09.2012
@@ -46,7 +46,7 @@ namespace logviewer.logic
         /// <param name="useRegularExpressions">Wheter to use regular expressions in filter string</param>
         /// <returns></returns>
         [Pure]
-        public static bool IsValid(this string messageTextFilter, bool useRegularExpressions)
+        public static bool IsValidTextFilter(this string messageTextFilter, bool useRegularExpressions)
         {
             if (string.IsNullOrEmpty(messageTextFilter) || !useRegularExpressions)
             {
