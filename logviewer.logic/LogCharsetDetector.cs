@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 04.10.2014
@@ -12,7 +12,7 @@ using ICharsetDetector = logviewer.engine.ICharsetDetector;
 
 namespace logviewer.logic
 {
-    public class LogCharsetDetector : ICharsetDetector
+    public sealed class LogCharsetDetector : ICharsetDetector
     {
         public Encoding Detect(Stream stream)
         {

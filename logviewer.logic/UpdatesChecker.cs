@@ -10,7 +10,7 @@ using logviewer.logic.Annotations;
 
 namespace logviewer.logic
 {
-    public class UpdatesChecker
+    public sealed class UpdatesChecker
     {
         private readonly IVersionsReader reader;
 

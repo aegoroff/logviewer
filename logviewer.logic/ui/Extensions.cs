@@ -26,9 +26,9 @@ namespace logviewer.logic.ui
             {
                 return new TemplateCommandViewModel
                        {
-                           Text = template.DisplayName,
-                           Checked = ix == selected,
-                           Index = ix++
+                               Text = template.DisplayName,
+                               Checked = ix == selected,
+                               Index = ix++
                        };
             }
 
@@ -36,9 +36,9 @@ namespace logviewer.logic.ui
         }
 
         private static readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings
-        {
-                                                                          ConformanceLevel = ConformanceLevel.Fragment,
-                                                                          CheckCharacters = false
+                                                                      {
+                                                                              ConformanceLevel = ConformanceLevel.Fragment,
+                                                                              CheckCharacters = false
                                                                       };
 
         public static string CleanupXaml(this string xaml)
@@ -64,6 +64,7 @@ namespace logviewer.logic.ui
                         }
                     }
                 }
+
                 return stringBuilder.ToString();
             }
 
