@@ -1,4 +1,4 @@
-﻿Feature: SpecOpenLogFile
+Feature: SpecOpenLogFile
 	Testing opening log file and parsing it
 
 @mainmodel

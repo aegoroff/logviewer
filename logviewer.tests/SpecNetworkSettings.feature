@@ -1,4 +1,4 @@
-﻿Feature: SpecNetworkSettings
+Feature: SpecNetworkSettings
 	Testing Network settings logic
 
 @networksettings
