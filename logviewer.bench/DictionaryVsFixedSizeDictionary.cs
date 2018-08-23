@@ -68,7 +68,7 @@ namespace logviewer.bench
             private const int InvocationCount = 100000000;
             private const int LaunchCount = 1;
             private const int WarmupCount = 2;
-            private const int TargetCount = 10;
+            private const int IterationCount = 10;
 
             public Config()
             {
@@ -87,7 +87,7 @@ namespace logviewer.bench
                         .With(runStrategy)
                         .WithLaunchCount(LaunchCount)
                         .WithWarmupCount(WarmupCount)
-                        .WithTargetCount(TargetCount)
+                        .WithIterationCount(IterationCount)
                         .WithInvocationCount(InvocationCount)
                         .WithId($"{jit:G}{runStrategy:G}")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
             }
