@@ -6,7 +6,7 @@ namespace logviewer.bench
     {
         public static void Main(string[] args)
         {
-            var summary1 = BenchmarkRunner.Run<DictionaryVsFixedSizeDictionary>();
+            //var summary1 = BenchmarkRunner.Run<DictionaryVsFixedSizeDictionary>();
             var summary2 = BenchmarkRunner.Run<AhoCorasickVsPlainStringMethods>();
         }
     }

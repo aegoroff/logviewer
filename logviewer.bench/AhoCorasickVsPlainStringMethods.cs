@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Engines;
@@ -14,7 +15,7 @@ namespace logviewer.bench
         private const string TestString =
                 "The message with Action 'http://tempuri.org/ISaasActivation/TutorialPassed' cannot be processed at the receiver, due to a ContractFilter mismatch at the EndpointDispatcher. This may be because of either a contract mismatch (mismatched Actions between sender and receiver) or a binding/security mismatch between the sender and the receiver.  Check that sender and receiver have the same contract and the same binding (including security requirements, e.g. Message, Transport, None).";
 
-        private readonly string[] keywords = { "ContractFilter", "EndpointDispatcher", "Message" };
+        private readonly string[] keywords = { "ContractFilter", "EndpointDispatcher", "Message", "binding/security", "receiver" };
 
         private readonly AhoCorasickTree tree;
 
@@ -42,6 +43,26 @@ namespace logviewer.bench
 
             return false;
         }
+        
+        [Benchmark]
+        public bool Contains_PlainWithForeach()
+        {
+            foreach (var kw in this.keywords)
+            {
+                if (TestString.Contains(kw))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
+        [Benchmark]
+        public bool Contains_PlainWithLinq()
+        {
+            return this.keywords.Any(keyword => TestString.Contains(keyword));
+        }
 
         [Benchmark]
         public IEnumerable<string> FindAll_AhoCorasick()
@@ -60,13 +81,31 @@ namespace logviewer.bench
                 }
             }
         }
+        
+        [Benchmark]
+        public IEnumerable<string> FindAll_PlainWithForeach()
+        {
+            foreach (var kw in this.keywords)
+            {
+                if (TestString.Contains(kw))
+                {
+                    yield return kw;
+                }
+            }
+        }
+        
+        [Benchmark]
+        public IEnumerable<string> FindAll_PlainWithLinq()
+        {
+            return this.keywords.Where(keyword => TestString.Contains(keyword));
+        }
 
         private class Config : ManualConfig
         {
-            private const int InvocationCount = 10000000;
+            private const int InvocationCount = 8000000;
             private const int LaunchCount = 1;
             private const int WarmupCount = 2;
-            private const int TargetCount = 10;
+            private const int IterationsCount = 10;
 
             public Config()
             {
@@ -85,7 +124,7 @@ namespace logviewer.bench
                             .With(runStrategy)
                             .WithLaunchCount(LaunchCount)
                             .WithWarmupCount(WarmupCount)
-                            .WithTargetCount(TargetCount)
+                            .WithIterationCount(IterationsCount)
                             .WithInvocationCount(InvocationCount)
                             .WithId($"{jit:G}{runStrategy:G}")); // IMPORTANT: Id assignment should be the last call in the chain or the id will be lost.
             }
