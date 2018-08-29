@@ -118,8 +118,10 @@ namespace logviewer.engine
                 return null;
             }
 
-            var result = new KeyValuePair<string, string>[this.messageSchema.Count];
-            for (var i = 0; i < this.messageSchema.Count; i++)
+            var messageSchemaCount = this.messageSchema.Count;
+
+            var result = new KeyValuePair<string, string>[messageSchemaCount];
+            for (var i = 0; i < messageSchemaCount; i++)
             {
                 var property = this.messageSchema[i].Property;
                 result[i] = new KeyValuePair<string, string>(property, match.Groups[property].Value);
