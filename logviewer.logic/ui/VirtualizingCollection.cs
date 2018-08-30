@@ -296,14 +296,10 @@ namespace logviewer.logic.ui
         /// </summary>
         private void RequestPage(int pageIndex)
         {
-            if (!this.pages.ContainsKey(pageIndex))
+            if (!this.pageTouchTimes.ContainsKey(pageIndex))
             {
                 this.pages.Add(pageIndex, new T[0]);
-
-                if (!this.pageTouchTimes.ContainsKey(pageIndex))
-                {
-                    this.pageTouchTimes.Add(pageIndex, DateTime.Now);
-                }
+                this.pageTouchTimes.Add(pageIndex, DateTime.Now);
 #if DEBUG
                 Trace.WriteLine("Added page: " + pageIndex);
 #endif
