@@ -86,6 +86,12 @@ namespace logviewer.logic.storage
             var colums = string.Join(",", this.ReadAdditionalColumns(s => prefix + s)); // Not L10N
             return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums; // Not L10N
         }
+        
+        private string CreateAdditionalColumnsParameters()
+        {
+            var colums = string.Join(",", this.rules.Keys.Select(_ => "?")); // Not L10N
+            return string.IsNullOrWhiteSpace(colums) ? string.Empty : "," + colums; // Not L10N
+        }
 
         public string DatabasePath { get; }
 
@@ -133,7 +139,7 @@ namespace logviewer.logic.storage
             }
 
             this.insertPrefix = $"INSERT INTO Log(Ix, Header, Body{this.CreateAdditionalColumnsList()}) VALUES (";
-            this.insertSuffix = $", @Header, @Body {this.CreateAdditionalColumnsList("@")})"; // Not L10N
+            this.insertSuffix = $", ?, ? {this.CreateAdditionalColumnsParameters()})"; // Not L10N
         }
 
         public void Dispose() => this.Dispose(true);
@@ -167,8 +173,8 @@ namespace logviewer.logic.storage
             {
                 try
                 {
-                    command.AddParameter("@Header", message.Header); // Not L10N
-                    command.AddParameter("@Body", message.Body); // Not L10N
+                    command.AddStringParameter(message.Header); // Not L10N
+                    command.AddStringParameter(message.Body); // Not L10N
 
                     // ReSharper disable once ForCanBeConvertedToForeach
                     for (var i = 0; i < this.additionalColumns.Length; i++)
@@ -176,11 +182,11 @@ namespace logviewer.logic.storage
                         var column = this.additionalColumns[i];
                         if (this.propertyTypesCache[column] == PropertyType.Integer)
                         {
-                            command.AddParameter("@" + column, message.IntegerProperty(column)); // Not L10N
+                            command.AddIntegerParameter(message.IntegerProperty(column)); // Not L10N
                         }
                         else
                         {
-                            command.AddParameter("@" + column, message.StringProperty(column)); // Not L10N
+                            command.AddStringParameter(message.StringProperty(column)); // Not L10N
                         }
                     }
 
