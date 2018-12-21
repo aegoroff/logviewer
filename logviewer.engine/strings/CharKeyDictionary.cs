@@ -26,7 +26,7 @@ namespace logviewer.engine.strings
         private List<char> keys;
 
         /// <summary>
-        /// Ininitalizes new dictionary instance
+        /// Initializes new dictionary instance
         /// </summary>
         public CharKeyDictionary() => this.Clear();
 

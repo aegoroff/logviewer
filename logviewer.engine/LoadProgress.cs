@@ -21,7 +21,7 @@ namespace logviewer.engine
         /// <summary>
         /// Remaining time
         /// </summary>
-        public TimeSpan Remainig { get; set; }
+        public TimeSpan Remaining { get; set; }
 
         /// <summary>
         /// Log read percent

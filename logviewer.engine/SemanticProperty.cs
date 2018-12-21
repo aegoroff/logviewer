@@ -47,8 +47,8 @@ namespace logviewer.engine
         /// <summary>
         /// Compares this instance with instance specified
         /// </summary>
-        /// <param name="other">Intance to compare with</param>
-        /// <returns>True if other's intance name equals to this name</returns>
+        /// <param name="other">Instance to compare with</param>
+        /// <returns>True if others' instance property equals to this property</returns>
         public bool Equals(SemanticProperty other) => string.Equals(this.name, other.name, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>

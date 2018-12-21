@@ -87,7 +87,7 @@ namespace logviewer.logic
             return progress.Speed.Bytes == 0
                        ? string.Format(Resources.SpeedPercent, progress.Percent)
                        : string.Format(Resources.SpeedPercentWithRemain, progress.Percent, progress.Speed.Format(),
-                                       progress.Remainig.Humanize());
+                                       progress.Remaining.Humanize());
         }
 
         /// <summary>

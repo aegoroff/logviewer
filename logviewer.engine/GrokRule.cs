@@ -56,8 +56,8 @@ namespace logviewer.engine
         /// <summary>
         /// Compares this instance with instance specified
         /// </summary>
-        /// <param name="other">Intance to compare with</param>
-        /// <returns>True if other's intance pattern equals to this pattern</returns>
+        /// <param name="other">Instance to compare with</param>
+        /// <returns>True if others' instance pattern equals to this pattern</returns>
         public bool Equals(GrokRule other) => string.Equals(this.pattern, other.pattern, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace logviewer.engine
     {
         private const char NewLine = '\n';
 
-        private const int DefaultPropertyDicitionaryCapacity = 5;
+        private const int DefaultPropertyDictionaryCapacity = 5;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
 
@@ -35,8 +35,8 @@ namespace logviewer.engine
             this.ix = 0L;
             this.rawProperties = null;
             this.bodyBuilder = null;
-            this.integerProperties = new Dictionary<string, long>(DefaultPropertyDicitionaryCapacity);
-            this.stringProperties = new Dictionary<string, string>(DefaultPropertyDicitionaryCapacity);
+            this.integerProperties = new Dictionary<string, long>(DefaultPropertyDictionaryCapacity);
+            this.stringProperties = new Dictionary<string, string>(DefaultPropertyDictionaryCapacity);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace logviewer.engine
         /// <summary>
         /// Adds metadata into message
         /// </summary>
-        /// <param name="extractedProperties">Concrete messate properties extracted by template</param>
+        /// <param name="extractedProperties">Concrete message properties extracted by template</param>
         /// <remarks>For performance reasons the real type of extractedProperties must be KeyValuePair&lt;string, string&gt;[] otherwise parsing will not work</remarks>
         public void AddProperties(IEnumerable<KeyValuePair<string, string>> extractedProperties)
         {

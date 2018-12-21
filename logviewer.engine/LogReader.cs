@@ -146,7 +146,7 @@ namespace logviewer.engine
         ///     Reads log from stream
         /// </summary>
         /// <param name="stream">Stream to read log from</param>
-        /// <param name="length">Stream lendgh if applicable</param>
+        /// <param name="length">Stream length if applicable</param>
         /// <param name="encoding">Stream encoding</param>
         /// <returns>Messages stream</returns>
         public IEnumerable<LogMessage> Read(Stream stream, long length, Encoding encoding = null)
@@ -248,7 +248,7 @@ namespace logviewer.engine
             var progress = new LoadProgress
                            {
                                Speed = new FileSize((ulong)speed, true),
-                               Remainig = TimeSpan.FromSeconds(remain),
+                               Remaining = TimeSpan.FromSeconds(remain),
                                Percent = stream.Position.PercentOf(stream.Length)
                            };
             this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(progress.Percent, progress));
