@@ -1,4 +1,4 @@
-﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 11.09.2015
@@ -31,11 +31,14 @@ namespace logviewer.logic.support
         {
             var csp = new RSACryptoServiceProvider(keySize);
 
-            var privKey = csp.ExportParameters(true);
-            var pubKey = csp.ExportParameters(false);
+            using (csp)
+            {
+                var privKey = csp.ExportParameters(true);
+                var pubKey = csp.ExportParameters(false);
 
-            this.PublicKey = Serialize(pubKey);
-            this.PrivateKey = Serialize(privKey);
+                this.PublicKey = Serialize(pubKey);
+                this.PrivateKey = Serialize(privKey);
+            }
         }
 
         private static string Serialize<T>(T obj)
