@@ -15,7 +15,7 @@ namespace logviewer.engine
     /// <summary>
     /// Represents parsed message structure with header, body and metadata if any
     /// </summary>
-    public struct LogMessage
+    public struct LogMessage : IEquatable<LogMessage>
     {
         private const char NewLine = '\n';
 
@@ -378,5 +378,20 @@ namespace logviewer.engine
 
         private long ix;
         #endregion
+
+        /// <inheritdoc />
+        public bool Equals(LogMessage other) => this.body == other.body && this.head == other.head;
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => obj is LogMessage other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((this.body != null ? this.body.GetHashCode() : 0) * 397) ^ (this.head != null ? this.head.GetHashCode() : 0);
+            }
+        }
     }
 }
