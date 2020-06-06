@@ -11,7 +11,7 @@ namespace logviewer.engine
     /// <summary>
     ///     Represents file size normalization code
     /// </summary>
-    public struct FileSize
+    public readonly struct FileSize : IEquatable<FileSize>
     {
         private const int Int64BitsCount = 64;
 
@@ -89,5 +89,25 @@ namespace logviewer.engine
             n -= x >> (Int64BitsCount - 1);
             return (Int64BitsCount - 1) - (n - x);
         }
+
+        
+        /// <summary>
+        /// Equals FileSize to other
+        /// </summary>
+        /// <param name="other">Other instance to compare</param>
+        /// <returns>True if file size the same, false otherwise</returns>
+        public bool Equals(FileSize other) => this.bytes == other.bytes;
+
+        /// <summary>
+        /// Equals FileSize to other
+        /// </summary>
+        /// <param name="obj">Other instance to compare</param>
+        /// <returns>True if file size the same, false otherwise</returns>
+        public override bool Equals(object obj) => obj is FileSize other && this.Equals(other);
+
+        /// <summary>Returns the hash code for this instance.</summary>
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+        /// <filterpriority>2</filterpriority>
+        public override int GetHashCode() => this.bytes.GetHashCode();
     }
 }

@@ -12,7 +12,7 @@ namespace logviewer.engine
     /// <summary>
     /// Represents metadata property info
     /// </summary>
-    public struct SemanticProperty : IEqualityComparer<SemanticProperty>
+    public struct SemanticProperty : IEqualityComparer<SemanticProperty>, IEquatable<SemanticProperty>
     {
         private readonly string name;
 

@@ -14,7 +14,7 @@ namespace logviewer.engine
     /// Represent all possible transformations for a named property
     /// </summary>
     [DebuggerDisplay("{" + nameof(Property) + "}")]
-    public struct Semantic
+    public struct Semantic : IEquatable<Semantic>
     {
         private readonly string property;
 
