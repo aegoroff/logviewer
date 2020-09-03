@@ -15,13 +15,13 @@ namespace logviewer.bench
         private const string TestString =
                 "The message with Action 'http://tempuri.org/ISaasActivation/TutorialPassed' cannot be processed at the receiver, due to a ContractFilter mismatch at the EndpointDispatcher. This may be because of either a contract mismatch (mismatched Actions between sender and receiver) or a binding/security mismatch between the sender and the receiver.  Check that sender and receiver have the same contract and the same binding (including security requirements, e.g. Message, Transport, None).";
 
-        private readonly string[] keywords = { "ContractFilter", "EndpointDispatcher", "Message", "binding/security", "receiver" };
+        private readonly KeyValuePair<string,int>[] keywords = new[] { new KeyValuePair<string,int>("ContractFilter", 1), new KeyValuePair<string,int>("EndpointDispatcher", 2), new KeyValuePair<string,int>("Message", 3), new KeyValuePair<string,int>("binding/security", 3), new KeyValuePair<string,int>("receiver", 4) };
 
-        private readonly AhoCorasickTree tree;
+        private readonly AhoCorasickTree<int> tree;
 
         public AhoCorasickVsPlainStringMethods()
         {
-            this.tree = new AhoCorasickTree(this.keywords);
+            this.tree = new AhoCorasickTree<int>(this.keywords);
         }
 
         [Benchmark]
@@ -35,7 +35,7 @@ namespace logviewer.bench
         {
             for (int i = 0; i < this.keywords.Length; i++)
             {
-                if (TestString.Contains(this.keywords[i]))
+                if (TestString.Contains(this.keywords[i].Key))
                 {
                     return true;
                 }
@@ -49,7 +49,7 @@ namespace logviewer.bench
         {
             foreach (var kw in this.keywords)
             {
-                if (TestString.Contains(kw))
+                if (TestString.Contains(kw.Key))
                 {
                     return true;
                 }
@@ -61,11 +61,11 @@ namespace logviewer.bench
         [Benchmark]
         public bool Contains_PlainWithLinq()
         {
-            return this.keywords.Any(keyword => TestString.Contains(keyword));
+            return this.keywords.Any(keyword => TestString.Contains(keyword.Key));
         }
 
         [Benchmark]
-        public IEnumerable<string> FindAll_AhoCorasick()
+        public IEnumerable<int> FindAll_AhoCorasick()
         {
             return this.tree.FindAll(TestString);
         }
@@ -75,9 +75,9 @@ namespace logviewer.bench
         {
             for (int i = 0; i < this.keywords.Length; i++)
             {
-                if (TestString.Contains(this.keywords[i]))
+                if (TestString.Contains(this.keywords[i].Key))
                 {
-                    yield return this.keywords[i];
+                    yield return this.keywords[i].Key;
                 }
             }
         }
@@ -87,17 +87,17 @@ namespace logviewer.bench
         {
             foreach (var kw in this.keywords)
             {
-                if (TestString.Contains(kw))
+                if (TestString.Contains(kw.Key))
                 {
-                    yield return kw;
+                    yield return kw.Key;
                 }
             }
         }
         
         [Benchmark]
-        public IEnumerable<string> FindAll_PlainWithLinq()
+        public IEnumerable<KeyValuePair<string,int>> FindAll_PlainWithLinq()
         {
-            return this.keywords.Where(keyword => TestString.Contains(keyword));
+            return this.keywords.Where(keyword => TestString.Contains(keyword.Key));
         }
 
         private class Config : ManualConfig

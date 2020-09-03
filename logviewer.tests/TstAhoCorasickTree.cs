@@ -4,6 +4,7 @@
 // Created at: 26.04.2017
 // © 2012-2018 Alexander Egorov
 
+using System.Collections.Generic;
 using FluentAssertions;
 using logviewer.engine.strings;
 using Xunit;
@@ -19,8 +20,8 @@ namespace logviewer.tests
         public void Contains_SeveralStringsSomeInTarget_ReturnTrue()
         {
             // Arrange
-            var keywords = new[] { "Windows", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var keywords = new[] { new KeyValuePair<string,int>("Windows", 1), new KeyValuePair<string,int>("Linux", 2), new KeyValuePair<string,int>("MacOSX", 3) };
+            var tree = new AhoCorasickTree<int>(keywords);
 
             // Act
             var result = tree.Contains(TestString);
@@ -33,8 +34,8 @@ namespace logviewer.tests
         public void Contains_SeveralStringsNotFoundSomeInTarget_ReturnFalse()
         {
             // Arrange
-            var keywords = new[] { "Google", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var keywords = new[] { new KeyValuePair<string,int>("Google", 1), new KeyValuePair<string,int>("Linux", 2), new KeyValuePair<string,int>("MacOSX", 3) };
+            var tree = new AhoCorasickTree<int>(keywords);
 
             // Act
             var result = tree.Contains(TestString);
@@ -47,8 +48,8 @@ namespace logviewer.tests
         public void ContainsThatStart_SeveralStringsSomeInTargetButStringDoesntStartsWithAny_ReturnFalse()
         {
             // Arrange
-            var keywords = new[] { "Windows", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var keywords = new[] { new KeyValuePair<string,int>("Windows", 1), new KeyValuePair<string,int>("Linux", 2), new KeyValuePair<string,int>("MacOSX", 3) };
+            var tree = new AhoCorasickTree<int>(keywords);
 
             // Act
             var result = tree.ContainsThatStart(TestString);
@@ -61,8 +62,8 @@ namespace logviewer.tests
         public void ContainsThatStart_SeveralStringsSomeInTarget_ReturnTrue()
         {
             // Arrange
-            var keywords = new[] { "Mozilla", "Chrome", "IE" };
-            var tree = new AhoCorasickTree(keywords);
+            var keywords = new[] { new KeyValuePair<string,int>("Mozilla", 1), new KeyValuePair<string,int>("Chrome", 2), new KeyValuePair<string,int>("IE", 3) };
+            var tree = new AhoCorasickTree<int>(keywords);
 
             // Act
             var result = tree.ContainsThatStart(TestString);
@@ -75,28 +76,28 @@ namespace logviewer.tests
         public void FindAll_SeveralStringsSomeInTarget_ReturnAllFound()
         {
             // Arrange
-            var keywords = new[] { "Windows", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var keywords = new[] { new KeyValuePair<string,int>("Windows", 1), new KeyValuePair<string,int>("Linux", 2), new KeyValuePair<string,int>("MacOSX", 3) };
+            var tree = new AhoCorasickTree<int>(keywords);
 
             // Act
             var result = tree.FindAll(TestString);
 
             // Assert
-            result.Should().BeEquivalentTo("Windows");
+            result.Should().BeEquivalentTo(1);
         }
 
         [Fact]
         public void FindAll_SeveralStringsSomeInTargetFoundMoreThenOne_ReturnAllFound()
         {
             // Arrange
-            var keywords = new[] { "Mozilla", "Chrome", "IE" };
-            var tree = new AhoCorasickTree(keywords);
+            var keywords = new[] { new KeyValuePair<string,int>("Mozilla", 1), new KeyValuePair<string,int>("Chrome", 2), new KeyValuePair<string,int>("IE", 3) };
+            var tree = new AhoCorasickTree<int>(keywords);
 
             // Act
             var result = tree.FindAll(TestString);
 
             // Assert
-            result.Should().BeEquivalentTo("Mozilla", "Chrome");
+            result.Should().BeEquivalentTo(1, 2);
         }
     }
 }
