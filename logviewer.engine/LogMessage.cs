@@ -383,7 +383,7 @@ namespace logviewer.engine
         public bool Equals(LogMessage other) => this.body == other.body && this.head == other.head;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is LogMessage other && Equals(other);
+        public override bool Equals(object obj) => obj is LogMessage other && this.Equals(other);
 
         /// <inheritdoc />
         public override int GetHashCode()
