@@ -8,75 +8,18 @@ using System.Collections.Generic;
 
 namespace logviewer.engine.strings
 {
-    public class AhoCorasickTree<T> : AhoCorasickTree
-    {
-        private readonly Dictionary<string, List<T>> mapping;
-        
-        /// <summary>
-        /// Initializes new algorithm instance using key-value pairs specified
-        /// </summary>
-        /// <param name="pairs">Patterns to search values by a string</param>
-        public AhoCorasickTree(IEnumerable<KeyValuePair<string, T>> pairs) : base(pairs?.Select(x => x.Key))
-        {
-            if (pairs == null)
-            {
-                return;
-            }
-
-            this.mapping = new Dictionary<string, List<T>>();
-
-            foreach (var p in pairs)
-            {
-                if (this.mapping.TryGetValue(p.Key, out var values))
-                {
-                    values.Add(p.Value);
-                }
-                else
-                {
-                    this.mapping[p.Key] = new List<T> { p.Value };
-                }
-            }
-        }
-        
-        /// <summary>
-        /// Finds all patterns values occurrences in the string specified
-        /// </summary>
-        /// <param name="text">string to search within</param>
-        /// <returns>All found values</returns>
-        public IEnumerable<T> FindAllValues(string text)
-        {
-            var patterns = FindAll(text);
-
-            foreach (var pattern in patterns)
-            {
-                if (!this.mapping.TryGetValue(pattern, out var values))
-                {
-                    continue;
-                }
-
-                // ReSharper disable once ForCanBeConvertedToForeach
-                for (var j = 0; j < values.Count; j++)
-                {
-                    yield return values[j];                            
-                }
-            }
-        }
-    }
-    
     /// <summary>
     /// Represents Aho-Corasick algorithm implementation
     /// </summary>
-    public class AhoCorasickTree<T>
+    public class AhoCorasickTree
     {
         internal AhoCorasickTreeNode Root { get; }
-
-        private readonly Dictionary<string, List<T>> mapping;
 
         /// <summary>
         /// Initializes new algorithm instance using keywords (patterns) specified
         /// </summary>
         /// <param name="keywords">Patterns to search in a string</param>
-        public AhoCorasickTree(IEnumerable<KeyValuePair<string, T>> keywords)
+        public AhoCorasickTree(IEnumerable<string> keywords)
         {
             this.Root = new AhoCorasickTreeNode();
 
@@ -85,19 +28,9 @@ namespace logviewer.engine.strings
                 return;
             }
 
-            this.mapping = new Dictionary<string, List<T>>();
-
             foreach (var p in keywords)
             {
-                this.AddPatternToTree(p.Key);
-                if (this.mapping.TryGetValue(p.Key, out var values))
-                {
-                    values.Add(p.Value);
-                }
-                else
-                {
-                    this.mapping[p.Key] = new List<T> { p.Value };
-                }
+                this.AddPatternToTree(p);
             }
 
             this.SetFailureNodes();
@@ -153,7 +86,7 @@ namespace logviewer.engine.strings
         /// </summary>
         /// <param name="text">string to search within</param>
         /// <returns>All found patterns</returns>
-        public IEnumerable<T> FindAll(string text)
+        public IEnumerable<string> FindAll(string text)
         {
             var pointer = this.Root;
 
@@ -172,16 +105,7 @@ namespace logviewer.engine.strings
                 // ReSharper disable once ForCanBeConvertedToForeach
                 for (var ix = 0; ix < results.Count; ix++)
                 {
-                    if (!this.mapping.TryGetValue(results[ix], out var values))
-                    {
-                        continue;
-                    }
-
-                    // ReSharper disable once ForCanBeConvertedToForeach
-                    for (var j = 0; j < values.Count; j++)
-                    {
-                        yield return values[j];                            
-                    }
+                    yield return results[ix];
                 }
             }
         }

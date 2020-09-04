@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="strings\AhoCorasickTree.cs" />
     <Compile Include="strings\AhoCorasickTreeNode.cs" />
+    <Compile Include="strings\AhoCorasickTree`1.cs" />
     <Compile Include="strings\CharKeyDictionary.cs" />
     <Compile Include="grammar\ReferencePattern.cs" />
     <Compile Include="grammar\Composer.cs" />
