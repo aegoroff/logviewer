@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
@@ -21,7 +22,7 @@ namespace logviewer.bench
 
         public AhoCorasickVsPlainStringMethods()
         {
-            this.tree = new AhoCorasickTree(this.keywords);
+            this.tree = new AhoCorasickTree(this.keywords, StringComparer.CurrentCulture);
         }
 
         [Benchmark]

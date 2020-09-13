@@ -4,6 +4,7 @@
 // Created at: 26.04.2017
 // © 2012-2018 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
 
 namespace logviewer.engine.strings
@@ -19,9 +20,10 @@ namespace logviewer.engine.strings
         /// Initializes new algorithm instance using keywords (patterns) specified
         /// </summary>
         /// <param name="keywords">Patterns to search in a string</param>
-        public AhoCorasickTree(IEnumerable<string> keywords)
+        /// <param name="comparer">String comparer</param>
+        public AhoCorasickTree(IEnumerable<string> keywords, StringComparer comparer)
         {
-            this.Root = new AhoCorasickTreeNode();
+            this.Root = new AhoCorasickTreeNode(comparer);
 
             if (keywords == null)
             {
@@ -100,12 +102,9 @@ namespace logviewer.engine.strings
                     pointer = transition;
                 }
 
-                var results = pointer.Results;
-
-                // ReSharper disable once ForCanBeConvertedToForeach
-                for (var ix = 0; ix < results.Count; ix++)
+                foreach (var result in pointer.Results)
                 {
-                    yield return results[ix];
+                    yield return result;
                 }
             }
         }

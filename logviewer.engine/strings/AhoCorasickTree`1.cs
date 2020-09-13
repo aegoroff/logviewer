@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +15,7 @@ namespace logviewer.engine.strings
         /// Initializes new algorithm instance using key-value pairs specified
         /// </summary>
         /// <param name="pairs">Patterns to search values by a string</param>
-        public AhoCorasickTree(IEnumerable<KeyValuePair<string, T>> pairs) : base(pairs?.Select(x => x.Key))
+        public AhoCorasickTree(IEnumerable<KeyValuePair<string, T>> pairs, StringComparer comparer) : base(pairs?.Select(x => x.Key), comparer)
         {
             if (pairs == null)
             {

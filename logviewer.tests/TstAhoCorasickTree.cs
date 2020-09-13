@@ -4,7 +4,10 @@
 // Created at: 26.04.2017
 // © 2012-2018 Alexander Egorov
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using FluentAssertions;
 using logviewer.engine.strings;
 using Xunit;
@@ -26,7 +29,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Linux", 2),
                 new KeyValuePair<string, int>("MacOSX", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.Contains(TestString);
@@ -40,7 +43,7 @@ namespace logviewer.tests
         {
             // Arrange
             var keywords = new[] { "Windows", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var tree = new AhoCorasickTree(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.Contains(TestString);
@@ -59,7 +62,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Linux", 2),
                 new KeyValuePair<string, int>("MacOSX", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.Contains(TestString);
@@ -73,7 +76,7 @@ namespace logviewer.tests
         {
             // Arrange
             var keywords = new[] { "Google", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var tree = new AhoCorasickTree(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.Contains(TestString);
@@ -92,7 +95,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Linux", 2),
                 new KeyValuePair<string, int>("MacOSX", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.ContainsThatStart(TestString);
@@ -106,7 +109,7 @@ namespace logviewer.tests
         {
             // Arrange
             var keywords = new[] { "Windows", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var tree = new AhoCorasickTree(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.ContainsThatStart(TestString);
@@ -125,7 +128,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Chrome", 2),
                 new KeyValuePair<string, int>("IE", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.ContainsThatStart(TestString);
@@ -139,7 +142,7 @@ namespace logviewer.tests
         {
             // Arrange
             var keywords = new[] { "Windows", "Linux", "MacOSX" };
-            var tree = new AhoCorasickTree(keywords);
+            var tree = new AhoCorasickTree(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.FindAll(TestString);
@@ -158,7 +161,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Linux", 2),
                 new KeyValuePair<string, int>("MacOSX", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.FindAllValues(TestString);
@@ -177,7 +180,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Chrome", 2),
                 new KeyValuePair<string, int>("IE", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.FindAllValues(TestString);
@@ -191,7 +194,7 @@ namespace logviewer.tests
         {
             // Arrange
             var keywords = new[] { "Mozilla", "Chrome", "IE" };
-            var tree = new AhoCorasickTree(keywords);
+            var tree = new AhoCorasickTree(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.FindAll(TestString);
@@ -211,7 +214,7 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Chrome", 2),
                 new KeyValuePair<string, int>("IE", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.FindAllValues(TestString);
@@ -231,13 +234,52 @@ namespace logviewer.tests
                 new KeyValuePair<string, int>("Chrome", 2),
                 new KeyValuePair<string, int>("IE", 3)
             };
-            var tree = new AhoCorasickTree<int>(keywords);
+            var tree = new AhoCorasickTree<int>(keywords, StringComparer.CurrentCulture);
 
             // Act
             var result = tree.FindAllValues("Moz");
 
             // Assert
             result.Should().BeEmpty();
+        }
+        
+        [Fact]
+        public void FindAllNaive_SeveralStringsSomeInTargetFoundMoreThenOne_ReturnAllFound()
+        {
+            // Arrange
+            var keywords = new[] { "Mozilla", "Chrome", "IE" };
+            
+            var sb = new StringBuilder(TestString);
+            for (int i = 0; i < 100; i++)
+            {
+                sb.Append(TestString);
+            }
+
+            var bigString = sb.ToString();
+
+            // Act
+            int result = 0;
+            for (int i = 0; i < 5000; i++)
+            {
+                result = FindAll(bigString, keywords).Count();
+            }
+
+            // Assert
+            result.Should().BePositive();
+        }
+        
+        private static IEnumerable<string> FindAll(string str, string[] keywords)
+        {
+            for (var i = 0; i < keywords.Length; i++)
+            {
+                for (int index = 0;; index += keywords[i].Length)
+                {
+                    index = str.IndexOf(keywords[i], index, StringComparison.CurrentCulture);
+                    if (index == -1)
+                        break;
+                    yield return keywords[i];
+                }
+            }
         }
     }
 }
