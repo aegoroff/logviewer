@@ -66,38 +66,35 @@ namespace logviewer.engine.strings
     /// <summary>
     /// Represents Aho-Corasick algorithm implementation
     /// </summary>
-    public class AhoCorasickTree<T>
+    public class AhoCorasickTree
     {
         internal AhoCorasickTreeNode Root { get; }
-
-        private readonly Dictionary<string, List<T>> mapping;
 
         /// <summary>
         /// Initializes new algorithm instance using keywords (patterns) specified
         /// </summary>
         /// <param name="keywords">Patterns to search in a string</param>
-        public AhoCorasickTree(IEnumerable<KeyValuePair<string, T>> keywords)
+        public AhoCorasickTree(IEnumerable<string> keywords) : this(keywords, StringComparer.CurrentCulture)
         {
-            this.Root = new AhoCorasickTreeNode();
+        }
+        
+        /// <summary>
+        /// Initializes new algorithm instance using keywords (patterns) specified
+        /// </summary>
+        /// <param name="keywords">Patterns to search in a string</param>
+        /// <param name="comparer">String comparer</param>
+        public AhoCorasickTree(IEnumerable<string> keywords, StringComparer comparer)
+        {
+            this.Root = new AhoCorasickTreeNode(comparer);
 
             if (keywords == null)
             {
                 return;
             }
 
-            this.mapping = new Dictionary<string, List<T>>();
-
             foreach (var p in keywords)
             {
-                this.AddPatternToTree(p.Key);
-                if (this.mapping.TryGetValue(p.Key, out var values))
-                {
-                    values.Add(p.Value);
-                }
-                else
-                {
-                    this.mapping[p.Key] = new List<T> { p.Value };
-                }
+                this.AddPatternToTree(p);
             }
 
             this.SetFailureNodes();
@@ -153,7 +150,7 @@ namespace logviewer.engine.strings
         /// </summary>
         /// <param name="text">string to search within</param>
         /// <returns>All found patterns</returns>
-        public IEnumerable<T> FindAll(string text)
+        public IEnumerable<string> FindAll(string text)
         {
             var pointer = this.Root;
 
@@ -167,21 +164,9 @@ namespace logviewer.engine.strings
                     pointer = transition;
                 }
 
-                var results = pointer.Results;
-
-                // ReSharper disable once ForCanBeConvertedToForeach
-                for (var ix = 0; ix < results.Count; ix++)
+                foreach (var result in pointer.Results)
                 {
-                    if (!this.mapping.TryGetValue(results[ix], out var values))
-                    {
-                        continue;
-                    }
-
-                    // ReSharper disable once ForCanBeConvertedToForeach
-                    for (var j = 0; j < values.Count; j++)
-                    {
-                        yield return values[j];                            
-                    }
+                    yield return result;
                 }
             }
         }
