@@ -10,11 +10,12 @@ namespace logviewer.engine.strings
     public class AhoCorasickTree<T> : AhoCorasickTree
     {
         private readonly Dictionary<string, List<T>> mapping;
-        
+
         /// <summary>
         /// Initializes new algorithm instance using key-value pairs specified
         /// </summary>
         /// <param name="pairs">Patterns to search values by a string</param>
+        /// <param name="comparer">strings comparer</param>
         public AhoCorasickTree(IEnumerable<KeyValuePair<string, T>> pairs, StringComparer comparer) : base(pairs?.Select(x => x.Key), comparer)
         {
             if (pairs == null)
