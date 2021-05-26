@@ -1,6 +1,8 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 06.07.2015
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -14,10 +16,16 @@ namespace logviewer.engine
     /// </summary>
     internal class GrokCompiler
     {
-        private readonly Action<string> customErrorOutputMethod;
-        private readonly List<Semantic> messageSchema = new List<Semantic>();
-        private const string MainPattern = "MAIN";
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Action<string> customErrorOutputMethod;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private List<Semantic> messageSchema = new List<Semantic>();
+
+        private const string MainPattern = "MAIN"; // Not L10N
+
         private string[] patternFiles;
+
         private const int StreamBufferSize = 0xFFFF;
 
         /// <summary>
@@ -32,11 +40,11 @@ namespace logviewer.engine
 
         private void CreateLibraryTemplates()
         {
-            const string pattern = "*.patterns";
+            const string pattern = "*.patterns"; // Not L10N
             this.patternFiles = Directory.GetFiles(Extensions.AssemblyDirectory, pattern, SearchOption.TopDirectoryOnly);
             if (this.patternFiles.Length == 0)
             {
-                this.patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly);
+                this.patternFiles = Directory.GetFiles(".", pattern, SearchOption.TopDirectoryOnly); // Not L10N
             }
         }
 
@@ -49,7 +57,7 @@ namespace logviewer.engine
         {
             this.messageSchema.Clear();
             var parser = new grammar.GrokParser(this.customErrorOutputMethod);
-            
+
             foreach (var stream in this.patternFiles.Select(File.OpenRead))
             {
                 var bufferedStream = new BufferedStream(stream, StreamBufferSize);
@@ -59,7 +67,7 @@ namespace logviewer.engine
                 }
             }
 
-            var mainDefinition = string.Format("{0} {1}", MainPattern, grok);
+            var mainDefinition = $"{MainPattern} {grok}";
             parser.Parse(mainDefinition);
 
             var mainTranslated = parser.DefinitionsTable[MainPattern];
@@ -69,9 +77,6 @@ namespace logviewer.engine
         /// <summary>
         /// Message schema - all possible properties and casting rules
         /// </summary>
-        internal ICollection<Semantic> MessageSchema
-        {
-            get { return this.messageSchema; }
-        }
+        internal IEnumerable<Semantic> MessageSchema => this.messageSchema;
     }
 }

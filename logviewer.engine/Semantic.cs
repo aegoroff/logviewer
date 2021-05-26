@@ -1,6 +1,8 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 03.10.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
@@ -11,10 +13,11 @@ namespace logviewer.engine
     /// <summary>
     /// Represent all possible transformations for a named property
     /// </summary>
-    [DebuggerDisplay("{Property}")]
-    public struct Semantic
+    [DebuggerDisplay("{" + nameof(Property) + "}")]
+    public struct Semantic : IEquatable<Semantic>
     {
         private readonly string property;
+
         private readonly HashSet<GrokRule> castingRules;
 
         /// <summary>
@@ -26,32 +29,24 @@ namespace logviewer.engine
             this.property = property;
             this.castingRules = new HashSet<GrokRule>();
         }
-        
+
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes new <see cref="Semantic"/> instance using name and rule specified.
+        /// Initializes new <see cref="T:logviewer.engine.Semantic" /> instance using name and rule specified.
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="rule">Casting rule</param>
-        public Semantic(string property, GrokRule rule) : this(property)
-        {
-            this.castingRules.Add(rule);
-        }
+        public Semantic(string property, GrokRule rule) : this(property) => this.castingRules.Add(rule);
 
         /// <summary>
         /// Gets semantic property name
         /// </summary>
-        public string Property
-        {
-            get { return this.property; }
-        }
+        public string Property => this.property;
 
         /// <summary>
         /// Gets all possible casting rules
         /// </summary>
-        public ISet<GrokRule> CastingRules
-        {
-            get { return this.castingRules; }
-        }
+        public ISet<GrokRule> CastingRules => this.castingRules;
 
         /// <summary>
         /// Gets whether this container has <see cref="GrokRule"/> specified
@@ -66,12 +61,9 @@ namespace logviewer.engine
         /// <summary>
         /// Compares this instance with instance specified
         /// </summary>
-        /// <param name="other">Intance to compare with</param>
-        /// <returns>True if other's intance property equals to this property</returns>
-        public bool Equals(Semantic other)
-        {
-            return string.Equals(this.property, other.property, StringComparison.OrdinalIgnoreCase);
-        }
+        /// <param name="other">Instance to compare with</param>
+        /// <returns>True if others' instance property equals to this property</returns>
+        public bool Equals(Semantic other) => string.Equals(this.property, other.property, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
@@ -86,7 +78,8 @@ namespace logviewer.engine
             {
                 return false;
             }
-            return obj is Semantic && this.Equals((Semantic)obj);
+
+            return obj is Semantic semantic && this.Equals(semantic);
         }
 
         /// <summary>
@@ -96,10 +89,7 @@ namespace logviewer.engine
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return this.property.Return(s => s.GetHashCode(), 0);
-        }
+        public override int GetHashCode() => this.property?.GetHashCode() ?? 0;
 
         /// <summary>
         /// Compare two instance for equality
@@ -107,10 +97,7 @@ namespace logviewer.engine
         /// <param name="s1">First instance</param>
         /// <param name="s2">Second instance</param>
         /// <returns>True if instances are equivalent false otherwise</returns>
-        public static bool operator ==(Semantic s1, Semantic s2)
-        {
-            return s1.Equals(s2);
-        }
+        public static bool operator ==(Semantic s1, Semantic s2) => s1.Equals(s2);
 
         /// <summary>
         /// Compare two instance for difference
@@ -118,9 +105,6 @@ namespace logviewer.engine
         /// <param name="s1">First instance</param>
         /// <param name="s2">Second instance</param>
         /// <returns>True if instances are not equivalent false otherwise</returns>
-        public static bool operator !=(Semantic s1, Semantic s2)
-        {
-            return !(s1 == s2);
-        }
+        public static bool operator !=(Semantic s1, Semantic s2) => !(s1 == s2);
     }
 }

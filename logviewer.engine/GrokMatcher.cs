@@ -1,23 +1,28 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 02.10.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using logviewer.engine.grammar;
 
 namespace logviewer.engine
 {
     /// <summary>
-    /// Represents pattern mather
+    /// Represents pattern matcher
     /// </summary>
     public class GrokMatcher
     {
         private Regex regex;
-        private readonly List<Semantic> messageSchema = new List<Semantic>();
-        private readonly Action<string> customErrorOutputMethod;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private List<Semantic> messageSchema = new List<Semantic>();
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private Action<string> customErrorOutputMethod;
 
         /// <summary>
         /// Init new matcher
@@ -88,10 +93,7 @@ namespace logviewer.engine
         /// <summary>
         /// Message schema - all possible properties and casting rules
         /// </summary>
-        public ICollection<Semantic> MessageSchema
-        {
-            get { return this.messageSchema; }
-        }
+        public ICollection<Semantic> MessageSchema => this.messageSchema;
 
         /// <summary>
         /// Checks line matching the pattern
@@ -106,12 +108,26 @@ namespace logviewer.engine
         /// <summary>
         /// Parse line and extract metadata that message schema defines
         /// </summary>
-        /// <param name="s">String to parse</param>
+        /// <param name="input">String to parse</param>
         /// <returns>Metadata dictionary or null</returns>
-        public IDictionary<string, string> Parse(string s)
+        public ICollection<KeyValuePair<string, string>> Parse(string input)
         {
-            var match = this.regex.Match(s);
-            return !match.Success ? null : this.MessageSchema.ToDictionary(semantic => semantic.Property, semantic => match.Groups[semantic.Property].Value);
+            var match = this.regex.Match(input);
+            if (!match.Success)
+            {
+                return null;
+            }
+
+            var messageSchemaCount = this.messageSchema.Count;
+
+            var result = new KeyValuePair<string, string>[messageSchemaCount];
+            for (var i = 0; i < messageSchemaCount; i++)
+            {
+                var property = this.messageSchema[i].Property;
+                result[i] = new KeyValuePair<string, string>(property, match.Groups[property].Value);
+            }
+
+            return result;
         }
     }
 }

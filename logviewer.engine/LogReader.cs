@@ -1,130 +1,163 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 14.09.2013
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace logviewer.engine
 {
     /// <summary>
-    /// Reads log from file or stream
+    ///     Reads log from file or stream
     /// </summary>
     public sealed class LogReader
     {
         private readonly ICharsetDetector detector;
-        private readonly GrokMatcher matcher;
-        private readonly GrokMatcher filter;
 
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private GrokMatcher excludeMatcher;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private GrokMatcher includeMatcher;
+
+        private bool cancelled;
+
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes reader
+        ///     Initializes reader
         /// </summary>
         /// <param name="detector">Charset detector</param>
         /// <param name="matcher">Message matcher</param>
-        /// <param name="filter">Message filter if applicable</param>
-        public LogReader(ICharsetDetector detector, GrokMatcher matcher, GrokMatcher filter = null)
+        public LogReader(ICharsetDetector detector, IMessageMatcher matcher) : this(detector, matcher.IncludeMatcher,
+                                                                                    matcher.ExcludeMatcher)
         {
-            this.detector = detector;
-            this.matcher = matcher;
-            this.filter = filter;
         }
 
         /// <summary>
-        /// Occurs every 5% of log progress
+        ///     Initializes reader
+        /// </summary>
+        /// <param name="detector">Charset detector</param>
+        /// <param name="includeMatcher">Matcher that defines message start</param>
+        /// <param name="excludeMatcher">Matcher that filters row (row will not be included into any message)</param>
+        public LogReader(ICharsetDetector detector, GrokMatcher includeMatcher, GrokMatcher excludeMatcher = null)
+        {
+            this.detector = detector;
+            this.includeMatcher = includeMatcher;
+            this.excludeMatcher = excludeMatcher;
+        }
+
+        /// <summary>
+        ///     Occurs every 5% of log progress
         /// </summary>
         public event ProgressChangedEventHandler ProgressChanged;
-        
+
         /// <summary>
-        /// Occurs on starting log file encoding detection
+        ///     Occurs on starting log file encoding detection
         /// </summary>
         public event EventHandler EncodingDetectionStarted;
-        
+
         /// <summary>
-        /// Occurs on finish log file encoding detection
+        ///     Occurs on finish log file encoding detection
         /// </summary>
         public event EventHandler<EncodingDetectedEventArgs> EncodingDetectionFinished;
-        
+
         /// <summary>
-        /// Occurs on starting template compilation (template compilation may take a long time)
+        ///     Occurs on starting template compilation (template compilation may take a long time)
         /// </summary>
         public event EventHandler CompilationStarted;
-        
+
         /// <summary>
-        /// Occurs on finish template compilation (template compilation may take a long time)
+        ///     Occurs on finish template compilation (template compilation may take a long time)
         /// </summary>
         public event EventHandler CompilationFinished;
 
         /// <summary>
-        /// Reads log from file
+        /// Gets whether read has been cancelled
+        /// </summary>
+        public bool Cancelled => this.cancelled;
+
+        /// <summary>
+        /// Cancels reading
+        /// </summary>
+        public void Cancel()
+        {
+            this.cancelled = true;
+        }
+
+        /// <summary>
+        ///     Reads log from file
         /// </summary>
         /// <param name="logPath">Full path to file</param>
-        /// <param name="onRead">On message complete action</param>
-        /// <param name="canContinue">Continue validator</param>
-        /// <param name="encoding">File encoding</param>
+        /// <param name="encoding">File encoding. It will be detected automatically if null passed as parameter value</param>
         /// <param name="offset">file offset</param>
-        /// <returns>Detected file encoding</returns>
-        public Encoding Read(string logPath, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null, long offset = 0)
+        /// <returns>Messages stream</returns>
+        public IEnumerable<LogMessage> Read(string logPath, Encoding encoding = null, long offset = 0)
         {
             var length = new FileInfo(logPath).Length;
             if (length == 0)
             {
-                return null;
+                yield break;
             }
 
             var mapName = Guid.NewGuid().ToString();
-            Encoding srcEncoding;
             using (
                 var mmf = MemoryMappedFile.CreateFromFile(logPath, FileMode.Open, mapName, 0,
-                    MemoryMappedFileAccess.Read))
+                                                          MemoryMappedFileAccess.Read))
             {
-                
-                if (encoding != null)
-                {
-                    srcEncoding = encoding;
-                }
-                else
-                {
-                    this.EncodingDetectionStarted.Do(handler => handler(this, new EventArgs()));
+                encoding = this.DetectEncoding(encoding, mmf, length);
 
-                    using (var s = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
+                using (var stream = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
+                {
+                    using (var enumerator = this.Read(stream, length, encoding).GetEnumerator())
                     {
-                        srcEncoding = this.detector.Detect(s);
+                        while (enumerator.MoveNext())
+                        {
+                            yield return enumerator.Current;
+                        }
                     }
                 }
-                this.EncodingDetectionFinished.Do(handler => handler(this, new EncodingDetectedEventArgs(srcEncoding)));
+            }
+        }
 
-                using (var s = mmf.CreateViewStream(offset, length - offset, MemoryMappedFileAccess.Read))
+        private Encoding DetectEncoding(Encoding encoding, MemoryMappedFile mmf, long length)
+        {
+            if (encoding == null)
+            {
+                this.EncodingDetectionStarted?.Invoke(this, new EventArgs());
+
+                using (var stream = mmf.CreateViewStream(0, length, MemoryMappedFileAccess.Read))
                 {
-                    this.Read(s, length, onRead, canContinue, srcEncoding);
+                    encoding = this.detector.Detect(stream);
                 }
             }
-
-            return srcEncoding;
+            this.EncodingDetectionFinished?.Invoke(this, new EncodingDetectedEventArgs(encoding));
+            return encoding;
         }
 
         /// <summary>
-        /// Reads log from stream
+        ///     Reads log from stream
         /// </summary>
         /// <param name="stream">Stream to read log from</param>
-        /// <param name="length">Stream lendgh if applicable</param>
-        /// <param name="onRead">On message complete action</param>
-        /// <param name="canContinue">Continue validator</param>
+        /// <param name="length">Stream length if applicable</param>
         /// <param name="encoding">Stream encoding</param>
-        /// <returns>Current stream position</returns>
-        public long Read(Stream stream, long length, Action<LogMessage> onRead, Func<bool> canContinue, Encoding encoding = null)
+        /// <returns>Messages stream</returns>
+        public IEnumerable<LogMessage> Read(Stream stream, long length, Encoding encoding = null)
         {
             var decode = DecodeNeeded(encoding);
             var canSeek = stream.CanSeek;
             var sr = new StreamReader(stream, encoding ?? Encoding.UTF8);
-            var result = 0L;
             using (sr)
             {
                 var total = length;
-                var fraction = total/20L;
+                var fraction = total / 20L;
                 var signalCounter = 1;
 
                 var stopWatch = new Stopwatch();
@@ -132,43 +165,44 @@ namespace logviewer.engine
                 var measureStart = 0L;
                 var message = LogMessage.Create();
                 var compiled = false;
-                while (!sr.EndOfStream && canContinue())
+                var line = sr.ReadLine();
+                var targetEncoding = Encoding.UTF8;
+                while (line != null && !this.cancelled)
                 {
-                    var line = sr.ReadLine();
                     if (decode)
                     {
-                        line = line.Convert(encoding, Encoding.UTF8);
+                        line = line.Convert(encoding, targetEncoding);
                     }
-                    if (line == null)
+                    if (this.excludeMatcher != null && this.excludeMatcher.Match(line))
                     {
-                        break;
-                    }
-                    if (this.filter != null && this.filter.Match(line))
-                    {
+                        line = sr.ReadLine();
                         continue;
                     }
 
                     // Occured on first row
                     if (!compiled)
                     {
-                        this.CompilationStarted.Do(handler => handler(this, new EventArgs()));
+                        this.CompilationStarted?.Invoke(this, new EventArgs());
                     }
 
-                    var properties = this.matcher.Parse(line);
+                    var properties = this.includeMatcher.Parse(line);
 
                     // Occured only after first row
                     if (!compiled)
                     {
-                        this.CompilationFinished.Do(handler => handler(this, new EventArgs()));
+                        this.CompilationFinished?.Invoke(this, new EventArgs());
                     }
 
                     compiled = true;
 
+                    // not null properties mean reading first message row that contains all meta information
+                    // and start message criteria
                     if (properties != null)
                     {
                         if (message.HasHeader)
                         {
-                            onRead(message);
+                            yield return message;
+
                             message = LogMessage.Create();
                         }
                         else
@@ -176,47 +210,54 @@ namespace logviewer.engine
                             // Remove trash from prev bad match
                             message.Clear();
                         }
+
                         message.AddProperties(properties);
                     }
+
                     message.AddLine(line);
+                    line = sr.ReadLine();
 
                     if (!canSeek || stream.Position < signalCounter * fraction || this.ProgressChanged == null)
                     {
                         continue;
                     }
+
                     var elapsed = stopWatch.Elapsed;
-                    var read = stream.Position - measureStart;
-                    measureStart = stream.Position;
-                    var speed = read/elapsed.TotalSeconds;
                     stopWatch.Restart();
-                    ++signalCounter;
-                    var remain = Math.Abs(speed) < 0.001 ? 0 : (total - stream.Position)/speed;
-                    var progress = new LoadProgress
-                    {
-                        Speed = new FileSize((ulong) speed, true),
-                        Remainig = TimeSpan.FromSeconds(remain),
-                        Percent = stream.Position.PercentOf(total)
-                    };
-                    this.ProgressChanged(this, new ProgressChangedEventArgs(progress.Percent, progress));
+
+                    measureStart = this.ReportProgress(stream, measureStart, elapsed, ref signalCounter);
                 }
-                try
+
+                if (!this.cancelled)
                 {
-                    result = stream.Position;
+                    // Add last message
+                    yield return message;
                 }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                }
-                // Add last message
-                onRead(message);
             }
-            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private long ReportProgress(Stream stream, long measureStart, TimeSpan elapsed, ref int signalCounter)
+        {
+            var read = stream.Position - measureStart;
+            measureStart = stream.Position;
+            var speed = read / elapsed.TotalSeconds;
+
+            ++signalCounter;
+            var remain = Math.Abs(speed) < 0.001 ? 0 : (stream.Length - stream.Position) / speed;
+            var progress = new LoadProgress
+                           {
+                               Speed = new FileSize((ulong)speed, true),
+                               Remaining = TimeSpan.FromSeconds(remain),
+                               Percent = stream.Position.PercentOf(stream.Length)
+                           };
+            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(progress.Percent, progress));
+            return measureStart;
         }
 
         private static bool DecodeNeeded(Encoding srcEncoding)
         {
-            return srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) &&
-                   !srcEncoding.Equals(Encoding.ASCII);
+            return srcEncoding != null && !srcEncoding.Equals(Encoding.UTF8) && !srcEncoding.Equals(Encoding.ASCII);
         }
     }
 }

@@ -1,138 +1,199 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 20.11.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using FluentAssertions;
 using logviewer.engine;
-using NMock;
+using logviewer.logic.Annotations;
+using Moq;
 using Xunit;
 
 namespace logviewer.tests
 {
     public class TstLogReader : IDisposable
     {
-        private const string MessageExamples =
+        internal const string MessageExamples =
             "2008-12-27 19:31:47,250 [4688] INFO \nmessage body 1\n2008-12-27 19:40:11,906 [5272] ERROR \nmessage body 2";
+        internal const string MessageExamplesRu =
+            "2008-12-27 19:31:47,250 [4688] INFO \r\nтело сообщения 1\n2008-12-27 19:40:11,906 [5272] ERROR \r\nтело сообщения 2";
 
-        private const string NlogGrok = @"^\[?%{TIMESTAMP_ISO8601:Occured:DateTime}\]?%{DATA}%{LOGLEVEL:Level:LogLevel}%{DATA}";
+        internal const string NlogGrok = @"^\[?%{TIMESTAMP_ISO8601:Occured:DateTime}\]?%{DATA}%{LOGLEVEL:Level:LogLevel}%{DATA}";
+        private readonly RulesBuilder builder;
 
 
         private readonly LogReader reader;
         private readonly MemoryStream stream;
-        private readonly RulesBuilder builder;
         private byte[] buffer;
+        private readonly Mock<ICharsetDetector> detector;
+        private readonly string path;
 
         public TstLogReader()
         {
-            var mockery = new MockFactory();
-            var detector = mockery.CreateMock<ICharsetDetector>();
+            this.detector = new Mock<ICharsetDetector>();
             this.stream = new MemoryStream();
             var grokMatcher = new GrokMatcher(NlogGrok);
-            this.reader = new LogReader(detector.MockObject, grokMatcher);
+            this.reader = new LogReader(this.detector.Object, grokMatcher);
             this.builder = new RulesBuilder(grokMatcher.MessageSchema);
+            this.path = Path.GetTempFileName();
         }
 
-        private void CreateStream(string data = MessageExamples)
+        [PublicAPI]
+        public static IEnumerable<object[]> ValidStreams => new[]
         {
-            this.buffer = Encoding.UTF8.GetBytes(data);
-            this.stream.Write(this.buffer, 0, this.buffer.Length);
-        }
+            new object[] { MessageExamples, Encoding.UTF8 },
+            new object[] { Environment.NewLine + MessageExamples, Encoding.UTF8 },
+            new object[] { " " + Environment.NewLine + " " + Environment.NewLine + MessageExamples, Encoding.UTF8 },
+            new object[] { MessageExamples + Environment.NewLine, Encoding.UTF8 },
+            new object[] { Environment.NewLine + MessageExamples + Environment.NewLine, Encoding.UTF8 },
+            new object[] { MessageExamplesRu, Encoding.GetEncoding("windows-1251") }
+        };
 
         public void Dispose()
         {
             this.stream.Dispose();
-        }
-
-        [Theory, MemberData("ValidStreams")]
-        public void LogFromStream(string data)
-        {
-            this.CreateStream(data);
-            this.stream.Seek(0, SeekOrigin.Begin);
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
+            if (File.Exists(this.path))
             {
-                count++;
-                Assert.False(message.IsEmpty);
-            };
-
-            var position = this.reader.Read(this.stream, 0, onRead, () => true);
-            Assert.Equal(2, count);
-            Assert.Equal(this.buffer.LongLength, position);
-        }
-
-        public static IEnumerable<object[]> ValidStreams
-        {
-            get
-            {
-                return new[]
-                {
-                    new object[] { MessageExamples  },
-                    new object[] { Environment.NewLine + MessageExamples },
-                    new object[] { " " + Environment.NewLine + " " + Environment.NewLine + MessageExamples },
-                    new object[] { MessageExamples + Environment.NewLine },
-                    new object[] { Environment.NewLine + MessageExamples + Environment.NewLine }
-
-                };
+                File.Delete(this.path);
             }
         }
 
-        [Fact]
-        public void LogFromStreamWithCache()
+        private void CreateStream(string data = MessageExamples, Encoding encoding = null)
         {
-            this.CreateStream();
-            this.stream.Seek(0, SeekOrigin.Begin);
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
+            if (encoding != null && !Equals(encoding, Encoding.UTF8))
             {
-                count++;
-                Assert.False(message.IsEmpty);
-                message.Cache(this.builder.Rules);
-                var level = (LogLevel)message.IntegerProperty("Level");
-                var date = DateTime.FromFileTime(message.IntegerProperty("Occured"));
-                Assert.InRange(level, LogLevel.Info, LogLevel.Error);
-                Assert.Equal(2008, date.Year);
-                Assert.Equal(12, date.Month);
-                Assert.Equal(27, date.Day);
-            };
+                data = Convert(data, Encoding.UTF8, encoding);
+            }
+            this.buffer = (encoding ?? Encoding.UTF8).GetBytes(data);
+            this.stream.Write(this.buffer, 0, this.buffer.Length);
+        }
 
-            
+        [Theory, MemberData(nameof(ValidStreams))]
+        public void Read_FromStream_AllRead(string data, Encoding encoding)
+        {
+            // Arrange
+            this.CreateStream(data, encoding);
+            this.stream.Seek(0, SeekOrigin.Begin);
 
-            this.reader.Read(this.stream, 0, onRead, () => true);
-            Assert.Equal(2, count);
+            // Act
+            var result = this.reader.Read(this.stream, 0, encoding).ToList();
+
+            // Assert
+            result.Count.Should().Be(2);
+            result[0].IsEmpty.Should().BeFalse();
+            result[1].IsEmpty.Should().BeFalse();
         }
 
         [Fact]
-        public void LogFromStreamCannotContinue()
+        public void Read_FromStreamWithCache_AllRead()
         {
+            // Arrange
             this.CreateStream();
             this.stream.Seek(0, SeekOrigin.Begin);
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
-            {
-                count++;
-                Assert.True(message.IsEmpty);
-            };
 
-            this.reader.Read(this.stream, 0, onRead, () => false);
-            Assert.Equal(1, count);
+            // Act
+            var result = this.reader.Read(this.stream, 0).ToList();
+
+            // Assert
+            result.Count.Should().Be(2);
+
+            result[0].IsEmpty.Should().BeFalse();
+            result[0].Build(this.builder.Rules);
+            var level = (LogLevel)result[0].IntegerProperty("Level");
+            var date = DateTime.FromFileTime(result[0].IntegerProperty("Occured"));
+            Assert.InRange(level, LogLevel.Info, LogLevel.Error);
+            date.Year.Should().Be(2008);
+            date.Month.Should().Be(12);
+            date.Day.Should().Be(27);
+
+            result[1].IsEmpty.Should().BeFalse();
+            result[1].Build(this.builder.Rules);
+            level = (LogLevel)result[1].IntegerProperty("Level");
+            date = DateTime.FromFileTime(result[1].IntegerProperty("Occured"));
+            Assert.InRange(level, LogLevel.Info, LogLevel.Error);
+            date.Year.Should().Be(2008);
+            date.Month.Should().Be(12);
+            date.Day.Should().Be(27);
+
         }
 
         [Fact]
-        public void LogFromStreamEnd()
+        public void Read_FromStreamCancelled_NoneRead()
         {
+            // Arrange
             this.CreateStream();
-            var count = 0;
-            Action<LogMessage> onRead = delegate(LogMessage message)
+            this.stream.Seek(0, SeekOrigin.Begin);
+
+            // Act
+            this.reader.Cancel();
+            var result = this.reader.Read(this.stream, 0).ToList();
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Read_FromStreamEnd_EmptyRead()
+        {
+            // Arrange
+            this.CreateStream();
+
+            // Act
+            var result = this.reader.Read(this.stream, 0).ToList();
+
+            // Assert
+            result.Count.Should().Be(1);
+            result[0].IsEmpty.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Read_FromNotUtf8File_AllRead()
+        {
+            // Arrange
+            var encoding = Encoding.GetEncoding("windows-1251");
+            this.detector.Setup(_ => _.Detect(It.IsAny<Stream>())).Returns(encoding);
+            var encoded = Convert(MessageExamplesRu, Encoding.UTF8, encoding);
+            File.WriteAllText(this.path, encoded, encoding);
+
+            this.reader.EncodingDetectionFinished += delegate(object sender, EncodingDetectedEventArgs args)
             {
-                count++;
-                Assert.True(message.IsEmpty);
+                args.Encoding.EncodingName.Should().Be(encoding.EncodingName);
             };
 
-            this.reader.Read(this.stream, 0, onRead, () => true);
-            Assert.Equal(1, count);
+            var monitoredSubject = this.reader.Monitor();
+
+            // Act
+            var result = this.reader.Read(this.path).ToList();
+
+            // Assert
+            result.Count.Should().Be(2);
+            monitoredSubject.Should().Raise("EncodingDetectionFinished");
+            monitoredSubject.Dispose();
+        }
+
+        [Fact]
+        public void Read_FromEmptyFile_NoneRead()
+        {
+            // Arrange
+
+            // Act
+            var result = this.reader.Read(this.path).ToList();
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        internal static string Convert(string line, Encoding srcEncoding, Encoding dstEncoding)
+        {
+            byte[] srcBytes = srcEncoding.GetBytes(line);
+            byte[] dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
+            return dstEncoding.GetString(dstBytes);
         }
     }
 }

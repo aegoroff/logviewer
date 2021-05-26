@@ -1,0 +1,118 @@
+﻿<Window x:Name="NetworkSettings" x:Class="logviewer.ui.Network"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:logviewer.ui"
+        xmlns:properties="clr-namespace:logviewer.ui.Properties"
+
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        Title="{x:Static properties:Resources.NetworkSettings}"
+        Height="320" Width="475"
+        MaxHeight="340" MaxWidth="475"
+        MinHeight="340" MinWidth="475" ResizeMode="NoResize"
+        TextOptions.TextFormattingMode="Display">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="27" />
+            <RowDefinition Height="27" />
+            <RowDefinition Height="27" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        <RadioButton Margin="10,0,0,0" Grid.Row="0" VerticalAlignment="Center"
+                     Content="{x:Static properties:Resources.NoProxy}" IsChecked="{Binding Path=IsNoUseProxy}" />
+        <RadioButton Margin="10,0,0,0" Grid.Row="1" VerticalAlignment="Center"
+                     Content="{x:Static properties:Resources.AutoProxy}" IsChecked="{Binding Path=IsUseAutoProxy}" />
+        <RadioButton Margin="10,0,0,0" Grid.Row="2" VerticalAlignment="Center"
+                     Content="{x:Static properties:Resources.ManualProxy}" IsChecked="{Binding Path=IsUseManualProxy}" />
+        <GroupBox Grid.Row="3" Header="{x:Static properties:Resources.ProxySettings}" IsEnabled="{Binding Path=IsUseManualProxy}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                    <Label VerticalAlignment="Center" Content="{x:Static properties:Resources.Address}"
+                           VerticalContentAlignment="Center" Margin="3,0,5,0" Padding="0" />
+                    <TextBox x:Name="Address" Height="20" Width="248" HorizontalAlignment="Left"
+                             VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,5"
+                             Text="{Binding Path=Host}" KeyDown="OnChange" />
+                    <Label VerticalAlignment="Center" HorizontalAlignment="Right"
+                           Content="{x:Static properties:Resources.Port}" VerticalContentAlignment="Center" Padding="0"
+                           Margin="10,0,5,0" />
+                    <TextBox x:Name="Port" Width="92" Height="20" HorizontalAlignment="Left" VerticalAlignment="Center"
+                             Text="{Binding Path=Port}"
+                             Margin="0,5" VerticalContentAlignment="Center" KeyDown="OnChange" />
+                </StackPanel>
+                <CheckBox Grid.Row="1"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Center"
+                          Content="{x:Static properties:Resources.UseCurrentUserSettings}"
+                          Margin="53,0,0,0"
+                          IsChecked="{Binding Path=IsUseDefaultCredentials}" />
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Stretch"
+                            FlowDirection="RightToLeft">
+                    <TextBox FlowDirection="LeftToRight"
+                             x:Name="Login"
+                             Height="20"
+                             Width="248"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Margin="5,0"
+                             KeyDown="OnChange"
+                             IsEnabled="{Binding Path=EnableCustomCredentials}"
+                             Text="{Binding Path=UserName}" />
+                    <Label VerticalAlignment="Center" Content="{x:Static properties:Resources.Login}"
+                           VerticalContentAlignment="Center" Margin="5,0,5,0" Padding="0" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Stretch"
+                            FlowDirection="RightToLeft">
+                    <PasswordBox FlowDirection="LeftToRight"
+                                 x:Name="Password"
+                                 Height="20"
+                                 Width="248"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 KeyDown="OnChange"
+                                 IsEnabled="{Binding Path=EnableCustomCredentials}"
+                                 Margin="5,0" />
+                    <Label VerticalAlignment="Center" Content="{x:Static properties:Resources.Password}"
+                           VerticalContentAlignment="Center" Margin="5,0,5,0" Padding="0" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Stretch"
+                            FlowDirection="RightToLeft">
+                    <TextBox
+                        FlowDirection="LeftToRight"
+                        x:Name="Domain"
+                        Height="20"
+                        Width="248"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Margin="5,0"
+                        Text="{Binding Path=Domain}" 
+                        KeyDown="OnChange"
+                        IsEnabled="{Binding Path=EnableCustomCredentials}"/>
+                    <Label VerticalAlignment="Center" Content="{x:Static properties:Resources.Domain}"
+                           VerticalContentAlignment="Center" Margin="5,0,5,0" Padding="0" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <StackPanel Grid.Row="4" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right"
+                    FlowDirection="RightToLeft">
+            <Button x:Name="Cancel" Content="Cancel" Width="70" Margin="3,0" Click="OnCancel" />
+            <Button x:Name="Ok" Content="OK" Margin="3,0" Click="OnOk" IsEnabled="{Binding Path=IsSettingsChanged}">
+                <Button.Width>
+                    <Binding ElementName="Cancel" Path="Width" />
+                </Button.Width>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

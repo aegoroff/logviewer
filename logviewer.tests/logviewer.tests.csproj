@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.props" Condition="Exists('..\packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.props')" />
-  <Import Project="..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" />
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props" Condition="Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props')" />
+  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,11 +11,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>logviewer.tests</RootNamespace>
     <AssemblyName>logviewer.tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>3f5a9613</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SnkPath) != '' AND Exists('$(SnkPath)')">
     <AssemblyOriginatorKeyFile>$(SnkPath)</AssemblyOriginatorKeyFile>
@@ -42,41 +44,114 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NMock3">
-      <HintPath>..\packages\NMock3.3.5.44\lib\net40\NMock3.dll</HintPath>
+    <Reference Include="AutoFixture, Version=4.11.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoFixture.4.11.0\lib\net452\AutoFixture.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Fare, Version=2.1.0.0, Culture=neutral, PublicKeyToken=ea68d375bf33a7c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fare.2.1.2\lib\net35\Fare.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions, Version=5.10.3.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.5.10.3\lib\net45\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0">
+      <HintPath>..\packages\FluentValidation.8.6.2\lib\net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.13.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920">
+      <HintPath>..\packages\Moq.4.13.1\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nrtftree-library, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\nrtftree-library.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.ComponentModel.Primitives, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Primitives.4.3.0\lib\net45\System.ComponentModel.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Reactive, Version=4.1.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.4.1.5\lib\net46\System.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Interfaces.4.1.5\lib\net46\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="xunit.abstractions">
-      <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TechTalk.SpecFlow, Version=2.4.0.0, Culture=neutral, PublicKeyToken=0778194805d6db41, processorArchitecture=MSIL">
+      <HintPath>..\packages\SpecFlow.2.4.0\lib\net45\TechTalk.SpecFlow.dll</HintPath>
     </Reference>
-    <Reference Include="xunit.assert">
-      <HintPath>..\packages\xunit.assert.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.assert.dll</HintPath>
+    <Reference Include="WindowsBase" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.abstractions.2.0.3\lib\net35\xunit.abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="xunit.core">
-      <HintPath>..\packages\xunit.extensibility.core.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
+    <Reference Include="xunit.assert, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.assert.2.4.1\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.core.2.4.1\lib\net452\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.execution.2.4.1\lib\net452\xunit.execution.desktop.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers.cs" />
+    <Compile Include="SpecNetworkSettings.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SpecNetworkSettings.feature</DependentUpon>
+    </Compile>
+    <Compile Include="SpecNetworkSettingsSteps.cs" />
+    <Compile Include="SpecOpenLogFile.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SpecOpenLogFile.feature</DependentUpon>
+    </Compile>
+    <Compile Include="SpecOpenLogFileSteps.cs" />
+    <Compile Include="support\Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="support\MainModelForTest.cs" />
+    <Compile Include="TstAhoCorasickTree.cs" />
+    <Compile Include="TstCharKeyDictionary.cs" />
+    <Compile Include="TstFixedSizeDictionary.cs" />
     <Compile Include="TstGrokMatcher.cs" />
+    <Compile Include="TstLogProvider.cs" />
     <Compile Include="TstLogReader.cs" />
-    <Compile Include="TstSqliteSettingsProvider.cs" />
+    <Compile Include="TstLogWorkflow.cs" />
+    <Compile Include="TstMessageMatcher.cs" />
+    <Compile Include="TstNetworkSettingsModel.cs" />
+    <Compile Include="TstNetworkSettingsViewModel.cs" />
+    <Compile Include="TstLocalDbSettingsProvider.cs" />
     <Compile Include="TstLogMessage.cs" />
-    <Compile Include="TstMainController.cs" />
+    <Compile Include="TstStatisticModel.cs" />
     <Compile Include="TstUpdatesChecker.cs" />
     <Compile Include="TstUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\logviewer.core\logviewer.core.csproj">
+    <ProjectReference Include="..\logviewer.logic\logviewer.logic.csproj">
       <Project>{383c08fc-9cac-42e5-9b02-471561479a74}</Project>
-      <Name>logviewer.core</Name>
+      <Name>logviewer.logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\logviewer.engine\logviewer.engine.csproj">
       <Project>{90e3a68d-c96d-4764-a1d0-f73d9f474be4}</Project>
@@ -84,10 +159,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="NMock3\NMock3 Cheat Sheet.pdf" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="SpecNetworkSettings.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>SpecNetworkSettings.feature.cs</LastGenOutput>
+    </None>
+    <None Include="SpecOpenLogFile.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>SpecOpenLogFile.feature.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -97,11 +188,18 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets')" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.1\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.1\build\net46\System.Data.SQLite.Core.targets')" />
+  <Import Project="..\packages\SpecFlow.2.4.0\build\SpecFlow.targets" Condition="Exists('..\packages\SpecFlow.2.4.0\build\SpecFlow.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.runner.msbuild.props'))" />
+    <Error Condition="!Exists('..\packages\SpecFlow.2.4.0\build\SpecFlow.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SpecFlow.2.4.0\build\SpecFlow.targets'))" />
+    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.props'))" />
+    <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.targets'))" />
+    <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.props'))" />
+    <Error Condition="!Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets'))" />
   </Target>
+  <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" />
+  <Import Project="..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets" Condition="Exists('..\packages\xunit.runner.msbuild.2.4.1\build\net452\xunit.runner.msbuild.targets')" />
 </Project>

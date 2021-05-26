@@ -1,11 +1,12 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 19.09.2012
-// © 2012-2015 Alexander Egorov
+// Â© 2012-2018 Alexander Egorov
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -14,25 +15,13 @@ namespace logviewer.engine
     /// <summary>
     /// Represents parsed message structure with header, body and metadata if any
     /// </summary>
-    public struct LogMessage
+    public struct LogMessage : IEquatable<LogMessage>
     {
         private const char NewLine = '\n';
 
-        static readonly string[] formats =
-                    {
-                        "yyyy-MM-dd HH:mm:ss,FFF",
-                        "yyyy-MM-dd HH:mm:ss.FFF",
-                        "yyyy-MM-dd HH:mm:ss,FFFK",
-                        "yyyy-MM-dd HH:mm:ss.FFFK",
-                        "yyyy-MM-dd HH:mm", 
-                        "yyyy-MM-dd HH:mm:ss", 
-                        "yyyy-MM-ddTHH:mm:ss,FFFK",
-                        "yyyy-MM-ddTHH:mm:ss.FFFK",
-                        "dd/MMM/yyyy:HH:mm:ssK",
-                        "dd/MMM/yyyy:HH:mm:ss K",
-                        "dd/MMM/yyyy:HH:mm:sszzz",
-                        "dd/MMM/yyyy:HH:mm:ss zzz"
-                    };
+        private const int DefaultPropertyDictionaryCapacity = 5;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
 
         /// <summary>
         /// Initializes new message instance using header and body specified
@@ -43,63 +32,63 @@ namespace logviewer.engine
         {
             this.head = header;
             this.body = body;
-            this.ix = 0;
+            this.ix = 0L;
             this.rawProperties = null;
             this.bodyBuilder = null;
-            this.integerProperties = new Dictionary<string, long>();
-            this.stringProperties = new Dictionary<string, string>();
+            this.integerProperties = new Dictionary<string, long>(DefaultPropertyDictionaryCapacity);
+            this.stringProperties = new Dictionary<string, string>(DefaultPropertyDictionaryCapacity);
         }
 
         /// <summary>
         /// Gets whether the message empty or not.
         /// </summary>
-        public bool IsEmpty
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) &&
-                       this.bodyBuilder.Length == 0;
-            }
-        }
+        public bool IsEmpty => string.IsNullOrWhiteSpace(this.head) && string.IsNullOrWhiteSpace(this.body) && this.bodyBuilder.Length == 0;
 
         /// <summary>
         /// Gets or sets message unique index to store it into database for example
         /// </summary>
         public long Ix
         {
-            get { return this.ix; }
-            set { this.ix = value; }
+            get => this.ix;
+            set => this.ix = value;
         }
 
         /// <summary>
         /// Gets message's head
         /// </summary>
-        public string Header
-        {
-            get { return this.head ?? string.Empty; }
-        }
+        public string Header => this.head ?? string.Empty;
 
         /// <summary>
         /// Gets message's body (without header)
         /// </summary>
-        public string Body
-        {
-            get
-            {
-                return this.body ??
-                       (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
-                           ? string.Empty
-                           : this.bodyBuilder.ToString());
-            }
-        }
+        public string Body => this.body
+                              ?? (this.bodyBuilder.Length == 1 && this.bodyBuilder[0] == NewLine
+                                      ? string.Empty
+                                      : this.bodyBuilder.ToString());
 
         /// <summary>
         /// Gets whether the message has header
         /// </summary>
-        public bool HasHeader
-        {
-            get { return this.rawProperties != null; }
-        }
+        public bool HasHeader => this.rawProperties != null;
+
+        /// <summary>
+        /// All supportable dates formats to parse
+        /// </summary>
+        public static string[] Formats { get; } =
+            {
+                @"yyyy-MM-dd HH:mm:ss,FFF",
+                @"yyyy-MM-dd HH:mm:ss.FFF",
+                @"yyyy-MM-dd HH:mm:ss,FFFK",
+                @"yyyy-MM-dd HH:mm:ss.FFFK",
+                @"yyyy-MM-dd HH:mm",
+                @"yyyy-MM-dd HH:mm:ss",
+                @"yyyy-MM-ddTHH:mm:ss,FFFK",
+                @"yyyy-MM-ddTHH:mm:ss.FFFK",
+                @"dd/MMM/yyyy:HH:mm:ssK",
+                @"dd/MMM/yyyy:HH:mm:ss K",
+                @"dd/MMM/yyyy:HH:mm:sszzz",
+                @"dd/MMM/yyyy:HH:mm:ss zzz"
+            };
 
         /// <summary>
         /// Add line to the message (the first line will be header the others will be considered as body)
@@ -121,73 +110,84 @@ namespace logviewer.engine
         /// <summary>
         /// Adds metadata into message
         /// </summary>
-        /// <param name="extractedProperties">Concrete messate properties extracted by template</param>
-        public void AddProperties(IDictionary<string, string> extractedProperties)
+        /// <param name="extractedProperties">Concrete message properties extracted by template</param>
+        /// <remarks>For performance reasons the real type of extractedProperties must be KeyValuePair&lt;string, string&gt;[] otherwise parsing will not work</remarks>
+        public void AddProperties(IEnumerable<KeyValuePair<string, string>> extractedProperties)
         {
-            this.rawProperties = extractedProperties;
+            this.rawProperties = extractedProperties as KeyValuePair<string, string>[];
         }
-            
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private static bool TryParseLogLevel(string s, out LogLevel level)
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static LogLevel ParseLogLevel(string str)
         {
-            switch (s.ToUpperInvariant())
+            if (string.Equals(str, @"TRACE", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(str, @"VERBOSE", StringComparison.OrdinalIgnoreCase))
             {
-                case "TRACE":
-                    level = LogLevel.Trace;
-                    return true;
-                case "DEBUG":
-                case "DEBUGGING":
-                    level = LogLevel.Debug;
-                    return true;
-                case "INFO":
-                case "NOTICE":
-                case "INFORMATIONAL":
-                    level = LogLevel.Info;
-                    return true;
-                case "WARN":
-                case "WARNING":
-                    level = LogLevel.Warn;
-                    return true;
-                case "ERROR":
-                case "ERR":
-                case "CRITICAL":
-                    level = LogLevel.Error;
-                    return true;
-                case "FATAL":
-                case "SEVERE":
-                case "EMERG":
-                case "EMERGENCY":
-                case "PANIC":
-                case "ALERT":
-                    level = LogLevel.Fatal;
-                    return true;
-                default:
-                    level = LogLevel.None;
-                    return false;
+                return LogLevel.Trace;
+            }
+            else if (string.Equals(str, @"DEBUG", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"DEBUGGING", StringComparison.OrdinalIgnoreCase))
+            {
+                return LogLevel.Debug;
+            }
+            else if (string.Equals(str, @"INFO", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"NOTICE", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"INFORMATIONAL", StringComparison.OrdinalIgnoreCase))
+            {
+                return LogLevel.Info;
+            }
+            else if (string.Equals(str, @"WARN", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"WARNING", StringComparison.OrdinalIgnoreCase))
+            {
+                return LogLevel.Warn;
+            }
+            else if (string.Equals(str, @"ERROR", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"ERR", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"CRITICAL", StringComparison.OrdinalIgnoreCase))
+            {
+                return LogLevel.Error;
+            }
+            else if (string.Equals(str, @"FATAL", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"SEVERE", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"EMERG", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"EMERGENCY", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"PANIC", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(str, @"ALERT", StringComparison.OrdinalIgnoreCase))
+            {
+                return LogLevel.Fatal;
+            }
+            else
+            {
+                return LogLevel.None;
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseLogLevel(string dataToParse, ISet<GrokRule> rules, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseLogLevel(string dataToParse, ICollection<GrokRule> rules, string property)
         {
-            LogLevel level;
-            var result = rules.Count > 1
-                ? TryRunSemanticAction(dataToParse, rules, out level) 
-                : TryParseLogLevel(dataToParse, out level);
-            if (result)
+            if (rules.Count > 1)
             {
-                this.integerProperties[property] = (int)level;
+                this.integerProperties[property] = (int)ReadLogLevelFromSemanticRules(dataToParse, rules);
+            }
+            else
+            {
+                var level = ParseLogLevel(dataToParse);
+                if (level != LogLevel.None)
+                {
+                    this.integerProperties[property] = (int)level;
+                }
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseDateTime(string dataToParse, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseDateTime(string dataToParse, string property)
         {
-            DateTime r;
-            var success = DateTime.TryParseExact(dataToParse, formats, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+            var success = DateTime.TryParseExact(dataToParse, Formats, CultureInfo.InvariantCulture,
+                                                 DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out var r);
             if (!success)
             {
-                success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal, out r);
+                success = DateTime.TryParse(dataToParse, CultureInfo.InvariantCulture, DateTimeStyles.None | DateTimeStyles.AssumeUniversal,
+                                            out r);
             }
             if (success)
             {
@@ -195,69 +195,101 @@ namespace logviewer.engine
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        void ParseInteger(string dataToParse, string property)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseInteger(string dataToParse, string property)
         {
-            long r;
-            var success = long.TryParse(dataToParse, out r);
-            if (success)
+            if (long.TryParse(dataToParse, out var r))
             {
                 this.integerProperties[property] = r;
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
-        private void ParseString(string dataToParse, string property)
-        {
-            this.stringProperties[property] = dataToParse;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ParseString(string dataToParse, string property) => this.stringProperties[property] = dataToParse;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ApplySemanticRules(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.rawProperties == null || schema == null)
             {
                 return;
             }
-            foreach (var property in this.rawProperties)
+
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < this.rawProperties.Length; i++)
             {
-                if (!schema.ContainsKey(property.Key))
+                var property = this.rawProperties[i];
+                var key = property.Key;
+
+                if (!schema.TryGetValue(key, out var rules))
                 {
                     continue;
                 }
-                var semanticProperty = schema.First(p => p.Key == property.Key).Key;
-                var rules = schema[property.Key];
-                var matchedData = property.Value;
+
+                var semanticProperty = default(SemanticProperty);
+
+                foreach (var prop in schema)
+                {
+                    if (prop.Key != key)
+                    {
+                        continue;
+                    }
+
+                    semanticProperty = prop.Key;
+                    break;
+                }
 
                 switch (semanticProperty.Parser)
                 {
                     case ParserType.LogLevel:
-                        this.ParseLogLevel(matchedData, rules, property.Key);
+                        this.ParseLogLevel(property.Value, rules, key);
                         break;
                     case ParserType.Datetime:
-                        this.ParseDateTime(matchedData, property.Key);
+                        this.ParseDateTime(property.Value, key);
                         break;
                     case ParserType.Interger:
-                        this.ParseInteger(matchedData, property.Key);
+                        this.ParseInteger(property.Value, key);
+                        break;
+                    case ParserType.String:
+                        this.ParseString(property.Value, key);
                         break;
                     default:
-                        this.ParseString(matchedData, property.Key);
+                        this.ParseString(property.Value, key);
                         break;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool TryRunSemanticAction(string dataToParse, ISet<GrokRule> rules, out LogLevel level)
+        private static LogLevel ReadLogLevelFromSemanticRules(string dataToParse, IEnumerable<GrokRule> rules) //-V3009
         {
-            foreach (var rule in rules.Where(rule => dataToParse.Contains(rule.Pattern)))
+            var enumerator = rules.GetEnumerator();
+            using (enumerator)
             {
-                level = rule.Level;
-                return true;
+                while (enumerator.MoveNext())
+                {
+                    var rule = enumerator.Current;
+                    if (!dataToParse.Contains(rule.Pattern))
+                    {
+                        continue;
+                    }
+
+                    return rule.Level;
+                }
+
+                // Not found concrete math. Use default rule
+                enumerator.Reset();
+                while (enumerator.MoveNext())
+                {
+                    var rule = enumerator.Current;
+                    if (rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return rule.Level;
+                    }
+                }
             }
-            var defaultRule = rules.First(rule => rule.Pattern.Equals(GrokRule.DefaultPattern, StringComparison.OrdinalIgnoreCase));
-            level = defaultRule.Level;
-            return true;
+
+            return LogLevel.None;
         }
 
         /// <summary>
@@ -265,101 +297,101 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="property">Property to get data of</param>
         /// <returns>Property value</returns>
-        public long IntegerProperty(string property)
-        {
-            return GetProperty(this.integerProperties, property);
-        }
+        public long IntegerProperty(string property) => GetProperty(this.integerProperties, property);
 
         /// <summary>
         /// Gets message's string metadata using property name specified
         /// </summary>
         /// <param name="property">Property to get data of</param>
         /// <returns>Property value</returns>
-        public string StringProperty(string property)
-        {
-            return GetProperty(this.stringProperties, property);
-        }
+        public string StringProperty(string property) => GetProperty(this.stringProperties, property);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T GetProperty<T>(IDictionary<string, T> dict, string property)
         {
-            T result;
-            dict.TryGetValue(property, out result);
+            dict.TryGetValue(property, out T result);
             return result;
         }
-        
+
         /// <summary>
         /// Updates or add integer property
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="value">Property value</param>
-        public void UpdateIntegerProperty(string property, long value)
-        {
-            this.integerProperties[property] = value;
-        }
+        public void UpdateIntegerProperty(string property, long value) => this.integerProperties[property] = value;
 
         /// <summary>
         /// Updates or add string property
         /// </summary>
         /// <param name="property">Property name</param>
         /// <param name="value">Property value</param>
-        public void UpdateStringProperty(string property, string value)
-        {
-            this.stringProperties[property] = value;
-        }
+        public void UpdateStringProperty(string property, string value) => this.stringProperties[property] = value;
 
         /// <summary>
         /// Builds message from lines array. All metadata will be extracted using schema specified
         /// </summary>
         /// <param name="schema">Message schema to extract metadata by</param>
-        public void Cache(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
+        public void Build(IDictionary<SemanticProperty, ISet<GrokRule>> schema)
         {
             if (this.head != null && this.body != null)
             {
                 return;
             }
-            if (this.bodyBuilder.Length > 0)
+
+            var length = this.bodyBuilder.Length;
+            if (length > 0)
             {
-                this.bodyBuilder.Remove(this.bodyBuilder.Length - 1, 1);
+                length = --length;
             }
             this.ApplySemanticRules(schema);
-            this.body = this.bodyBuilder.ToString();
+            this.body = this.bodyBuilder.ToString(0, length); //-V3057
             this.Clear();
         }
 
         /// <summary>
         /// Clears message's builder
         /// </summary>
-        public void Clear()
-        {
-            this.bodyBuilder.Clear();
-        }
+        public void Clear() => this.bodyBuilder.Clear();
 
         /// <summary>
         /// Creates new <see cref="LogMessage"/> instance
         /// </summary>
         /// <returns>new <see cref="LogMessage"/> instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LogMessage Create()
-        {
-            return new LogMessage
-            {
-                bodyBuilder = new StringBuilder(),
-                integerProperties = new Dictionary<string, long>(5),
-                stringProperties = new Dictionary<string, string>(5)
-            };
-        }
+        public static LogMessage Create() => new LogMessage(null, null)
+                                             {
+                                                 bodyBuilder = new StringBuilder()
+                                             };
 
         #region Constants and Fields
+        private Dictionary<string, long> integerProperties;
 
-        private IDictionary<string, long> integerProperties; 
-        private IDictionary<string, string> stringProperties; 
+        private Dictionary<string, string> stringProperties;
+
         private string body;
-        private StringBuilder bodyBuilder;
-        private string head;
-        private long ix;
-        private IDictionary<string, string> rawProperties;
 
+        private StringBuilder bodyBuilder;
+
+        private string head;
+
+        private KeyValuePair<string, string>[] rawProperties;
+
+        private long ix;
         #endregion
+
+        /// <inheritdoc />
+        public bool Equals(LogMessage other) => this.body == other.body && this.head == other.head;
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => obj is LogMessage other && this.Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((this.body != null ? this.body.GetHashCode() : 0) * 397) ^ (this.head != null ? this.head.GetHashCode() : 0);
+            }
+        }
     }
 }

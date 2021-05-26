@@ -1,6 +1,8 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 19.11.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System.IO;
 using System.Text;

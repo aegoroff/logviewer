@@ -2,7 +2,7 @@
 <Project DefaultTargets="WixVersionUpdater" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Target Name="WixVersionUpdater">
 	<ItemGroup>
-		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install\Product.wxs" />
+		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install\Variables.wxi" />
 		<WixFile Include="$(MSBuildProjectDirectory)\logviewer.install.bootstrap\Bundle.wxs" />
 	</ItemGroup>
 	<ItemGroup>

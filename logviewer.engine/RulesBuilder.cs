@@ -1,6 +1,8 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 19.11.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System.Collections.Generic;
 using System.Linq;
@@ -22,34 +24,31 @@ namespace logviewer.engine
         {
             if (schema == null)
             {
-                this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
+                this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>(new SemanticProperty());
                 return;
             }
-            this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>();
+
+            this.rules = new Dictionary<SemanticProperty, ISet<GrokRule>>(new SemanticProperty());
             foreach (var semantic in schema)
             {
-                var k = this.rules.ContainsKey(semantic.Property) ? semantic.Property + "_1" : semantic.Property;
-                this.rules.Add(Create(k, semantic.CastingRules), semantic.CastingRules);
+                var property = semantic.Property;
+                var castingRules = semantic.CastingRules;
+                var k = this.rules.ContainsKey(property) ? property + "_1" : property; // Not L10N
+                this.rules.Add(Create(k, castingRules), castingRules);
             }
         }
 
         /// <summary>
         /// Gets rules dictionary that has been built from the schema
         /// </summary>
-        public IDictionary<SemanticProperty, ISet<GrokRule>> Rules
-        {
-            get { return this.rules; }
-        }
+        public IDictionary<SemanticProperty, ISet<GrokRule>> Rules => this.rules;
 
         /// <summary>
         /// Defines parser type of the property specified
         /// </summary>
         /// <param name="property">Property to define parser type for</param>
         /// <returns>Parser type info</returns>
-        public ParserType DefineParserType(SemanticProperty property)
-        {
-            return this.rules.ContainsKey(property) ? this.rules[property].First().Type : ParserType.String;
-        }
+        public ParserType DefineParserType(SemanticProperty property) => this.rules.ContainsKey(property) ? this.rules[property].First().Type : ParserType.String;
 
         private static SemanticProperty Create(string name, IEnumerable<GrokRule> castingRules)
         {
@@ -57,6 +56,7 @@ namespace logviewer.engine
             {
                 return new SemanticProperty(name, rule.Type);
             }
+
             return new SemanticProperty(name, ParserType.String);
         }
     }

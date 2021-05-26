@@ -1,6 +1,8 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Created by: egr
 // Created at: 06.07.2015
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 
@@ -8,19 +10,13 @@ namespace logviewer.engine.grammar
 {
     internal partial class GrokScanner
     {
-        private Action<string> customErrorOutputMethod = Console.WriteLine;
-
-        internal Action<string> CustomErrorOutputMethod
-        {
-            get { return this.customErrorOutputMethod; }
-            set { this.customErrorOutputMethod = value; }
-        }
+        internal Action<string> CustomErrorOutputMethod { get; set; } = Console.WriteLine;
 
         public override void yyerror(string format, params object[] args)
         {
             base.yyerror(format, args);
             var message = string.Format(format, args);
-            var currentToken = string.Format("current token: '{0}'", this.yytext);
+            var currentToken = $"current token: '{this.yytext}'";
             this.CustomErrorOutputMethod(currentToken);
             this.CustomErrorOutputMethod(string.Empty);
             throw new GrokSyntaxException(message);

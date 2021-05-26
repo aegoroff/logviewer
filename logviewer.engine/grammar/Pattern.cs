@@ -1,25 +1,21 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 31.01.2015
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace logviewer.engine.grammar
 {
-    [DebuggerDisplay("{content}")]
+    [DebuggerDisplay("{" + nameof(content) + "}")]
     internal class Pattern : IPattern
     {
         private readonly string content;
 
-        internal Pattern(string content)
-        {
-            this.content = content;
-        }
+        internal Pattern(string content) => this.content = content;
 
-        public string Compose(IList<Semantic> messageSchema)
-        {
-            return this.content;
-        }
+        public string Compose(IList<Semantic> messageSchema) => this.content;
     }
 }

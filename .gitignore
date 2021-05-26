@@ -7,10 +7,17 @@ _ReSharper.logviewer/
 *.pdb
 *.log
 *.DotSettings.user
+*.sln.DotSettings
 *.tokens
 *.vcxproj.user
+*.user
+.sonar
+*.psess
+*.vsp
+*.sln.iml
 Debug/
 Release/
+logviewer.server/bin/
 dist/
 packages/
 !lib/Debug/
@@ -19,7 +26,4 @@ packages/
 !lib/x64/Release/
 logviewer.core/x86/
 logviewer.core/x64/
-*.user
-.sonar
-*.psess
-*.vsp
+/.vs/

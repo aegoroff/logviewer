@@ -1,23 +1,29 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 13.10.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.Diagnostics;
 
 namespace logviewer.engine
 {
-    
     /// <summary>
     /// Represents metadata rule
     /// </summary>
-    [DebuggerDisplay("{Pattern}")]
-    public struct GrokRule
+    [DebuggerDisplay("{" + nameof(Pattern) + "}")]
+    public struct GrokRule : IEquatable<GrokRule>
     {
-        internal const string DefaultPattern = "*";
+        internal const string DefaultPattern = @"*";
+
         private readonly string pattern;
-        private readonly ParserType type;
-        private readonly LogLevel level;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private ParserType type;
+
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private LogLevel level;
 
         /// <summary>
         /// Initializes new <see cref="GrokRule"/> instance
@@ -35,36 +41,24 @@ namespace logviewer.engine
         /// <summary>
         /// Gets or sets data pattern that will be cast to type
         /// </summary>
-        public string Pattern
-        {
-            get { return this.pattern; }
-        }
+        public string Pattern => this.pattern;
 
         /// <summary>
         /// Gets target casting type
         /// </summary>
-        public ParserType Type
-        {
-            get { return this.type; }
-        }
+        public ParserType Type => this.type;
 
         /// <summary>
         /// Gets target log level
         /// </summary>
-        public LogLevel Level
-        {
-            get { return this.level; }
-        }
+        public LogLevel Level => this.level;
 
         /// <summary>
         /// Compares this instance with instance specified
         /// </summary>
-        /// <param name="other">Intance to compare with</param>
-        /// <returns>True if other's intance pattern equals to this pattern</returns>
-        public bool Equals(GrokRule other)
-        {
-            return string.Equals(this.pattern, other.pattern, StringComparison.OrdinalIgnoreCase);
-        }
+        /// <param name="other">Instance to compare with</param>
+        /// <returns>True if others' instance pattern equals to this pattern</returns>
+        public bool Equals(GrokRule other) => string.Equals(this.pattern, other.pattern, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
@@ -79,7 +73,8 @@ namespace logviewer.engine
             {
                 return false;
             }
-            return obj is GrokRule && this.Equals((GrokRule)obj);
+
+            return obj is GrokRule rule && this.Equals(rule);
         }
 
         /// <summary>
@@ -89,10 +84,7 @@ namespace logviewer.engine
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return this.pattern.Return(s => s.GetHashCode(), 0);
-        }
+        public override int GetHashCode() => this.pattern?.GetHashCode() ?? 0;
 
         /// <summary>
         /// Compare two instance for equality
@@ -100,10 +92,7 @@ namespace logviewer.engine
         /// <param name="r1">First instance</param>
         /// <param name="r2">Second instance</param>
         /// <returns>True if instances are equivalent false otherwise</returns>
-        public static bool operator ==(GrokRule r1, GrokRule r2)
-        {
-            return r1.Equals(r2);
-        }
+        public static bool operator ==(GrokRule r1, GrokRule r2) => r1.Equals(r2);
 
         /// <summary>
         /// Compare two instance for difference
@@ -111,9 +100,6 @@ namespace logviewer.engine
         /// <param name="r1">First instance</param>
         /// <param name="r2">Second instance</param>
         /// <returns>True if instances are not equivalent false otherwise</returns>
-        public static bool operator !=(GrokRule r1, GrokRule r2)
-        {
-            return !(r1 == r2);
-        }
+        public static bool operator !=(GrokRule r1, GrokRule r2) => !(r1 == r2);
     }
 }

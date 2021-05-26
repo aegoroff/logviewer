@@ -1,0 +1,43 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
+// Created at: 17.09.2013
+// © 2012-2018 Alexander Egorov
+
+using System;
+using System.Data.SQLite;
+using System.Text.RegularExpressions;
+using logviewer.logic.Annotations;
+using logviewer.logic.support;
+
+namespace logviewer.logic.storage
+{
+    [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
+    [PublicAPI]
+    internal class SqliteRegEx : SQLiteFunction
+    {
+        private static string invalid;
+
+        public override object Invoke(object[] args)
+        {
+            var input = Convert.ToString(args[1]);
+            var pattern = Convert.ToString(args[0]);
+            try
+            {
+                if (invalid != null && invalid.Equals(pattern))
+                {
+                    return false;
+                }
+
+                return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            }
+            catch (Exception e)
+            {
+                Log.Instance.Error(e.Message, e);
+                invalid = pattern;
+            }
+
+            return false;
+        }
+    }
+}

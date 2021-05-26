@@ -1,4 +1,6 @@
-﻿using System;
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
@@ -12,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Alexander Egorov")]
 [assembly: AssemblyProduct("logviewer")]
-[assembly: AssemblyCopyright("Copyright ©  2012-2015")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

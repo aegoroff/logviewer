@@ -1,6 +1,8 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 12.07.2015
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.Runtime.Serialization;
@@ -11,9 +13,6 @@ namespace logviewer.engine.grammar
     [Serializable]
     internal class GrokSyntaxException : Exception
     {
-
-        private readonly string message;
-
         /// <summary>Creates new empty exception instance.</summary>
         public GrokSyntaxException()
         {
@@ -23,7 +22,7 @@ namespace logviewer.engine.grammar
         /// <param name="message">Error message.</param>
         public GrokSyntaxException(string message)
         {
-            this.message = message;
+            this.Message = message;
         }
 
         /// <summary>Initializes a new instance of the GrokSyntaxException class with serialized data.</summary>
@@ -33,29 +32,21 @@ namespace logviewer.engine.grammar
         protected GrokSyntaxException(SerializationInfo info, StreamingContext context) :
             base(info, context)
         {
-            if ((info == null))
+            if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
-            this.message = info.GetString("message");
+
+            this.Message = info.GetString("message");
         }
 
         /// <summary>Creates new exception instance with keeping inner exception.</summary>
         /// <param name="message">Error message.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         public GrokSyntaxException(string message, Exception innerException) :
-            base(message, innerException)
-        {
-            this.message = message;
-        }
+            base(message, innerException) => this.Message = message;
 
-        public override string Message
-        {
-            get
-            {
-                return this.message;
-            }
-        }
+        public override string Message { get; }
 
         /// <summary>Sets the SerializationInfo with information about the exception.</summary>
         /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
@@ -64,11 +55,12 @@ namespace logviewer.engine.grammar
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if ((info == null))
+            if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
-            info.AddValue("message", this.message);
+
+            info.AddValue("message", this.Message);
             base.GetObjectData(info, context);
         }
     }

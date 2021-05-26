@@ -1,18 +1,20 @@
-﻿// Created by: egr
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 18.10.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
+using System.Collections.Generic;
 
 namespace logviewer.engine
 {
     /// <summary>
     /// Represents metadata property info
     /// </summary>
-    public struct SemanticProperty
+    public struct SemanticProperty : IEqualityComparer<SemanticProperty>, IEquatable<SemanticProperty>
     {
         private readonly string name;
-        private readonly ParserType parser;
 
         /// <summary>
         /// Initializes new <see cref="SemanticProperty"/> instance using name and parser type specified
@@ -22,7 +24,7 @@ namespace logviewer.engine
         public SemanticProperty(string name, ParserType parser)
         {
             this.name = name;
-            this.parser = parser;
+            this.Parser = parser;
         }
 
         /// <summary>
@@ -30,36 +32,24 @@ namespace logviewer.engine
         /// </summary>
         /// <param name="name">Property name</param>
         /// <returns>new <see cref="SemanticProperty"/> instance</returns>
-        public static implicit operator SemanticProperty(string name)
-        {
-            return new SemanticProperty(name, ParserType.String);
-        }
+        public static implicit operator SemanticProperty(string name) => new SemanticProperty(name, ParserType.String);
 
         /// <summary>
         /// Gets property name
         /// </summary>
-        public string Name
-        {
-            get { return this.name; }
-        }
+        public string Name => this.name;
 
         /// <summary>
         /// Gets property parser type
         /// </summary>
-        public ParserType Parser
-        {
-            get { return this.parser; }
-        }
+        public ParserType Parser { get; }
 
         /// <summary>
         /// Compares this instance with instance specified
         /// </summary>
-        /// <param name="other">Intance to compare with</param>
-        /// <returns>True if other's intance name equals to this name</returns>
-        public bool Equals(SemanticProperty other)
-        {
-            return string.Equals(this.name, other.name, StringComparison.OrdinalIgnoreCase);
-        }
+        /// <param name="other">Instance to compare with</param>
+        /// <returns>True if others' instance property equals to this property</returns>
+        public bool Equals(SemanticProperty other) => string.Equals(this.name, other.name, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
@@ -74,7 +64,8 @@ namespace logviewer.engine
             {
                 return false;
             }
-            return obj is SemanticProperty && this.Equals((SemanticProperty)obj);
+
+            return obj is SemanticProperty property && this.Equals(property);
         }
 
         /// <summary>
@@ -84,10 +75,7 @@ namespace logviewer.engine
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return this.name.Return(s => s.GetHashCode(), 0);
-        }
+        public override int GetHashCode() => this.name?.GetHashCode() ?? 0;
 
         /// <summary>
         /// Compare two instance for equality
@@ -95,10 +83,7 @@ namespace logviewer.engine
         /// <param name="s1">First instance</param>
         /// <param name="s2">Second instance</param>
         /// <returns>True if instances are equivalent false otherwise</returns>
-        public static bool operator ==(SemanticProperty s1, SemanticProperty s2)
-        {
-            return s1.Equals(s2);
-        }
+        public static bool operator ==(SemanticProperty s1, SemanticProperty s2) => s1.Equals(s2);
 
         /// <summary>
         /// Compare two instance for difference
@@ -106,9 +91,12 @@ namespace logviewer.engine
         /// <param name="s1">First instance</param>
         /// <param name="s2">Second instance</param>
         /// <returns>True if instances are not equivalent false otherwise</returns>
-        public static bool operator !=(SemanticProperty s1, SemanticProperty s2)
-        {
-            return !(s1 == s2);
-        }
+        public static bool operator !=(SemanticProperty s1, SemanticProperty s2) => !(s1 == s2);
+
+        /// <inheritdoc />
+        public bool Equals(SemanticProperty x, SemanticProperty y) => x == y;
+
+        /// <inheritdoc />
+        public int GetHashCode(SemanticProperty obj) => obj.GetHashCode();
     }
 }

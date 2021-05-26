@@ -1,0 +1,44 @@
+﻿<Window x:Class="logviewer.ui.Statistic"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:logviewer.ui"
+        xmlns:properties="clr-namespace:logviewer.ui.Properties"
+        mc:Ignorable="d"
+        Title="{x:Static properties:Resources.LogStatistics}" Height="405" Width="529" ResizeMode="NoResize"
+        TextOptions.TextFormattingMode="Display">
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="OnClose" />
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Left"
+                    FlowDirection="LeftToRight">
+            <TextBox Width="240" Margin="5,0,10,0" Text="{Binding Path=Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <CheckBox Content="{x:Static properties:Resources.UseRegexp}" VerticalAlignment="Center" IsChecked="{Binding Path=UserRegexp}"></CheckBox>
+        </StackPanel>
+        <ListView Grid.Row="1" x:Name="ListView" Margin="5">
+            <ListView.Resources>
+                <Style x:Key="StatHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView ColumnHeaderContainerStyle="{StaticResource StatHeaderStyle}">
+                    <GridView.Columns>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Key}" Width="150"></GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Value}" Width="200"></GridViewColumn>
+                    </GridView.Columns>
+                </GridView>
+             </ListView.View>
+        </ListView>
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft">
+            <Button Margin="5,0,0,0" Content="OK" Width="80" Command="Close"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

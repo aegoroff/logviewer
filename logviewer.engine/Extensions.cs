@@ -1,6 +1,8 @@
-﻿// Created by: egr
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
 // Created at: 19.11.2014
-// © 2012-2015 Alexander Egorov
+// © 2012-2018 Alexander Egorov
 
 using System;
 using System.IO;
@@ -19,20 +21,27 @@ namespace logviewer.engine
         {
             get
             {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 var uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
+                var path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
             }
         }
 
+        /// <summary>
+        /// Removes all leading and trailing '," chars and replaces \\ and \" by \ and " respectively
+        /// </summary>
+        /// <param name="escaped">Escaped string</param>
+        /// <returns>Clean string</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static string UnescapeString(this string escaped)
+        internal static string Unescape(this string escaped)
         {
-            if (escaped.Length > 1 && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\"")))
+            if (escaped.Length > 1
+                && (escaped.StartsWith("'") && escaped.EndsWith("'") || escaped.StartsWith("\"") && escaped.EndsWith("\""))) // Not L10N
             {
-                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'");
+                return escaped.Substring(1, escaped.Length - 2).Replace("\\\"", "\"").Replace("\\'", "'"); // Not L10N
             }
+
             return escaped;
         }
 
@@ -46,8 +55,8 @@ namespace logviewer.engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string Convert(this string line, Encoding srcEncoding, Encoding dstEncoding)
         {
-            byte[] srcBytes = srcEncoding.GetBytes(line);
-            byte[] dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
+            var srcBytes = srcEncoding.GetBytes(line);
+            var dstBytes = Encoding.Convert(srcEncoding, dstEncoding, srcBytes);
             return dstEncoding.GetString(dstBytes);
         }
 
@@ -57,11 +66,8 @@ namespace logviewer.engine
         /// <param name="value">Value to calculate percent</param>
         /// <param name="total">Value upper boundary</param>
         /// <returns>Percent of value from total parameter</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static int PercentOf(this ulong value, ulong total)
-        {
-            return (int)((value / (double)total) * 100);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int PercentOf(this ulong value, ulong total) => (int)((value / (double)total) * 100);
 
         /// <summary>
         /// Returns percent of value specified from total
@@ -69,7 +75,7 @@ namespace logviewer.engine
         /// <param name="value">Value to calculate percent</param>
         /// <param name="total">Value upper boundary</param>
         /// <returns>Percent of value from total parameter</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PercentOf(this long value, long total)
         {
             var v = value > 0 ? (ulong)value : 0;
@@ -82,10 +88,7 @@ namespace logviewer.engine
         /// <param name="value">Value to calculate percent</param>
         /// <param name="total">Value upper boundary</param>
         /// <returns>Percent of value from total parameter</returns>
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-        public static int PercentOf(this FileSize value, FileSize total)
-        {
-            return value.Bytes.PercentOf(total.Bytes);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int PercentOf(this FileSize value, FileSize total) => value.Bytes.PercentOf(total.Bytes);
     }
 }

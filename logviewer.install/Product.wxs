@@ -1,207 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-    <?define SourcePath = "$(var.SolutionDir)logviewer\bin\$(var.CONFIGURATION)" ?>
-	<?define Version = "1.0.0.0" ?>
-	<Product 
-        Id="*" 
-        Name="Logviewer tool" 
-        Language="1033" 
-        Version="$(var.Version)" 
-        Manufacturer="Alexander Egorov" 
-        UpgradeCode="079be60b-0417-4be7-9513-27034cfedfd6"
-    >
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <?include "Variables.wxi" ?>
+  <Product
+    Id="*"
+    Name="Logviewer tool"
+    Language="1033"
+    Version="$(var.Version)"
+    Manufacturer="Alexander Egorov"
+    UpgradeCode="079be60b-0417-4be7-9513-27034cfedfd6">
+    <Package InstallerVersion="200" Compressed="yes" Platform="x64" InstallScope="perMachine" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-        
-        <!--
-			Check for .NET 4.5
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <!--
+			Check for .NET 4.6
 		-->
-		<PropertyRef Id="NETFRAMEWORK45"/>
-		<Condition Message="This setup requires the .NET Framework 4.5 or higher.">
-            Installed OR NETFRAMEWORK45
-        </Condition>
-        
-		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_46_OR_LATER_INSTALLED" />
+    <Condition Message="This setup requires the .NET Framework 4.6 or higher.">
+      Installed OR WIX_IS_NETFRAMEWORK_46_OR_LATER_INSTALLED
+    </Condition>
 
-        <util:CloseApplication Id="CloseLogviewer" CloseMessage="yes" Target="logviewer.exe" RebootPrompt="no" />
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-        <Binary Id="logviewer.install.mca.Pack.dll"
-                SourceFile="..\logviewer.install.mca\bin\$(var.CONFIGURATION)\logviewer.install.mca.pack.dll" />
+    <util:CloseApplication Id="CloseLogviewer" CloseMessage="yes" Target="logviewer.exe" RebootPrompt="no" />
 
-        <CustomAction Id="KeepConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll" DllEntry="KeepConfigurationFiles" Execute="deferred" Impersonate="no"/>
-        <CustomAction Id="RestoreConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll" DllEntry="RestoreConfigurationFiles" Execute="deferred" Impersonate="no"/>
+    <Binary Id="logviewer.install.mca.Pack.dll"
+            SourceFile="..\logviewer.install.mca\bin\$(var.CONFIGURATION)\logviewer.install.mca.pack.dll" />
 
-        <Feature Id="ProductFeature" Title="logviewer.install" Level="1">
-			<ComponentRef Id="logviewer.bin" />
-			<ComponentRef Id="logviewer.bin.x86" />
-			<ComponentRef Id="logviewer.bin.x64" />
-			<ComponentRef Id="logviewer.shortcut" />
-			<ComponentRef Id="logviewer.resources.ru" />
-		</Feature>
+    <CustomAction Id="KeepConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll"
+                  DllEntry="KeepConfigurationFiles" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="RestoreConfigurationFiles" BinaryKey="logviewer.install.mca.Pack.dll"
+                  DllEntry="RestoreConfigurationFiles" Execute="deferred" Impersonate="no" />
 
-        <InstallExecuteSequence>
-            <Custom Before="InstallInitialize" Action="WixCloseApplications">WIX_UPGRADE_DETECTED</Custom>
-            <Custom Action="KeepConfigurationFiles" Before="RemoveFiles">Installed</Custom>
-            <Custom Action="RestoreConfigurationFiles" Before="StartServices">Not Installed AND WIX_UPGRADE_DETECTED</Custom>
-        </InstallExecuteSequence>
-    
-        <UIRef Id="WixUI_Minimal"/>
-	</Product>
+    <Feature Id="ProductFeature" Title="logviewer.install" Level="1">
+      <ComponentRef Id="logviewer.shortcut" />
+      <ComponentGroupRef Id="logviewer" />
+    </Feature>
 
-	<Fragment>
+    <InstallExecuteSequence>
+      <Custom Before="InstallInitialize" Action="WixCloseApplications">WIX_UPGRADE_DETECTED</Custom>
+      <Custom Action="KeepConfigurationFiles" Before="RemoveFiles">Installed</Custom>
+      <Custom Action="RestoreConfigurationFiles" Before="StartServices">Not Installed AND WIX_UPGRADE_DETECTED</Custom>
+    </InstallExecuteSequence>
 
-        <Icon Id="AppIcon" SourceFile="$(var.SourcePath)\logviewer.exe"/>
-        <Property Id="ARPPRODUCTICON" Value="AppIcon" />
-        
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-                <Directory Id="INSTALLFOLDER" Name="logviewer">
-                    <Component Id="logviewer.bin" Guid="{48B9BC82-F77A-4981-874A-B523F6021505}">
-							<File
-								Id="LICENSE.txt"
-								Name="LICENSE.txt"
-								Source="..\LICENSE.txt"
-								DiskId="1"/>
-                            <File
-								Id="logviewer.exe"
-								Name="logviewer.exe"
-								Source="$(var.SourcePath)\logviewer.exe"
-								DiskId="1"/>
-                            <File
-								Id="logviewer.pdb"
-								Name="logviewer.pdb"
-								Source="$(var.SourcePath)\logviewer.pdb"
-								DiskId="1"/>
-							<File
-								Id="logviewer.exe.config"
-								Name="logviewer.exe.config"
-								Source="$(var.SourcePath)\logviewer.exe.config"
-								DiskId="1"/>
-                            <File
-								Id="logviewer.core.dll"
-								Name="logviewer.core.dll"
-								Source="$(var.SourcePath)\logviewer.core.dll"
-								DiskId="1"/>
-                            <File
-								Id="logviewer.core.pdb"
-								Name="logviewer.core.pdb"
-								Source="$(var.SourcePath)\logviewer.core.pdb"
-								DiskId="1"/>
-                            <File
-								Id="logviewer.engine.dll"
-								Name="logviewer.engine.dll"
-								Source="$(var.SourcePath)\logviewer.engine.dll"
-								DiskId="1"/>
-                            <File
-								Id="logviewer.engine.pdb"
-								Name="logviewer.engine.pdb"
-								Source="$(var.SourcePath)\logviewer.engine.pdb"
-								DiskId="1"/>
-							<File
-								Id="nrtftree_library.dll"
-								Name="nrtftree-library.dll"
-								Source="$(var.SourcePath)\nrtftree-library.dll"
-								DiskId="1"/>
-                            <File
-								Id="Ude.dll"
-								Name="Ude.dll"
-								Source="$(var.SourcePath)\Ude.dll"
-								DiskId="1"/>
-                            <File
-								Id="NLog.dll"
-								Name="NLog.dll"
-								Source="$(var.SourcePath)\NLog.dll"
-								DiskId="1"/>
-                            <File
-								Id="NLog.Windows.Forms.dll"
-								Name="NLog.Windows.Forms.dll"
-								Source="$(var.SourcePath)\NLog.Windows.Forms.dll"
-								DiskId="1"/>
-                            <File
-								Id="Octokit.dll"
-								Name="Octokit.dll"
-								Source="$(var.SourcePath)\Octokit.dll"
-								DiskId="1"/>
-                            <File
-								Id="Ninject.dll"
-								Name="Ninject.dll"
-								Source="$(var.SourcePath)\Ninject.dll"
-								DiskId="1"/>
-                            <File
-								Id="System.Data.SQLite.dll"
-								Name="System.Data.SQLite.dll"
-								Source="$(var.SourcePath)\System.Data.SQLite.dll"
-								DiskId="1"/>
-                            <File
-								Id="BurnSystems.CommandLine.dll"
-								Name="BurnSystems.CommandLine.dll"
-								Source="$(var.SourcePath)\BurnSystems.CommandLine.dll"
-								DiskId="1"/>
-                            <File
-								Id="grok.patterns"
-								Name="grok.patterns"
-								Source="$(var.SourcePath)\grok.patterns"
-								DiskId="1"/>
-                            <File
-								Id="webservers.patterns"
-								Name="webservers.patterns"
-								Source="$(var.SourcePath)\webservers.patterns"
-								DiskId="1"/>
-						</Component>
-                        <Directory Id="ru" Name="ru">
-                            <Component Id="logviewer.resources.ru" Guid="{12C3AFFE-0000-4965-B0E2-293AF3AA4A78}">
-                                <File
-								    Id="ru.logviewer.core.resources.dll"
-								    Name="logviewer.core.resources.dll"
-								    Source="$(var.SourcePath)\ru\logviewer.core.resources.dll"
-								    DiskId="1"/>
-                                <File
-								    Id="ru.logviewer.resources.dll"
-								    Name="logviewer.resources.dll"
-								    Source="$(var.SourcePath)\ru\logviewer.resources.dll"
-								    DiskId="1"/>
-                            </Component>
-                        </Directory>
-                        <Directory Id="X86" Name="x86">
-                            <Component Id="logviewer.bin.x86" Guid="{68BA3E47-2BB8-4D0E-8A46-B861390A4548}">
-                                <File
-								    Id="x86.SQLite.Interop.dll"
-								    Name="SQLite.Interop.dll"
-								    Source="$(var.SourcePath)\x86\SQLite.Interop.dll"
-								    DiskId="1"/>
-                            </Component>
-                        </Directory>
-                        <Directory Id="X64" Name="x64">
-                            <Component Id="logviewer.bin.x64" Guid="{14FB1152-6AF8-47F7-BF19-6EEC442E2C57}">
-                                <File
-								    Id="x64.SQLite.Interop.dll"
-								    Name="SQLite.Interop.dll"
-								    Source="$(var.SourcePath)\x64\SQLite.Interop.dll"
-								    DiskId="1"/>
-                            </Component>
-                        </Directory>
-                </Directory>
-            </Directory>
-            <!-- logviewer Start menu folder -->
-			<Directory Id="ProgramMenuFolder" Name="Programs">
-				<Directory Id="LogviewerProgramMenuFolder" Name="Logviewer">
-					<Component Id="logviewer.shortcut" Guid="{02EEED82-AD16-4EC4-8AC3-BA3E92D2F3A8}">
-						<!-- 
-							Fix ICE 38 by adding a dummy registry key that is the key for this shortcut.
-							http://msdn.microsoft.com/library/en-us/msi/setup/ice38.asp
-						-->
-						<RegistryValue Root="HKCU" Key="Software\logviewer" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
-						<Shortcut Name="Logviewer $(var.Version)" Target="[!logviewer.exe]" Id="LogviewerStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
-						<Shortcut Name="License" Target="[!LICENSE.txt]" Id="LogviewerLicenseStartMenuShortcut" WorkingDirectory="logviewer" Directory="LogviewerProgramMenuFolder" />
-						<!--
-							Fix ICE64 by adding a remove folder element 
-							http://windowssdk.msdn.microsoft.com/en-us/library/ms704358.aspx
-						-->
-						<RemoveFolder Id="RemoveLogviewerProgramMenuFolder" On="uninstall" />
-					</Component>
-				</Directory>
-			</Directory>
-		</Directory>
-	</Fragment>
+    <UIRef Id="WixUI_Minimal" />
+  </Product>
 </Wix>

@@ -1,0 +1,116 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// Created by: egr
+// Created at: 11.09.2015
+// © 2012-2018 Alexander Egorov
+
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
+using logviewer.logic.Annotations;
+
+namespace logviewer.logic.support
+{
+    public class AsymCrypt : IAsymCrypt
+    {
+        /// <summary>
+        ///     Must be set as base64 encoded
+        /// </summary>
+        public string PublicKey { get; set; }
+
+        /// <summary>
+        ///     Must be set as base64 encoded
+        /// </summary>
+        public string PrivateKey { get; set; }
+
+        [PublicAPI]
+        public void GenerateKeys(int keySize = 2048)
+        {
+            var csp = new RSACryptoServiceProvider(keySize);
+
+            using (csp)
+            {
+                var privKey = csp.ExportParameters(true);
+                var pubKey = csp.ExportParameters(false);
+
+                this.PublicKey = Serialize(pubKey);
+                this.PrivateKey = Serialize(privKey);
+            }
+        }
+
+        private static string Serialize<T>(T obj)
+        {
+            var settings = new XmlWriterSettings { Indent = false };
+            var stringWriter = new StringWriter();
+            var serializer = new XmlSerializer(typeof(T));
+
+            using (var xmlWriter = XmlWriter.Create(stringWriter, settings))
+            {
+                serializer.Serialize(xmlWriter, obj);
+            }
+
+            return ToBase64String(stringWriter.ToString());
+        }
+
+        [Pure]
+        [PublicAPI]
+        public string Encrypt(string plain)
+        {
+            var provider = CreateProvider(this.PublicKey);
+            const int countBitsInByte = 8;
+            const int rsaPaddingSize = 11;
+            var maxStringLength = (provider.KeySize / countBitsInByte) / sizeof(char) - (rsaPaddingSize + 1) / sizeof(char);
+            if (plain.Length > maxStringLength)
+            {
+                throw new
+                        NotSupportedException($"Max acceptable string length is {maxStringLength} for the key size {provider.KeySize} but this string length is {plain.Length}");
+            }
+
+            var decryptedBytes = Encoding.Unicode.GetBytes(plain);
+            var cryptedBytes = provider.Encrypt(decryptedBytes, false);
+
+            return Convert.ToBase64String(cryptedBytes);
+        }
+
+        [Pure]
+        [PublicAPI]
+        public string Decrypt(string crypted)
+        {
+            var provider = CreateProvider(this.PrivateKey);
+            var cryptedBytes = Convert.FromBase64String(crypted);
+            var decryptedBytes = provider.Decrypt(cryptedBytes, false);
+            return Encoding.Unicode.GetString(decryptedBytes);
+        }
+
+        private static RSACryptoServiceProvider CreateProvider(string key)
+        {
+            var reader = new StringReader(FromBase64String(key));
+            var serializer = new XmlSerializer(typeof(RSAParameters));
+
+            var parameters = (RSAParameters)serializer.Deserialize(reader);
+
+            var provider = new RSACryptoServiceProvider();
+            provider.ImportParameters(parameters);
+            return provider;
+        }
+
+        [Pure]
+        [PublicAPI]
+        public static string ToBase64String(string plain)
+        {
+            var bytes = Encoding.Unicode.GetBytes(plain);
+            return Convert.ToBase64String(bytes);
+        }
+
+        [Pure]
+        [PublicAPI]
+        public static string FromBase64String(string base64)
+        {
+            var bytes = Convert.FromBase64String(base64);
+            return Encoding.Unicode.GetString(bytes);
+        }
+    }
+}

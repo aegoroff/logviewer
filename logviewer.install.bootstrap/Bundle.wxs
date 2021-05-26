@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
-    <?define Version = "1.0.0.0" ?>
-	<Bundle 
-        Name="Logviewer" 
-        Version="$(var.Version)" 
-        Manufacturer="Alexander Egorov" 
-        UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e"
-        Condition="VersionNT > v5.2"
-        IconSourceFile="..\logviewer\Lv.ico">
+  <?define Version = "1.0.0.0" ?>
+  <Bundle
+    Name="Logviewer"
+    Version="$(var.Version)"
+    Manufacturer="Alexander Egorov"
+    UpgradeCode="1c0ed62b-d506-4e72-bbc2-a50d3926466e"
+    Condition="VersionNT > v6.0 AND VersionNT64"
+    IconSourceFile="..\logviewer.ui\Lv.ico">
 
-        <WixVariable Id="WixStdbaThemeXml" Value="Theme.xml" />
-        <WixVariable Id="WixStdbaThemeWxl" Value="Theme.wxl" />
-        <WixVariable Id="WixStdbaLicenseUrl" Value="LICENSE.txt" />
+    <WixVariable Id="WixStdbaThemeXml" Value="Theme.xml" />
+    <WixVariable Id="WixStdbaThemeWxl" Value="Theme.wxl" />
+    <WixVariable Id="WixStdbaLicenseUrl" Value="LICENSE.txt" />
 
-        <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
-            <Payload SourceFile="Lv.bmp" />
-            <Payload SourceFile="..\LICENSE.txt" Compressed="yes" />
-            <Payload Id="thm-ru-RU" Compressed="yes" Name="1049\thm.wxl" SourceFile="Theme.ru.wxl"/>
-        </BootstrapperApplicationRef>
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+      <Payload SourceFile="Lv.bmp" />
+      <Payload SourceFile="..\LICENSE.txt" Compressed="yes" />
+      <Payload Id="thm-ru-RU" Compressed="yes" Name="1049\thm.wxl" SourceFile="Theme.ru.wxl" />
+    </BootstrapperApplicationRef>
 
-	    <Chain>
-            <PackageGroupRef Id="NetFx45Redist"/>
-            <RollbackBoundary />
-            <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" />
-		</Chain>
-	</Bundle>
+    <Variable Name="InstallFolder" Type="string" Value="[ProgramFiles6432Folder]logviewer" />
+
+    <Chain>
+      <PackageGroupRef Id="NetFx46Redist" />
+      <RollbackBoundary />
+      <MsiPackage SourceFile="..\logviewer.install\bin\$(var.CONFIGURATION)\logviewer.install.msi" InstallCondition="VersionNT64">
+        <MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]" />
+      </MsiPackage>
+    </Chain>
+  </Bundle>
 </Wix>
